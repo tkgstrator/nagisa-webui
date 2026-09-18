@@ -10,33 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RecordingsIndexRouteImport } from './routes/recordings/index'
-import { Route as ChangelogIndexRouteImport } from './routes/changelog/index'
-import { Route as BrowseIndexRouteImport } from './routes/browse/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as AnimeIdIndexRouteImport } from './routes/anime/$id/index'
-import { Route as AdminUnidentifiedIndexRouteImport } from './routes/admin/unidentified/index'
-import { Route as AdminNagisaIndexRouteImport } from './routes/admin/nagisa/index'
+import { Route as BrowseIndexRouteImport } from './routes/browse/index'
+import { Route as ChangelogIndexRouteImport } from './routes/changelog/index'
+import { Route as RecordingsIndexRouteImport } from './routes/recordings/index'
 import { Route as ErrorsStatusCodeIndexRouteImport } from './routes/_errors/$statusCode/index'
+import { Route as AdminNagisaIndexRouteImport } from './routes/admin/nagisa/index'
+import { Route as AdminUnidentifiedIndexRouteImport } from './routes/admin/unidentified/index'
+import { Route as AnimeIdIndexRouteImport } from './routes/anime/$id/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecordingsIndexRoute = RecordingsIndexRouteImport.update({
-  id: '/recordings/',
-  path: '/recordings/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChangelogIndexRoute = ChangelogIndexRouteImport.update({
-  id: '/changelog/',
-  path: '/changelog/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrowseIndexRoute = BrowseIndexRouteImport.update({
-  id: '/browse/',
-  path: '/browse/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -44,14 +29,24 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AnimeIdIndexRoute = AnimeIdIndexRouteImport.update({
-  id: '/anime/$id/',
-  path: '/anime/$id/',
+const BrowseIndexRoute = BrowseIndexRouteImport.update({
+  id: '/browse/',
+  path: '/browse/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUnidentifiedIndexRoute = AdminUnidentifiedIndexRouteImport.update({
-  id: '/admin/unidentified/',
-  path: '/admin/unidentified/',
+const ChangelogIndexRoute = ChangelogIndexRouteImport.update({
+  id: '/changelog/',
+  path: '/changelog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordingsIndexRoute = RecordingsIndexRouteImport.update({
+  id: '/recordings/',
+  path: '/recordings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ErrorsStatusCodeIndexRoute = ErrorsStatusCodeIndexRouteImport.update({
+  id: '/_errors/$statusCode/',
+  path: '/$statusCode/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminNagisaIndexRoute = AdminNagisaIndexRouteImport.update({
@@ -59,9 +54,14 @@ const AdminNagisaIndexRoute = AdminNagisaIndexRouteImport.update({
   path: '/admin/nagisa/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ErrorsStatusCodeIndexRoute = ErrorsStatusCodeIndexRouteImport.update({
-  id: '/_errors/$statusCode/',
-  path: '/$statusCode/',
+const AdminUnidentifiedIndexRoute = AdminUnidentifiedIndexRouteImport.update({
+  id: '/admin/unidentified/',
+  path: '/admin/unidentified/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnimeIdIndexRoute = AnimeIdIndexRouteImport.update({
+  id: '/anime/$id/',
+  path: '/anime/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -156,18 +156,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/recordings/': {
-      id: '/recordings/'
-      path: '/recordings'
-      fullPath: '/recordings/'
-      preLoaderRoute: typeof RecordingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/changelog/': {
-      id: '/changelog/'
-      path: '/changelog'
-      fullPath: '/changelog/'
-      preLoaderRoute: typeof ChangelogIndexRouteImport
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/browse/': {
@@ -177,25 +170,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrowseIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
+    '/changelog/': {
+      id: '/changelog/'
+      path: '/changelog'
+      fullPath: '/changelog/'
+      preLoaderRoute: typeof ChangelogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/anime/$id/': {
-      id: '/anime/$id/'
-      path: '/anime/$id'
-      fullPath: '/anime/$id/'
-      preLoaderRoute: typeof AnimeIdIndexRouteImport
+    '/recordings/': {
+      id: '/recordings/'
+      path: '/recordings'
+      fullPath: '/recordings/'
+      preLoaderRoute: typeof RecordingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/unidentified/': {
-      id: '/admin/unidentified/'
-      path: '/admin/unidentified'
-      fullPath: '/admin/unidentified/'
-      preLoaderRoute: typeof AdminUnidentifiedIndexRouteImport
+    '/_errors/$statusCode/': {
+      id: '/_errors/$statusCode/'
+      path: '/$statusCode'
+      fullPath: '/$statusCode/'
+      preLoaderRoute: typeof ErrorsStatusCodeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/nagisa/': {
@@ -205,11 +198,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNagisaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_errors/$statusCode/': {
-      id: '/_errors/$statusCode/'
-      path: '/$statusCode'
-      fullPath: '/$statusCode/'
-      preLoaderRoute: typeof ErrorsStatusCodeIndexRouteImport
+    '/admin/unidentified/': {
+      id: '/admin/unidentified/'
+      path: '/admin/unidentified'
+      fullPath: '/admin/unidentified/'
+      preLoaderRoute: typeof AdminUnidentifiedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/anime/$id/': {
+      id: '/anime/$id/'
+      path: '/anime/$id'
+      fullPath: '/anime/$id/'
+      preLoaderRoute: typeof AnimeIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
