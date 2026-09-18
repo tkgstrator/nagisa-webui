@@ -1,0 +1,5 @@
+{
+  "enabledPlugins": {
+    "mock-diff@qtmleap-plugins": true
+  }
+}

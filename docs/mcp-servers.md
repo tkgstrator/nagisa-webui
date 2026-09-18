@@ -110,6 +110,25 @@ gh auth login
 
 > 他の MCP Server と異なり、リモートホスト型のため `url` で直接指定している。ローカルへのパッケージインストールは不要。
 
+### 7. mock-diff MCP Server
+
+| 項目 | 値 |
+|------|-----|
+| パッケージ | `mock-diff@qtmleap-plugins` (Claude Code プラグイン) |
+| 用途 | デザイン候補の選定(Deciding)・実装(Building)・実装結果とのピクセル差分検証(Checking) |
+| 前提条件 | `mock-diff-viewer` sidecar (`docker compose` の `mock-diff` サービス) が起動していること |
+| 参考 | https://github.com/qtmleap/mock-diff-viewer |
+
+**提供される機能:**
+
+- 画面ごとのデザイン候補一覧・状態の取得 (`list_screens`)
+- 採用済みデザインの取得 (`get_chosen_design`)
+- 任意のデザイン候補のレンダリング取得 (`get_candidate`)
+- デザイン候補同士の比較 (`compare_candidates`)
+- 実装結果と採用済みデザインのピクセル差分検証 (`check_implementation` / `check_all`)
+
+> 他の MCP Server と異なり `.mcp.json` ではなく Claude Code プラグインとして導入する(`claude plugin install mock-diff@qtmleap-plugins`)。詳細な導入手順・sidecar の起動方法・screen の追加方法は [`docs/mock-diff.md`](./mock-diff.md) を参照。
+
 ## 動作確認
 
 MCP Server が正しく認識されているか確認するには、Claude Code 内で以下を実行する:
