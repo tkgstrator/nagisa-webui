@@ -6,13 +6,16 @@
 # スキーマの要点:
 #   screens[].id            画面を一意に識別する ID (URL やコマンドで指定する)
 #   screens[].name           画面の表示名
-#   screens[].threshold      実装とデザインのピクセル差分許容値 (0-1、小さいほど厳密)
+#   screens[].threshold      実装とデザインのピクセル差分許容値 (0-1、小さいほど厳密)。
+#                             screen 単位が基本だが devices[] 単位で個別に上書きもできる
 #   screens[].devices[].id           デバイスを一意に識別する ID
 #   screens[].devices[].name         デバイスの表示名
 #   screens[].devices[].viewport     width / height / deviceScaleFactor
 #   screens[].devices[].orientations portrait / landscape の組み合わせ
 #   screens[].devices[].versions     デザイン候補 (キーがバリアント名)。
-#                                     type: html | png のいずれかと path (workspace 相対) を指定
+#                                     type: html | png | url のいずれかを指定。
+#                                     html / png は path (workspace 相対) を、
+#                                     url は稼働中のページを指す url を指定する
 #   screens[].devices[].actual       実装結果。type: url で稼働中アプリの URL を指定するのが基本
 #                                     (このリポジトリでは devcontainer 内の vite dev server
 #                                     http://app:25173/<path> を指すことを想定)
