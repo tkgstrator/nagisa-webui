@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
           })
         },
         writeBundle() {
-          const outDir = resolve(__dirname, 'dist/client')
+          const outDir = resolve(import.meta.dirname, 'dist/client')
           mkdirSync(outDir, { recursive: true })
           writeFileSync(resolve(outDir, 'commits.json'), JSON.stringify(gitLog))
         }
@@ -44,8 +44,8 @@ export default defineConfig(({ mode }) => {
       tanstackRouter({
         target: 'react',
         autoCodeSplitting: true,
-        routesDirectory: resolve(__dirname, './src/app/routes'),
-        generatedRouteTree: resolve(__dirname, './src/app/routeTree.gen.ts')
+        routesDirectory: resolve(import.meta.dirname, './src/app/routes'),
+        generatedRouteTree: resolve(import.meta.dirname, './src/app/routeTree.gen.ts')
       }),
       react(),
       tailwindcss(),
@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': resolve(__dirname, './src')
+        '@': resolve(import.meta.dirname, './src')
       }
     },
     define: {
