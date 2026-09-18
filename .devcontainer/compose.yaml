@@ -12,8 +12,26 @@ services:
     tty: true
     stdin_open: true
 
+  # デザイン候補の選定(Deciding)・実装(Building)・ピクセル差分検証(Checking)を行う
+  # mock-diff-viewer sidecar。詳細は docs/mock-diff.md を参照。
+  #
+  # ホスト側ポートは README 記載の 3000:3000 ではなく 12355:3000 を採用している。
+  # Claude Code 用 MCP プラグイン (mock-diff@qtmleap-plugins) のデフォルト
+  # MOCK_DIFF_URL が http://127.0.0.1:12355 を向いているため、環境変数を追加設定せず
+  # そのまま接続できるようにするための対応。
+  mock-diff:
+    image: ghcr.io/qtmleap/mock-diff-viewer:latest
+    ports:
+      - "12355:3000"
+    volumes:
+      - ../docs/mock-diff:/workspace
+      - mock_diff_data:/data
+    init: true
+
 volumes:
   node_modules:
     driver: local
   cache:
+    driver: local
+  mock_diff_data:
     driver: local
