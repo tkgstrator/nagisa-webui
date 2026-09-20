@@ -266,7 +266,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">録画予約が 0 件</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本">
     <div class="es v-key">
       <div class="es-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg></div>
       <div class="es-body">
@@ -285,7 +285,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>絞り込みの結果が 0 件 <span class="cat-hint">条件を消す導線を主役にする</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">検索語に一致なし</span>
+    <div class="cat-item cat-full is-key" data-story="絞り込みの結果が 0 件 / 検索語に一致なし"><span class="cat-label">検索語に一致なし</span>
       <div class="es">
         <div class="es-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
         <div class="es-body">
@@ -298,7 +298,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">絞り込みの結果 0 件 <small>条件を並べて示す</small></span>
+    <div class="cat-item cat-full" data-story="絞り込みの結果が 0 件 / 絞り込みの結果 0 件"><span class="cat-label">絞り込みの結果 0 件 <small>条件を並べて示す</small></span>
       <div class="es">
         <div class="es-ico"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg></div>
         <div class="es-body">
@@ -324,7 +324,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>読み込み中 <span class="cat-hint">行の形のまま骨組みを出す</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="読み込み中">
     <div class="es-skel" aria-hidden="true">
       <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w70"></div><div class="sk-l sk w30"></div></div></div>
       <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w55"></div><div class="sk-l sk w45"></div></div></div>
@@ -337,7 +337,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>取得に失敗 <span class="cat-hint">再試行を主役にする</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="取得に失敗">
     <div class="es v-err">
       <div class="es-ico"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
       <div class="es-body">
@@ -357,13 +357,13 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>コンパクト版 <span class="cat-hint">表の中に差し込む細い帯</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">ページに行が無い</span>
+    <div class="cat-item cat-full is-key" data-story="コンパクト版 / ページに行が無い"><span class="cat-label">ページに行が無い</span>
       <div class="tbl-demo">
         <div class="tbl-head"><span>作品</span><span>録画</span><span>全話</span><span>更新</span></div>
         <div class="es-slim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>このページに表示できる行がありません<a class="lnk" href="#">1 ページ目に戻る</a></div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">部分的な失敗 <small>表を残したまま知らせる</small></span>
+    <div class="cat-item cat-full" data-story="コンパクト版 / 部分的な失敗"><span class="cat-label">部分的な失敗 <small>表を残したまま知らせる</small></span>
       <div class="es-slim v-err"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>3 件の進捗を取得できませんでした<button type="button" class="lnk">再試行</button></div>
     </div>
   </div>

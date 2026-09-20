@@ -228,7 +228,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">配信元 / 年 / クール / ステータス / バッジ + 並び替え</span></h2>
   <div class="cat-stack cat-full">
-    <div class="cat-item is-key"><span class="cat-label">ツールバー全体</span>
+    <div class="cat-item is-key" data-story="基本 / ツールバー全体"><span class="cat-label">ツールバー全体</span>
       <section class="toolbar" aria-label="絞り込みと並び替え">
         <div class="toolbar-row">
           <div class="sort">
@@ -289,7 +289,7 @@ svg { display: block; flex: none; }
         </div>
       </section>
     </div>
-    <div class="cat-item"><span class="cat-label">絞り込み適用後 <small>(配信元 2 件・ステータス 1 件)</small></span>
+    <div class="cat-item" data-story="基本 / 絞り込み適用後"><span class="cat-label">絞り込み適用後 <small>(配信元 2 件・ステータス 1 件)</small></span>
       <section class="toolbar" aria-label="絞り込みと並び替え">
         <div class="toolbar-row">
           <div class="filters">
@@ -319,41 +319,41 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>チップ単体</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">通常</span><button class="chip">放送中</button></div>
-    <div class="cat-item"><span class="cat-label">hover</span><button class="chip is-hover">放送中</button></div>
-    <div class="cat-item"><span class="cat-label">選択中</span><button class="chip" aria-pressed="true">放送中</button></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><button class="chip is-focus">放送中</button></div>
-    <div class="cat-item"><span class="cat-label">該当なしで無効</span><button class="chip" aria-disabled="true">中止 <span class="cnt">0</span></button></div>
-    <div class="cat-item"><span class="cat-label">件数つき</span><button class="chip">新着エピソード <span class="cnt">12</span></button></div>
+    <div class="cat-item" data-story="チップ単体 / 通常"><span class="cat-label">通常</span><button class="chip">放送中</button></div>
+    <div class="cat-item" data-story="チップ単体 / hover"><span class="cat-label">hover</span><button class="chip is-hover">放送中</button></div>
+    <div class="cat-item" data-story="チップ単体 / 選択中"><span class="cat-label">選択中</span><button class="chip" aria-pressed="true">放送中</button></div>
+    <div class="cat-item" data-story="チップ単体 / フォーカス"><span class="cat-label">フォーカス</span><button class="chip is-focus">放送中</button></div>
+    <div class="cat-item" data-story="チップ単体 / 該当なしで無効"><span class="cat-label">該当なしで無効</span><button class="chip" aria-disabled="true">中止 <span class="cnt">0</span></button></div>
+    <div class="cat-item" data-story="チップ単体 / 件数つき"><span class="cat-label">件数つき</span><button class="chip">新着エピソード <span class="cnt">12</span></button></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>配信元チップ <span class="cat-hint">先頭のドットだけがブランド色を持つ</span></h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">Prime Video</span><button class="chip p-amazon"><span class="dot"></span>Prime Video <span class="cnt">84</span></button></div>
-    <div class="cat-item"><span class="cat-label">Hulu</span><button class="chip p-hulu"><span class="dot"></span>Hulu <span class="cnt">41</span></button></div>
-    <div class="cat-item"><span class="cat-label">Crunchyroll</span><button class="chip p-crunchyroll"><span class="dot"></span>Crunchyroll <span class="cnt">67</span></button></div>
-    <div class="cat-item"><span class="cat-label">ABEMA</span><button class="chip p-abema"><span class="dot"></span>ABEMA <span class="cnt">59</span></button></div>
-    <div class="cat-item"><span class="cat-label">Netflix</span><button class="chip p-netflix"><span class="dot"></span>Netflix <span class="cnt">36</span></button></div>
-    <div class="cat-item"><span class="cat-label">選択中</span><button class="chip p-abema" aria-pressed="true"><span class="dot"></span>ABEMA <span class="cnt">59</span></button></div>
+    <div class="cat-item" data-story="配信元チップ / Prime Video"><span class="cat-label">Prime Video</span><button class="chip p-amazon"><span class="dot"></span>Prime Video <span class="cnt">84</span></button></div>
+    <div class="cat-item" data-story="配信元チップ / Hulu"><span class="cat-label">Hulu</span><button class="chip p-hulu"><span class="dot"></span>Hulu <span class="cnt">41</span></button></div>
+    <div class="cat-item" data-story="配信元チップ / Crunchyroll"><span class="cat-label">Crunchyroll</span><button class="chip p-crunchyroll"><span class="dot"></span>Crunchyroll <span class="cnt">67</span></button></div>
+    <div class="cat-item" data-story="配信元チップ / ABEMA"><span class="cat-label">ABEMA</span><button class="chip p-abema"><span class="dot"></span>ABEMA <span class="cnt">59</span></button></div>
+    <div class="cat-item" data-story="配信元チップ / Netflix"><span class="cat-label">Netflix</span><button class="chip p-netflix"><span class="dot"></span>Netflix <span class="cnt">36</span></button></div>
+    <div class="cat-item" data-story="配信元チップ / 選択中"><span class="cat-label">選択中</span><button class="chip p-abema" aria-pressed="true"><span class="dot"></span>ABEMA <span class="cnt">59</span></button></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>セグメント <span class="cat-hint">択一。年とクールに使う</span></h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">年</span><div class="seg"><button class="chip num" aria-pressed="false">すべて</button><button class="chip num" aria-pressed="true">2026</button><button class="chip num" aria-pressed="false">2025</button><button class="chip num" aria-pressed="false">2024</button></div></div>
-    <div class="cat-item"><span class="cat-label">クール</span><div class="seg"><button class="chip" aria-pressed="false">すべて</button><button class="chip" aria-pressed="false">冬</button><button class="chip" aria-pressed="true">春</button><button class="chip" aria-pressed="false">夏</button><button class="chip" aria-pressed="false">秋</button></div></div>
-    <div class="cat-item"><span class="cat-label">項目の hover</span><div class="seg"><button class="chip" aria-pressed="false">すべて</button><button class="chip is-hover" aria-pressed="false">冬</button><button class="chip" aria-pressed="true">春</button><button class="chip" aria-pressed="false">夏</button></div></div>
+    <div class="cat-item" data-story="セグメント / 年"><span class="cat-label">年</span><div class="seg"><button class="chip num" aria-pressed="false">すべて</button><button class="chip num" aria-pressed="true">2026</button><button class="chip num" aria-pressed="false">2025</button><button class="chip num" aria-pressed="false">2024</button></div></div>
+    <div class="cat-item" data-story="セグメント / クール"><span class="cat-label">クール</span><div class="seg"><button class="chip" aria-pressed="false">すべて</button><button class="chip" aria-pressed="false">冬</button><button class="chip" aria-pressed="true">春</button><button class="chip" aria-pressed="false">夏</button><button class="chip" aria-pressed="false">秋</button></div></div>
+    <div class="cat-item" data-story="セグメント / 項目の hover"><span class="cat-label">項目の hover</span><div class="seg"><button class="chip" aria-pressed="false">すべて</button><button class="chip is-hover" aria-pressed="false">冬</button><button class="chip" aria-pressed="true">春</button><button class="chip" aria-pressed="false">夏</button></div></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>並び替え</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">通常</span><div class="sort"><span>並び替え</span><div class="sel"><select aria-label="並び替え"><option selected>リリース年 新しい順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><div class="sort"><span>並び替え</span><div class="sel"><select class="is-focus" aria-label="並び替え"><option selected>タイトル 昇順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
+    <div class="cat-item" data-story="並び替え / 通常"><span class="cat-label">通常</span><div class="sort"><span>並び替え</span><div class="sel"><select aria-label="並び替え"><option selected>リリース年 新しい順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
+    <div class="cat-item" data-story="並び替え / フォーカス"><span class="cat-label">フォーカス</span><div class="sort"><span>並び替え</span><div class="sel"><select class="is-focus" aria-label="並び替え"><option selected>タイトル 昇順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
   </div>
   <p class="cat-note">選択肢は「タイトル / リリース年」×「昇順 / 降順」の 4 通り。単一のセレクトにまとめ、チップ群とは別に左端へ置く。</p>
 </section>

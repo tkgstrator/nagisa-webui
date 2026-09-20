@@ -265,7 +265,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">絞り込み + 並べ替え + 選択バー</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本">
     <div class="filters" role="group" aria-label="絞り込みと並べ替え">
       <div class="seg" role="group" aria-label="録画状態">
         <button type="button" aria-pressed="true">すべて <span class="n">16</span></button>
@@ -309,10 +309,10 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>検索</h2>
   <div class="cat-stack">
-    <div class="cat-item is-key"><span class="cat-label">空</span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" placeholder="タイトルで絞り込み"></div></div></div>
-    <div class="cat-item"><span class="cat-label">入力済み <small>クリアボタンが出る</small></span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" value="カフェ"><button type="button" class="clear" aria-label="検索語をクリア"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div></div>
-    <div class="cat-item"><span class="cat-label">クリアボタン hover</span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" value="カフェ"><button type="button" class="clear is-hover" aria-label="検索語をクリア"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="is-focus" type="search" value="カフェ"><button type="button" class="clear" aria-label="検索語をクリア"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div></div>
+    <div class="cat-item is-key" data-story="検索 / 空"><span class="cat-label">空</span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" placeholder="タイトルで絞り込み"></div></div></div>
+    <div class="cat-item" data-story="検索 / 入力済み"><span class="cat-label">入力済み <small>クリアボタンが出る</small></span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" value="カフェ"><button type="button" class="clear" aria-label="検索語をクリア"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div></div>
+    <div class="cat-item" data-story="検索 / クリアボタン hover"><span class="cat-label">クリアボタン hover</span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" value="カフェ"><button type="button" class="clear is-hover" aria-label="検索語をクリア"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div></div>
+    <div class="cat-item" data-story="検索 / フォーカス"><span class="cat-label">フォーカス</span><div class="tbrow"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="is-focus" type="search" value="カフェ"><button type="button" class="clear" aria-label="検索語をクリア"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div></div>
   </div>
   <p class="cat-note">入力欄も 999px の角丸にして、隣に並ぶチップと輪郭をそろえる。</p>
 </section>
@@ -320,11 +320,11 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>録画状態のセグメント <span class="cat-hint">1 つだけ選べる</span></h2>
   <div class="cat-stack">
-    <div class="cat-item is-key"><span class="cat-label">すべて</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="true">すべて <span class="n">16</span></button><button type="button" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
-    <div class="cat-item"><span class="cat-label">未録画</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="false">すべて <span class="n">16</span></button><button type="button" aria-pressed="true">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
-    <div class="cat-item"><span class="cat-label">録画済み</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="false">すべて <span class="n">16</span></button><button type="button" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="true">録画済み <span class="n">5</span></button></div></div></div>
-    <div class="cat-item"><span class="cat-label">hover <small>未選択の項目</small></span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="true">すべて <span class="n">16</span></button><button type="button" class="is-hover" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="true">すべて <span class="n">16</span></button><button type="button" class="is-focus" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
+    <div class="cat-item is-key" data-story="録画状態のセグメント / すべて"><span class="cat-label">すべて</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="true">すべて <span class="n">16</span></button><button type="button" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
+    <div class="cat-item" data-story="録画状態のセグメント / 未録画"><span class="cat-label">未録画</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="false">すべて <span class="n">16</span></button><button type="button" aria-pressed="true">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
+    <div class="cat-item" data-story="録画状態のセグメント / 録画済み"><span class="cat-label">録画済み</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="false">すべて <span class="n">16</span></button><button type="button" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="true">録画済み <span class="n">5</span></button></div></div></div>
+    <div class="cat-item" data-story="録画状態のセグメント / hover"><span class="cat-label">hover <small>未選択の項目</small></span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="true">すべて <span class="n">16</span></button><button type="button" class="is-hover" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
+    <div class="cat-item" data-story="録画状態のセグメント / フォーカス"><span class="cat-label">フォーカス</span><div class="tbrow"><div class="seg" role="group" aria-label="録画状態"><button type="button" aria-pressed="true">すべて <span class="n">16</span></button><button type="button" class="is-focus" aria-pressed="false">未録画 <span class="n">1</span></button><button type="button" aria-pressed="false">録画済み <span class="n">5</span></button></div></div></div>
   </div>
   <p class="cat-note">溝を <code>muted</code> で塗り、選んだ 1 つだけを背景色まで持ち上げる。件数はラベルの右に添えて、押す前に何件になるか分かるようにする。</p>
 </section>
@@ -332,10 +332,10 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>プロバイダ chip <span class="cat-hint">複数選べる</span></h2>
   <div class="cat-stack">
-    <div class="cat-item is-key"><span class="cat-label">すべて未選択</span><div class="tbrow"><div class="chips"><button type="button" class="pchip amazon" aria-pressed="false"><i class="dot"></i>Prime Video</button><button type="button" class="pchip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button><button type="button" class="pchip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button><button type="button" class="pchip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button><button type="button" class="pchip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button></div></div></div>
-    <div class="cat-item"><span class="cat-label">すべて選択済み</span><div class="tbrow"><div class="chips"><button type="button" class="pchip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button><button type="button" class="pchip hulu" aria-pressed="true"><i class="dot"></i>Hulu</button><button type="button" class="pchip crunchyroll" aria-pressed="true"><i class="dot"></i>Crunchyroll</button><button type="button" class="pchip abema" aria-pressed="true"><i class="dot"></i>ABEMA</button><button type="button" class="pchip netflix" aria-pressed="true"><i class="dot"></i>Netflix</button></div></div></div>
-    <div class="cat-item"><span class="cat-label">一部選択 <small>2 件</small></span><div class="tbrow"><div class="chips"><button type="button" class="pchip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button><button type="button" class="pchip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button><button type="button" class="pchip crunchyroll" aria-pressed="true"><i class="dot"></i>Crunchyroll</button><button type="button" class="pchip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button><button type="button" class="pchip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button></div></div></div>
-    <div class="cat-item"><span class="cat-label">hover / フォーカス</span><div class="tbrow"><div class="chips"><button type="button" class="pchip hulu is-hover" aria-pressed="false"><i class="dot"></i>Hulu</button><button type="button" class="pchip abema is-focus" aria-pressed="false"><i class="dot"></i>ABEMA</button></div></div></div>
+    <div class="cat-item is-key" data-story="プロバイダ chip / すべて未選択"><span class="cat-label">すべて未選択</span><div class="tbrow"><div class="chips"><button type="button" class="pchip amazon" aria-pressed="false"><i class="dot"></i>Prime Video</button><button type="button" class="pchip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button><button type="button" class="pchip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button><button type="button" class="pchip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button><button type="button" class="pchip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button></div></div></div>
+    <div class="cat-item" data-story="プロバイダ chip / すべて選択済み"><span class="cat-label">すべて選択済み</span><div class="tbrow"><div class="chips"><button type="button" class="pchip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button><button type="button" class="pchip hulu" aria-pressed="true"><i class="dot"></i>Hulu</button><button type="button" class="pchip crunchyroll" aria-pressed="true"><i class="dot"></i>Crunchyroll</button><button type="button" class="pchip abema" aria-pressed="true"><i class="dot"></i>ABEMA</button><button type="button" class="pchip netflix" aria-pressed="true"><i class="dot"></i>Netflix</button></div></div></div>
+    <div class="cat-item" data-story="プロバイダ chip / 一部選択"><span class="cat-label">一部選択 <small>2 件</small></span><div class="tbrow"><div class="chips"><button type="button" class="pchip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button><button type="button" class="pchip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button><button type="button" class="pchip crunchyroll" aria-pressed="true"><i class="dot"></i>Crunchyroll</button><button type="button" class="pchip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button><button type="button" class="pchip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button></div></div></div>
+    <div class="cat-item" data-story="プロバイダ chip / hover / フォーカス"><span class="cat-label">hover / フォーカス</span><div class="tbrow"><div class="chips"><button type="button" class="pchip hulu is-hover" aria-pressed="false"><i class="dot"></i>Hulu</button><button type="button" class="pchip abema is-focus" aria-pressed="false"><i class="dot"></i>ABEMA</button></div></div></div>
   </div>
   <p class="cat-note">選ぶと枠線を消してプロバイダの色で塗る。未選択のときは色を出さず、丸ドットだけで区別する。</p>
 </section>
@@ -343,10 +343,10 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>配信終了予定のみ</h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">off</span><button type="button" class="toggle-chip" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
-    <div class="cat-item"><span class="cat-label">on</span><button type="button" class="toggle-chip" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
-    <div class="cat-item"><span class="cat-label">hover</span><button type="button" class="toggle-chip is-hover" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><button type="button" class="toggle-chip is-focus" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
+    <div class="cat-item is-key" data-story="配信終了予定のみ / off"><span class="cat-label">off</span><button type="button" class="toggle-chip" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
+    <div class="cat-item" data-story="配信終了予定のみ / on"><span class="cat-label">on</span><button type="button" class="toggle-chip" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
+    <div class="cat-item" data-story="配信終了予定のみ / hover"><span class="cat-label">hover</span><button type="button" class="toggle-chip is-hover" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
+    <div class="cat-item" data-story="配信終了予定のみ / フォーカス"><span class="cat-label">フォーカス</span><button type="button" class="toggle-chip is-focus" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button></div>
   </div>
   <p class="cat-note">on のときだけ <code>warning</code> で塗る。プロバイダ chip と同じ丸みなので、並べても列が乱れない。</p>
 </section>
@@ -354,18 +354,18 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>並べ替えと絞り込みリセット</h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">並べ替え</span><label class="sort">並べ替え<span class="sel"><select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></label></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><label class="sort">並べ替え<span class="sel"><select class="is-focus"><option>進捗が低い順</option></select><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></label></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset-link"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット <span class="num">3</span></button></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>hover</small></span><button type="button" class="reset-link is-hover"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット <span class="num">3</span></button></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset-link" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット</button></div>
+    <div class="cat-item is-key" data-story="並べ替えと絞り込みリセット / 並べ替え"><span class="cat-label">並べ替え</span><label class="sort">並べ替え<span class="sel"><select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></label></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / フォーカス"><span class="cat-label">フォーカス</span><label class="sort">並べ替え<span class="sel"><select class="is-focus"><option>進捗が低い順</option></select><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></label></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset-link"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット <span class="num">3</span></button></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット 2"><span class="cat-label">リセット <small>hover</small></span><button type="button" class="reset-link is-hover"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット <span class="num">3</span></button></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット 3"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset-link" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット</button></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>選択バー <span class="cat-hint">チェックした行への一括操作</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">未選択 <small>操作は無効</small></span>
+    <div class="cat-item cat-full is-key" data-story="選択バー / 未選択"><span class="cat-label">未選択 <small>操作は無効</small></span>
       <div class="selbar">
         <label><input type="checkbox"> 表示中をすべて選択</label>
         <span class="state">選択されていません</span>
@@ -375,7 +375,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">一部選択 <small>indeterminate</small></span>
+    <div class="cat-item cat-full" data-story="選択バー / 一部選択"><span class="cat-label">一部選択 <small>indeterminate</small></span>
       <div class="selbar">
         <label><span class="mixbox"><i></i></span> 表示中をすべて選択</label>
         <span class="state"><b>2</b> 件選択中</span>
@@ -385,7 +385,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">全選択 <small>解除ボタンは hover</small></span>
+    <div class="cat-item cat-full" data-story="選択バー / 全選択"><span class="cat-label">全選択 <small>解除ボタンは hover</small></span>
       <div class="selbar">
         <label><input type="checkbox" checked> 表示中をすべて選択</label>
         <span class="state"><b>16</b> 件選択中</span>
@@ -402,9 +402,9 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>選択のチェック <span class="cat-hint">素のチェックボックスを <code>accent-color</code> で染める</span></h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">未チェック</span><div class="selbar"><input type="checkbox" aria-label="未チェック"></div></div>
-    <div class="cat-item"><span class="cat-label">チェック済み</span><div class="selbar"><input type="checkbox" checked aria-label="チェック済み"></div></div>
-    <div class="cat-item"><span class="cat-label">一部選択 <small>差し替えた箱</small></span><div class="selbar"><span class="mixbox"><i></i></span></div></div>
+    <div class="cat-item is-key" data-story="選択のチェック / 未チェック"><span class="cat-label">未チェック</span><div class="selbar"><input type="checkbox" aria-label="未チェック"></div></div>
+    <div class="cat-item" data-story="選択のチェック / チェック済み"><span class="cat-label">チェック済み</span><div class="selbar"><input type="checkbox" checked aria-label="チェック済み"></div></div>
+    <div class="cat-item" data-story="選択のチェック / 一部選択"><span class="cat-label">一部選択 <small>差し替えた箱</small></span><div class="selbar"><span class="mixbox"><i></i></span></div></div>
   </div>
   <p class="cat-note">チェックボックスは作り込まず OS の描画に任せる。中間状態だけは静的に出せないので、同じ 15px の箱に置き換える。</p>
 </section>

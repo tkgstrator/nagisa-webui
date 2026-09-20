@@ -308,7 +308,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>開いた状態 <span class="cat-hint">背後はぼかして沈める</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="開いた状態">
     <div class="stage">
       <div class="behind" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="scrim" aria-hidden="true"></div>
@@ -351,7 +351,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>中身のバリエーション <span class="cat-hint">舞台から出して単体で並べる</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w320"><span class="cat-label is-key">予約済み + 全話録画済み</span>
+    <div class="cat-item cat-w320" data-story="中身のバリエーション / 予約済み + 全話録画済み"><span class="cat-label is-key">予約済み + 全話録画済み</span>
       <div class="modal is-standalone p-netflix" role="dialog" aria-label="蒼海のリフレイン">
         <div class="mhero">
           <div class="art" style="--h: 210"></div>
@@ -374,7 +374,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-w320"><span class="cat-label">未放送 <small>(進捗バーは出さない)</small></span>
+    <div class="cat-item cat-w320" data-story="蒼海のリフレイン / 未放送"><span class="cat-label">未放送 <small>(進捗バーは出さない)</small></span>
       <div class="modal is-standalone p-abema" role="dialog" aria-label="ひだまり商店街の観測日誌">
         <div class="mhero">
           <div class="art" style="--h: 130"></div>
@@ -395,7 +395,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-w320"><span class="cat-label">休止中</span>
+    <div class="cat-item cat-w320" data-story="ひだまり商店街の観測日誌 / 休止中"><span class="cat-label">休止中</span>
       <div class="modal is-standalone p-crunchyroll" role="dialog" aria-label="機械仕掛けの遠雷">
         <div class="mhero">
           <div class="art" style="--h: 40"></div>
@@ -424,13 +424,13 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>アクション</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">未予約</span><button class="mbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button></div>
-    <div class="cat-item"><span class="cat-label">hover</span><button class="mbtn is-hover" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button></div>
-    <div class="cat-item"><span class="cat-label">予約済み</span><button class="mbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button></div>
-    <div class="cat-item"><span class="cat-label">送信中</span><button class="mbtn busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>送信中…</button></div>
-    <div class="cat-item"><span class="cat-label">失敗</span><button class="mbtn fail" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6M12 17v.01"/></svg>失敗 — 再試行</button></div>
-    <div class="cat-item"><span class="cat-label">副次</span><button class="mbtn ghost" type="button">詳細を開く</button></div>
-    <div class="cat-item"><span class="cat-label">再取得</span><button class="mbtn icon" type="button" style="margin-left:0" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
+    <div class="cat-item" data-story="アクション / 未予約"><span class="cat-label">未予約</span><button class="mbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button></div>
+    <div class="cat-item" data-story="アクション / hover"><span class="cat-label">hover</span><button class="mbtn is-hover" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button></div>
+    <div class="cat-item" data-story="アクション / 予約済み"><span class="cat-label">予約済み</span><button class="mbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button></div>
+    <div class="cat-item" data-story="アクション / 送信中"><span class="cat-label">送信中</span><button class="mbtn busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>送信中…</button></div>
+    <div class="cat-item" data-story="アクション / 失敗"><span class="cat-label">失敗</span><button class="mbtn fail" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6M12 17v.01"/></svg>失敗 — 再試行</button></div>
+    <div class="cat-item" data-story="アクション / 副次"><span class="cat-label">副次</span><button class="mbtn ghost" type="button">詳細を開く</button></div>
+    <div class="cat-item" data-story="アクション / 再取得"><span class="cat-label">再取得</span><button class="mbtn icon" type="button" style="margin-left:0" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
   </div>
   <p class="cat-note">再取得だけはアイコンのみにして右端に離す。押す頻度が低く、隣の予約ボタンと取り違えられると困るため。</p>
 </section>
@@ -438,9 +438,9 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>録画の進捗</h2>
   <div class="cat-stack cat-w320">
-    <div class="cat-item"><span class="cat-label">未着手</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">0</b><span>/ 24 話</span><span class="pct num">0%</span></div><div class="bar"><span class="is-partial" style="width: 0%"></span></div></div></div>
-    <div class="cat-item"><span class="cat-label is-key">途中</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">8</b><span>/ 24 話</span><span class="pct num">33%</span></div><div class="bar"><span class="is-partial" style="width: 33%"></span></div></div></div>
-    <div class="cat-item"><span class="cat-label">完了</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">24</b><span>/ 24 話</span><span class="pct num">100%</span></div><div class="bar"><span style="width: 100%"></span></div></div></div>
+    <div class="cat-item" data-story="録画の進捗 / 未着手"><span class="cat-label">未着手</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">0</b><span>/ 24 話</span><span class="pct num">0%</span></div><div class="bar"><span class="is-partial" style="width: 0%"></span></div></div></div>
+    <div class="cat-item" data-story="録画の進捗 / 途中"><span class="cat-label is-key">途中</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">8</b><span>/ 24 話</span><span class="pct num">33%</span></div><div class="bar"><span class="is-partial" style="width: 33%"></span></div></div></div>
+    <div class="cat-item" data-story="録画の進捗 / 完了"><span class="cat-label">完了</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">24</b><span>/ 24 話</span><span class="pct num">100%</span></div><div class="bar"><span style="width: 100%"></span></div></div></div>
   </div>
   <p class="cat-note">完了したときだけ色を <code>--success</code> に替える。途中は <code>--info</code>。分母と分子は別の語として置き、<code>8/24</code> のように 1 つに詰めない。</p>
 </section>
@@ -448,9 +448,9 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>閉じるボタン</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">通常</span><div class="cat-frame"><button class="mclose" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
-    <div class="cat-item"><span class="cat-label">hover <small>(90° 回る)</small></span><div class="cat-frame"><button class="mclose is-hover" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><div class="cat-frame"><button class="mclose is-focus" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item" data-story="閉じるボタン / 通常"><span class="cat-label">通常</span><div class="cat-frame"><button class="mclose" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item" data-story="閉じるボタン / hover"><span class="cat-label">hover <small>(90° 回る)</small></span><div class="cat-frame"><button class="mclose is-hover" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item" data-story="閉じるボタン / フォーカス"><span class="cat-label">フォーカス</span><div class="cat-frame"><button class="mclose is-focus" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
   </div>
   <p class="cat-note">画像の明るさに左右されないよう、下地は固定の暗色 <code>oklch(0.18 0.005 250 / 60%)</code> にしてぼかしを掛ける。ここはライト / ダークで切り替えない。</p>
 </section>

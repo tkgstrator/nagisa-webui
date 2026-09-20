@@ -234,7 +234,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">配信元 / 年 / クール / ステータス / バッジ</span></h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">パネル全体</span>
+    <div class="cat-item is-key" data-story="基本 / パネル全体"><span class="cat-label">パネル全体</span>
       <div class="fpanel" aria-label="絞り込み">
         <p class="ftitle">絞り込み</p>
         <div class="fgroup"><h3>配信元</h3>
@@ -266,7 +266,7 @@ svg { display: block; flex: none; }
         <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
       </div>
     </div>
-    <div class="cat-item"><span class="cat-label">絞り込み適用後 <small>(件数バッジつき)</small></span>
+    <div class="cat-item" data-story="基本 / 絞り込み適用後"><span class="cat-label">絞り込み適用後 <small>(件数バッジつき)</small></span>
       <div class="fpanel" aria-label="絞り込み">
         <p class="ftitle">絞り込み<span class="n">3</span></p>
         <div class="fgroup"><h3>配信元</h3>
@@ -290,17 +290,17 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>チェック項目単体</h2>
   <div class="cat-stack cat-w260">
-    <div class="cat-item"><span class="cat-label">通常</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox">新着エピソード<span class="cnt">12</span></label></div></div>
-    <div class="cat-item"><span class="cat-label">hover</span><div class="cat-frame is-plain"><label class="fcheck is-hover"><input type="checkbox">新着エピソード<span class="cnt">12</span></label></div></div>
-    <div class="cat-item"><span class="cat-label">チェック済み</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox" checked>新着エピソード<span class="cnt">12</span></label></div></div>
-    <div class="cat-item"><span class="cat-label">キーボードフォーカス</span><div class="cat-frame is-plain"><label class="fcheck is-focus"><input type="checkbox" checked>新着エピソード<span class="cnt">12</span></label></div></div>
-    <div class="cat-item"><span class="cat-label">件数 0</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox">配信終了予定<span class="cnt">0</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / 通常"><span class="cat-label">通常</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox">新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / hover"><span class="cat-label">hover</span><div class="cat-frame is-plain"><label class="fcheck is-hover"><input type="checkbox">新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / チェック済み"><span class="cat-label">チェック済み</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox" checked>新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / キーボードフォーカス"><span class="cat-label">キーボードフォーカス</span><div class="cat-frame is-plain"><label class="fcheck is-focus"><input type="checkbox" checked>新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / 件数 0"><span class="cat-label">件数 0</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox">配信終了予定<span class="cnt">0</span></label></div></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>配信元の項目 <span class="cat-hint">ドットだけがブランド色を持つ</span></h2>
-  <div class="cat-item cat-w260">
+  <div class="cat-item cat-w260" data-story="配信元の項目">
     <div class="cat-frame is-plain">
       <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-amazon-foreground)"></span>Prime Video<span class="cnt">84</span></label>
       <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-hulu-foreground)"></span>Hulu<span class="cnt">41</span></label>
@@ -314,28 +314,28 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>ピル <span class="cat-hint">択一。年 / クール / ステータス</span></h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">通常</span><button class="fpill" type="button" aria-pressed="false">2025</button></div>
-    <div class="cat-item"><span class="cat-label">hover</span><button class="fpill is-hover" type="button" aria-pressed="false">2025</button></div>
-    <div class="cat-item"><span class="cat-label">選択中</span><button class="fpill" type="button" aria-pressed="true">2026</button></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><button class="fpill is-focus" type="button" aria-pressed="false">2025</button></div>
-    <div class="cat-item"><span class="cat-label">クール一式</span><div class="fpills" style="padding:0"><button class="fpill" type="button" aria-pressed="false">冬</button><button class="fpill" type="button" aria-pressed="true">春</button><button class="fpill" type="button" aria-pressed="false">夏</button><button class="fpill" type="button" aria-pressed="false">秋</button></div></div>
+    <div class="cat-item" data-story="ピル / 通常"><span class="cat-label">通常</span><button class="fpill" type="button" aria-pressed="false">2025</button></div>
+    <div class="cat-item" data-story="ピル / hover"><span class="cat-label">hover</span><button class="fpill is-hover" type="button" aria-pressed="false">2025</button></div>
+    <div class="cat-item" data-story="ピル / 選択中"><span class="cat-label">選択中</span><button class="fpill" type="button" aria-pressed="true">2026</button></div>
+    <div class="cat-item" data-story="ピル / フォーカス"><span class="cat-label">フォーカス</span><button class="fpill is-focus" type="button" aria-pressed="false">2025</button></div>
+    <div class="cat-item" data-story="ピル / クール一式"><span class="cat-label">クール一式</span><div class="fpills" style="padding:0"><button class="fpill" type="button" aria-pressed="false">冬</button><button class="fpill" type="button" aria-pressed="true">春</button><button class="fpill" type="button" aria-pressed="false">夏</button><button class="fpill" type="button" aria-pressed="false">秋</button></div></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>リセット</h2>
   <div class="cat-row">
-    <div class="cat-item cat-w220"><span class="cat-label">通常</span><button class="reset-btn" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
-    <div class="cat-item cat-w220"><span class="cat-label">hover</span><button class="reset-btn is-hover" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
+    <div class="cat-item cat-w220" data-story="リセット / 通常"><span class="cat-label">通常</span><button class="reset-btn" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
+    <div class="cat-item cat-w220" data-story="リセット / hover"><span class="cat-label">hover</span><button class="reset-btn is-hover" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>検索と並び替え <span class="cat-hint">パネルではなくコンテンツ側のヘッダに置く</span></h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">検索</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="タイトルで検索" aria-label="タイトルで検索"></div></div>
-    <div class="cat-item"><span class="cat-label">入力あり + フォーカス</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="is-focus" type="search" value="アストロ" aria-label="タイトルで検索"></div></div>
-    <div class="cat-item"><span class="cat-label">並び替え</span><div class="sort"><span>並び替え</span><div class="sel"><select aria-label="並び替え"><option selected>リリース年 新しい順</option><option>リリース年 古い順</option><option>タイトル 昇順</option><option>タイトル 降順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
+    <div class="cat-item" data-story="検索と並び替え / 検索"><span class="cat-label">検索</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="タイトルで検索" aria-label="タイトルで検索"></div></div>
+    <div class="cat-item" data-story="検索と並び替え / 入力あり + フォーカス"><span class="cat-label">入力あり + フォーカス</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="is-focus" type="search" value="アストロ" aria-label="タイトルで検索"></div></div>
+    <div class="cat-item" data-story="検索と並び替え / 並び替え"><span class="cat-label">並び替え</span><div class="sort"><span>並び替え</span><div class="sel"><select aria-label="並び替え"><option selected>リリース年 新しい順</option><option>リリース年 古い順</option><option>タイトル 昇順</option><option>タイトル 降順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
   </div>
   <p class="cat-note">パネルが左を占有するぶん、検索窓は一覧の上に残す。両方を左に寄せると本文の横幅が細くなりすぎる。</p>
 </section>

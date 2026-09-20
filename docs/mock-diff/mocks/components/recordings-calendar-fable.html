@@ -204,7 +204,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>週ぜんたい <span class="cat-hint">通常・休止・予定・空日を含む 1 週間</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="週ぜんたい">
     <div class="week-grid">
       <div class="day">
         <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
@@ -273,7 +273,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>枠の状態 <span class="cat-hint">左罫の色で 3 種</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w260 is-key">
+    <div class="cat-item cat-w260 is-key" data-story="枠の状態 / 通常">
       <span class="cat-label">通常</span>
       <div class="slot">
         <span class="stime num">22:00</span>
@@ -281,7 +281,7 @@ svg { display: block; flex: none; }
         <span class="sbadges"><span class="badge abema">ABEMA</span></span>
       </div>
     </div>
-    <div class="cat-item cat-w260">
+    <div class="cat-item cat-w260" data-story="枠の状態 / 休止">
       <span class="cat-label">休止</span>
       <div class="slot hiatus">
         <span class="stime num">24:30</span>
@@ -290,7 +290,7 @@ svg { display: block; flex: none; }
         <span class="sbadges"><span class="badge abema">ABEMA</span></span>
       </div>
     </div>
-    <div class="cat-item cat-w260">
+    <div class="cat-item cat-w260" data-story="枠の状態 / 放送予定">
       <span class="cat-label">放送予定</span>
       <div class="slot upcoming">
         <span class="stime num">24:30</span>
@@ -305,14 +305,14 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>1 日の中身 <span class="cat-hint">件数 0 / 1 / 複数</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w220">
+    <div class="cat-item cat-w220" data-story="1 日の中身 / 0 件">
       <span class="cat-label">0 件</span>
       <div class="day">
         <div class="day-head"><span class="dname">木</span><span class="dcount num">0</span></div>
         <div class="day-empty">予定なし</div>
       </div>
     </div>
-    <div class="cat-item cat-w220">
+    <div class="cat-item cat-w220" data-story="1 日の中身 / 1 件">
       <span class="cat-label">1 件</span>
       <div class="day">
         <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
@@ -323,7 +323,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-w220">
+    <div class="cat-item cat-w220" data-story="1 日の中身 / 3 件（積み重なる）">
       <span class="cat-label">3 件（積み重なる）</span>
       <div class="day">
         <div class="day-head"><span class="dname">水</span><span class="dcount num">3</span></div>
