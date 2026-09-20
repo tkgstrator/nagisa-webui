@@ -120,6 +120,7 @@ svg { display: block; flex: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* ---------- catalog harness (全コンポーネントモック共通) ---------- */
 .cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
 .cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
@@ -258,6 +259,8 @@ svg { display: block; flex: none; }
   .rthumb { width: 76px; }
   .rnums { flex-wrap: wrap; gap: 6px 10px; }
   .mini-strip { max-width: none; flex-basis: 100%; }}
+
+/* 話数とミニストリップを 1 行に並べる */.rmeta-row { margin-top: 5px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted-foreground); }
 </style>
 </head>
 <body>

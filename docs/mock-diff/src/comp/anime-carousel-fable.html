@@ -127,6 +127,20 @@ TITLE: 作品カルーセル
         <div class="car-meta"><span class="no">第 1 話</span><span class="ttl">未放送</span><span class="time">16 日後</span></div>
       </a>
     </div>
+    <div class="cat-item cat-w260"><span class="cat-label">録画完了</span>
+      <a class="car-tile is-solo" href="#">
+        <div class="car-thumb" style="--h:210"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">蒼</span><span class="prov car-badge b-netflix">Netflix</span><span class="state done">録画済み</span></div>
+        <p class="car-title">蒼海のリヴァイアサン</p>
+        <div class="car-meta"><span class="no">第 12 話</span><span class="ttl">最終潜航</span><span class="time">20:00</span></div>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">録画失敗</span>
+      <a class="car-tile is-solo" href="#">
+        <div class="car-thumb" style="--h:290"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">月</span><span class="prov car-badge b-netflix">Netflix</span><span class="state fail">失敗</span></div>
+        <p class="car-title">月光カルテット</p>
+        <div class="car-meta"><span class="no">第 8 話</span><span class="ttl">第二ヴァイオリン</span><span class="time">昨日</span></div>
+      </a>
+    </div>
   </div>
   <p class="cat-note">バッジは左上、配信元は左下、録画の状態は右下に固定する。位置が意味を持つので、種類が増えても置き場所は動かさない。</p>
 </section>
@@ -179,6 +193,7 @@ TITLE: 作品カルーセル
     </div>
   </div>
   <p class="cat-note">左右の矢印ボタンは置かない。指とホイールで送る前提にして、端のぼかしだけで続きを示す。</p>
+  <p class="cat-note">レールには <b>anime-card</b> の縦長タイル (<code>.tile</code>) も載せられる。そのときの幅 (176px / 狭い画面では 44%) はこの部品の CSS が決めるので、ホームの「今期のアニメ」のような縦長カードの帯もこのレールで作る。</p>
 </section>
 
 <section class="cat-sec">

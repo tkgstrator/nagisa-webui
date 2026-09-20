@@ -507,6 +507,39 @@ screens:
           astra:
             type: html
             path: mocks/components/related-providers-astra.html
+  - id: breadcrumbs
+    name: 「アニメ詳細」パンくず
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/breadcrumbs-fable.html
+          astra:
+            type: html
+            path: mocks/components/breadcrumbs-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/breadcrumbs-fable.html
+          astra:
+            type: html
+            path: mocks/components/breadcrumbs-astra.html
   - id: recording-row
     name: 「録画一覧」録画一覧の行
     category: コンポーネント
@@ -606,6 +639,39 @@ screens:
           astra:
             type: html
             path: mocks/components/empty-state-astra.html
+  - id: recordings-calendar
+    name: 「録画一覧」週カレンダー
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/recordings-calendar-fable.html
+          astra:
+            type: html
+            path: mocks/components/recordings-calendar-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/recordings-calendar-fable.html
+          astra:
+            type: html
+            path: mocks/components/recordings-calendar-astra.html
   - id: summary-stats
     name: 「トップ」録画状況サマリ
     category: コンポーネント

@@ -95,3 +95,8 @@
   .sort select { width: 100%; }
   .selbar .acts { margin-left: 0; width: 100%; }
 }
+
+/* 選択バーの件数 */
+.selbar .cnt { font-weight: 700; color: var(--foreground); font-variant-numeric: tabular-nums; }
+/* 一覧 / スケジュールの切り替え。ツールバーの下に置く。 */
+.view-switch { margin-top: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }

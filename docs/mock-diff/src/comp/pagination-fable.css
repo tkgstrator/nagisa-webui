@@ -37,3 +37,6 @@
   .pages { margin-left: 0; width: 100%; justify-content: space-between; }
   .hide-m { display: none; }
 }
+
+/* 凡例とページャを両端に置く一覧の脚 */
+.foot { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; font-size: 12px; color: var(--muted-foreground); }

@@ -120,6 +120,7 @@ svg { display: block; flex: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* ---------- catalog harness (全コンポーネントモック共通) ---------- */
 .cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
 .cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
@@ -253,6 +254,46 @@ svg { display: block; flex: none; }
   .su-upd { width: auto; text-align: left; order: 2; }
   .su-upd .abs { display: none; }
   .su-thumb { width: 72px; }}
+
+/* ---------- 次の録画バナー ---------- *//* 一覧の先頭に 1 件だけ大きく出す。残り時間を右端に置く。 */@keyframes suCountdown { 0%, 100% { opacity: 1; } 50% { opacity: .82; } }
+.su-focus {
+  display: flex; align-items: center; gap: 16px;
+  border-left: 3px solid var(--primary); background: var(--accent); border-radius: 0 12px 12px 0;
+  padding: 14px 18px;
+}
+.su-focus-thumb {
+  width: 80px; aspect-ratio: 16 / 9; border-radius: 9px; flex: none; position: relative; overflow: hidden;
+  animation: suCountdown 2.6s ease-in-out infinite;
+}
+.su-focus-thumb .art { position: absolute; inset: 0; background: linear-gradient(155deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%); }
+.su-focus-body { flex: 1; min-width: 0; }
+.su-focus-label { font-size: 11px; color: var(--accent-foreground); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.su-focus-title { margin-top: 3px; font-size: 15px; font-weight: 700; }
+.su-focus-meta { margin-top: 3px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
+.su-countdown { flex: none; font-size: 20px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
+.su-countdown small { display: block; font-size: 10.5px; font-weight: 500; color: var(--muted-foreground); text-align: right; }
+
+/* ---------- 録画キュー ---------- *//* 取得中 / 失敗 / 待機 の 3 列。行より粒度の粗い見せ方。 */.su-kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.su-kcol h3 { font-size: 12px; font-weight: 700; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; padding: 0 2px 8px; }
+.su-kcol h3 .dot { width: 6px; height: 6px; border-radius: 999px; }
+.su-kcol.busy h3 .dot { background: var(--warning); }
+.su-kcol.bad h3 .dot { background: var(--destructive); }
+.su-kcol.next h3 .dot { background: var(--muted-foreground); }
+.su-kcard {
+  border-left: 3px solid var(--border); border-radius: 0 8px 8px 0; padding: 9px 12px; margin-bottom: 3px;
+  animation: fadeUp .4s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 40ms);
+}
+.su-kcard:hover, .su-kcard.is-hover { background: var(--muted); }
+.su-kcol.busy .su-kcard { border-left-color: var(--warning); }
+.su-kcol.bad .su-kcard { border-left-color: var(--destructive); }
+.su-ktitle { font-size: 12.5px; font-weight: 600; }
+.su-ksub { margin-top: 3px; font-size: 10.5px; color: var(--muted-foreground); }
+.su-kbar { margin-top: 6px; height: 4px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.su-kbar span { display: block; height: 100%; background: var(--warning); transform-origin: left center; animation: growX .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: .25s; }
+
+@media (max-width: 640px) {
+  .su-kanban { grid-template-columns: minmax(0, 1fr); }
+  .su-focus { flex-wrap: wrap; }}
 </style>
 </head>
 <body>

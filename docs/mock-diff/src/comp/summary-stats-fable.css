@@ -54,3 +54,10 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
   .ss .val { font-size: 24px; }
   .ss .lab { font-size: 11.5px; }
 }
+
+/* 取得中を示す変種。info 色で左罫を引く。 */
+.ss.busy { border-left-color: var(--info); }
+
+/* 達成率を添える細いバー。値の下に置く。 */
+.ss .bar { margin-top: 6px; height: 4px; border-radius: 2px; background: var(--muted); overflow: hidden; }
+.ss .bar > span { display: block; height: 100%; background: var(--success); }

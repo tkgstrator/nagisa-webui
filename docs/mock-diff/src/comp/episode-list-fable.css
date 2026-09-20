@@ -83,3 +83,27 @@
   .rec { width: 34px; padding: 0; justify-content: center; }
   .rec .lbl, .rec .lbl-hover, .rec .pct { display: none; }
 }
+
+/* ---------- タブの件数と注記 ---------- */
+.tab .tab-count { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+.tab-note { align-self: center; font-size: 12px; color: var(--muted-foreground); padding: 0 4px; white-space: nowrap; }
+.tabs .spacer { flex: 1; }
+.chips .spacer { flex: 1; }
+/* 枠線を持たないチップ。絞り込みを外す導線に使う。 */
+.chip-ghost { border-color: transparent; }
+
+/* ---------- 録画進捗ストリップ ---------- */
+/* 一覧の上に置く帯。左に進捗バー、右に内訳の数値を並べる。 */
+.progress { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 24px; align-items: center; padding: 14px 16px; margin-bottom: 16px; border-left: 3px solid var(--primary); background: color-mix(in oklch, var(--muted) 60%, transparent); border-radius: 0 8px 8px 0; }
+.stats { grid-column: 2; grid-row: 1 / span 2; display: grid; grid-template-columns: repeat(5, auto); gap: 0 18px; }
+.stat { display: flex; flex-direction: column; align-items: flex-end; }
+.stat .k { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted-foreground); white-space: nowrap; }
+.stat .k::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--dot); }
+.stat .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat .v small { font-size: 11px; font-weight: 400; color: var(--muted-foreground); margin-left: 2px; }
+
+/* ---------- 一覧の脚 ---------- */
+.ep-foot { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 0; font-size: 12px; color: var(--muted-foreground); }
+.ep-foot .link { color: var(--primary); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+/* 狭い画面でだけ出すメタ情報 */
+.ep-meta .m-mobile { display: none; }

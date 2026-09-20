@@ -82,3 +82,8 @@ a.ss:hover .ico { transform: scale(1.12) translateY(-1px); }
   .ss .ico { width: 24px; height: 24px; right: 10px; top: 12px; }
   .ss .ico svg { width: 13px; height: 13px; }
 }
+
+/* ホームの 4 枠で使う色分け。新着 / 録画中 / 失敗 / 視聴中。 */
+.ss.d-new { border-left-color: var(--info); }
+.ss.d-rec { border-left-color: var(--warning); }
+.ss.d-watch { border-left-color: var(--success); }

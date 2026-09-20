@@ -97,3 +97,6 @@
   .rnums { flex-wrap: wrap; gap: 6px 10px; }
   .mini-strip { max-width: none; flex-basis: 100%; }
 }
+
+/* 話数とミニストリップを 1 行に並べる */
+.rmeta-row { margin-top: 5px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted-foreground); }

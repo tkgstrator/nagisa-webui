@@ -65,3 +65,7 @@
   .ep-grid, .ep-grid.is-2 { grid-template-columns: minmax(0, 1fr); }
   .legend { gap: 10px; }
 }
+
+/* 未放送・未取得。凡例もトグルも「色を置かない」で表す。 */
+.legend .none i { background: var(--border); }
+.ep-toggle.st-none { background: var(--muted); color: var(--muted-foreground); }

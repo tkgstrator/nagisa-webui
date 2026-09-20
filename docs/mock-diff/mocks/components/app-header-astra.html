@@ -120,6 +120,7 @@ svg { display: block; flex: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* ---------- catalog harness (全コンポーネントモック共通) ---------- */
 .cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
 .cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
@@ -223,6 +224,16 @@ svg { display: block; flex: none; }
   .side-nav a svg { width: 18px; height: 18px; }
   .side-count, .side-widget, .side-status, .side-search { display: none; }
   .side.is-mobile { width: 100%; }}
+
+/* ---------- sidebar: 放送スケジュール ---------- *//* side-widget の中に敷く行。放送中の回だけ左罫と背景が付く。 */.side-sched-row { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px; border-left: 3px solid transparent; border-radius: 0 7px 7px 0; }
+.side-sched-row.now { border-left-color: var(--primary); background: var(--accent); }
+.side-sched-row .k { font-size: 11.5px; color: var(--muted-foreground); }
+.side-sched-row .v { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 数値の性質で左罫と値の見え方を変える (成功 / 失敗) */.side-stat.ok { border-left-color: var(--success); }
+.side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
+.side-stat.err { border-left-color: var(--destructive); }
+.side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
 </style>
 </head>
 <body>

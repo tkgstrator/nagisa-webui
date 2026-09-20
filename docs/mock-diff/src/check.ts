@@ -29,7 +29,9 @@ function defined(path: string): Set<string> {
 
 function used(html: string): Set<string> {
   const out = new Set<string>()
-  for (const m of html.matchAll(/class="([^"]*)"/g)) {
+  // script の中の class="${...}" はテンプレートで、静的なクラス名ではない。
+  const body = html.replace(/<script[\s\S]*?<\/script>/g, ' ')
+  for (const m of body.matchAll(/class="([^"]*)"/g)) {
     for (const c of (m[1] ?? '').split(/\s+/)) if (c) out.add(c)
   }
   return out

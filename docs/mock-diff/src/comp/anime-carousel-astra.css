@@ -125,3 +125,16 @@
   .car-more { padding: 0 9px; }
   .car-rail.is-mid > :first-child { margin-left: -178px; }
 }
+
+/* 録画状態のバッジ。i 要素を置かない書き方なのでドットは ::before で出す。 */
+.b-done { background: var(--success); color: var(--success-foreground); }
+.b-rec { background: var(--warning); color: var(--warning-foreground); }
+.b-wait { background: var(--secondary); color: var(--secondary-foreground); }
+.b-fail { background: var(--destructive); color: var(--destructive-foreground); }
+.car-badge.b-done::before,
+.car-badge.b-rec::before,
+.car-badge.b-wait::before,
+.car-badge.b-fail::before {
+  content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; margin-right: 5px;
+}
+.car-badge.b-rec::before { animation: pulseDot 1.4s ease-in-out infinite; }

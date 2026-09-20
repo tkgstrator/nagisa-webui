@@ -65,3 +65,10 @@
   .id-actions .btn { flex: 1 1 auto; }
   .progress-row { flex-wrap: wrap; }
 }
+
+/* 未取得ぶんは帯の残り。progress-row と対で使う。 */
+.strip .none { background: var(--border); }
+/* 情報側だけを縦に詰めたいときの調整 (バナー無し配置) */
+.hero-body { margin-top: 0; }
+/* 再取得ボタン。押している間だけアイコンが 1 回転する。 */
+.btn-refresh:active svg { animation: spin .5s linear; }

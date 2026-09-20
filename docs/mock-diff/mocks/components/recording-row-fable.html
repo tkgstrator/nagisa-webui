@@ -120,6 +120,7 @@ svg { display: block; flex: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* ---------- catalog harness (全コンポーネントモック共通) ---------- */
 .cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
 .cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
@@ -283,6 +284,31 @@ td.upd .abs { display: block; font-size: 11px; color: var(--muted-foreground); f
   .pct { display: none; }
   .unsch { padding: 0 6px; }
   .unsch span { display: none; }}
+
+/* ---------- 列の意味クラス ---------- *//* 幅は col.c-* が持つ。td 側は中身の見せ方だけを決める。 */.tbl col.c-title { width: auto; }
+.tbl col.c-exp { width: 96px; }
+td.chk { text-align: center; }
+td.tc { min-width: 0; }
+td.prov, td.stat { white-space: nowrap; }
+td.prog { min-width: 0; }
+td.act { text-align: right; }
+
+/* 並べ替えできる見出し */.tbl th.sortable { cursor: pointer; }
+.tbl th.sortable:hover, .tbl th.sortable.is-hover { color: var(--foreground); }
+
+/* ---------- 行のグループ見出し ---------- *//* 曜日や状態でまとめるときに挟む見出し行。 */.tbl tr.group th {
+  padding: 18px 10px 6px 13px; font-size: 12px; font-weight: 600; color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+.tbl tr.group th .n { margin-left: 6px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.tbl tr.group th .hint { margin-left: 10px; font-weight: 400; font-size: 11px; opacity: .8; }
+
+/* ---------- 配信終了 ---------- */td.exp { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+td.exp .soon { color: var(--destructive); font-weight: 600; }
+td.exp .days { display: block; font-size: 11px; }
+
+/* 狭い画面でだけ出す話数の内訳 */td.upd .m-num { display: none; }
+td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 </style>
 </head>
 <body>

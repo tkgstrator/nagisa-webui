@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>パンくず — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<title>週間スケジュール カレンダー — astra 案 | Nagisa WebUI コンポーネントモック</title>
 <style>
 :root {
   --background: oklch(0.99 0.002 247);
@@ -162,83 +162,149 @@ svg { display: block; flex: none; }
   .cat-row { gap: 18px 14px; }
   .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
 }
-/* ---------- component: breadcrumbs ---------- */
-.crumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted-foreground); }
-.crumb a { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px; border-radius: 6px; }
-.crumb a:hover, .crumb a.is-hover { background: var(--muted); color: var(--foreground); }
-.crumb svg { width: 12px; height: 12px; }
-.crumb .cur { color: var(--foreground); font-weight: 600; }
+/* ---------- component: recordings-calendar ---------- */
+.week { margin-top: 16px; }
+.week-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.week-col { background: var(--background); padding: 10px 9px 12px; min-width: 0; }
+.week-col-head { display: flex; align-items: baseline; gap: 6px; font-size: 12px; font-weight: 700; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.week-col-cnt { font-size: 10.5px; font-weight: 400; color: var(--muted-foreground); }
+.week-item { border-left: 3px solid var(--border); border-radius: 0 7px 7px 0; padding: 7px 8px; margin-bottom: 4px; }
+.week-item:hover, .week-item.is-hover { background: var(--muted); }
+.week-title-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.week-title { flex: 1; min-width: 0; font-size: 11.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.week-time { margin-top: 3px; display: flex; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted-foreground); }
+.week-time svg { width: 11px; height: 11px; flex: none; }
+.week-empty { font-size: 11px; color: var(--muted-foreground); padding: 6px 1px; }
+
+@media (max-width: 640px) {
+  .week-grid { grid-template-columns: 1fr; }}
 </style>
 </head>
 <body>
 <main class="cat">
 <header class="cat-head">
-  <h1>パンくず <span class="cat-id">breadcrumbs</span></h1>
-  <p>アニメ詳細ページの本文最上部に置く現在地表示。fable 案と違い「戻る」を独立させず、先頭リンクの中に左向き矢印アイコンを内包する。区切りはクラス無しの <code>/</code>。現在地 (<code>.cur</code>) は太字化のみで省略記号は付けない。</p>
+  <h1>週間スケジュール カレンダー <span class="cat-id">recordings-calendar</span></h1>
+  <p>録画一覧ページの週間ビュー。7 列のカードを敷き詰めたグリッドで、各列の中にその日の配信タイトル (<code>.week-item</code>) をカード状に積む。fable 版と違い枠線は使わず、列間の 1px ギャップだけで区切る。時刻の無い項目もある。</p>
   <div class="cat-meta">
-    <span>先頭リンクにアイコンを内包</span>
-    <span>区切りはクラス無し <code>&lt;span&gt;/&lt;/span&gt;</code></span>
-    <span>現在地は太字、省略しない</span>
+    <span>列間はグリッド gap のみ（縦罫線なし）</span>
+    <span>プロバイダは <code>.pbadge</code> だがここでは項目名のみ、色は左罫で表現しない</span>
+    <span>時刻表示 (<code>.week-time</code>) は項目ごとに任意</span>
   </div>
 </header>
 
 <section class="cat-sec">
-  <h2>基本 <span class="cat-hint">2 階層</span></h2>
+  <h2>基本 <span class="cat-hint">1 週間分</span></h2>
   <div class="cat-item cat-full is-key">
-    <span class="cat-label">アニメ詳細 (一覧 → 詳細)</span>
-    <nav class="crumb" aria-label="パス">
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
-      <span>/</span>
-      <span class="cur">星降る夜のアストロノーツ</span>
-    </nav>
-  </div>
-</section>
-
-<section class="cat-sec">
-  <h2>階層数 <span class="cat-hint">1〜3 階層</span></h2>
-  <div class="cat-stack">
-    <div class="cat-item cat-full">
-      <span class="cat-label">1 階層（一覧のみ、現在地無し）</span>
-      <nav class="crumb" aria-label="パス">
-        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
-      </nav>
-    </div>
-    <div class="cat-item cat-full">
-      <span class="cat-label">3 階層（カテゴリを挟む）</span>
-      <nav class="crumb" aria-label="パス">
-        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
-        <span>/</span>
-        <a href="#">放送中</a>
-        <span>/</span>
-        <span class="cur">星降る夜のアストロノーツ</span>
-      </nav>
-    </div>
-  </div>
-</section>
-
-<section class="cat-sec">
-  <h2>長いタイトル <span class="cat-hint">省略記号は付けない</span></h2>
-  <div class="cat-row">
-    <div class="cat-item cat-w320">
-      <span class="cat-label">320px 幅</span>
-      <div class="cat-frame is-plain">
-        <nav class="crumb" aria-label="パス">
-          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
-          <span>/</span>
-          <span class="cur">とある小さな町の魔法使いと不思議な仲間たちの物語 第二部</span>
-        </nav>
+    <span class="cat-label">月〜日（複数件・時刻なし・空きを含む）</span>
+    <div class="week">
+      <div class="week-grid">
+        <div class="week-col">
+          <div class="week-col-head">月<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">蒼穹のリベリオン</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>25:30</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">火<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">放課後クロノグラフ</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>23:00</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">水<span class="week-col-cnt">2件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">海辺のカフェテラス</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>22:00</div>
+          </div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">春待ちレコード</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24:30</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">木<span class="week-col-cnt">0件</span></div>
+          <p class="week-empty">配信予定なし</p>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">金<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">魔法少女は二度目の朝を迎える</span></div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">土<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">王都パン屋のスローライフ</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>23:30</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">日<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">雨上がりのガーデナー</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24:00</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <p class="cat-note">fable の <code>.crumbs .cur</code> と異なり省略記号 (ellipsis) を持たない。幅が足りない場合は折り返す。</p>
 </section>
 
 <section class="cat-sec">
-  <h2>リンクの状態</h2>
+  <h2>列の状態 <span class="cat-hint">1 件 / 複数件 / 時刻なし / 空き</span></h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">通常</span><nav class="crumb"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
-    <div class="cat-item is-key"><span class="cat-label">hover</span><nav class="crumb"><a class="is-hover" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item cat-w220 is-key">
+      <span class="cat-label">1 件</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">月<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">蒼穹のリベリオン</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>25:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220">
+      <span class="cat-label">複数件（積み重なる）</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">水<span class="week-col-cnt">2件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">海辺のカフェテラス</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>22:00</div>
+          </div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">春待ちレコード</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220">
+      <span class="cat-label">時刻なし</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">金<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">魔法少女は二度目の朝を迎える</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220">
+      <span class="cat-label">空き</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">木<span class="week-col-cnt">0件</span></div>
+          <p class="week-empty">配信予定なし</p>
+        </div>
+      </div>
+    </div>
   </div>
+  <p class="cat-note">タイトル (<code>.week-title</code>) は 1 行省略 (ellipsis)。列幅が狭いため fable 版のように折り返さない。</p>
 </section>
 </main>
 </body>

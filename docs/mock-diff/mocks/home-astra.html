@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nagisa — トップ (astra 案)</title>
+<title>Nagisa — トップ (astra 案) — astra 案 | Nagisa WebUI モック</title>
 <style>
 :root {
   --background: oklch(0.99 0.002 247);
@@ -98,7 +98,6 @@
     --status-hiatus-foreground: oklch(0.82 0.14 50);
   }
 }
-
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -114,49 +113,184 @@ body {
 a { color: inherit; text-decoration: none; }
 button, select, input { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
-ul { list-style: none; margin: 0; padding: 0; }
-h1, h2, p { margin: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
 svg { display: block; flex: none; }
 .num { font-variant-numeric: tabular-nums; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---------- motion ---------- */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.6); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes countdownPulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--primary) 35%, transparent); } 50% { box-shadow: 0 0 0 6px color-mix(in oklch, var(--primary) 0%, transparent); } }
-.page > * { animation: fadeUp .5s cubic-bezier(.16,1,.3,1) both; }
-.page > *:nth-child(1) { animation-delay: 0s; }
-.page > *:nth-child(2) { animation-delay: .05s; }
-.page > *:nth-child(3) { animation-delay: .1s; }
-.page > *:nth-child(4) { animation-delay: .15s; }
-.page > *:nth-child(5) { animation-delay: .2s; }
-.page > *:nth-child(6) { animation-delay: .25s; }
-.page > *:nth-child(7) { animation-delay: .3s; }
-.pbar span, .kbar span { transform-origin: left center; animation: growX .6s cubic-bezier(.16,1,.3,1) both; animation-delay: .25s; }
-a, button { transition: background-color .15s ease, color .15s ease, border-color .15s ease, opacity .15s ease, transform .15s ease, box-shadow .15s ease; }
+/* ---------- page skeleton (astra) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   astra はサイドバー (app-header の .side) と本文の 2 ペイン構成。 */
 
-/* ---------- app shell ---------- */
-.shell { display: flex; min-height: 100vh; }
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  flex: 1;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 26px 36px 46px;
+}
+.pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .06s; }
+.pg > *:nth-child(3) { animation-delay: .12s; }
+.pg > *:nth-child(4) { animation-delay: .18s; }
+.pg > *:nth-child(5) { animation-delay: .24s; }
+.pg > *:nth-child(6) { animation-delay: .3s; }
+.pg > *:nth-child(7) { animation-delay: .36s; }
+.pg-narrow { max-width: 1060px; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 600; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- page body ---------- */
+/* ヒーローの直下から始まる本文。セクションより詰める。 */
+.pg-body { margin-top: 22px; }
+
+/* ---------- section ---------- */
+.pg-sec { margin-top: 36px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.pg-sec-title { font-size: 16px; font-weight: 700; }
+.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ---------- sidebar filter slot ---------- */
+/* astra はフィルタをサイドバー内に差す。中身は browse-filters が持つ。 */
+.pg-side-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 32px; }
+  .pg-title { font-size: 20px; }
+  .pg-sec { margin-top: 28px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- quick link ---------- */
+/* pg-links の中に並ぶ 1 枚。左罫の色で注意を促す。 */
+.pg-link {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  border-left: 3px solid var(--primary); border-radius: 0 10px 10px 0;
+  transition: background .18s ease, transform .18s ease;
+}
+.pg-link:hover { background: var(--muted); transform: translateX(3px); }
+.pg-link.pg-warn { border-left-color: var(--destructive); }
+.pg-link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
+.pg-link.pg-warn svg { color: var(--destructive); }
+.pg-link .t { font-size: 13px; font-weight: 700; }
+.pg-link .s { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); }
+
+/* ---------- header search ---------- */
+/* ページ見出しの右に置く検索欄。部品側のフィルタとは別物。 */
+.pg-search { position: relative; width: 260px; }
+.pg-search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
+.pg-search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.pg-search input:focus-visible { outline: 2px solid var(--ring); }
+/* ---------- component: app-header ---------- */
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.6); } }
+
 .side {
   width: 236px; flex: 0 0 236px;
   background: var(--sidebar); border-right: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 16px;
-  padding: 18px 14px 16px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 18px 14px 16px;
 }
+.side.is-tall { min-height: 420px; }
 .side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
-.side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; }
+.side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
 .side-logo svg { width: 13px; height: 13px; }
+
 .side-nav { display: flex; flex-direction: column; gap: 2px; }
-.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
 .side-nav a svg { width: 16px; height: 16px; }
 .side-nav a:hover { background: var(--muted); color: var(--foreground); }
 .side-nav a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-left-color: var(--primary); font-weight: 600; }
 .side-count { margin-left: auto; font-size: 10px; background: var(--secondary); color: var(--secondary-foreground); border-radius: 999px; padding: 1px 6px; }
+.side-count.is-alert { background: color-mix(in oklch, var(--primary) 20%, transparent); color: var(--accent-foreground); }
+.side-nav.is-solo { width: 208px; }
 
 .side-widget { border-top: 1px solid var(--border); padding-top: 14px; }
 .side-widget h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 8px; font-weight: 600; }
-.side-stat { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); }
+.side-stat { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
 .side-stat:hover { background: var(--muted); }
 .side-stat .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
 .side-stat .v { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -164,147 +298,615 @@ a, button { transition: background-color .15s ease, color .15s ease, border-colo
 .side-stat.d-rec .dot { background: var(--warning); }
 .side-stat.d-err .dot { background: var(--destructive); }
 .side-stat.d-watch .dot { background: var(--success); }
+
+.side-search { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin: 0 2px; border-radius: 8px; border: 1px solid var(--input); background: var(--background); color: var(--muted-foreground); font-size: 12.5px; transition: border-color .15s, box-shadow .15s; }
+.side-search svg { width: 13px; height: 13px; flex: none; }
+.side-search:hover { border-color: var(--ring); }
+.side-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
+.side-search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+
 .side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
-.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; }
+.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.side-status.is-checking i { background: var(--warning); }
+.side-status.is-down { color: var(--destructive); }
+.side-status.is-down i { background: var(--destructive); animation: none; }
 
-.content { flex: 1; min-width: 0; }
+/* mobile: サイドバーを畳んで上端の横並びバーにする */
+.side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
+.side.is-mobile .side-brand { padding: 0; font-size: 14px; }
+.side.is-mobile .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+.side.is-mobile .side-nav a { padding: 7px; border-left: 0; border-radius: 8px; }
+.side.is-mobile .side-nav a span, .side.is-mobile .side-nav a { font-size: 0; }
+.side.is-mobile .side-nav a svg { width: 18px; height: 18px; }
+.side.is-mobile .side-nav a[aria-current="page"] { background: var(--accent); }
 
-/* ---------- content ---------- */
-.page { max-width: 1180px; margin: 0 auto; padding: 26px 36px 46px; }
-.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.head .eyebrow { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
-.head h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px; }
-.search { position: relative; width: 260px; }
-.search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
-.search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
-.search input:focus-visible { outline: 2px solid var(--ring); }
+@media (max-width: 640px) {
+  .side, .side.is-tall { width: 100%; flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-brand { padding: 0; font-size: 14px; }
+  .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+  .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
+  .side-nav a svg { width: 18px; height: 18px; }
+  .side-count, .side-widget, .side-status, .side-search { display: none; }
+  .side.is-mobile { width: 100%; }
+}
 
-/* focus banner: next recording countdown */
-.focus {
-  margin-top: 20px; display: flex; align-items: center; gap: 16px;
+/* ---------- sidebar: 放送スケジュール ---------- */
+/* side-widget の中に敷く行。放送中の回だけ左罫と背景が付く。 */
+.side-sched-row { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px; border-left: 3px solid transparent; border-radius: 0 7px 7px 0; }
+.side-sched-row.now { border-left-color: var(--primary); background: var(--accent); }
+.side-sched-row .k { font-size: 11.5px; color: var(--muted-foreground); }
+.side-sched-row .v { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 数値の性質で左罫と値の見え方を変える (成功 / 失敗) */
+.side-stat.ok { border-left-color: var(--success); }
+.side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
+.side-stat.err { border-left-color: var(--destructive); }
+.side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
+/* ---------- component: summary-stats ---------- */
+/* ---------- summary stats (astra) ---------- */
+@keyframes ssShimmer { 0% { background-position: -140% 0; } 100% { background-position: 240% 0; } }
+
+.ss-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden;
+}
+.ss-grid.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ss-grid.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ss-grid.is-mobile { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.ss {
+  position: relative; display: block; min-width: 0;
+  background: var(--background); padding: 16px 18px;
+  border-left: 3px solid var(--primary);
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+  transition: background .22s ease;
+}
+.ss.is-solo { border-radius: 0 14px 14px 0; }
+.ss.d-ok { border-left-color: var(--success); }
+.ss.d-warn { border-left-color: var(--warning); }
+.ss.d-err { border-left-color: var(--destructive); }
+.ss.d-mute { border-left-color: var(--border); }
+
+a.ss:hover { background: var(--muted); }
+a.ss:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+
+.ss .k { font-size: 11.5px; color: var(--muted-foreground); padding-right: 38px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ss .v { margin-top: 5px; font-size: 24px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ss .v small { margin-left: 4px; font-size: 12px; font-weight: 500; color: var(--muted-foreground); letter-spacing: 0; }
+
+.ss .d {
+  margin-top: 8px; display: inline-flex; align-items: center; gap: 4px;
+  height: 20px; padding: 0 9px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: var(--muted); color: var(--muted-foreground);
+}
+.ss .d.up { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); }
+.ss .d.down { background: color-mix(in oklch, var(--destructive) 18%, transparent); color: var(--destructive); }
+.ss .d.soon { background: color-mix(in oklch, var(--warning) 26%, transparent); color: var(--warning-foreground); }
+.ss .d svg { width: 11px; height: 11px; }
+
+/* 右上のアイコンチップ */
+.ss .ico {
+  position: absolute; right: 14px; top: 14px;
+  width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--muted); color: var(--muted-foreground);
+  transition: transform .28s cubic-bezier(.16,1,.3,1), background .22s ease;
+}
+.ss .ico svg { width: 15px; height: 15px; }
+.ss.d-new .ico { background: color-mix(in oklch, var(--info) 16%, transparent); color: var(--info); }
+.ss.d-ok .ico { background: color-mix(in oklch, var(--success) 16%, transparent); color: var(--success); }
+.ss.d-warn .ico { background: color-mix(in oklch, var(--warning) 26%, transparent); color: var(--warning-foreground); }
+.ss.d-err .ico { background: color-mix(in oklch, var(--destructive) 16%, transparent); color: var(--destructive); }
+a.ss:hover .ico { transform: scale(1.12) translateY(-1px); }
+
+.ss.is-zero { border-left-color: var(--border); }
+.ss.is-zero .v { color: var(--muted-foreground); font-weight: 700; }
+.ss.is-zero .ico { background: var(--muted); color: var(--muted-foreground); }
+
+/* 読み込み中 */
+.ss.is-load { border-left-color: var(--border); }
+.ss-bar {
+  display: block; border-radius: 999px; background-color: var(--muted);
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--foreground) 9%, transparent) 50%, transparent 100%);
+  background-size: 220% 100%; animation: ssShimmer 1.5s linear infinite;
+}
+.ss-bar.b1 { width: 84px; height: 10px; }
+.ss-bar.b2 { width: 58px; height: 22px; margin-top: 8px; }
+.ss-bar.b3 { width: 66px; height: 18px; margin-top: 9px; }
+.ss.is-load .ico { background: var(--muted); }
+
+.ss-m390 { max-width: 390px; }
+
+@media (max-width: 640px) {
+  .ss-grid, .ss-grid.n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ss { padding: 14px 14px; }
+  .ss .v { font-size: 21px; }
+  .ss .k { padding-right: 30px; }
+  .ss .ico { width: 24px; height: 24px; right: 10px; top: 12px; }
+  .ss .ico svg { width: 13px; height: 13px; }
+}
+
+/* ホームの 4 枠で使う色分け。新着 / 録画中 / 失敗 / 視聴中。 */
+.ss.d-new { border-left-color: var(--info); }
+.ss.d-rec { border-left-color: var(--warning); }
+.ss.d-watch { border-left-color: var(--success); }
+/* ---------- component: anime-card ---------- */
+@keyframes pulseDot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .35; } }
+
+/* ---------- anime card: netflix-style overlay + hover preview ---------- */
+.tile {
+  display: block; min-width: 0;
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+.poster {
+  position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
+}
+.tile:hover .poster, .tile:focus-visible .poster {
+  transform: translateY(-6px) scale(1.045);
+  box-shadow: 0 22px 34px -16px oklch(0.15 0.02 250 / 45%);
+}
+.tile:focus-visible .poster { outline: 2px solid var(--ring); outline-offset: 2px; }
+.poster .art {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%),
+              linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%);
+}
+.poster .kanji {
+  position: absolute; right: -4px; top: -8px;
+  font-size: 40px; font-weight: 800; opacity: 0.16; line-height: 1;
+  color: oklch(0.99 0.01 var(--h));
+}
+.poster::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 28%, var(--overlay) 100%);
+}
+.poster .peek {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .25s ease; background: oklch(0.14 0.02 250 / 35%);
+}
+.tile:hover .poster .peek, .tile:focus-visible .poster .peek { opacity: 1; }
+.poster .peek svg { width: 20px; height: 20px; color: oklch(0.99 0.005 250); filter: drop-shadow(0 2px 5px oklch(0 0 0 / 45%)); }
+
+.poster .tag {
+  position: absolute; top: 8px; left: 8px; z-index: 1;
+  font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.tag-new { background: var(--info); color: var(--info-foreground); }
+.tag-added { background: var(--success); color: var(--success-foreground); }
+.tag-soon { background: var(--warning); color: var(--warning-foreground); }
+.tag-exp { background: var(--destructive); color: var(--destructive-foreground); }
+.tag .pulse { width: 5px; height: 5px; border-radius: 999px; background: currentColor; animation: pulseDot 1.6s ease-in-out infinite; }
+
+.poster .info { position: absolute; left: 9px; right: 9px; bottom: 9px; z-index: 1; color: oklch(0.99 0.01 var(--h)); }
+.poster .ptitle {
+  font-size: 12px; font-weight: 700; line-height: 1.3;
+  text-shadow: 0 1px 3px oklch(0.1 0.02 var(--h) / 60%);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.poster .pmeta { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10px; opacity: 0.9; }
+.poster .pmeta .ep { font-variant-numeric: tabular-nums; }
+
+.meta2 { margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; }
+.status { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.s-releasing { color: var(--status-releasing-foreground); }
+.s-finished { color: var(--status-finished-foreground); }
+.s-not-yet { color: var(--status-not-yet-foreground); }
+.s-cancelled { color: var(--status-cancelled-foreground); }
+.s-hiatus { color: var(--status-hiatus-foreground); }
+.season { color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* 実際の並び (5 カラム) */
+.grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; }
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
+  .poster .kanji { font-size: 32px; }
+}
+
+/* 視聴の進捗。ポスターの下端に細い帯で重ねる。 */
+.poster .pbar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--overlay); z-index: 1; }
+.poster .pbar span { display: block; height: 100%; background: var(--primary); transform-origin: left center; animation: growX .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: .25s; }
+/* 録画中を示すタグ。tag-new などと同じ枠。 */
+.tag-rec { background: var(--warning); color: var(--warning-foreground); }
+/* ---------- component: anime-carousel ---------- */
+/* ---------- anime carousel (astra) ---------- */
+@keyframes pulseDot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .35; } }
+@keyframes carShimmer { 0% { background-position: -140% 0; } 100% { background-position: 240% 0; } }
+
+/* セクション見出し */
+.car-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.car-head h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; min-width: 0; }
+.car-head .sub { font-size: 12px; font-weight: 500; color: var(--muted-foreground); }
+.car-head .n {
+  display: inline-flex; align-items: center; height: 20px; padding: 0 9px; border-radius: 999px;
+  background: var(--muted); color: var(--muted-foreground);
+  font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.car-more {
+  flex: none; display: inline-flex; align-items: center; gap: 4px;
+  height: 28px; padding: 0 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; color: var(--muted-foreground);
+  transition: background .22s ease, color .22s ease;
+}
+.car-more:hover { background: var(--accent); color: var(--accent-foreground); }
+.car-more:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.car-more svg { width: 13px; height: 13px; transition: transform .22s cubic-bezier(.16,1,.3,1); }
+.car-more:hover svg { transform: translateX(3px); }
+
+/* レール */
+.car-rail {
+  margin-top: 14px; display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 10px;
+  scroll-behavior: smooth; scroll-snap-type: x proximate;
+  -webkit-mask-image: linear-gradient(90deg, black 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, black 93%, transparent 100%);
+}
+.car-rail::-webkit-scrollbar { height: 6px; }
+.car-rail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+.car-rail.is-mid {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 6%, black 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 6%, black 93%, transparent 100%);
+}
+.car-rail.is-mid > :first-child { margin-left: -178px; }
+
+/* タイル */
+.car-tile {
+  flex: 0 0 216px; scroll-snap-align: start; display: block; min-width: 0;
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.car-tile:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; border-radius: 12px; }
+.car-thumb {
+  position: relative; aspect-ratio: 16 / 9; border-radius: 11px; overflow: hidden;
+  transition: transform .34s cubic-bezier(.16,1,.3,1), box-shadow .34s ease;
+}
+.car-thumb .art {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%),
+    linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%);
+  transition: transform .5s cubic-bezier(.16,1,.3,1);
+}
+.car-thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, var(--overlay) 100%); }
+.car-thumb .kana { position: absolute; right: -6px; bottom: -14px; font-size: 48px; font-weight: 800; line-height: 1; opacity: .18; color: oklch(0.99 0.01 var(--h)); user-select: none; }
+.car-tile:hover .car-thumb { transform: translateY(-5px) scale(1.035); box-shadow: 0 20px 32px -16px var(--overlay); }
+.car-tile:hover .car-thumb .art { transform: scale(1.06); }
+
+.car-thumb .flag { position: absolute; left: 8px; top: 8px; z-index: 1; }
+.car-thumb .prov { position: absolute; left: 8px; bottom: 8px; z-index: 1; }
+.car-thumb .state {
+  position: absolute; right: 8px; bottom: 8px; z-index: 1;
+  display: inline-flex; align-items: center; gap: 5px; height: 19px; padding: 0 8px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; background: var(--overlay); color: var(--overlay-foreground);
+  backdrop-filter: blur(4px);
+}
+.car-thumb .state i { width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.car-thumb .state.rec i { background: var(--warning); animation: pulseDot 1.4s ease-in-out infinite; }
+
+.car-title { margin-top: 9px; font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .22s ease; }
+.car-tile:hover .car-title { color: var(--primary); }
+.car-meta { margin-top: 3px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted-foreground); min-width: 0; }
+.car-meta .no { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--foreground); flex: none; }
+.car-meta .ttl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.car-meta .time { margin-left: auto; font-variant-numeric: tabular-nums; flex: none; }
+
+/* 未放送は彩度を落として「まだ観られない」を示す */
+.car-tile.is-soon .car-thumb .art { filter: saturate(.4); }
+.car-tile.is-soon .car-title { color: var(--muted-foreground); }
+.car-tile.is-soon:hover .car-title { color: var(--foreground); }
+
+/* バッジ (pill) */
+.car-badge { display: inline-flex; align-items: center; height: 19px; padding: 0 9px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+.car-badge i { width: 5px; height: 5px; border-radius: 999px; background: currentColor; margin-right: 5px; animation: pulseDot 1.4s ease-in-out infinite; }
+.b-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.b-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.b-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.b-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.b-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.b-new { background: var(--info); color: var(--info-foreground); }
+.b-add { background: var(--primary); color: var(--primary-foreground); }
+.b-soon { background: var(--warning); color: var(--warning-foreground); }
+.b-exp { background: var(--destructive); color: var(--destructive-foreground); }
+
+/* 0 件 */
+.car-empty {
+  margin-top: 14px; padding: 22px 18px;
+  border-left: 3px solid var(--border); border-radius: 0 12px 12px 0;
+  background: var(--muted); color: var(--muted-foreground); font-size: 12.5px;
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+}
+.car-empty b { display: block; font-size: 13px; font-weight: 700; color: var(--foreground); margin-bottom: 4px; }
+
+/* 読み込み中 */
+.car-skel { flex: 0 0 216px; }
+.car-sk {
+  display: block; border-radius: 999px; background-color: var(--muted);
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--foreground) 9%, transparent) 50%, transparent 100%);
+  background-size: 220% 100%; animation: carShimmer 1.5s linear infinite;
+}
+.car-sk.th { aspect-ratio: 16 / 9; border-radius: 11px; }
+.car-sk.t1 { width: 80%; height: 11px; margin-top: 10px; }
+.car-sk.t2 { width: 50%; height: 9px; margin-top: 7px; }
+
+/* カタログで 1 枚だけ見せるとき (レールの外に置く) */
+.car-tile.is-solo, .car-skel.is-solo { flex: none; width: 100%; }
+
+@media (max-width: 640px) {
+  .car-tile, .car-skel { flex: 0 0 64%; }
+  .car-head h3 { font-size: 15px; }
+  .car-more { padding: 0 9px; }
+  .car-rail.is-mid > :first-child { margin-left: -178px; }
+}
+
+/* 録画状態のバッジ。i 要素を置かない書き方なのでドットは ::before で出す。 */
+.b-done { background: var(--success); color: var(--success-foreground); }
+.b-rec { background: var(--warning); color: var(--warning-foreground); }
+.b-wait { background: var(--secondary); color: var(--secondary-foreground); }
+.b-fail { background: var(--destructive); color: var(--destructive-foreground); }
+.car-badge.b-done::before,
+.car-badge.b-rec::before,
+.car-badge.b-wait::before,
+.car-badge.b-fail::before {
+  content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; margin-right: 5px;
+}
+.car-badge.b-rec::before { animation: pulseDot 1.4s ease-in-out infinite; }
+/* ---------- component: scheduled-updates ---------- */
+/* ---------- scheduled updates (soft rows) ---------- */
+.su-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.su-head h3 { font-size: 15px; font-weight: 700; }
+.su-head h3 .n { margin-left: 7px; font-size: 12px; font-weight: 400; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.su-head .sub { font-size: 11.5px; color: var(--muted-foreground); }
+.su-head .more { font-size: 12px; color: var(--primary); display: inline-flex; align-items: center; gap: 3px; }
+.su-head .more:hover { text-decoration: underline; }
+.su-head .more svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.su-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.su-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 14px 10px 12px;
+  border-left: 3px solid var(--border); border-radius: 0 11px 11px 0;
+  transition: background .18s ease, transform .18s ease, border-color .18s ease;
+  animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 45ms);
+}
+.su-row:hover { background: var(--muted); transform: translateX(3px); }
+.su-row:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.su-row.is-rec { border-left-color: var(--warning); }
+.su-row.is-err { border-left-color: var(--destructive); }
+.su-row.is-done { border-left-color: var(--success); }
+.su-row.is-new { border-left-color: var(--primary); }
+.su-row.is-exp { border-left-color: var(--info); }
+
+.su-thumb {
+  flex: none; width: 92px; aspect-ratio: 16 / 9; border-radius: 9px; overflow: hidden; position: relative;
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
+.su-row:hover .su-thumb { transform: scale(1.04); }
+.su-thumb .art { position: absolute; inset: 0; background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%), linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%); }
+.su-thumb .kanji { position: absolute; right: -3px; bottom: -10px; font-size: 32px; font-weight: 800; opacity: .2; color: oklch(0.99 0.01 var(--h)); }
+
+.su-body { flex: 1; min-width: 0; }
+.su-title { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.su-sub { margin-top: 5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--muted-foreground); }
+.su-row.is-err .su-sub .why { color: var(--destructive); }
+
+/* 進捗: バーは割合、数は録画と全話で別の枠に分ける */
+.su-prog { flex: none; width: 128px; display: block; }
+.su-bar { display: block; height: 5px; border-radius: 999px; background: color-mix(in oklch, var(--muted-foreground) 18%, transparent); overflow: hidden; }
+.su-bar > i { display: block; height: 100%; border-radius: 999px; background: var(--primary); transition: width .5s cubic-bezier(.16,1,.3,1); }
+.su-row.is-rec .su-bar > i { background: var(--warning); }
+.su-row.is-err .su-bar > i { background: var(--destructive); }
+.su-row.is-done .su-bar > i { background: var(--success); }
+.su-nums { margin-top: 6px; display: flex; gap: 14px; }
+.su-stat { display: flex; align-items: baseline; gap: 4px; font-size: 10.5px; color: var(--muted-foreground); }
+.su-stat b { font-size: 13px; font-weight: 700; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.su-row.is-done .su-stat.rec b { color: var(--success); }
+
+.su-upd { flex: none; width: 88px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
+.su-upd .rel { font-weight: 600; }
+.su-upd .abs { display: block; margin-top: 2px; font-size: 10.5px; color: var(--muted-foreground); }
+.su-row.is-err .su-upd .rel { color: var(--destructive); }
+
+/* 状態の pill */
+.pill { display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; flex: none; }
+.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.s-new { background: var(--primary); color: var(--primary-foreground); }
+.s-rec { background: var(--warning); color: var(--warning-foreground); }
+.s-rec i { width: 5px; height: 5px; border-radius: 999px; background: currentColor; animation: suPulse 1.4s ease-in-out infinite; }
+.s-err { background: var(--destructive); color: var(--destructive-foreground); }
+.s-exp { background: color-mix(in oklch, var(--info) 22%, transparent); color: var(--info); }
+.s-done { background: color-mix(in oklch, var(--success) 20%, transparent); color: var(--success); }
+@keyframes suPulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* 空・読み込み中 */
+.su-empty { margin-top: 12px; padding: 22px 18px; border-left: 3px solid var(--border); border-radius: 0 11px 11px 0; background: var(--muted); }
+.su-empty p { font-size: 12.5px; color: var(--muted-foreground); }
+.su-empty .cta { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 14px; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: 12px; font-weight: 700; }
+.su-empty .cta:hover { filter: brightness(1.08); }
+.su-empty .cta:active { transform: scale(.96); }
+.su-empty .cta svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+
+.su-skel .su-row { animation: none; }
+.su-skel .sk, .su-skel .su-thumb { background: var(--muted); background-image: linear-gradient(90deg, transparent 0 35%, color-mix(in oklch, var(--background) 60%, transparent) 50%, transparent 65% 100%); background-size: 220% 100%; animation: suSkel 1.3s linear infinite; }
+.su-skel .sk { border-radius: 999px; }
+.su-skel .sk-t { height: 11px; width: 58%; }
+.su-skel .sk-s { height: 9px; width: 34%; margin-top: 7px; }
+@keyframes suSkel { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .su-row { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .su-row { flex-wrap: wrap; gap: 10px 12px; }
+  .su-body { flex: 1 1 auto; }
+  .su-prog { order: 3; width: 100%; }
+  .su-upd { width: auto; text-align: left; order: 2; }
+  .su-upd .abs { display: none; }
+  .su-thumb { width: 72px; }
+}
+
+/* ---------- 次の録画バナー ---------- */
+/* 一覧の先頭に 1 件だけ大きく出す。残り時間を右端に置く。 */
+@keyframes suCountdown { 0%, 100% { opacity: 1; } 50% { opacity: .82; } }
+.su-focus {
+  display: flex; align-items: center; gap: 16px;
   border-left: 3px solid var(--primary); background: var(--accent); border-radius: 0 12px 12px 0;
   padding: 14px 18px;
 }
-.focus-thumb { width: 80px; aspect-ratio: 16 / 9; border-radius: 9px; flex: none; position: relative; overflow: hidden; animation: countdownPulse 2.6s ease-in-out infinite; }
-.focus-thumb .art { position: absolute; inset: 0; background: linear-gradient(155deg, oklch(0.6 0.15 265) 0%, oklch(0.32 0.13 305) 100%); }
-.focus-body { flex: 1; min-width: 0; }
-.focus-label { font-size: 11px; color: var(--accent-foreground); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-.focus-title { margin-top: 3px; font-size: 15px; font-weight: 700; }
-.focus-meta { margin-top: 3px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
-.fcountdown { flex: none; font-size: 20px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
-.fcountdown small { display: block; font-size: 10.5px; font-weight: 500; color: var(--muted-foreground); text-align: right; }
-
-/* stat tiles */
-.stats { margin-top: 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; }
-.stat { background: var(--background); padding: 14px 16px; border-left: 3px solid var(--border); display: block; }
-.stat:hover { background: var(--muted); }
-.stat.d-new { border-left-color: var(--info); }
-.stat.d-rec { border-left-color: var(--warning); }
-.stat.d-err { border-left-color: var(--destructive); }
-.stat.d-watch { border-left-color: var(--success); }
-.stat .k { font-size: 11.5px; color: var(--muted-foreground); }
-.stat .v { margin-top: 4px; font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; }
-
-/* sections */
-.sec { margin-top: 36px; }
-.sec-head { display: flex; align-items: baseline; justify-content: space-between; }
-.sec h2 { font-size: 16px; font-weight: 700; }
-.sec .more { font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 3px; }
-.sec .more:hover { color: var(--foreground); }
-.sec .more svg { width: 12px; height: 12px; }
-
-/* horizontal carousel of episode cards */
-.scroller {
-  margin-top: 14px; display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px;
-  scroll-behavior: smooth; scroll-snap-type: x proximate;
-  -webkit-mask-image: linear-gradient(90deg, black 95%, transparent 100%);
-  mask-image: linear-gradient(90deg, black 95%, transparent 100%);
+.su-focus-thumb {
+  width: 80px; aspect-ratio: 16 / 9; border-radius: 9px; flex: none; position: relative; overflow: hidden;
+  animation: suCountdown 2.6s ease-in-out infinite;
 }
-.ep-card { flex: 0 0 200px; scroll-snap-align: start; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 40ms); }
-.ep-thumb { position: relative; aspect-ratio: 16/9; border-radius: 9px; overflow: hidden; transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease; }
-.ep-card:hover .ep-thumb { transform: translateY(-4px) scale(1.03); box-shadow: 0 16px 26px -14px oklch(0.15 0.02 250 / 40%); }
-.ep-thumb .art { position: absolute; inset: 0; background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%), linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%); }
-.ep-thumb .kanji { position: absolute; right: -6px; bottom: -12px; font-size: 46px; font-weight: 800; opacity: 0.18; color: oklch(0.99 0.01 var(--h)); }
-.ep-thumb .ep-state { position: absolute; left: 7px; top: 7px; font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; }
-.ep-state::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
-.st-recorded { background: var(--success); color: var(--success-foreground); }
-.st-recording { background: var(--warning); color: var(--warning-foreground); }
-.st-recording::before { animation: pulseDot 1.4s ease-in-out infinite; }
-.st-pending { background: var(--secondary); color: var(--secondary-foreground); }
-.st-failed { background: var(--destructive); color: var(--destructive-foreground); }
-.ep-title2 { margin-top: 8px; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ep-sub { margin-top: 2px; font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; justify-content: space-between; }
+.su-focus-thumb .art { position: absolute; inset: 0; background: linear-gradient(155deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%); }
+.su-focus-body { flex: 1; min-width: 0; }
+.su-focus-label { font-size: 11px; color: var(--accent-foreground); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.su-focus-title { margin-top: 3px; font-size: 15px; font-weight: 700; }
+.su-focus-meta { margin-top: 3px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
+.su-countdown { flex: none; font-size: 20px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
+.su-countdown small { display: block; font-size: 10.5px; font-weight: 500; color: var(--muted-foreground); text-align: right; }
 
-/* kanban queue */
-.kanban { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.kcol h3 { font-size: 12px; font-weight: 700; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; padding: 0 2px 8px; }
-.kcol h3 .dot { width: 6px; height: 6px; border-radius: 999px; }
-.kcol.busy h3 .dot { background: var(--warning); }
-.kcol.bad h3 .dot { background: var(--destructive); }
-.kcol.next h3 .dot { background: var(--muted-foreground); }
-.kcard { border-left: 3px solid var(--border); border-radius: 0 8px 8px 0; padding: 9px 12px; margin-bottom: 3px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 40ms); }
-.kcard:hover { background: var(--muted); }
-.kcol.busy .kcard { border-left-color: var(--warning); }
-.kcol.bad .kcard { border-left-color: var(--destructive); }
-.ktitle { font-size: 12.5px; font-weight: 600; }
-.ksub { margin-top: 3px; font-size: 10.5px; color: var(--muted-foreground); }
-.kbar { margin-top: 6px; height: 4px; border-radius: 999px; background: var(--border); overflow: hidden; }
-.kbar span { display: block; height: 100%; background: var(--warning); }
+/* ---------- 録画キュー ---------- */
+/* 取得中 / 失敗 / 待機 の 3 列。行より粒度の粗い見せ方。 */
+.su-kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.su-kcol h3 { font-size: 12px; font-weight: 700; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; padding: 0 2px 8px; }
+.su-kcol h3 .dot { width: 6px; height: 6px; border-radius: 999px; }
+.su-kcol.busy h3 .dot { background: var(--warning); }
+.su-kcol.bad h3 .dot { background: var(--destructive); }
+.su-kcol.next h3 .dot { background: var(--muted-foreground); }
+.su-kcard {
+  border-left: 3px solid var(--border); border-radius: 0 8px 8px 0; padding: 9px 12px; margin-bottom: 3px;
+  animation: fadeUp .4s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 40ms);
+}
+.su-kcard:hover { background: var(--muted); }
+.su-kcol.busy .su-kcard { border-left-color: var(--warning); }
+.su-kcol.bad .su-kcard { border-left-color: var(--destructive); }
+.su-ktitle { font-size: 12.5px; font-weight: 600; }
+.su-ksub { margin-top: 3px; font-size: 10.5px; color: var(--muted-foreground); }
+.su-kbar { margin-top: 6px; height: 4px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.su-kbar span { display: block; height: 100%; background: var(--warning); transform-origin: left center; animation: growX .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: .25s; }
 
-/* continue watching poster grid */
-.pgrid { margin-top: 14px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
-.ptile { display: block; animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 35ms); }
-.poster { position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease; }
-.ptile:hover .poster { transform: translateY(-6px) scale(1.045); box-shadow: 0 20px 32px -16px oklch(0.15 0.02 250 / 45%); }
-.poster .art { position: absolute; inset: 0; background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%), linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%); }
-.poster .kanji { position: absolute; right: -4px; top: -8px; font-size: 38px; font-weight: 800; opacity: 0.16; color: oklch(0.99 0.01 var(--h)); }
-.poster::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 28%, var(--overlay) 100%); }
-.poster .tag { position: absolute; top: 8px; left: 8px; z-index: 1; font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
-.tag-new { background: var(--info); color: var(--info-foreground); }
-.tag-rec { background: var(--warning); color: var(--warning-foreground); }
-.tag-exp { background: var(--destructive); color: var(--destructive-foreground); }
-.poster .ptitle { position: absolute; left: 9px; right: 9px; bottom: 16px; z-index: 1; color: oklch(0.99 0.01 var(--h)); font-size: 11.5px; font-weight: 700; line-height: 1.3; text-shadow: 0 1px 3px oklch(0.1 0.02 var(--h) / 60%); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pbar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: oklch(0.1 0.02 250 / 45%); z-index: 1; }
-.pbar span { display: block; height: 100%; background: var(--primary); }
-
-/* quick links */
-.links { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.link { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-left: 3px solid var(--primary); border-radius: 0 10px 10px 0; }
-.link:hover { background: var(--muted); transform: translateX(3px); }
-.link.warn { border-left-color: var(--destructive); }
-.link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
-.link.warn svg { color: var(--destructive); }
-.link .t { font-size: 13px; font-weight: 700; }
-.link .s { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); }
-
-.ftr { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted-foreground); display: flex; justify-content: space-between; }
-
-/* ---------- mobile ---------- */
 @media (max-width: 640px) {
-  .shell { flex-direction: column; }
-  .side {
-    position: static;
-    width: 100%;
-    height: auto;
-    flex: none;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    gap: 0;
-    overflow: visible;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .side-nav, .side-widget, .side-status { display: none; }
-  .page { padding: 20px 16px 32px; }
-  .search { width: 100%; }
+  .su-kanban { grid-template-columns: minmax(0, 1fr); }
+  .su-focus { flex-wrap: wrap; }
+}
+/* ---------- component: home-tabs ---------- */
+/* ---------- home tabs (pill segments) ---------- */
+.segs-wrap { position: relative; }
+.segs {
+  display: flex; gap: 4px; padding: 4px; border-radius: 999px;
+  background: var(--muted); overflow-x: auto; scrollbar-width: none;
+}
+.segs::-webkit-scrollbar { display: none; }
+
+.seg {
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  height: 32px; padding: 0 14px; border-radius: 999px;
+  font-size: 13px; color: var(--muted-foreground); white-space: nowrap;
+  transition: background .18s ease, color .18s ease, transform .12s ease;
+  animation: chipIn .22s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 40ms);
+}
+@keyframes chipIn { from { opacity: 0; transform: translateY(-4px) scale(.94); } to { opacity: 1; transform: none; } }
+.seg:hover { background: color-mix(in oklch, var(--background) 70%, transparent); color: var(--foreground); }
+.seg:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.seg:active { transform: scale(.95); }
+.seg[aria-selected="true"] {
+  background: var(--primary); color: var(--primary-foreground); font-weight: 700;
+  box-shadow: 0 6px 14px -10px var(--overlay);
+}
+.seg[aria-selected="true"]:hover { background: var(--primary); color: var(--primary-foreground); }
+.seg[disabled] { color: color-mix(in oklch, var(--muted-foreground) 50%, transparent); cursor: not-allowed; }
+.seg[disabled]:hover { background: none; color: color-mix(in oklch, var(--muted-foreground) 50%, transparent); }
+.seg[disabled]:active { transform: none; }
+
+/* 件数: ラベルと混ぜず独立した丸で持つ */
+.seg .c {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 17px;
+  padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in oklch, var(--muted-foreground) 18%, transparent); color: var(--muted-foreground);
+}
+.seg[aria-selected="true"] .c { background: color-mix(in oklch, var(--primary-foreground) 28%, transparent); color: var(--primary-foreground); }
+.seg .c.is-zero { opacity: .5; }
+.seg svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 入り切らないとき: 右端をぼかして続きを示す */
+.segs-wrap.is-over::after {
+  content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 44px; pointer-events: none;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(90deg, transparent, var(--background) 88%);
+}
+/* 折り返す並べ方 (縦に伸びてよい場所で使う) */
+.segs.is-wrap { flex-wrap: wrap; overflow: visible; border-radius: 16px; }
+
+/* 切り替えた直後のパネル */
+.panel { margin-top: 18px; animation: fadeUp .38s cubic-bezier(.16,1,.3,1) both; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.panel-head h4 { font-size: 14px; font-weight: 700; }
+.panel-head .n { margin-left: 7px; font-size: 12px; font-weight: 400; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.panel-head .more { font-size: 12px; color: var(--primary); }
+.panel-head .more:hover { text-decoration: underline; }
+
+.p-grid { margin-top: 14px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.p-cell { animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i, 0) * 45ms); }
+.p-thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease; }
+.p-cell:hover .p-thumb { transform: translateY(-4px) scale(1.03); box-shadow: 0 16px 26px -16px var(--overlay); }
+.p-thumb .art { position: absolute; inset: 0; background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%), linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%); }
+.p-thumb .kanji { position: absolute; right: -4px; bottom: -12px; font-size: 40px; font-weight: 800; opacity: .2; color: oklch(0.99 0.01 var(--h)); }
+.p-title { margin-top: 8px; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-sub { margin-top: 4px; font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; gap: 7px; }
+.p-empty { margin-top: 14px; padding: 22px 18px; border-left: 3px solid var(--border); border-radius: 0 11px 11px 0; background: var(--muted); font-size: 12.5px; color: var(--muted-foreground); }
+
+.pill { display: inline-flex; align-items: center; height: 19px; padding: 0 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; flex: none; }
+.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+@media (prefers-reduced-motion: reduce) {
+  .seg, .p-cell, .panel { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .seg { height: 30px; padding: 0 12px; font-size: 12.5px; }
+  .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}
+/* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
+.ftr {
+  padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted-foreground);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.ftr .r { display: inline-flex; align-items: center; gap: 14px; }
+.ftr a { transition: color .12s; }
+.ftr a:hover { color: var(--foreground); }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
+.ftr .dot.is-down { background: var(--destructive); }
+@media (max-width: 640px) {
+  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr .r { gap: 12px; }
 }
 </style>
 </head>
 <body>
 
-<div class="shell">
+<div class="pg-shell">
   <aside class="side">
     <a class="side-brand" href="#">
       <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
@@ -327,91 +929,91 @@ a, button { transition: background-color .15s ease, color .15s ease, border-colo
     <div class="side-status"><i></i>サーバー稼働中</div>
   </aside>
 
-  <main class="content">
-    <div class="page">
+  <main class="pg-main">
+    <div class="pg">
 
-      <div class="head">
+      <div class="pg-head">
         <div>
-          <p class="eyebrow num">2026年 夏クール · 9月18日 (金)</p>
+          <p class="pg-eyebrow num">2026年 夏クール · 9月18日 (金)</p>
           <h1>今日の録画状況</h1>
         </div>
-        <label class="search">
+        <label class="pg-search">
           <span class="sr">アニメを検索</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" placeholder="アニメを検索">
         </label>
       </div>
 
-      <a class="focus" href="#">
-        <div class="focus-thumb"><div class="art"></div></div>
-        <div class="focus-body">
-          <p class="focus-label">次の録画予約</p>
-          <p class="focus-title">星降る夜のアストロノーツ</p>
-          <p class="focus-meta"><span>第10話</span><span>Prime Video</span></p>
+      <a class="su-focus" href="#">
+        <div class="su-focus-thumb"><div class="art"></div></div>
+        <div class="su-focus-body">
+          <p class="su-focus-label">次の録画予約</p>
+          <p class="su-focus-title">星降る夜のアストロノーツ</p>
+          <p class="su-focus-meta"><span>第10話</span><span>Prime Video</span></p>
         </div>
-        <div class="fcountdown num">45分後<small>18:00〜</small></div>
+        <div class="su-countdown num">45分後<small>18:00〜</small></div>
       </a>
 
-      <div class="stats">
-        <a class="stat d-new" href="#new"><p class="k">新着エピソード</p><p class="v num">6</p></a>
-        <a class="stat d-rec" href="#queue"><p class="k">録画中</p><p class="v num">1</p></a>
-        <a class="stat d-err" href="#queue"><p class="k">失敗</p><p class="v num">1</p></a>
-        <a class="stat d-watch" href="#watch"><p class="k">継続視聴中</p><p class="v num">10</p></a>
+      <div class="ss-grid">
+        <a class="ss d-new" href="#new"><p class="k">新着エピソード</p><p class="v num">6</p></a>
+        <a class="ss d-rec" href="#queue"><p class="k">録画中</p><p class="v num">1</p></a>
+        <a class="ss d-err" href="#queue"><p class="k">失敗</p><p class="v num">1</p></a>
+        <a class="ss d-watch" href="#watch"><p class="k">継続視聴中</p><p class="v num">10</p></a>
       </div>
 
-      <section class="sec" id="new">
-        <div class="sec-head"><h2>新着エピソード</h2><a class="more" href="#">すべて見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a></div>
-        <div class="scroller">
-          <a class="ep-card" href="#" style="--h:265;--i:0"><div class="ep-thumb"><div class="art"></div><span class="kanji">星</span><span class="ep-state st-recorded">録画済み</span></div><p class="ep-title2">星降る夜のアストロノーツ</p><div class="ep-sub"><span class="num">第9話</span><span>Prime Video</span></div></a>
-          <a class="ep-card" href="#" style="--h:40;--i:1"><div class="ep-thumb"><div class="art"></div><span class="kanji">剣</span><span class="ep-state st-recording">録画中</span></div><p class="ep-title2">蒼き剣と忘れられた王国</p><div class="ep-sub"><span class="num">第7話</span><span>Crunchyroll</span></div></a>
-          <a class="ep-card" href="#" style="--h:340;--i:2"><div class="ep-thumb"><div class="art"></div><span class="kanji">魔</span><span class="ep-state st-pending">待ち</span></div><p class="ep-title2">魔法少女は残業しない</p><div class="ep-sub"><span class="num">第8話</span><span>Netflix</span></div></a>
-          <a class="ep-card" href="#" style="--h:150;--i:3"><div class="ep-thumb"><div class="art"></div><span class="kanji">庭</span><span class="ep-state st-recorded">録画済み</span></div><p class="ep-title2">ぼくらの空中庭園</p><div class="ep-sub"><span class="num">第7話</span><span>ABEMA</span></div></a>
-          <a class="ep-card" href="#" style="--h:200;--i:4"><div class="ep-thumb"><div class="art"></div><span class="kanji">静</span><span class="ep-state st-failed">失敗</span></div><p class="ep-title2">サイレント・ハーモニクス</p><div class="ep-sub"><span class="num">第8話</span><span>Hulu</span></div></a>
-          <a class="ep-card" href="#" style="--h:290;--i:5"><div class="ep-thumb"><div class="art"></div><span class="kanji">月</span><span class="ep-state st-pending">待ち</span></div><p class="ep-title2">月光カルテット</p><div class="ep-sub"><span class="num">第6話</span><span>ABEMA</span></div></a>
+      <section class="pg-sec" id="new">
+        <div class="pg-sec-head"><h2>新着エピソード</h2><a class="more" href="#">すべて見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a></div>
+        <div class="car-rail">
+          <a class="car-tile" href="#" style="--h:265;--i:0"><div class="car-thumb"><div class="art"></div><span class="kanji">星</span><span class="car-badge flag b-done">録画済み</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="num">第9話</span><span>Prime Video</span></div></a>
+          <a class="car-tile" href="#" style="--h:40;--i:1"><div class="car-thumb"><div class="art"></div><span class="kanji">剣</span><span class="car-badge flag b-rec">録画中</span></div><p class="car-title">蒼き剣と忘れられた王国</p><div class="car-meta"><span class="num">第7話</span><span>Crunchyroll</span></div></a>
+          <a class="car-tile" href="#" style="--h:340;--i:2"><div class="car-thumb"><div class="art"></div><span class="kanji">魔</span><span class="car-badge flag b-wait">待ち</span></div><p class="car-title">魔法少女は残業しない</p><div class="car-meta"><span class="num">第8話</span><span>Netflix</span></div></a>
+          <a class="car-tile" href="#" style="--h:150;--i:3"><div class="car-thumb"><div class="art"></div><span class="kanji">庭</span><span class="car-badge flag b-done">録画済み</span></div><p class="car-title">ぼくらの空中庭園</p><div class="car-meta"><span class="num">第7話</span><span>ABEMA</span></div></a>
+          <a class="car-tile" href="#" style="--h:200;--i:4"><div class="car-thumb"><div class="art"></div><span class="kanji">静</span><span class="car-badge flag b-fail">失敗</span></div><p class="car-title">サイレント・ハーモニクス</p><div class="car-meta"><span class="num">第8話</span><span>Hulu</span></div></a>
+          <a class="car-tile" href="#" style="--h:290;--i:5"><div class="car-thumb"><div class="art"></div><span class="kanji">月</span><span class="car-badge flag b-wait">待ち</span></div><p class="car-title">月光カルテット</p><div class="car-meta"><span class="num">第6話</span><span>ABEMA</span></div></a>
         </div>
       </section>
 
-      <section class="sec" id="queue">
-        <div class="sec-head"><h2>録画キュー</h2><a class="more" href="#">録画一覧へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a></div>
-        <div class="kanban">
-          <div class="kcol busy">
+      <section class="pg-sec" id="queue">
+        <div class="pg-sec-head"><h2>録画キュー</h2><a class="more" href="#">録画一覧へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a></div>
+        <div class="su-kanban">
+          <div class="su-kcol busy">
             <h3><span class="dot"></span>録画中 · 1</h3>
-            <div class="kcard" style="--i:0"><p class="ktitle">蒼き剣と忘れられた王国 第7話</p><p class="ksub">Crunchyroll · 残り 6分</p><div class="kbar"><span style="width:72%"></span></div></div>
+            <div class="su-kcard" style="--i:0"><p class="su-ktitle">蒼き剣と忘れられた王国 第7話</p><p class="su-ksub">Crunchyroll · 残り 6分</p><div class="su-kbar"><span style="width:72%"></span></div></div>
           </div>
-          <div class="kcol bad">
+          <div class="su-kcol bad">
             <h3><span class="dot"></span>失敗 · 1</h3>
-            <div class="kcard" style="--i:1"><p class="ktitle">サイレント・ハーモニクス 第8話</p><p class="ksub">Hulu · 配信元エラー (再試行可)</p></div>
+            <div class="su-kcard" style="--i:1"><p class="su-ktitle">サイレント・ハーモニクス 第8話</p><p class="su-ksub">Hulu · 配信元エラー (再試行可)</p></div>
           </div>
-          <div class="kcol next">
+          <div class="su-kcol next">
             <h3><span class="dot"></span>次の予約</h3>
-            <div class="kcard" style="--i:2"><p class="ktitle">星降る夜のアストロノーツ 第10話</p><p class="ksub num">18:00〜 · Prime Video</p></div>
-            <div class="kcard" style="--i:3"><p class="ktitle">幽霊部員は今日も部活中 第9話</p><p class="ksub num">21:30〜 · ABEMA</p></div>
+            <div class="su-kcard" style="--i:2"><p class="su-ktitle">星降る夜のアストロノーツ 第10話</p><p class="su-ksub num">18:00〜 · Prime Video</p></div>
+            <div class="su-kcard" style="--i:3"><p class="su-ktitle">幽霊部員は今日も部活中 第9話</p><p class="su-ksub num">21:30〜 · ABEMA</p></div>
           </div>
         </div>
       </section>
 
-      <section class="sec" id="watch">
-        <div class="sec-head"><h2>継続視聴中</h2><a class="more" href="#">アニメ一覧へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a></div>
-        <div class="pgrid">
-          <a class="ptile" href="#" style="--h:265;--i:0"><div class="poster"><div class="art"></div><span class="kanji">星</span><span class="tag tag-new">新着</span><p class="ptitle">星降る夜のアストロノーツ</p><div class="pbar"><span style="width:75%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:75;--i:1"><div class="poster"><div class="art"></div><span class="kanji">魔</span><span class="tag tag-rec">録画中</span><p class="ptitle">転生したら魔王城の家政婦でした</p><div class="pbar"><span style="width:40%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:200;--i:2"><div class="poster"><div class="art"></div><span class="kanji">海</span><p class="ptitle">蒼海のリヴァイアサン</p><div class="pbar"><span style="width:90%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:20;--i:3"><div class="poster"><div class="art"></div><span class="kanji">喫</span><p class="ptitle">ぼっち喫茶のラテアート</p><div class="pbar"><span style="width:60%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:340;--i:4"><div class="poster"><div class="art"></div><span class="kanji">花</span><p class="ptitle">鋼鉄の花嫁と機械仕掛けの王国</p><div class="pbar"><span style="width:25%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:290;--i:5"><div class="poster"><div class="art"></div><span class="kanji">月</span><span class="tag tag-new">新着</span><p class="ptitle">月光カルテット</p><div class="pbar"><span style="width:50%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:195;--i:6"><div class="poster"><div class="art"></div><span class="kanji">深</span><p class="ptitle">深層ダイバーズ</p><div class="pbar"><span style="width:33%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:110;--i:7"><div class="poster"><div class="art"></div><span class="kanji">乳</span><p class="ptitle">異世界チーズ工房 2期</p><div class="pbar"><span style="width:80%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:165;--i:8"><div class="poster"><div class="art"></div><span class="kanji">辺</span><p class="ptitle">辺境の錬金術師、今日も店番</p><div class="pbar"><span style="width:100%"></span></div></div></a>
-          <a class="ptile" href="#" style="--h:250;--i:9"><div class="poster"><div class="art"></div><span class="kanji">灰</span><span class="tag tag-exp">終了間近</span><p class="ptitle">灰色の楽園</p><div class="pbar"><span style="width:42%"></span></div></div></a>
+      <section class="pg-sec" id="watch">
+        <div class="pg-sec-head"><h2>継続視聴中</h2><a class="more" href="#">アニメ一覧へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a></div>
+        <div class="grid">
+          <a class="tile" href="#" style="--h:265;--i:0"><div class="poster"><div class="art"></div><span class="kanji">星</span><span class="tag tag-new">新着</span><p class="ptitle">星降る夜のアストロノーツ</p><div class="pbar"><span style="width:75%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:75;--i:1"><div class="poster"><div class="art"></div><span class="kanji">魔</span><span class="tag tag-rec">録画中</span><p class="ptitle">転生したら魔王城の家政婦でした</p><div class="pbar"><span style="width:40%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:200;--i:2"><div class="poster"><div class="art"></div><span class="kanji">海</span><p class="ptitle">蒼海のリヴァイアサン</p><div class="pbar"><span style="width:90%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:20;--i:3"><div class="poster"><div class="art"></div><span class="kanji">喫</span><p class="ptitle">ぼっち喫茶のラテアート</p><div class="pbar"><span style="width:60%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:340;--i:4"><div class="poster"><div class="art"></div><span class="kanji">花</span><p class="ptitle">鋼鉄の花嫁と機械仕掛けの王国</p><div class="pbar"><span style="width:25%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:290;--i:5"><div class="poster"><div class="art"></div><span class="kanji">月</span><span class="tag tag-new">新着</span><p class="ptitle">月光カルテット</p><div class="pbar"><span style="width:50%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:195;--i:6"><div class="poster"><div class="art"></div><span class="kanji">深</span><p class="ptitle">深層ダイバーズ</p><div class="pbar"><span style="width:33%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:110;--i:7"><div class="poster"><div class="art"></div><span class="kanji">乳</span><p class="ptitle">異世界チーズ工房 2期</p><div class="pbar"><span style="width:80%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:165;--i:8"><div class="poster"><div class="art"></div><span class="kanji">辺</span><p class="ptitle">辺境の錬金術師、今日も店番</p><div class="pbar"><span style="width:100%"></span></div></div></a>
+          <a class="tile" href="#" style="--h:250;--i:9"><div class="poster"><div class="art"></div><span class="kanji">灰</span><span class="tag tag-exp">終了間近</span><p class="ptitle">灰色の楽園</p><div class="pbar"><span style="width:42%"></span></div></div></a>
         </div>
       </section>
 
-      <section class="sec">
+      <section class="pg-sec">
         <h2>探す</h2>
-        <div class="links">
-          <a class="link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><div><p class="t">アニメ一覧</p><p class="s num">287件 全プロバイダ横断</p></div></a>
-          <a class="link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg><div><p class="t">録画一覧</p><p class="s num">予約中 12作品</p></div></a>
-          <a class="link warn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg><div><p class="t">配信終了予定</p><p class="s num">まもなく終了 2件</p></div></a>
+        <div class="pg-links">
+          <a class="pg-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><div><p class="t">アニメ一覧</p><p class="s num">287件 全プロバイダ横断</p></div></a>
+          <a class="pg-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg><div><p class="t">録画一覧</p><p class="s num">予約中 12作品</p></div></a>
+          <a class="pg-link pg-warn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg><div><p class="t">配信終了予定</p><p class="s num">まもなく終了 2件</p></div></a>
         </div>
       </section>
 
@@ -423,6 +1025,5 @@ a, button { transition: background-color .15s ease, color .15s ease, border-colo
     </div>
   </main>
 </div>
-
 </body>
 </html>

@@ -74,3 +74,16 @@
   .hero-poster { width: 100%; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* 配信ページを別タブで開くボタン。btn-outline と併用する。 */
+.btn-open svg { margin-left: -2px; }
+
+/* ---------- 放送スケジュール (aside) ---------- */
+/* 作品の放送枠。左罫だけで囲み、行ごとにラベルと値を両端に置く。 */
+.sched { border-left: 3px solid var(--primary); padding: 4px 12px; }
+.sched-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent); font-size: 13px; }
+.sched-row:last-child { border-bottom: 0; }
+.sched-row .k { color: var(--muted-foreground); }
+.sched-row .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+.sched-row .v.on { color: var(--success); }
+.sched-row .v small { color: var(--muted-foreground); font-weight: 400; }

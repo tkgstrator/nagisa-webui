@@ -36,9 +36,11 @@ mock-diff-viewer 上で複数案を並べて比較・選定するための共通
 | `anime-hero` | 作品ヒーロー | anime-detail |
 | `episode-list` | エピソード一覧 | anime-detail |
 | `related-providers` | 他プロバイダ一覧 | anime-detail |
+| `breadcrumbs` | パンくず | anime-detail |
 | `recording-row` | 録画一覧の行 | recordings |
 | `recordings-toolbar` | 録画一覧ツールバー | recordings |
 | `empty-state` | 空状態 | recordings |
+| `recordings-calendar` | 週カレンダー | recordings |
 | `summary-stats` | 録画状況サマリ | home |
 | `anime-carousel` | 作品カルーセル | home |
 | `scheduled-updates` | 直近更新リスト | home |

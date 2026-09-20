@@ -53,6 +53,8 @@
 }
 .car-thumb .state i { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
 .car-thumb .state.rec i { background: var(--info); animation: pulseDot 1.1s ease-in-out infinite; }
+.car-thumb .state.done { color: var(--success); }
+.car-thumb .state.fail { color: var(--destructive); }
 
 .car-title { font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .15s ease; }
 .car-tile:hover .car-title { color: var(--primary); }
@@ -106,3 +108,7 @@
 
 /* カタログで 1 枚だけ見せるとき (レールの外に置く) */
 .car-tile.is-solo, .car-skel.is-solo { flex: none; width: 100%; }
+
+/* アニメカード (anime-card の .tile) をレールに載せるとき */
+.car-rail > .tile { flex: 0 0 176px; scroll-snap-align: start; }
+@media (max-width: 640px) { .car-rail > .tile { flex: 0 0 44%; } }

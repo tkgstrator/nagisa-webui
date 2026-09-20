@@ -120,6 +120,7 @@ svg { display: block; flex: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* ---------- catalog harness (全コンポーネントモック共通) ---------- */
 .cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
 .cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
@@ -279,6 +280,15 @@ svg { display: block; flex: none; }
   .car-head h3 { font-size: 15px; }
   .car-more { padding: 0 9px; }
   .car-rail.is-mid > :first-child { margin-left: -178px; }}
+
+/* 録画状態のバッジ。i 要素を置かない書き方なのでドットは ::before で出す。 */.b-done { background: var(--success); color: var(--success-foreground); }
+.b-rec { background: var(--warning); color: var(--warning-foreground); }
+.b-wait { background: var(--secondary); color: var(--secondary-foreground); }
+.b-fail { background: var(--destructive); color: var(--destructive-foreground); }
+.car-badge.b-done::before, .car-badge.b-rec::before, .car-badge.b-wait::before, .car-badge.b-fail::before {
+  content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; margin-right: 5px;
+}
+.car-badge.b-rec::before { animation: pulseDot 1.4s ease-in-out infinite; }
 </style>
 </head>
 <body>

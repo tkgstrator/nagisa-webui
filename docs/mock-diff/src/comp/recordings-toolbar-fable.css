@@ -108,3 +108,6 @@
   .sort select { flex: 1; min-width: 0; }
   .selbar .actions { margin-left: 0; width: 100%; }
 }
+
+/* 一覧 / 週間スケジュールの切り替え。ツールバーの上に置く。 */
+.view-switch { margin-top: 18px; }
