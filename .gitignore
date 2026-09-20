@@ -272,3 +272,8 @@ lambda/layers/
 # Local D1 backups (large sqlite snapshots)
 .backups/
 
+
+# Local capture artefacts (playwright / mock-diff)
+/*-full.png
+screenshots/
+playwright-mcp.config.json
