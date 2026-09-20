@@ -6,6 +6,10 @@ services:
     volumes:
       - node_modules:/home/vscode/app/node_modules
       - cache:/home/vscode/app/.cache
+      # VS Code server の拡張はコンテナ FS に入るのでリビルドで消える。/vscode 配下に
+      # 残るのは .vsix のダウンロードキャッシュだけで、何を入れるかを決めている
+      # extensions.json はここにあるため、このディレクトリごと永続化する。
+      - vscode_extensions:/home/vscode/.vscode-server/extensions
       - ../:/home/vscode/app:cached
     environment:
       NODE_OPTIONS: "--no-deprecation"
@@ -15,14 +19,13 @@ services:
   # デザイン候補の選定(Deciding)・実装(Building)・ピクセル差分検証(Checking)を行う
   # mock-diff-viewer sidecar。詳細は docs/mock-diff.md を参照。
   #
-  # ホスト側ポートは README 記載の 3000:3000 ではなく 12355:3000 を採用している。
-  # Claude Code 用 MCP プラグイン (mock-diff@qtmleap-plugins) のデフォルト
-  # MOCK_DIFF_URL が http://127.0.0.1:12355 を向いているため、環境変数を追加設定せず
-  # そのまま接続できるようにするための対応。
+  # ホスト側公開ポートは 12555:3000 (ブラウザから http://localhost:12555 で直接閲覧する用)。
+  # Claude Code (mock-diff MCP プラグイン) からはホスト側ポートを経由せず、
+  # devcontainer.json の containerEnv.MOCK_DIFF_URL=http://mock-diff:3000 で
+  # compose ネットワーク内のサービス名 (mock-diff) とコンテナ内部の固定ポート (3000) に
+  # 直接名前解決して接続する。ホスト公開ポートの番号はこの接続経路には影響しない。
   mock-diff:
     image: ghcr.io/qtmleap/mock-diff-viewer:latest
-    ports:
-      - "12355:3000"
     volumes:
       - ../docs/mock-diff:/workspace
       - mock_diff_data:/data
@@ -32,6 +35,8 @@ volumes:
   node_modules:
     driver: local
   cache:
+    driver: local
+  vscode_extensions:
     driver: local
   mock_diff_data:
     driver: local
