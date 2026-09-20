@@ -21,11 +21,10 @@ const gitLog = execSync('git log --format="%h %aI %s" -50')
 
 export default defineConfig(({ mode }) => ({
   server: {
+    // mock-diff sidecar は app のネットワーク名前空間を共有しているので、viewer の
+    // Playwright はこのポートに http://localhost:14755/ で届く。localhost は vite の
+    // server.allowedHosts を素通しするため追加設定は要らない。
     port: 14755,
-    // mock-diff の Playwright は compose ネットワーク内から http://webui:14755/ を開くため
-    // Host ヘッダが compose のサービス名 (webui) になる。vite 5.4.12 以降はこれを既定で
-    // 403 で弾くので明示的に許可する。
-    allowedHosts: ['webui'],
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Cross-Origin-Embedder-Policy': 'require-corp',

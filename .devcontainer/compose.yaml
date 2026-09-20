@@ -1,9 +1,5 @@
 services:
-  # サービス名を `app` にしないこと。Chromium は `.app` gTLD を HSTS preload リストに丸ごと
-  # 載せており、単一ラベルのホスト名 `app` もこれにマッチする。mock-diff の Playwright が
-  # compose ネットワーク内から http://app:14755/ を開くと問答無用で https:// に昇格され、
-  # TLS を話さない vite は net::ERR_SSL_PROTOCOL_ERROR を返す。
-  webui:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,6 +13,13 @@ services:
       - ../:/home/vscode/app:cached
     environment:
       NODE_OPTIONS: "--no-deprecation"
+    # mock-diff は network_mode でこのコンテナのネットワーク名前空間に相乗りするため、
+    # sidecar 側では ports を宣言できない (compose が弾く)。viewer の 3000 番をホストに
+    # 出すのはこちらの責務になる。番号は「vite の port (14755) + 1」。mock-diff sidecar を
+    # 持つ repo を複数同時に起動するので固定値だと衝突するが、vite の port は repo ごとに
+    # 固有なので +1 も固有になる。
+    ports:
+      - "14756:3000"
     tty: true
     stdin_open: true
 
@@ -27,16 +30,18 @@ services:
   # 覗く構成は成立しない。viewer の client が /api/screens などルート相対 URL を出すため、
   # アプリ側 Worker の /api ルートに先に捕まって Hono が 404 を返し、UI が空になる。
   #
-  # ポート番号は「vite の port (14755) + 1」。mock-diff sidecar を持つ repo を複数同時に
-  # 起動するため固定値だと衝突する。vite の port は repo ごとに固有なので +1 も固有になる。
-  # Claude Code (mock-diff MCP プラグイン) は devcontainer.json の
-  # containerEnv.MOCK_DIFF_URL=http://mock-diff:3000 を使い、compose ネットワーク内の
-  # サービス名 (mock-diff) とコンテナ内部の固定ポート (3000) に直接名前解決して接続する。
-  # サービス名はホストからは名前解決できないので、ホストでこの URL を叩いても繋がらない。
+  # app のネットワーク名前空間をそのまま共有する。こうすると viewer の Playwright は
+  # http://localhost:14755/ で dev server に届き、compose のサービス名もエイリアスも
+  # 一切要らなくなる。ホスト名を使う経路には罠がある: Chromium は `.app` gTLD を HSTS
+  # preload list に丸ごと載せていて単一ラベルの `app` もこれに一致するため、
+  # http://app:14755/ は https に昇格され、TLS を話さない vite は
+  # net::ERR_SSL_PROTOCOL_ERROR になる。localhost は昇格対象外で、vite の
+  # server.allowedHosts も素通しするので、この経路だけが追加設定なしで成立する。
+  # Claude Code (mock-diff MCP プラグイン) も同じ名前空間にいるので
+  # devcontainer.json の containerEnv.MOCK_DIFF_URL=http://localhost:3000 で届く。
   mock-diff:
     image: ghcr.io/qtmleap/mock-diff-viewer:latest
-    ports:
-      - "14756:3000"
+    network_mode: "service:app"
     volumes:
       - ../docs/mock-diff:/workspace
       - mock_diff_data:/data

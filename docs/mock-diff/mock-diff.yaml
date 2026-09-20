@@ -18,13 +18,13 @@
 #                                     url は稼働中のページを指す url を指定する
 #   screens[].devices[].actual       実装結果。type: url で稼働中アプリの URL を指定するのが基本
 #                                     (このリポジトリでは devcontainer 内の vite dev server
-#                                     http://webui:14755/<path> を指すことを想定)
+#                                     http://localhost:14755/<path> を指すことを想定)
 #
-# ホスト名が `app` ではなく `webui` なのは意図的。Chromium は `.app` gTLD を HSTS preload
-# リストに丸ごと載せているため、単一ラベルのホスト名 `app` への http:// アクセスも問答無用で
-# https:// に昇格される。vite dev server は TLS を話さないので撮影が必ず
-# net::ERR_SSL_PROTOCOL_ERROR で落ちる。そのため compose のサービス名自体を `webui` にして
-# ある (.devcontainer/compose.yaml)。
+# ホストが localhost なのは、mock-diff sidecar が app コンテナのネットワーク名前空間を
+# 共有しているため (.devcontainer/compose.yaml の network_mode)。compose のサービス名を
+# ホストに使う経路は避けること。Chromium は `.app` gTLD を HSTS preload リストに丸ごと
+# 載せているため単一ラベルの `app` への http:// も https:// に昇格され、TLS を話さない
+# vite dev server では撮影が net::ERR_SSL_PROTOCOL_ERROR で必ず落ちる。
 #
 # 画面を追加する場合は screens 配列にエントリを足し、
 # mocks/ (デザイン原案) / variants/ (候補違い) / actual/ (実装のスナップショット) に
@@ -51,7 +51,7 @@ screens:
             path: mocks/browse-astra.html
         actual:
           type: url
-          url: http://webui:14755/browse
+          url: http://localhost:14755/browse
       - id: iphone
         name: iPhone
         viewport:
@@ -68,7 +68,7 @@ screens:
             path: mocks/browse-astra.html
         actual:
           type: url
-          url: http://webui:14755/browse
+          url: http://localhost:14755/browse
   - id: anime-detail
     name: アニメ詳細
     category: ページ
@@ -123,7 +123,7 @@ screens:
             path: mocks/recordings-astra.html
         actual:
           type: url
-          url: http://webui:14755/recordings
+          url: http://localhost:14755/recordings
       - id: iphone
         name: iPhone
         viewport:
@@ -140,7 +140,7 @@ screens:
             path: mocks/recordings-astra.html
         actual:
           type: url
-          url: http://webui:14755/recordings
+          url: http://localhost:14755/recordings
   - id: home
     name: トップ
     category: ページ
@@ -162,7 +162,7 @@ screens:
             path: mocks/home-astra.html
         actual:
           type: url
-          url: http://webui:14755/
+          url: http://localhost:14755/
       - id: iphone
         name: iPhone
         viewport:
@@ -179,7 +179,7 @@ screens:
             path: mocks/home-astra.html
         actual:
           type: url
-          url: http://webui:14755/
+          url: http://localhost:14755/
 
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。
