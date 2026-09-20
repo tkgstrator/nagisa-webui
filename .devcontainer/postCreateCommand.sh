@@ -5,3 +5,4 @@ sudo chown -R $(whoami):$(whoami) .cache
 bun install --frozen-lockfile --ignore-scripts
 bunx --bun biome migrate --write
 bunx playwright install --with-deps
+/bin/sh .devcontainer/installAgents.sh
