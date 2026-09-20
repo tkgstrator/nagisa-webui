@@ -1,0 +1,57 @@
+/* ---------- filter panel (sidebar embedded) ---------- */
+.fpanel {
+  width: 236px; max-width: 100%;
+  background: var(--sidebar);
+  border-radius: 12px;
+  padding: 14px 6px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.fpanel > .ftitle {
+  font-size: 12px; font-weight: 700; padding: 0 10px 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.fpanel > .ftitle .n {
+  margin-left: auto; font-size: 11px; font-variant-numeric: tabular-nums;
+  color: var(--primary-foreground); background: var(--primary);
+  border-radius: 999px; padding: 1px 7px;
+}
+
+.fgroup h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 6px; font-weight: 600; }
+.fgroup .flist { display: flex; flex-direction: column; gap: 1px; }
+
+.fcheck { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px; font-size: 12.5px; color: var(--foreground); cursor: pointer; }
+.fcheck:hover { background: var(--muted); }
+.fcheck:focus-within { background: var(--muted); box-shadow: 0 0 0 2px var(--ring); }
+.fcheck input { width: 14px; height: 14px; accent-color: var(--primary); flex: none; }
+.fcheck .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.6; flex: none; }
+.fcheck .cnt { margin-left: auto; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.fpills { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px; }
+.fpill { height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; color: var(--muted-foreground); transition: background .12s, color .12s, border-color .12s; }
+.fpill:hover { background: var(--muted); color: var(--foreground); }
+.fpill:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.fpill:active { transform: scale(0.94); }
+.fpill[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); border-color: transparent; font-weight: 600; }
+
+.reset-btn { margin: 4px 10px 0; height: 30px; border: 1px dashed var(--border); border-radius: 8px; font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.reset-btn:hover { background: var(--muted); color: var(--foreground); }
+.reset-btn:active { transform: scale(0.96); }
+.reset-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* 検索・並び替え (コンテンツ側ヘッダに置く) */
+.search { position: relative; width: 240px; max-width: 100%; }
+.search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+.search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.search input:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.search input::placeholder { color: var(--muted-foreground); }
+
+.sort { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted-foreground); }
+.sort select { height: 34px; padding: 0 26px 0 12px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--foreground); appearance: none; -webkit-appearance: none; font-size: 12.5px; }
+.sort select:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.sort .sel { position: relative; }
+.sort .sel svg { position: absolute; right: 10px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+
+@media (max-width: 640px) {
+  .fpanel { width: 100%; }
+  .search { width: 100%; }
+}

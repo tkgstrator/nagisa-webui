@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>録画一覧の行 — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: recording-row ---------- */
+/* ---------- recording row (tile) ---------- */.rgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
+.rdemo { max-width: 520px; }
+.sbox { display: flex; align-items: center; }
+
+.rcard {
+  position: relative; display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px 11px 12px;
+  border-left: 3px solid var(--border); border-radius: 0 9px 9px 0;
+  transition: background .18s ease, transform .18s ease, border-color .18s ease;
+}
+.rcard:hover, .rcard.is-hover { background: var(--muted); transform: translateX(2px); }
+.rcard:focus-within, .rcard.is-focus { background: var(--muted); box-shadow: 0 0 0 2px var(--ring); }
+.rcard.s-busy { border-left-color: var(--info); }
+.rcard.s-ok { border-left-color: var(--success); }
+.rcard.s-warn { border-left-color: var(--warning); }
+.rcard.s-err { border-left-color: var(--destructive); }
+.rcard.is-sel { background: var(--accent); }
+.rcard.is-sel:hover, .rcard.is-sel.is-hover { background: var(--accent); transform: none; }
+
+.cbx { width: 15px; height: 15px; accent-color: var(--primary); flex: none; margin: 0; cursor: pointer; }
+
+.rthumb { width: 96px; aspect-ratio: 16 / 9; border-radius: 8px; flex: none; position: relative; overflow: hidden; transition: transform .25s ease; }
+.rcard:hover .rthumb, .rcard.is-hover .rthumb { transform: scale(1.06); }
+.rthumb .art {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h, 265) / 85%), transparent 55%),
+    linear-gradient(165deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%);
+}
+.rthumb .ini { position: absolute; left: 7px; bottom: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.04em; color: var(--overlay-foreground); opacity: .6; }
+@media (prefers-color-scheme: dark) {
+  .rthumb .art { background:
+    radial-gradient(120% 100% at 25% 0%, oklch(0.6 0.11 var(--h, 265) / 75%), transparent 55%),
+    linear-gradient(165deg, oklch(0.48 0.14 var(--h, 265)) 0%, oklch(0.26 0.1 calc(var(--h, 265) + 40)) 100%); }}
+
+.rbody { flex: 1; min-width: 0; }
+.rtitle-row { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.rtitle { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.pbadge { flex: none; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.sbadge { flex: none; font-size: 9.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.st-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.st-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.st-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.st-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.st-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+
+.rnums { margin-top: 5px; display: flex; align-items: center; gap: 12px; }
+.rnum { display: inline-flex; align-items: baseline; gap: 4px; font-size: 10.5px; color: var(--muted-foreground); white-space: nowrap; }
+.rnum b { font-size: 13px; font-weight: 700; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.rnum.tot b { color: var(--muted-foreground); font-weight: 600; }
+.rnum.tot.open b::after { content: "+"; font-size: 9px; vertical-align: super; }
+
+.mini-strip { flex: 1; max-width: 132px; height: 5px; border-radius: 999px; overflow: hidden; display: flex; background: var(--border); }
+.mini-strip span { display: block; height: 100%; }
+.mini-strip .rec { background: var(--success); }
+.mini-strip .busy { background: var(--info); animation: blink 1.4s ease-in-out infinite; }
+.mini-strip .fail { background: var(--destructive); }
+.mini-strip .none { background: transparent; }
+@keyframes blink { 50% { opacity: .35; } }
+
+.rsched { margin-top: 4px; display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--accent-foreground); }
+.rsched svg { width: 12px; height: 12px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.rfoot { margin-top: 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 10.5px; color: var(--muted-foreground); }
+.rfoot .exp { color: var(--destructive); font-weight: 700; }
+.rfoot .warn { color: var(--warning-foreground); font-weight: 700; }
+.rfoot .fetching { color: var(--info); font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+.rfoot .fetching::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--info); animation: blink 1.4s ease-in-out infinite; }
+
+.unsched {
+  flex: none; width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center;
+  color: var(--muted-foreground); border: 1px solid transparent;
+}
+.unsched svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.unsched:hover, .unsched.is-hover { background: var(--destructive); color: var(--destructive-foreground); }
+.unsched:focus-visible, .unsched.is-focus { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+.rlegend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted-foreground); }
+.rlegend span { display: inline-flex; align-items: center; gap: 6px; }
+.rlegend i { width: 16px; height: 5px; border-radius: 999px; background: var(--border); }
+.rlegend i.rec { background: var(--success); }
+.rlegend i.busy { background: var(--info); }
+.rlegend i.fail { background: var(--destructive); }
+
+@media (max-width: 640px) {
+  .rgrid { grid-template-columns: 1fr; }
+  .rcard { gap: 10px; padding: 11px 8px 11px 10px; }
+  .rthumb { width: 76px; }
+  .rnums { flex-wrap: wrap; gap: 6px 10px; }
+  .mini-strip { max-width: none; flex-basis: 100%; }}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>録画一覧の行 <span class="cat-id">recording-row</span></h1>
+  <p>録画予約している 1 作品 = 1 枚のタイル。2 列グリッドに並べる。左端 3px のアクセントで録画状態を示し、録画済みと全話数は別々の数として置く。</p>
+  <div class="cat-meta"><span>astra 案 = 2 列グリッドの軽いタイル</span><span>角丸 <code>0 9px 9px 0</code></span><span>サムネ 96px / 16:9</span><span>進捗は 5px の積み上げ 1 本</span><span>予約解除は 28px の丸ボタン</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">2 列グリッドに並べる</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="rgrid">
+      <div class="rcard s-busy" style="--h:265">
+        <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">星</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>8</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 25:00</div><div class="rfoot"><span class="fetching">第9話 取得中</span><span>12分前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="星降る夜のアストロノーツ の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard s-err" style="--h:330">
+        <input type="checkbox" class="cbx" aria-label="魔法少女は二度目の朝を迎える を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">魔</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">魔法少女は二度目の朝を迎える</span><span class="pbadge p-amazon">Prime Video</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>10</b>録画</span><span class="rnum tot open"><b>13</b>全話</span><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:00</div><div class="rfoot"><span class="exp">第7話 失敗 · DRM エラー</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="魔法少女は二度目の朝を迎える の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard s-ok" style="--h:100">
+        <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">転</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">転生したら図書館の司書だった件</span><span class="pbadge p-netflix">Netflix</span><span class="sbadge st-finished">完結</span></div>
+          <div class="rnums"><span class="rnum"><b>24</b>録画</span><span class="rnum tot"><b>24</b>全話</span><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div>
+          <div class="rfoot"><span>1日前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="転生したら図書館の司書だった件 の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard s-warn" style="--h:180">
+        <input type="checkbox" class="cbx" aria-label="海辺のカフェテラス を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">海</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">海辺のカフェテラス</span><span class="pbadge p-abema">ABEMA</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>7</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:7"></span><span class="none" style="flex:5"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週水曜 22:00</div><div class="rfoot"><span class="warn">配信終了まで12日</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="海辺のカフェテラス の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard" style="--h:290">
+        <input type="checkbox" class="cbx" aria-label="銀河鉄道の車掌さん を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">銀</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">銀河鉄道の車掌さん</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-not-yet">未放送</span></div>
+          <div class="rnums"><span class="rnum"><b>0</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="none" style="flex:12"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週日曜 23:00</div><div class="rfoot"><span>初回 9/20 配信 · 待機中</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="銀河鉄道の車掌さん の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard" style="--h:20">
+        <input type="checkbox" class="cbx" aria-label="春待ちレコード を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">春</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">春待ちレコード</span><span class="pbadge p-abema">ABEMA</span><span class="sbadge st-hiatus">休止</span></div>
+          <div class="rnums"><span class="rnum"><b>6</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:6"></span><span class="none" style="flex:6"></span></div></div>
+          <div class="rfoot"><span>第7話以降 未定</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="春待ちレコード の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タイル内では <b>録画</b> と <b>全話</b> を別の数として並べる。<code>7/9話</code> のように 1 つの語に詰めない。放送中は全話数に <code>+</code> を付けて未確定だと示す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>タイルの状態 <span class="cat-hint">左端 3px のアクセント</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">未録画 <small>border</small></span>
+      <div class="rdemo">
+      <div class="rcard" style="--h:290">
+        <input type="checkbox" class="cbx" aria-label="銀河鉄道の車掌さん を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">銀</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">銀河鉄道の車掌さん</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-not-yet">未放送</span></div>
+          <div class="rnums"><span class="rnum"><b>0</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="none" style="flex:12"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週日曜 23:00</div><div class="rfoot"><span>初回 9/20 配信 · 待機中</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="銀河鉄道の車掌さん の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画中 <small>info</small></span>
+      <div class="rdemo">
+      <div class="rcard s-busy" style="--h:265">
+        <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">星</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>8</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 25:00</div><div class="rfoot"><span class="fetching">第9話 取得中</span><span>12分前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="星降る夜のアストロノーツ の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画済み <small>success</small></span>
+      <div class="rdemo">
+      <div class="rcard s-ok" style="--h:100">
+        <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">転</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">転生したら図書館の司書だった件</span><span class="pbadge p-netflix">Netflix</span><span class="sbadge st-finished">完結</span></div>
+          <div class="rnums"><span class="rnum"><b>24</b>録画</span><span class="rnum tot"><b>24</b>全話</span><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div>
+          <div class="rfoot"><span>1日前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="転生したら図書館の司書だった件 の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">失敗 <small>destructive</small></span>
+      <div class="rdemo">
+      <div class="rcard s-err" style="--h:330">
+        <input type="checkbox" class="cbx" aria-label="魔法少女は二度目の朝を迎える を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">魔</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">魔法少女は二度目の朝を迎える</span><span class="pbadge p-amazon">Prime Video</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>10</b>録画</span><span class="rnum tot open"><b>13</b>全話</span><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:00</div><div class="rfoot"><span class="exp">第7話 失敗 · DRM エラー</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="魔法少女は二度目の朝を迎える の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">配信終了予定 <small>warning</small></span>
+      <div class="rdemo">
+      <div class="rcard s-warn" style="--h:180">
+        <input type="checkbox" class="cbx" aria-label="海辺のカフェテラス を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">海</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">海辺のカフェテラス</span><span class="pbadge p-abema">ABEMA</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>7</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:7"></span><span class="none" style="flex:5"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週水曜 22:00</div><div class="rfoot"><span class="warn">配信終了まで12日</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="海辺のカフェテラス の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">hover <small>2px 右にずれる</small></span>
+      <div class="rdemo">
+      <div class="rcard s-busy is-hover" style="--h:265">
+        <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">星</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>8</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 25:00</div><div class="rfoot"><span class="fetching">第9話 取得中</span><span>12分前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="星降る夜のアストロノーツ の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">選択中</span>
+      <div class="rdemo">
+      <div class="rcard s-err is-sel" style="--h:330">
+        <input type="checkbox" class="cbx" checked aria-label="魔法少女は二度目の朝を迎える を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">魔</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">魔法少女は二度目の朝を迎える</span><span class="pbadge p-amazon">Prime Video</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>10</b>録画</span><span class="rnum tot open"><b>13</b>全話</span><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:00</div><div class="rfoot"><span class="exp">第7話 失敗 · DRM エラー</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="魔法少女は二度目の朝を迎える の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">フォーカス</span>
+      <div class="rdemo">
+      <div class="rcard s-ok is-focus" style="--h:100">
+        <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">転</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">転生したら図書館の司書だった件</span><span class="pbadge p-netflix">Netflix</span><span class="sbadge st-finished">完結</span></div>
+          <div class="rnums"><span class="rnum"><b>24</b>録画</span><span class="rnum tot"><b>24</b>全話</span><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div>
+          <div class="rfoot"><span>1日前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="転生したら図書館の司書だった件 の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">選択中はタイル全体を <code>accent</code> にして、hover のずれを止める。アクセント色は録画状態のままにして、選択と状態を同時に読ませる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>プロバイダ</h2>
+  <div class="cat-row">
+    <div class="cat-item is-key"><span class="cat-label">amazon</span><span class="pbadge p-amazon">Prime Video</span></div>
+    <div class="cat-item"><span class="cat-label">hulu</span><span class="pbadge p-hulu">Hulu</span></div>
+    <div class="cat-item"><span class="cat-label">crunchyroll</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item"><span class="cat-label">abema</span><span class="pbadge p-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">netflix</span><span class="pbadge p-netflix">Netflix</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>放送ステータス <span class="cat-hint">プロバイダとは形を変えて見分ける</span></h2>
+  <div class="cat-row">
+    <div class="cat-item is-key"><span class="cat-label">releasing</span><span class="sbadge st-releasing">放送中</span></div>
+    <div class="cat-item"><span class="cat-label">finished</span><span class="sbadge st-finished">完結</span></div>
+    <div class="cat-item"><span class="cat-label">not-yet</span><span class="sbadge st-not-yet">未放送</span></div>
+    <div class="cat-item"><span class="cat-label">cancelled</span><span class="sbadge st-cancelled">中止</span></div>
+    <div class="cat-item"><span class="cat-label">hiatus</span><span class="sbadge st-hiatus">休止</span></div>
+  </div>
+  <p class="cat-note">プロバイダは角丸 4px の四角、放送ステータスは丸いピル。色を落としても形で区別できる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>進捗の帯 <span class="cat-hint">5px の積み上げ 1 本</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220 is-key"><span class="cat-label">全話完了 <small>24 / 24話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">途中 <small>8 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">失敗混在 <small>10 / 13話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">未着手 <small>0 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="none" style="flex:12"></span></div></div></div>
+  </div>
+  <p class="cat-note">1 話ずつ刻まず、録画済み・録画中・失敗・未録画の 4 区画を積み上げる。どの話が欠けたかは行の注記で伝える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>凡例</h2>
+  <div class="cat-item cat-full">
+    <div class="rlegend">
+      <span><i class="rec"></i>録画済み</span>
+      <span><i class="busy"></i>録画中</span>
+      <span><i class="fail"></i>失敗</span>
+      <span><i></i>未録画</span>
+    </div>
+  </div>
+</section>
+</main>
+</body>
+</html>

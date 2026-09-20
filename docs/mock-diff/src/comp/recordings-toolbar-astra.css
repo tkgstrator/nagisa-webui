@@ -1,0 +1,97 @@
+/* ---------- recordings toolbar (rounded, pill) ---------- */
+.filters { display: flex; align-items: center; gap: 10px 12px; flex-wrap: wrap; }
+.tbrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.filters .spacer { flex: 1; min-width: 0; }
+
+/* 検索 */
+.search { position: relative; width: 260px; max-width: 100%; }
+.search svg { position: absolute; left: 11px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+.search input { width: 100%; height: 34px; padding: 0 32px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); font-size: 13px; }
+.search input::placeholder { color: var(--muted-foreground); }
+.search input:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.search .clear { position: absolute; right: 7px; top: 50%; translate: 0 -50%; width: 20px; height: 20px; border-radius: 999px; display: grid; place-items: center; color: var(--muted-foreground); }
+.search .clear svg { position: static; translate: none; width: 11px; height: 11px; stroke: currentColor; stroke-width: 2.4; }
+.search .clear:hover { background: var(--muted); color: var(--foreground); }
+
+/* セグメント (録画状態) */
+.seg { display: inline-flex; background: var(--muted); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { height: 28px; padding: 0 13px; border-radius: 999px; font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.seg button:hover { color: var(--foreground); }
+.seg button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.seg button:active { transform: scale(0.95); }
+.seg button[aria-pressed="true"] { background: var(--background); color: var(--foreground); font-weight: 600; box-shadow: 0 1px 3px color-mix(in oklch, var(--foreground) 14%, transparent); }
+.seg button .n { font-size: 11px; opacity: .75; font-variant-numeric: tabular-nums; }
+
+/* プロバイダ chip */
+.chips { display: inline-flex; flex-wrap: wrap; gap: 7px; }
+.pchip {
+  height: 30px; padding: 0 13px; border-radius: 999px; font-size: 12px;
+  border: 1px solid var(--border); color: var(--muted-foreground); background: var(--background);
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+}
+.pchip .dot { width: 8px; height: 8px; border-radius: 999px; background: currentColor; opacity: .5; flex: none; }
+.pchip:hover { background: var(--muted); color: var(--foreground); }
+.pchip:active { transform: scale(0.95); }
+.pchip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.pchip[aria-pressed="true"] { border-color: transparent; font-weight: 600; }
+.pchip[aria-pressed="true"] .dot { opacity: 1; }
+.pchip[aria-pressed="true"].amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.pchip[aria-pressed="true"].hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.pchip[aria-pressed="true"].crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.pchip[aria-pressed="true"].abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.pchip[aria-pressed="true"].netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+/* 配信終了予定のみ トグル */
+.toggle-chip { height: 30px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.toggle-chip svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.toggle-chip:hover { background: var(--muted); color: var(--foreground); }
+.toggle-chip:active { transform: scale(0.95); }
+.toggle-chip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.toggle-chip[aria-pressed="true"] { background: var(--warning); color: var(--warning-foreground); border-color: transparent; font-weight: 600; }
+
+/* 並べ替え */
+.sort { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--muted-foreground); }
+.sort .sel { position: relative; }
+.sort select { height: 34px; padding: 0 30px 0 14px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--foreground); appearance: none; -webkit-appearance: none; font-size: 12.5px; }
+.sort select:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.sort .sel svg { position: absolute; right: 12px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; stroke-linecap: round; }
+
+/* 絞り込みリセット */
+.reset-link { font-size: 12px; color: var(--muted-foreground); padding: 0 6px; height: 30px; display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; }
+.reset-link svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.reset-link:hover { color: var(--foreground); background: var(--muted); }
+.reset-link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.reset-link[disabled] { opacity: .4; cursor: default; }
+
+/* 選択バー */
+.selbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 4px; }
+.selbar label { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted-foreground); cursor: pointer; }
+.selbar input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--primary); margin: 0; }
+.selbar .state { font-size: 12.5px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.selbar .state b { color: var(--foreground); font-weight: 700; }
+.selbar .acts { margin-left: auto; display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.ghost-btn { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); font-size: 12.5px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ghost-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ghost-btn:hover { background: var(--muted); color: var(--foreground); }
+.ghost-btn:active { transform: scale(0.95); }
+.ghost-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.bulk-btn { height: 32px; padding: 0 16px; border-radius: 999px; background: var(--destructive); color: var(--destructive-foreground); font-size: 12.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.bulk-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.bulk-btn:hover { background: color-mix(in oklch, var(--destructive) 86%, var(--foreground)); }
+.bulk-btn:active { transform: scale(0.95); }
+.bulk-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.bulk-btn[disabled] { opacity: .4; cursor: default; }
+
+/* indeterminate をカタログ上で静的に見せるための箱 */
+.mixbox { width: 15px; height: 15px; border-radius: 4px; background: var(--primary); display: grid; place-items: center; flex: none; }
+.mixbox i { width: 8px; height: 2px; border-radius: 1px; background: var(--primary-foreground); }
+
+@media (max-width: 640px) {
+  .search { width: 100%; }
+  .seg { width: 100%; overflow-x: auto; }
+  .filters .spacer { display: none; }
+  .sort { width: 100%; }
+  .sort .sel { flex: 1; min-width: 0; }
+  .sort select { width: 100%; }
+  .selbar .acts { margin-left: 0; width: 100%; }
+}

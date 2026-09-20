@@ -1,0 +1,166 @@
+TITLE: 録画状況サマリ
+---
+<header class="cat-head">
+  <h1>録画状況サマリ <span class="cat-id">summary-stats</span></h1>
+  <p>ホーム最上部で今日の録画状況を示すタイル群。1px の罫線でつないだひと続きの面にして、各タイルは左 3px の色・右上のアイコン・下段の増減ピルで性質を伝える。</p>
+  <div class="cat-meta"><span>置き場所: ホーム見出しの直下</span><span>罫線 1px で連結・角丸 14px</span><span>値は <code>tabular-nums</code></span><span>登場は <code>fadeUp</code> を 60ms ずつ遅らせる</span><span>既定 4 枚 / 狭い画面は 2 列</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">4 枚を罫線でつなぐ</span></h2>
+  <div class="cat-item cat-full is-key"><span class="cat-label">既定の 4 指標</span>
+    <div class="ss-grid">
+      <a class="ss d-new" href="#" style="--i:0">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p>
+        <p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+      <a class="ss d-ok" href="#" style="--i:1">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p class="k">録画済み</p>
+        <p class="v">128<small>本</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span>
+      </a>
+      <a class="ss d-warn" href="#" style="--i:2">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <p class="k">配信終了間近</p>
+        <p class="v">3<small>作品</small></p>
+        <span class="d soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>最短 6/30</span>
+      </a>
+      <a class="ss d-err" href="#" style="--i:3">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <p class="k">失敗</p>
+        <p class="v">1<small>件</small></p>
+        <span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span>
+      </a>
+    </div>
+  </div>
+  <p class="cat-note">タイル同士は影や枠で分けず、1px の罫線だけで割る。増減はピルに逃がして、主数値の桁を邪魔しない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>1 枚の状態 <span class="cat-hint">左 3px とアイコンの色を揃えて差し替える</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260 is-key"><span class="cat-label">通常 <small>primary</small></span>
+      <div class="ss is-solo">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        <p class="k">録画予約中</p><p class="v">16<small>作品</small></p>
+        <span class="d">全 1,204 作品を追跡</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">強調 <small>success</small></span>
+      <div class="ss is-solo d-ok">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p class="k">録画済み</p><p class="v">128<small>本</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">注意 <small>warning</small></span>
+      <div class="ss is-solo d-warn">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <p class="k">配信終了間近</p><p class="v">3<small>作品</small></p>
+        <span class="d soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>最短 6/30</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">異常 <small>destructive</small></span>
+      <div class="ss is-solo d-err">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <p class="k">失敗</p><p class="v">1<small>件</small></p>
+        <span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">値が 0</span>
+      <div class="ss is-solo is-zero">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        <p class="k">録画予約中</p><p class="v">0<small>作品</small></p>
+        <span class="d">まだ追跡していません</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">読み込み中</span>
+      <div class="ss is-solo is-load">
+        <span class="ico"></span>
+        <span class="ss-bar b1"></span>
+        <span class="ss-bar b2"></span>
+        <span class="ss-bar b3"></span>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">0 件のときはアクセント色とアイコンの色を外す。「無い」ことを警告として見せない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>押せるとき <span class="cat-hint">hover で下地とアイコンが動く</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260 is-key"><span class="cat-label">リンク・通常</span>
+      <a class="ss is-solo d-new" href="#">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">リンク・hover</span>
+      <a class="ss is-solo d-new is-hover" href="#">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">リンク・フォーカス</span>
+      <a class="ss is-solo d-new is-focus" href="#">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">押せない <small>表示のみ</small></span>
+      <div class="ss is-solo d-mute">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        <p class="k">追跡中の作品</p><p class="v">1,204<small>作品</small></p>
+        <span class="d">毎日 4:00 に更新</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>枚数違い <span class="cat-hint">2 / 3 / 4 枚とも 1 枚の面として扱う</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">2 枚</span>
+      <div class="ss-grid n2">
+        <div class="ss"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><p class="k">録画予約中</p><p class="v">16<small>作品</small></p><span class="d">全 1,204 作品を追跡</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span></div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">3 枚</span>
+      <div class="ss-grid n3">
+        <div class="ss d-new"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span><p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span></div>
+        <div class="ss d-err"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><p class="k">失敗</p><p class="v">1<small>件</small></p><span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span></div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">4 枚 <small>既定</small></span>
+      <div class="ss-grid">
+        <div class="ss d-new"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span><p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span></div>
+        <div class="ss d-warn"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p class="k">配信終了間近</p><p class="v">3<small>作品</small></p><span class="d soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>最短 6/30</span></div>
+        <div class="ss d-err"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><p class="k">失敗</p><p class="v">1<small>件</small></p><span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>狭い画面 <span class="cat-hint">390px 相当・2 列に折り返す</span></h2>
+  <div class="cat-item"><span class="cat-label">mobile</span>
+    <div class="cat-frame is-plain ss-m390">
+      <div class="ss-grid is-mobile">
+        <div class="ss d-new"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span><p class="k">新着エピソード</p><p class="v">6<small>件</small></p><span class="d up">+2</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up">+14</span></div>
+        <div class="ss d-warn"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p class="k">配信終了間近</p><p class="v">3<small>作品</small></p><span class="d soon">6/30</span></div>
+        <div class="ss d-err"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><p class="k">失敗</p><p class="v">1<small>件</small></p><span class="d down">要対応</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">狭い画面ではアイコンを小さくしてラベルの幅を確保する。2 列は崩さず、4 指標が一目で収まる高さを守る。</p>
+</section>

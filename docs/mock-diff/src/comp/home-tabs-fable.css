@@ -1,0 +1,65 @@
+/* ---------- home tabs (underline) ---------- */
+.tabs-wrap { position: relative; border-bottom: 1px solid var(--border); }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 38px; padding: 0 12px; margin-bottom: -1px; flex: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted-foreground); font-size: 14px; white-space: nowrap;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.tab:hover { color: var(--foreground); background: color-mix(in oklch, var(--muted) 65%, transparent); }
+.tab:focus-visible { outline: 2px solid var(--ring); outline-offset: -3px; }
+.tab[aria-selected="true"] { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+.tab[aria-selected="true"]:hover { background: none; }
+.tab[disabled] { color: color-mix(in oklch, var(--muted-foreground) 55%, transparent); cursor: not-allowed; }
+.tab[disabled]:hover { background: none; color: color-mix(in oklch, var(--muted-foreground) 55%, transparent); }
+
+/* 件数: 括弧やスラッシュで本文に混ぜず、独立した等幅の数字にする */
+.tab .c { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+.tab[aria-selected="true"] .c { color: var(--primary); font-weight: 600; }
+.tab .c.is-zero { opacity: .45; }
+.tab[disabled] .c { opacity: .45; }
+.tab svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 入り切らないとき: 右端をぼかして続きを示す */
+.tabs-wrap.is-over::after {
+  content: ''; position: absolute; right: 0; top: 0; bottom: 1px; width: 40px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--background) 82%);
+}
+.tabs-wrap.is-over .tabs { padding-right: 28px; }
+
+/* 切り替えた直後のパネル */
+.panel { padding-top: 16px; animation: fadeUp .35s cubic-bezier(.16,1,.3,1) both; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.panel-head h4 { font-size: 12.5px; font-weight: 700; }
+.panel-head .n { margin-left: 7px; font-size: 11.5px; font-weight: 400; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.panel-head .more { font-size: 11.5px; color: var(--muted-foreground); }
+.panel-head .more:hover { color: var(--foreground); }
+
+.p-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.p-cell { border-left: 3px solid transparent; padding-left: 9px; transition: background .12s, border-color .12s; }
+.p-cell:hover { background: var(--muted); border-left-color: var(--primary); }
+.p-thumb {
+  aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; display: grid; place-items: center;
+  background: linear-gradient(160deg, oklch(0.78 0.12 var(--h)), oklch(0.45 0.16 calc(var(--h) + 40)));
+  color: oklch(0.99 0.01 var(--h) / 92%); font-size: 18px; font-weight: 800;
+}
+.p-title { margin-top: 6px; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-sub { margin-top: 3px; font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.p-empty { margin-top: 12px; padding: 18px 12px; border-left: 3px solid var(--border); font-size: 12.5px; color: var(--muted-foreground); }
+
+.pv { display: inline-flex; align-items: center; height: 17px; padding: 0 6px; border-radius: 4px; font-size: 10.5px; font-weight: 600; flex: none; }
+.pv-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.pv-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.pv-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.pv-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.pv-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+@media (max-width: 640px) {
+  .tabs { gap: 0; }
+  .tab { padding: 0 10px; font-size: 13.5px; }
+  .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

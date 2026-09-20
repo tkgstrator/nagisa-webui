@@ -1,0 +1,13 @@
+/* ---------- stage (カタログ内で fixed の代わりに使う舞台) ---------- */
+.stage {
+  position: relative; overflow: hidden;
+  height: 420px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+.stage .behind { position: absolute; inset: 0; padding: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stage .behind i { border-radius: 6px; background: var(--muted); height: 92px; display: block; }
+.stage .scrim { position: absolute; inset: 0; background: var(--overlay); }
+@media (max-width: 640px) {
+  .stage { height: 380px; }
+}

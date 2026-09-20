@@ -1,0 +1,39 @@
+/* ---------- active filter chips ---------- */
+.active { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
+.active .lbl { color: var(--muted-foreground); }
+.active .hits { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.achip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 0 4px 0 9px;
+  border-radius: 999px; font-size: 12px;
+  background: var(--accent); color: var(--accent-foreground);
+  animation: chipIn .18s ease both;
+}
+@keyframes chipIn { from { opacity: 0; transform: translateY(-3px) scale(.94); } to { opacity: 1; transform: none; } }
+.achip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.achip.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.achip.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.achip.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.achip.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.achip.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.achip.is-query { background: var(--muted); color: var(--foreground); }
+.achip.is-query .q { color: var(--muted-foreground); }
+
+.achip button { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; color: inherit; }
+.achip button:hover { background: color-mix(in oklch, currentColor 18%, transparent); }
+.achip button:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+.achip button:active { transform: scale(0.85); }
+.achip svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+
+.reset { height: 24px; padding: 0 10px; border-radius: 999px; border: 1px dashed var(--border); color: var(--muted-foreground); font-size: 12px; }
+.reset:hover { background: var(--muted); color: var(--foreground); }
+.reset:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.reset:active { transform: scale(0.94); }
+
+.empty-line { color: var(--muted-foreground); font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+.empty-line svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 640px) {
+  .active .hits { margin-left: 0; width: 100%; }
+}

@@ -1,0 +1,44 @@
+/* ---------- other providers (list) ---------- */
+.rel-box { border-left: 3px solid var(--primary); padding: 2px 0 2px 0; }
+.rel-box > h3 { font-size: 13px; font-weight: 700; padding: 6px 13px 2px; }
+.rel-box > h3 .n { font-size: 12px; font-weight: 400; color: var(--muted-foreground); font-variant-numeric: tabular-nums; margin-left: 6px; }
+.rel-head { display: grid; grid-template-columns: minmax(0, 1fr) 52px 52px 14px; gap: 10px; padding: 0 10px 6px 13px; font-size: 11px; color: var(--muted-foreground); }
+.rel-head .num { text-align: right; }
+.rel-list { display: flex; flex-direction: column; }
+.rel {
+  display: grid; grid-template-columns: minmax(0, 1fr) 52px 52px 14px; gap: 10px; align-items: center;
+  padding: 8px 10px; border-left: 3px solid transparent;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  transition: background .12s, border-color .12s;
+}
+.rel:hover { background: var(--muted); border-left-color: var(--primary); }
+.rel:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.rel.cur { border-left-color: var(--primary); background: color-mix(in oklch, var(--accent) 60%, transparent); cursor: default; }
+.rel.cur:hover { background: color-mix(in oklch, var(--accent) 60%, transparent); }
+.rel.off { color: var(--muted-foreground); }
+.rel.off .rel-title { text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent); }
+.rel-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.rel-title { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rel-sub { font-size: 11px; color: var(--muted-foreground); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.rel-eps { font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; color: var(--muted-foreground); }
+.rel-eps b { color: var(--foreground); font-weight: 600; }
+.rel > svg { color: var(--muted-foreground); width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 配信元のバッジ */
+.pv { display: inline-flex; align-items: center; height: 18px; padding: 0 7px; border-radius: 4px; font-size: 11px; font-weight: 600; flex: none; }
+.pv-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.pv-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.pv-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.pv-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.pv-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.tag { display: inline-flex; align-items: center; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; }
+.tag-exp { border-color: color-mix(in oklch, var(--warning) 45%, transparent); color: var(--warning-foreground); background: color-mix(in oklch, var(--warning) 22%, transparent); }
+.tag-cur { border-color: transparent; background: var(--primary); color: var(--primary-foreground); font-weight: 600; }
+
+.rel-empty { padding: 14px 13px; font-size: 12.5px; color: var(--muted-foreground); border-left: 3px solid var(--border); }
+
+@media (max-width: 640px) {
+  .rel, .rel-head { grid-template-columns: minmax(0, 1fr) 46px 14px; }
+  .rel .rel-eps.all, .rel-head .all { display: none; }
+}

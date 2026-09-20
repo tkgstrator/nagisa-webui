@@ -1,0 +1,91 @@
+TITLE: ページネーション
+---
+<header class="cat-head">
+  <h1>ページネーション <span class="cat-id">pagination</span></h1>
+  <p>アニメ一覧 (24 件/ページ) と録画一覧 (24 件/ページ)、未識別タイトル一覧 (30 件/ページ) で共用する。fable 案は左に件数レンジ、中央に表示件数の切り替え、右にページ番号を並べる。番号が多いときは省略記号で畳み、mobile では前へ/次への文字ラベルと中間ページを隠す。</p>
+  <div class="cat-meta">
+    <span>既定 <code>24 件/ページ</code></span>
+    <span>数値はすべて <code>tabular-nums</code></span>
+    <span>現在ページは <code>aria-current="page"</code></span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本</h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">1 ページ目 (全 142 件 / 6 ページ)</span>
+    <nav class="pager" aria-label="ページネーション">
+      <div class="range"><b>1–24</b> / 142 件</div>
+      <div class="perpage">表示件数
+        <div class="seg">
+          <button class="chip" aria-pressed="true">24</button>
+          <button class="chip" aria-pressed="false">48</button>
+          <button class="chip" aria-pressed="false">96</button>
+        </div>
+      </div>
+      <div class="pages">
+        <a class="pnum" href="#" aria-disabled="true" aria-label="前のページ"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+        <a class="pnum" href="#" aria-current="page">1</a>
+        <a class="pnum" href="#">2</a>
+        <a class="pnum" href="#">3</a>
+        <a class="pnum hide-m" href="#">4</a>
+        <a class="pnum hide-m" href="#">5</a>
+        <span class="pnum ellipsis">…</span>
+        <a class="pnum" href="#">6</a>
+        <a class="pnum" href="#" aria-label="次のページ"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>ページ位置 <span class="cat-hint">省略記号の入り方</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full"><span class="cat-label">先頭 <small>(前へが無効)</small></span><div class="pages" style="margin-left:0">
+      <a class="pnum" href="#" aria-disabled="true"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+      <a class="pnum" href="#" aria-current="page">1</a><a class="pnum" href="#">2</a><a class="pnum" href="#">3</a><span class="pnum ellipsis">…</span><a class="pnum" href="#">12</a>
+      <a class="pnum" href="#"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div></div>
+    <div class="cat-item cat-full"><span class="cat-label">中間 <small>(両側に省略記号)</small></span><div class="pages" style="margin-left:0">
+      <a class="pnum" href="#"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+      <a class="pnum" href="#">1</a><span class="pnum ellipsis">…</span><a class="pnum" href="#">5</a><a class="pnum" href="#" aria-current="page">6</a><a class="pnum" href="#">7</a><span class="pnum ellipsis">…</span><a class="pnum" href="#">12</a>
+      <a class="pnum" href="#"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div></div>
+    <div class="cat-item cat-full"><span class="cat-label">最終 <small>(次へが無効)</small></span><div class="pages" style="margin-left:0">
+      <a class="pnum" href="#"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+      <a class="pnum" href="#">1</a><span class="pnum ellipsis">…</span><a class="pnum" href="#">10</a><a class="pnum" href="#">11</a><a class="pnum" href="#" aria-current="page">12</a>
+      <a class="pnum" href="#" aria-disabled="true"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div></div>
+    <div class="cat-item cat-full"><span class="cat-label">1 ページのみ <small>(両方無効・番号は 1 つ)</small></span><div class="pages" style="margin-left:0">
+      <a class="pnum" href="#" aria-disabled="true"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+      <a class="pnum" href="#" aria-current="page">1</a>
+      <a class="pnum" href="#" aria-disabled="true"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>ページ番号ボタン <span class="cat-hint">単体の状態</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><a class="pnum" href="#">7</a></div>
+    <div class="cat-item"><span class="cat-label">hover</span><a class="pnum is-hover" href="#">7</a></div>
+    <div class="cat-item is-key"><span class="cat-label">現在ページ</span><a class="pnum" href="#" aria-current="page">7</a></div>
+    <div class="cat-item"><span class="cat-label">フォーカス</span><a class="pnum is-focus" href="#">7</a></div>
+    <div class="cat-item"><span class="cat-label">無効</span><a class="pnum" href="#" aria-disabled="true">7</a></div>
+    <div class="cat-item"><span class="cat-label">省略記号</span><span class="pnum ellipsis">…</span></div>
+    <div class="cat-item"><span class="cat-label">3 桁</span><a class="pnum" href="#">128</a></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>件数レンジ / 表示件数</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><div class="range"><b>1–24</b> / 142 件</div></div>
+    <div class="cat-item"><span class="cat-label">最終ページ <small>(端数)</small></span><div class="range"><b>121–142</b> / 142 件</div></div>
+    <div class="cat-item"><span class="cat-label">絞り込み中</span><div class="range"><b>1–24</b> / 142 件 <span style="opacity:.7">(全 287 件)</span></div></div>
+    <div class="cat-item"><span class="cat-label">0 件</span><div class="range"><b>0</b> 件</div></div>
+    <div class="cat-item"><span class="cat-label">表示件数 24</span><div class="seg"><button class="chip" aria-pressed="true">24</button><button class="chip">48</button><button class="chip">96</button></div></div>
+    <div class="cat-item"><span class="cat-label">表示件数 96</span><div class="seg"><button class="chip">24</button><button class="chip">48</button><button class="chip" aria-pressed="true">96</button></div></div>
+  </div>
+  <p class="cat-note">レンジは <code>12/24話</code> のような複合表記にせず、開始–終了と母数を別要素に分ける。</p>
+</section>

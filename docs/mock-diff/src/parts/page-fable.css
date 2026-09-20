@@ -1,0 +1,103 @@
+/* ---------- page skeleton (fable) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   衝突を避けるため骨格クラスは pg- 名前空間に統一する。 */
+
+.pg {
+  max-width: 1392px;
+  margin: 0 auto;
+  padding: 24px 24px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.pg > * { animation: fadeUp .5s ease both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .05s; }
+.pg > *:nth-child(3) { animation-delay: .1s; }
+.pg > *:nth-child(4) { animation-delay: .15s; }
+.pg > *:nth-child(5) { animation-delay: .2s; }
+.pg > *:nth-child(6) { animation-delay: .25s; }
+.pg > *:nth-child(7) { animation-delay: .3s; }
+.pg-narrow { max-width: 1280px; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 700; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- section ---------- */
+.pg-sec { display: flex; flex-direction: column; gap: 14px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pg-sec-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.pg-sec-count { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 40px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 68px;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 40px; gap: 30px; }
+  .pg-title { font-size: 20px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}

@@ -1,0 +1,139 @@
+TITLE: ホームのタブ
+---
+<header class="cat-head">
+  <h1>ホームのタブ <span class="cat-id">home-tabs</span></h1>
+  <p>ホームのカタログを切り替える 5 つのタブ。選択中は下線 2px と太字で示し、件数はラベルから切り離した等幅の数字で右に添える。</p>
+  <div class="cat-meta"><span>今期アニメ / 新着追加 / もうすぐ配信 / 配信終了予定 / 配信元から探す</span><span>高さ 38px</span><span>選択中 = 下線 primary</span><span>入り切らないときは横スクロール</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">5 タブ・先頭を選択中</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="tabs-wrap">
+      <div class="tabs" role="tablist" aria-label="カタログの絞り込み">
+        <button class="tab" role="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
+        <button class="tab" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">件数は「今期アニメ (48)」と文に混ぜず独立した要素にする。等幅なので桁が増えてもラベルの位置が動かない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>タブ 1 個の状態</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label is-key">通常</span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false">新着追加<span class="c">12</span></button></div></div>
+    </div>
+    <div class="cat-item"><span class="cat-label">hover</span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab is-hover" aria-selected="false">新着追加<span class="c">12</span></button></div></div>
+    </div>
+    <div class="cat-item"><span class="cat-label">選択中</span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="true">新着追加<span class="c">12</span></button></div></div>
+    </div>
+    <div class="cat-item"><span class="cat-label">フォーカス</span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab is-focus" aria-selected="false">新着追加<span class="c">12</span></button></div></div>
+    </div>
+    <div class="cat-item"><span class="cat-label">件数 0 <small>薄く出して押せる</small></span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false">配信終了予定<span class="c is-zero">0</span></button></div></div>
+    </div>
+    <div class="cat-item"><span class="cat-label">件数 3 桁</span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false">今期アニメ<span class="c">248</span></button></div></div>
+    </div>
+    <div class="cat-item"><span class="cat-label">無効 <small>取得に失敗したとき</small></span>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false" disabled>もうすぐ配信<span class="c">—</span></button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>件数バッジの有無</h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">件数あり <small>母数が決まっている 4 タブ</small></span>
+      <div class="tabs-wrap"><div class="tabs">
+        <button class="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
+        <button class="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
+        <button class="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">件数なし <small>「配信元から探す」は入口なので数を持たない</small></span>
+      <div class="tabs-wrap"><div class="tabs">
+        <button class="tab" aria-selected="true">配信元から探す</button>
+        <button class="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">件数を読み込み中 <small>数が決まるまでは — を置いて幅を保つ</small></span>
+      <div class="tabs-wrap"><div class="tabs">
+        <button class="tab" aria-selected="true">今期アニメ<span class="c is-zero">—</span></button>
+        <button class="tab" aria-selected="false">新着追加<span class="c is-zero">—</span></button>
+        <button class="tab" aria-selected="false">もうすぐ配信<span class="c is-zero">—</span></button>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>入り切らないとき <span class="cat-hint">横スクロール・右端をぼかす</span></h2>
+  <div class="cat-item cat-w320">
+    <span class="cat-label">幅 320px <small>スクロールバーは隠す</small></span>
+    <div class="tabs-wrap is-over">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
+        <button class="tab" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">折り返すとタブの帯が 2 段になって下線の意味が崩れるので、狭い画面でも 1 行のまま横に流す。選択中のタブは表示時に左端へ寄せる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>切り替えた直後 <span class="cat-hint">パネルだけが差し替わる</span></h2>
+  <div class="cat-item cat-full">
+    <div class="tabs-wrap">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
+        <button class="tab" role="tab" aria-selected="true">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
+      </div>
+    </div>
+    <div class="panel" role="tabpanel">
+      <div class="panel-head"><h4>新着追加<span class="n">12 作品</span></h4><a class="more" href="#">一覧で見る</a></div>
+      <div class="p-grid">
+        <a class="p-cell" href="#"><span class="p-thumb" style="--h:265" aria-hidden="true">星</span><span class="p-title">星降る夜のアストロノーツ</span><span class="p-sub"><span class="pv pv-netflix">Netflix</span>2026年 秋</span></a>
+        <a class="p-cell" href="#"><span class="p-thumb" style="--h:30" aria-hidden="true">魔</span><span class="p-title">転生したら魔王城の家政婦でした</span><span class="p-sub"><span class="pv pv-amazon">Prime Video</span>2026年 秋</span></a>
+        <a class="p-cell" href="#"><span class="p-thumb" style="--h:210" aria-hidden="true">海</span><span class="p-title">蒼海のリヴァイアサン</span><span class="p-sub"><span class="pv pv-crunchyroll">Crunchyroll</span>2026年 秋</span></a>
+        <a class="p-cell" href="#"><span class="p-thumb" style="--h:150" aria-hidden="true">珈</span><span class="p-title">ぼっち喫茶のラテアート</span><span class="p-sub"><span class="pv pv-abema">ABEMA</span>2026年 秋</span></a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タブの帯は動かさず、下のパネルだけを差し替える。パネルは 0.35 秒の fadeUp で入り、帯の高さは常に一定。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>中身が 0 件のパネル</h2>
+  <div class="cat-item cat-full">
+    <div class="tabs-wrap">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
+        <button class="tab" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
+        <button class="tab" role="tab" aria-selected="true">配信終了予定<span class="c is-zero">0</span></button>
+        <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
+      </div>
+    </div>
+    <div class="panel" role="tabpanel">
+      <div class="panel-head"><h4>配信終了予定<span class="n">0 作品</span></h4></div>
+      <p class="p-empty">30 日以内に配信が終わる作品はありません。</p>
+    </div>
+  </div>
+  <p class="cat-note">件数が 0 でもタブは消さず押せるままにする。数が動く指標なので、消えると「無くなった」のか「取れていない」のか分からなくなる。</p>
+</section>

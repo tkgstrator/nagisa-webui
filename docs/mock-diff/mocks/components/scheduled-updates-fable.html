@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>録画予約中の更新 — fable 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: scheduled-updates ---------- */
+/* ---------- scheduled updates (ruled list) ---------- */.su-box { border-left: 3px solid var(--primary); }
+.su-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 4px 10px 8px 13px; }
+.su-head h3 { font-size: 13px; font-weight: 700; }
+.su-head h3 .sub { margin-left: 8px; font-size: 11.5px; font-weight: 400; color: var(--muted-foreground); }
+.su-head .more { font-size: 11.5px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 3px; }
+.su-head .more:hover, .su-head .more.is-hover { color: var(--foreground); }
+.su-head .more svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.su-cols, .su-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 84px 42px 42px 84px; gap: 12px; align-items: center; }
+.su-cols { padding: 0 10px 6px 13px; font-size: 11px; color: var(--muted-foreground); border-bottom: 1px solid var(--border); }
+.su-cols .num { text-align: right; }
+.su-cols .upd { text-align: right; }
+
+.su-list { display: flex; flex-direction: column; }
+.su-row {
+  padding: 8px 10px; border-left: 3px solid transparent;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  transition: background .12s, border-color .12s;
+}
+.su-row:hover, .su-row.is-hover { background: var(--muted); border-left-color: var(--primary); }
+.su-row:focus-visible, .su-row.is-focus { outline: 2px solid var(--ring); outline-offset: -2px; }
+.su-row.is-err { border-left-color: var(--destructive); }
+.su-row.is-rec { border-left-color: var(--info); }
+
+.su-thumb {
+  aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; display: grid; place-items: center;
+  background: linear-gradient(160deg, oklch(0.78 0.12 var(--h)), oklch(0.45 0.16 calc(var(--h) + 40)));
+  color: oklch(0.99 0.01 var(--h) / 92%); font-size: 14px; font-weight: 800; letter-spacing: .04em;
+}
+
+.su-body { min-width: 0; }
+.su-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.su-sub { margin-top: 3px; font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.su-row.is-err .su-sub .why { color: var(--destructive); }
+
+/* 進捗バー: 数字は別列に出す。バーは割合だけを示す */.su-bar { height: 4px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.su-bar > i { display: block; height: 100%; border-radius: 999px; background: var(--success); }
+.su-row.is-rec .su-bar > i {
+  background: var(--info);
+  background-image: repeating-linear-gradient(-45deg, transparent 0 4px, oklch(1 0 0 / 28%) 4px 8px);
+  background-size: 200% 100%; animation: suFlow 1.4s linear infinite;
+}
+.su-row.is-err .su-bar > i { background: var(--destructive); }
+.su-row.is-done .su-bar > i { background: var(--success); }
+@keyframes suFlow { to { background-position: 200% 0; } }
+
+.su-n { font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+.su-n b { color: var(--foreground); font-weight: 600; }
+.su-row.is-done .su-n b { color: var(--success); }
+
+.su-upd { text-align: right; font-size: 12px; color: var(--muted-foreground); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.su-upd .abs { display: block; font-size: 10.5px; opacity: .75; }
+.su-row.is-err .su-upd .rel { color: var(--destructive); }
+
+/* 配信元・状態のバッジ */.pv { display: inline-flex; align-items: center; height: 17px; padding: 0 6px; border-radius: 4px; font-size: 10.5px; font-weight: 600; flex: none; }
+.pv-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.pv-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.pv-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.pv-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.pv-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.tag { display: inline-flex; align-items: center; gap: 4px; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; flex: none; }
+.tag-new { border-color: transparent; background: var(--info); color: var(--info-foreground); font-weight: 600; }
+.tag-rec { border-color: transparent; background: color-mix(in oklch, var(--info) 22%, transparent); color: var(--foreground); font-weight: 600; }
+.tag-rec i { width: 5px; height: 5px; border-radius: 999px; background: var(--info); animation: suPulse 1.4s ease-in-out infinite; }
+.tag-err { border-color: transparent; background: var(--destructive); color: var(--destructive-foreground); font-weight: 600; }
+.tag-exp { border-color: color-mix(in oklch, var(--warning) 45%, transparent); background: color-mix(in oklch, var(--warning) 22%, transparent); color: var(--warning-foreground); }
+.tag-done { border-color: color-mix(in oklch, var(--success) 45%, transparent); color: var(--success); }
+@keyframes suPulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* 空・読み込み中 */.su-empty { padding: 20px 13px; border-left: 3px solid var(--border); }
+.su-empty p { font-size: 12.5px; color: var(--muted-foreground); }
+.su-empty .cta { margin-top: 8px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--primary); }
+.su-empty .cta:hover, .su-empty .cta.is-hover { text-decoration: underline; }
+.su-empty .cta svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.su-skel .sk { border-radius: 3px; background: var(--muted); background-image: linear-gradient(90deg, transparent 0 35%, color-mix(in oklch, var(--background) 55%, transparent) 50%, transparent 65% 100%); background-size: 220% 100%; animation: suSkel 1.3s linear infinite; }
+.su-skel .su-thumb { background: var(--muted); }
+.su-skel .sk-t { height: 11px; width: 62%; }
+.su-skel .sk-s { height: 9px; width: 38%; margin-top: 6px; }
+.su-skel .sk-n { height: 9px; }
+@keyframes suSkel { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+
+@media (max-width: 640px) {
+  .su-cols, .su-row { grid-template-columns: 56px minmax(0, 1fr) 38px 60px; gap: 10px; }
+  .su-cols .bar, .su-cols .all, .su-row .su-bar, .su-row .su-n.all { display: none; }
+  .su-upd .abs { display: none; }
+  .su-head h3 .sub { display: block; margin-left: 0; }}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>録画予約中の更新 <span class="cat-id">scheduled-updates</span></h1>
+  <p>ホームに置く「直近で動きのあった録画予約中の作品」。更新日時の新しい順に最大 6 件。1 行で 作品 / 配信元 / 進捗 / 更新日時 を読ませる。</p>
+  <div class="cat-meta"><span>最大 6 件</span><span>更新日時の降順</span><span>録画予約中の作品のみ</span><span>行の高さ 60px</span><span>狭い画面ではバーと全話数を落とす</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">見出し + 6 件</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="su-box">
+      <div class="su-head">
+        <h3>録画予約中の更新<span class="sub">更新が新しい順・最大 6 件</span></h3>
+        <a class="more" href="#">録画一覧へ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+      <div class="su-cols"><span></span><span>作品</span><span class="bar">進捗</span><span class="num">録画</span><span class="num all">全話</span><span class="upd">更新</span></div>
+      <div class="su-list">
+        <a class="su-row is-rec" href="#">
+          <span class="su-thumb" style="--h:30" aria-hidden="true">魔</span>
+          <span class="su-body">
+            <span class="su-title">転生したら魔王城の家政婦でした</span>
+            <span class="su-sub"><span class="pv pv-amazon">Prime Video</span><span class="tag tag-rec"><i></i>録画中</span><span>第 7 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:58%"></i></span>
+          <span class="su-n"><b>7</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span>
+        </a>
+        <a class="su-row" href="#">
+          <span class="su-thumb" style="--h:210" aria-hidden="true">海</span>
+          <span class="su-body">
+            <span class="su-title">蒼海のリヴァイアサン</span>
+            <span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-new">新着エピソード</span><span>第 12 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:92%"></i></span>
+          <span class="su-n"><b>11</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+        </a>
+        <a class="su-row is-err" href="#">
+          <span class="su-thumb" style="--h:150" aria-hidden="true">珈</span>
+          <span class="su-body">
+            <span class="su-title">ぼっち喫茶のラテアート</span>
+            <span class="su-sub"><span class="pv pv-abema">ABEMA</span><span class="tag tag-err">失敗</span><span class="why">配信元エラー・再試行できます</span></span>
+          </span>
+          <span class="su-bar"><i style="width:75%"></i></span>
+          <span class="su-n"><b>9</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></span>
+        </a>
+        <a class="su-row" href="#">
+          <span class="su-thumb" style="--h:95" aria-hidden="true">鋼</span>
+          <span class="su-body">
+            <span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span>
+            <span class="su-sub"><span class="pv pv-hulu">Hulu</span><span>第 4 話 待機中</span></span>
+          </span>
+          <span class="su-bar"><i style="width:12%"></i></span>
+          <span class="su-n"><b>3</b></span>
+          <span class="su-n all">24</span>
+          <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+        </a>
+        <a class="su-row is-done" href="#">
+          <span class="su-thumb" style="--h:265" aria-hidden="true">放</span>
+          <span class="su-body">
+            <span class="su-title">放課後クロノスタシス</span>
+            <span class="su-sub"><span class="pv pv-amazon">Prime Video</span><span class="tag tag-done">全話録画済み</span></span>
+          </span>
+          <span class="su-bar"><i style="width:100%"></i></span>
+          <span class="su-n"><b>13</b></span>
+          <span class="su-n all">13</span>
+          <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 23:30</span></span>
+        </a>
+        <a class="su-row" href="#">
+          <span class="su-thumb" style="--h:320" aria-hidden="true">深</span>
+          <span class="su-body">
+            <span class="su-title">深層ダイバーズ</span>
+            <span class="su-sub"><span class="pv pv-netflix">Netflix</span><span class="tag tag-exp">9/30 配信終了</span></span>
+          </span>
+          <span class="su-bar"><i style="width:17%"></i></span>
+          <span class="su-n"><b>2</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">「7 / 12 話」と 1 つの枠に詰めず、<b>録画</b>と<b>全話</b>を別の列にする。バーは割合だけを受け持ち、数はすべて等幅で右に揃える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>1 行の状態</h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">通常</span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row" href="#">
+          <span class="su-thumb" style="--h:95" aria-hidden="true">鋼</span>
+          <span class="su-body"><span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span><span class="su-sub"><span class="pv pv-hulu">Hulu</span><span>第 4 話 待機中</span></span></span>
+          <span class="su-bar"><i style="width:12%"></i></span>
+          <span class="su-n"><b>3</b></span><span class="su-n all">24</span>
+          <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">hover <small>左に primary の罫・背景 muted</small></span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row is-hover" href="#">
+          <span class="su-thumb" style="--h:95" aria-hidden="true">鋼</span>
+          <span class="su-body"><span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span><span class="su-sub"><span class="pv pv-hulu">Hulu</span><span>第 4 話 待機中</span></span></span>
+          <span class="su-bar"><i style="width:12%"></i></span>
+          <span class="su-n"><b>3</b></span><span class="su-n all">24</span>
+          <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">新着エピソードあり</span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row" href="#">
+          <span class="su-thumb" style="--h:210" aria-hidden="true">海</span>
+          <span class="su-body"><span class="su-title">蒼海のリヴァイアサン</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-new">新着エピソード</span><span>第 12 話</span></span></span>
+          <span class="su-bar"><i style="width:92%"></i></span>
+          <span class="su-n"><b>11</b></span><span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画中 <small>左罫は info・バーは縞が流れる</small></span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row is-rec" href="#">
+          <span class="su-thumb" style="--h:30" aria-hidden="true">魔</span>
+          <span class="su-body"><span class="su-title">転生したら魔王城の家政婦でした</span><span class="su-sub"><span class="pv pv-amazon">Prime Video</span><span class="tag tag-rec"><i></i>録画中</span><span>第 7 話</span></span></span>
+          <span class="su-bar"><i style="width:58%"></i></span>
+          <span class="su-n"><b>7</b></span><span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">失敗あり <small>左罫と更新日時を destructive に</small></span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row is-err" href="#">
+          <span class="su-thumb" style="--h:150" aria-hidden="true">珈</span>
+          <span class="su-body"><span class="su-title">ぼっち喫茶のラテアート</span><span class="su-sub"><span class="pv pv-abema">ABEMA</span><span class="tag tag-err">失敗</span><span class="why">配信元エラー・再試行できます</span></span></span>
+          <span class="su-bar"><i style="width:75%"></i></span>
+          <span class="su-n"><b>9</b></span><span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">配信終了予定</span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row" href="#">
+          <span class="su-thumb" style="--h:320" aria-hidden="true">深</span>
+          <span class="su-body"><span class="su-title">深層ダイバーズ</span><span class="su-sub"><span class="pv pv-netflix">Netflix</span><span class="tag tag-exp">9/30 配信終了</span></span></span>
+          <span class="su-bar"><i style="width:17%"></i></span>
+          <span class="su-n"><b>2</b></span><span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">全話録画済み <small>録画 = 全話</small></span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row is-done" href="#">
+          <span class="su-thumb" style="--h:265" aria-hidden="true">放</span>
+          <span class="su-body"><span class="su-title">放課後クロノスタシス</span><span class="su-sub"><span class="pv pv-amazon">Prime Video</span><span class="tag tag-done">全話録画済み</span></span></span>
+          <span class="su-bar"><i style="width:100%"></i></span>
+          <span class="su-n"><b>13</b></span><span class="su-n all">13</span>
+          <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 23:30</span></span>
+        </a>
+      </div></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">キーボードフォーカス</span>
+      <div class="su-box"><div class="su-list">
+        <a class="su-row is-focus" href="#">
+          <span class="su-thumb" style="--h:210" aria-hidden="true">海</span>
+          <span class="su-body"><span class="su-title">蒼海のリヴァイアサン</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span>第 12 話</span></span></span>
+          <span class="su-bar"><i style="width:92%"></i></span>
+          <span class="su-n"><b>11</b></span><span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+        </a>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元 <span class="cat-hint">5 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label is-key">amazon</span><span class="pv pv-amazon">Prime Video</span></div>
+    <div class="cat-item"><span class="cat-label">hulu</span><span class="pv pv-hulu">Hulu</span></div>
+    <div class="cat-item"><span class="cat-label">crunchyroll</span><span class="pv pv-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item"><span class="cat-label">abema</span><span class="pv pv-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">netflix</span><span class="pv pv-netflix">Netflix</span></div>
+  </div>
+  <div class="cat-row" style="margin-top:22px">
+    <div class="cat-item"><span class="cat-label is-key">新着エピソード</span><span class="tag tag-new">新着エピソード</span></div>
+    <div class="cat-item"><span class="cat-label">録画中</span><span class="tag tag-rec"><i></i>録画中</span></div>
+    <div class="cat-item"><span class="cat-label">失敗</span><span class="tag tag-err">失敗</span></div>
+    <div class="cat-item"><span class="cat-label">配信終了予定</span><span class="tag tag-exp">9/30 配信終了</span></div>
+    <div class="cat-item"><span class="cat-label">全話録画済み</span><span class="tag tag-done">全話録画済み</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>更新日時の表記 <span class="cat-hint">相対 + 絶対を 2 段で</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220"><span class="cat-label is-key">1 時間以内</span><span class="su-upd" style="text-align:left"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">今日</span><span class="su-upd" style="text-align:left"><span class="rel">3 時間前</span><span class="abs">9/18 11:05</span></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">昨日</span><span class="su-upd" style="text-align:left"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">それ以前</span><span class="su-upd" style="text-align:left"><span class="rel">9月12日</span><span class="abs">9/12 19:40</span></span></div>
+  </div>
+  <p class="cat-note">相対表記だけだと後から並びを追えないので、絶対時刻を小さく 2 段目に置く。いずれも等幅で右に揃える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>0 件のとき</h2>
+  <div class="cat-item cat-full">
+    <div class="su-box">
+      <div class="su-head"><h3>録画予約中の更新<span class="sub">更新が新しい順・最大 6 件</span></h3></div>
+      <div class="su-empty">
+        <p>録画予約中の作品はまだありません。一覧から作品を選んで録画予約すると、ここに更新が並びます。</p>
+        <a class="cta" href="#">作品を探す <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">3 行分のスケルトン</span></h2>
+  <div class="cat-item cat-full">
+    <div class="su-box su-skel">
+      <div class="su-cols"><span></span><span>作品</span><span class="bar">進捗</span><span class="num">録画</span><span class="num all">全話</span><span class="upd">更新</span></div>
+      <div class="su-list">
+        <div class="su-row"><span class="su-thumb"></span><span class="su-body"><span class="sk sk-t" style="display:block"></span><span class="sk sk-s" style="display:block"></span></span><span class="sk" style="height:4px"></span><span class="sk sk-n"></span><span class="sk sk-n all"></span><span class="sk sk-n"></span></div>
+        <div class="su-row"><span class="su-thumb"></span><span class="su-body"><span class="sk sk-t" style="display:block;width:48%"></span><span class="sk sk-s" style="display:block"></span></span><span class="sk" style="height:4px"></span><span class="sk sk-n"></span><span class="sk sk-n all"></span><span class="sk sk-n"></span></div>
+        <div class="su-row"><span class="su-thumb"></span><span class="su-body"><span class="sk sk-t" style="display:block;width:70%"></span><span class="sk sk-s" style="display:block"></span></span><span class="sk" style="height:4px"></span><span class="sk sk-n"></span><span class="sk sk-n all"></span><span class="sk sk-n"></span></div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">件数が決まっているリストなので、読み込み中も行の高さと列の位置を保ったまま差し替える。中身が届いても表がずれない。</p>
+</section>
+</main>
+</body>
+</html>

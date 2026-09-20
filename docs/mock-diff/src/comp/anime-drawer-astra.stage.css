@@ -1,0 +1,14 @@
+/* ---------- stage ---------- */
+.stage {
+  position: relative; overflow: hidden;
+  height: 480px; border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  display: grid; place-items: center;
+}
+.stage .behind { position: absolute; inset: 0; padding: 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-content: start; }
+.stage .behind i { border-radius: 8px; background: var(--muted); aspect-ratio: 16 / 9; display: block; }
+.stage .scrim { position: absolute; inset: 0; background: var(--overlay); backdrop-filter: blur(3px); }
+@media (max-width: 640px) {
+  .stage { height: 420px; align-items: end; }
+}

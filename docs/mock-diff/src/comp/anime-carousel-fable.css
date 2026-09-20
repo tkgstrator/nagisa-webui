@@ -1,0 +1,108 @@
+/* ---------- anime carousel (fable) ---------- */
+@keyframes pulseDot { 50% { opacity: .25; } }
+@keyframes carShimmer { 0% { background-position: -140% 0; } 100% { background-position: 240% 0; } }
+
+/* セクション見出し */
+.car-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.car-head h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.car-head .sub { color: var(--muted-foreground); font-size: 12px; font-weight: 400; }
+.car-head .n { font-size: 12px; font-weight: 600; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.car-more { color: var(--muted-foreground); font-size: 13px; display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; padding: 4px 6px; border-radius: 6px; transition: color .15s ease, background .15s ease; }
+.car-more:hover { color: var(--foreground); background: var(--muted); }
+.car-more:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.car-more svg { width: 14px; height: 14px; transition: transform .15s ease; }
+.car-more:hover svg { transform: translateX(2px); }
+
+/* レール */
+.car-wrap { position: relative; }
+.car-rail {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x proximity;
+  padding: 4px 2px 12px; margin: -4px -2px -8px; scrollbar-width: none;
+}
+.car-rail::-webkit-scrollbar { display: none; }
+.car-wrap::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 12px; width: 56px;
+  background: linear-gradient(90deg, transparent, var(--background)); pointer-events: none;
+}
+.car-wrap.is-mid::before {
+  content: ""; position: absolute; top: 0; left: 0; bottom: 12px; width: 44px; z-index: 1;
+  background: linear-gradient(270deg, transparent, var(--background)); pointer-events: none;
+}
+.car-wrap.is-mid .car-rail > :first-child { margin-left: -202px; }
+
+/* タイル */
+.car-tile { flex: 0 0 240px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.car-tile:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 8px; }
+.car-thumb {
+  position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden;
+  background: linear-gradient(150deg, oklch(0.78 0.12 var(--h)) 0%, oklch(0.46 0.16 calc(var(--h) + 40)) 100%);
+  color: oklch(0.99 0.01 var(--h) / 92%);
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
+}
+.car-thumb svg { position: absolute; right: 6%; top: -10%; width: 58%; height: auto; opacity: .26; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.car-thumb .kana { position: absolute; left: 10px; top: 5px; font-size: 26px; font-weight: 800; line-height: 1; opacity: .3; letter-spacing: -0.03em; user-select: none; }
+.car-tile:hover .car-thumb { transform: scale(1.04) translateY(-3px); box-shadow: 0 18px 34px -14px var(--overlay); }
+
+.car-thumb .prov { position: absolute; left: 8px; bottom: 8px; z-index: 1; }
+.car-thumb .flag { position: absolute; left: 8px; top: 8px; z-index: 1; }
+.car-thumb .state {
+  position: absolute; right: 8px; bottom: 8px; z-index: 1;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+  background: var(--overlay); color: var(--overlay-foreground);
+}
+.car-thumb .state i { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+.car-thumb .state.rec i { background: var(--info); animation: pulseDot 1.1s ease-in-out infinite; }
+
+.car-title { font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .15s ease; }
+.car-tile:hover .car-title { color: var(--primary); }
+.car-meta { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted-foreground); min-width: 0; }
+.car-meta .no { font-variant-numeric: tabular-nums; color: var(--foreground); font-weight: 500; flex: none; }
+.car-meta .ttl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.car-meta .time { margin-left: auto; font-variant-numeric: tabular-nums; flex: none; }
+
+/* 未放送は彩度を落として「まだ観られない」を示す */
+.car-tile.is-soon .car-thumb { filter: saturate(.45); }
+.car-tile.is-soon .car-title { color: var(--muted-foreground); }
+.car-tile.is-soon:hover .car-title { color: var(--foreground); }
+
+/* バッジ */
+.car-badge { display: inline-flex; align-items: center; height: 18px; padding: 0 6px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+.car-badge i { width: 5px; height: 5px; border-radius: 999px; background: currentColor; margin-right: 4px; animation: pulseDot 1.2s ease-in-out infinite; }
+.b-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.b-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.b-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.b-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.b-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.b-new { background: var(--info); color: var(--info-foreground); }
+.b-add { background: var(--primary); color: var(--primary-foreground); }
+.b-soon { background: var(--warning); color: var(--warning-foreground); }
+.b-exp { background: var(--destructive); color: var(--destructive-foreground); }
+
+/* 0 件 */
+.car-empty {
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 26px 12px; text-align: center; font-size: 12.5px; color: var(--muted-foreground);
+}
+.car-empty b { display: block; font-size: 13px; font-weight: 600; color: var(--foreground); margin-bottom: 3px; }
+
+/* 読み込み中 */
+.car-skel { flex: 0 0 240px; display: flex; flex-direction: column; gap: 8px; }
+.car-sk {
+  border-radius: 4px; background-color: var(--muted);
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--foreground) 9%, transparent) 50%, transparent 100%);
+  background-size: 220% 100%; animation: carShimmer 1.5s linear infinite;
+}
+.car-sk.th { aspect-ratio: 16 / 9; border-radius: 8px; }
+.car-sk.t1 { width: 78%; height: 12px; }
+.car-sk.t2 { width: 52%; height: 10px; }
+
+@media (max-width: 640px) {
+  .car-tile, .car-skel { flex: 0 0 62%; }
+  .car-head h3 { font-size: 15px; }
+  .car-wrap.is-mid .car-rail > :first-child { margin-left: -188px; }
+  .car-wrap::after { width: 32px; }
+}
+
+/* カタログで 1 枚だけ見せるとき (レールの外に置く) */
+.car-tile.is-solo, .car-skel.is-solo { flex: none; width: 100%; }

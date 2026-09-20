@@ -1,0 +1,214 @@
+TITLE: 録画予約中の更新
+---
+<header class="cat-head">
+  <h1>録画予約中の更新 <span class="cat-id">scheduled-updates</span></h1>
+  <p>ホームに置く「直近で動きのあった録画予約中の作品」。更新日時の新しい順に最大 6 件。左の 3px を状態の色に使い、行が現れるときに段差をつけて流し込む。</p>
+  <div class="cat-meta"><span>最大 6 件</span><span>更新日時の降順</span><span>左罫の色 = 状態</span><span>45ms ずつ遅らせて fadeUp</span><span>狭い画面では進捗を 2 段目に折る</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">見出し + 6 件</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="su-head">
+      <div><h3>録画予約中の更新<span class="n">6</span></h3><p class="sub">更新が新しい順・最大 6 件</p></div>
+      <a class="more" href="#">録画一覧へ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    </div>
+    <div class="su-list">
+      <a class="su-row is-rec" href="#" style="--i:0">
+        <span class="su-thumb" style="--h:30"><span class="art"></span><span class="kanji">魔</span></span>
+        <span class="su-body">
+          <span class="su-title">転生したら魔王城の家政婦でした</span>
+          <span class="su-sub"><span class="pill p-amazon">Prime Video</span><span class="pill s-rec"><i></i>録画中</span><span>第 7 話</span></span>
+        </span>
+        <span class="su-prog">
+          <span class="su-bar"><i style="width:58%"></i></span>
+          <span class="su-nums"><span class="su-stat rec"><b>7</b>録画</span><span class="su-stat"><b>12</b>全話</span></span>
+        </span>
+        <span class="su-upd"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span>
+      </a>
+      <a class="su-row is-new" href="#" style="--i:1">
+        <span class="su-thumb" style="--h:210"><span class="art"></span><span class="kanji">海</span></span>
+        <span class="su-body">
+          <span class="su-title">蒼海のリヴァイアサン</span>
+          <span class="su-sub"><span class="pill p-crunchyroll">Crunchyroll</span><span class="pill s-new">新着エピソード</span><span>第 12 話</span></span>
+        </span>
+        <span class="su-prog">
+          <span class="su-bar"><i style="width:92%"></i></span>
+          <span class="su-nums"><span class="su-stat rec"><b>11</b>録画</span><span class="su-stat"><b>12</b>全話</span></span>
+        </span>
+        <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+      </a>
+      <a class="su-row is-err" href="#" style="--i:2">
+        <span class="su-thumb" style="--h:150"><span class="art"></span><span class="kanji">珈</span></span>
+        <span class="su-body">
+          <span class="su-title">ぼっち喫茶のラテアート</span>
+          <span class="su-sub"><span class="pill p-abema">ABEMA</span><span class="pill s-err">失敗</span><span class="why">配信元エラー・再試行できます</span></span>
+        </span>
+        <span class="su-prog">
+          <span class="su-bar"><i style="width:75%"></i></span>
+          <span class="su-nums"><span class="su-stat rec"><b>9</b>録画</span><span class="su-stat"><b>12</b>全話</span></span>
+        </span>
+        <span class="su-upd"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></span>
+      </a>
+      <a class="su-row" href="#" style="--i:3">
+        <span class="su-thumb" style="--h:95"><span class="art"></span><span class="kanji">鋼</span></span>
+        <span class="su-body">
+          <span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span>
+          <span class="su-sub"><span class="pill p-hulu">Hulu</span><span>第 4 話 待機中</span></span>
+        </span>
+        <span class="su-prog">
+          <span class="su-bar"><i style="width:12%"></i></span>
+          <span class="su-nums"><span class="su-stat rec"><b>3</b>録画</span><span class="su-stat"><b>24</b>全話</span></span>
+        </span>
+        <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+      </a>
+      <a class="su-row is-done" href="#" style="--i:4">
+        <span class="su-thumb" style="--h:265"><span class="art"></span><span class="kanji">放</span></span>
+        <span class="su-body">
+          <span class="su-title">放課後クロノスタシス</span>
+          <span class="su-sub"><span class="pill p-amazon">Prime Video</span><span class="pill s-done">全話録画済み</span></span>
+        </span>
+        <span class="su-prog">
+          <span class="su-bar"><i style="width:100%"></i></span>
+          <span class="su-nums"><span class="su-stat rec"><b>13</b>録画</span><span class="su-stat"><b>13</b>全話</span></span>
+        </span>
+        <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 23:30</span></span>
+      </a>
+      <a class="su-row is-exp" href="#" style="--i:5">
+        <span class="su-thumb" style="--h:320"><span class="art"></span><span class="kanji">深</span></span>
+        <span class="su-body">
+          <span class="su-title">深層ダイバーズ</span>
+          <span class="su-sub"><span class="pill p-netflix">Netflix</span><span class="pill s-exp">9/30 配信終了</span></span>
+        </span>
+        <span class="su-prog">
+          <span class="su-bar"><i style="width:17%"></i></span>
+          <span class="su-nums"><span class="su-stat rec"><b>2</b>録画</span><span class="su-stat"><b>12</b>全話</span></span>
+        </span>
+        <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span>
+      </a>
+    </div>
+  </div>
+  <p class="cat-note">数は「7 / 12」と 1 つに詰めず、<b>録画</b>と<b>全話</b>を別の枠に分けてバーの下に置く。バーは割合だけを担当する。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>1 行の状態 <span class="cat-hint">左罫の色で見分ける</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">通常 <small>左罫は border</small></span>
+      <div class="su-list"><a class="su-row" href="#">
+        <span class="su-thumb" style="--h:95"><span class="art"></span><span class="kanji">鋼</span></span>
+        <span class="su-body"><span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span><span class="su-sub"><span class="pill p-hulu">Hulu</span><span>第 4 話 待機中</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:12%"></i></span><span class="su-nums"><span class="su-stat rec"><b>3</b>録画</span><span class="su-stat"><b>24</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">hover <small>右に 3px ずれてサムネが 1.04 倍</small></span>
+      <div class="su-list"><a class="su-row is-hover" href="#">
+        <span class="su-thumb" style="--h:95"><span class="art"></span><span class="kanji">鋼</span></span>
+        <span class="su-body"><span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span><span class="su-sub"><span class="pill p-hulu">Hulu</span><span>第 4 話 待機中</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:12%"></i></span><span class="su-nums"><span class="su-stat rec"><b>3</b>録画</span><span class="su-stat"><b>24</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">新着エピソードあり <small>左罫 primary</small></span>
+      <div class="su-list"><a class="su-row is-new" href="#">
+        <span class="su-thumb" style="--h:210"><span class="art"></span><span class="kanji">海</span></span>
+        <span class="su-body"><span class="su-title">蒼海のリヴァイアサン</span><span class="su-sub"><span class="pill p-crunchyroll">Crunchyroll</span><span class="pill s-new">新着エピソード</span><span>第 12 話</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:92%"></i></span><span class="su-nums"><span class="su-stat rec"><b>11</b>録画</span><span class="su-stat"><b>12</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画中 <small>左罫 warning・点が明滅</small></span>
+      <div class="su-list"><a class="su-row is-rec" href="#">
+        <span class="su-thumb" style="--h:30"><span class="art"></span><span class="kanji">魔</span></span>
+        <span class="su-body"><span class="su-title">転生したら魔王城の家政婦でした</span><span class="su-sub"><span class="pill p-amazon">Prime Video</span><span class="pill s-rec"><i></i>録画中</span><span>第 7 話</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:58%"></i></span><span class="su-nums"><span class="su-stat rec"><b>7</b>録画</span><span class="su-stat"><b>12</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">失敗あり <small>左罫 destructive・更新日時も赤</small></span>
+      <div class="su-list"><a class="su-row is-err" href="#">
+        <span class="su-thumb" style="--h:150"><span class="art"></span><span class="kanji">珈</span></span>
+        <span class="su-body"><span class="su-title">ぼっち喫茶のラテアート</span><span class="su-sub"><span class="pill p-abema">ABEMA</span><span class="pill s-err">失敗</span><span class="why">配信元エラー・再試行できます</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:75%"></i></span><span class="su-nums"><span class="su-stat rec"><b>9</b>録画</span><span class="su-stat"><b>12</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">配信終了予定 <small>左罫 info</small></span>
+      <div class="su-list"><a class="su-row is-exp" href="#">
+        <span class="su-thumb" style="--h:320"><span class="art"></span><span class="kanji">深</span></span>
+        <span class="su-body"><span class="su-title">深層ダイバーズ</span><span class="su-sub"><span class="pill p-netflix">Netflix</span><span class="pill s-exp">9/30 配信終了</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:17%"></i></span><span class="su-nums"><span class="su-stat rec"><b>2</b>録画</span><span class="su-stat"><b>12</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">全話録画済み <small>左罫 success・バーは満了</small></span>
+      <div class="su-list"><a class="su-row is-done" href="#">
+        <span class="su-thumb" style="--h:265"><span class="art"></span><span class="kanji">放</span></span>
+        <span class="su-body"><span class="su-title">放課後クロノスタシス</span><span class="su-sub"><span class="pill p-amazon">Prime Video</span><span class="pill s-done">全話録画済み</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:100%"></i></span><span class="su-nums"><span class="su-stat rec"><b>13</b>録画</span><span class="su-stat"><b>13</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 23:30</span></span>
+      </a></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">キーボードフォーカス</span>
+      <div class="su-list"><a class="su-row is-focus" href="#">
+        <span class="su-thumb" style="--h:210"><span class="art"></span><span class="kanji">海</span></span>
+        <span class="su-body"><span class="su-title">蒼海のリヴァイアサン</span><span class="su-sub"><span class="pill p-crunchyroll">Crunchyroll</span><span>第 12 話</span></span></span>
+        <span class="su-prog"><span class="su-bar"><i style="width:92%"></i></span><span class="su-nums"><span class="su-stat rec"><b>11</b>録画</span><span class="su-stat"><b>12</b>全話</span></span></span>
+        <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+      </a></div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元 <span class="cat-hint">5 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label is-key">amazon</span><span class="pill p-amazon">Prime Video</span></div>
+    <div class="cat-item"><span class="cat-label">hulu</span><span class="pill p-hulu">Hulu</span></div>
+    <div class="cat-item"><span class="cat-label">crunchyroll</span><span class="pill p-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item"><span class="cat-label">abema</span><span class="pill p-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">netflix</span><span class="pill p-netflix">Netflix</span></div>
+  </div>
+  <div class="cat-row" style="margin-top:22px">
+    <div class="cat-item"><span class="cat-label is-key">新着エピソード</span><span class="pill s-new">新着エピソード</span></div>
+    <div class="cat-item"><span class="cat-label">録画中</span><span class="pill s-rec"><i></i>録画中</span></div>
+    <div class="cat-item"><span class="cat-label">失敗</span><span class="pill s-err">失敗</span></div>
+    <div class="cat-item"><span class="cat-label">配信終了予定</span><span class="pill s-exp">9/30 配信終了</span></div>
+    <div class="cat-item"><span class="cat-label">全話録画済み</span><span class="pill s-done">全話録画済み</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>更新日時の表記 <span class="cat-hint">相対を上・絶対を下</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220"><span class="cat-label is-key">1 時間以内</span><span class="su-upd" style="text-align:left;width:auto"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">今日</span><span class="su-upd" style="text-align:left;width:auto"><span class="rel">3 時間前</span><span class="abs">9/18 11:05</span></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">昨日</span><span class="su-upd" style="text-align:left;width:auto"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">それ以前</span><span class="su-upd" style="text-align:left;width:auto"><span class="rel">9月12日</span><span class="abs">9/12 19:40</span></span></div>
+  </div>
+  <p class="cat-note">相対表記だけでは並びを後から追えないので、絶対時刻を小さく下段に添える。どちらも等幅。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>0 件のとき</h2>
+  <div class="cat-item cat-full">
+    <div class="su-head"><div><h3>録画予約中の更新<span class="n">0</span></h3><p class="sub">更新が新しい順・最大 6 件</p></div></div>
+    <div class="su-empty">
+      <p>録画予約中の作品はまだありません。一覧から作品を選んで録画予約すると、ここに更新が並びます。</p>
+      <a class="cta" href="#">作品を探す <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">3 行分のスケルトン</span></h2>
+  <div class="cat-item cat-full su-skel">
+    <div class="su-list">
+      <div class="su-row"><span class="su-thumb"></span><span class="su-body"><span class="sk sk-t" style="display:block"></span><span class="sk sk-s" style="display:block"></span></span><span class="su-prog"><span class="sk" style="display:block;height:5px"></span><span class="sk" style="display:block;height:9px;width:60%;margin-top:9px"></span></span><span class="su-upd"><span class="sk" style="display:block;height:10px"></span></span></div>
+      <div class="su-row"><span class="su-thumb"></span><span class="su-body"><span class="sk sk-t" style="display:block;width:44%"></span><span class="sk sk-s" style="display:block"></span></span><span class="su-prog"><span class="sk" style="display:block;height:5px"></span><span class="sk" style="display:block;height:9px;width:60%;margin-top:9px"></span></span><span class="su-upd"><span class="sk" style="display:block;height:10px"></span></span></div>
+      <div class="su-row"><span class="su-thumb"></span><span class="su-body"><span class="sk sk-t" style="display:block;width:66%"></span><span class="sk sk-s" style="display:block"></span></span><span class="su-prog"><span class="sk" style="display:block;height:5px"></span><span class="sk" style="display:block;height:9px;width:60%;margin-top:9px"></span></span><span class="su-upd"><span class="sk" style="display:block;height:10px"></span></span></div>
+    </div>
+  </div>
+  <p class="cat-note">行数が決まっているので、読み込み中も同じ高さの行を並べて中身だけを差し替える。届いた瞬間に画面が跳ねない。</p>
+</section>

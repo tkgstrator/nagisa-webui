@@ -23,5 +23,718 @@
 # 画面を追加する場合は screens 配列にエントリを足し、
 # mocks/ (デザイン原案) / variants/ (候補違い) / actual/ (実装のスナップショット) に
 # 対応するファイルを配置する。詳細は docs/mock-diff.md を参照。
+screens:
+  - id: browse
+    name: アニメ一覧
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/browse-fable.html
+          astra:
+            type: html
+            path: mocks/browse-astra.html
+        actual:
+          type: url
+          url: http://app:25173/browse
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/browse-fable.html
+          astra:
+            type: html
+            path: mocks/browse-astra.html
+        actual:
+          type: url
+          url: http://app:25173/browse
+  - id: anime-detail
+    name: アニメ詳細
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/anime-detail-fable.html
+          astra:
+            type: html
+            path: mocks/anime-detail-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/anime-detail-fable.html
+          astra:
+            type: html
+            path: mocks/anime-detail-astra.html
+  - id: recordings
+    name: 録画一覧
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/recordings-fable.html
+          astra:
+            type: html
+            path: mocks/recordings-astra.html
+        actual:
+          type: url
+          url: http://app:25173/recordings
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/recordings-fable.html
+          astra:
+            type: html
+            path: mocks/recordings-astra.html
+        actual:
+          type: url
+          url: http://app:25173/recordings
+  - id: home
+    name: トップ
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/home-fable.html
+          astra:
+            type: html
+            path: mocks/home-astra.html
+        actual:
+          type: url
+          url: http://app:25173/
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/home-fable.html
+          astra:
+            type: html
+            path: mocks/home-astra.html
+        actual:
+          type: url
+          url: http://app:25173/
 
-screens: []
+  # ---------- コンポーネント単体のモック ----------
+  # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。
+  - id: app-header
+    name: 「共通」アプリヘッダー
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/app-header-fable.html
+          astra:
+            type: html
+            path: mocks/components/app-header-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/app-header-fable.html
+          astra:
+            type: html
+            path: mocks/components/app-header-astra.html
+  - id: app-footer
+    name: 「共通」アプリフッター
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/app-footer-fable.html
+          astra:
+            type: html
+            path: mocks/components/app-footer-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/app-footer-fable.html
+          astra:
+            type: html
+            path: mocks/components/app-footer-astra.html
+  - id: pagination
+    name: 「共通」ページネーション
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/pagination-fable.html
+          astra:
+            type: html
+            path: mocks/components/pagination-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/pagination-fable.html
+          astra:
+            type: html
+            path: mocks/components/pagination-astra.html
+  - id: anime-card
+    name: 「アニメ一覧」アニメカード
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-card-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-card-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-card-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-card-astra.html
+  - id: browse-filters
+    name: 「アニメ一覧」絞り込みパネル
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/browse-filters-fable.html
+          astra:
+            type: html
+            path: mocks/components/browse-filters-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/browse-filters-fable.html
+          astra:
+            type: html
+            path: mocks/components/browse-filters-astra.html
+  - id: filter-chips
+    name: 「アニメ一覧」適用中フィルタチップ
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/filter-chips-fable.html
+          astra:
+            type: html
+            path: mocks/components/filter-chips-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/filter-chips-fable.html
+          astra:
+            type: html
+            path: mocks/components/filter-chips-astra.html
+  - id: anime-drawer
+    name: 「アニメ一覧」作品概要ドロワー
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-drawer-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-drawer-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-drawer-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-drawer-astra.html
+  - id: anime-hero
+    name: 「アニメ詳細」作品ヒーロー
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-hero-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-hero-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-hero-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-hero-astra.html
+  - id: episode-list
+    name: 「アニメ詳細」エピソード一覧
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/episode-list-fable.html
+          astra:
+            type: html
+            path: mocks/components/episode-list-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/episode-list-fable.html
+          astra:
+            type: html
+            path: mocks/components/episode-list-astra.html
+  - id: related-providers
+    name: 「アニメ詳細」他プロバイダ一覧
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/related-providers-fable.html
+          astra:
+            type: html
+            path: mocks/components/related-providers-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/related-providers-fable.html
+          astra:
+            type: html
+            path: mocks/components/related-providers-astra.html
+  - id: recording-row
+    name: 「録画一覧」録画一覧の行
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/recording-row-fable.html
+          astra:
+            type: html
+            path: mocks/components/recording-row-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/recording-row-fable.html
+          astra:
+            type: html
+            path: mocks/components/recording-row-astra.html
+  - id: recordings-toolbar
+    name: 「録画一覧」録画一覧ツールバー
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/recordings-toolbar-fable.html
+          astra:
+            type: html
+            path: mocks/components/recordings-toolbar-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/recordings-toolbar-fable.html
+          astra:
+            type: html
+            path: mocks/components/recordings-toolbar-astra.html
+  - id: empty-state
+    name: 「録画一覧」空状態
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/empty-state-fable.html
+          astra:
+            type: html
+            path: mocks/components/empty-state-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/empty-state-fable.html
+          astra:
+            type: html
+            path: mocks/components/empty-state-astra.html
+  - id: summary-stats
+    name: 「トップ」録画状況サマリ
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/summary-stats-fable.html
+          astra:
+            type: html
+            path: mocks/components/summary-stats-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/summary-stats-fable.html
+          astra:
+            type: html
+            path: mocks/components/summary-stats-astra.html
+  - id: anime-carousel
+    name: 「トップ」作品カルーセル
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-carousel-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-carousel-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/anime-carousel-fable.html
+          astra:
+            type: html
+            path: mocks/components/anime-carousel-astra.html
+  - id: scheduled-updates
+    name: 「トップ」直近更新リスト
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/scheduled-updates-fable.html
+          astra:
+            type: html
+            path: mocks/components/scheduled-updates-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/scheduled-updates-fable.html
+          astra:
+            type: html
+            path: mocks/components/scheduled-updates-astra.html
+  - id: home-tabs
+    name: 「トップ」ホームタブ
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/home-tabs-fable.html
+          astra:
+            type: html
+            path: mocks/components/home-tabs-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/home-tabs-fable.html
+          astra:
+            type: html
+            path: mocks/components/home-tabs-astra.html
