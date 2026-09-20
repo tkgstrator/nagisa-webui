@@ -249,7 +249,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">5 タブ・先頭を選択中</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本">
     <div class="segs-wrap"><div class="segs" role="tablist" aria-label="カタログの絞り込み">
       <button class="seg" role="tab" aria-selected="true" style="--i:0">今期アニメ<span class="c">48</span></button>
       <button class="seg" role="tab" aria-selected="false" style="--i:1">新着追加<span class="c">12</span></button>
@@ -264,25 +264,25 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>タブ 1 個の状態</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label is-key">通常</span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / 通常"><span class="cat-label is-key">通常</span>
       <div class="segs"><button class="seg" aria-selected="false">新着追加<span class="c">12</span></button></div>
     </div>
-    <div class="cat-item"><span class="cat-label">hover <small>下地が背景色に抜ける</small></span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / hover"><span class="cat-label">hover <small>下地が背景色に抜ける</small></span>
       <div class="segs"><button class="seg is-hover" aria-selected="false">新着追加<span class="c">12</span></button></div>
     </div>
-    <div class="cat-item"><span class="cat-label">選択中</span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / 選択中"><span class="cat-label">選択中</span>
       <div class="segs"><button class="seg" aria-selected="true">新着追加<span class="c">12</span></button></div>
     </div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / フォーカス"><span class="cat-label">フォーカス</span>
       <div class="segs"><button class="seg is-focus" aria-selected="false">新着追加<span class="c">12</span></button></div>
     </div>
-    <div class="cat-item"><span class="cat-label">件数 0 <small>薄く出して押せる</small></span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / 件数 0"><span class="cat-label">件数 0 <small>薄く出して押せる</small></span>
       <div class="segs"><button class="seg" aria-selected="false">配信終了予定<span class="c is-zero">0</span></button></div>
     </div>
-    <div class="cat-item"><span class="cat-label">件数 3 桁</span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / 件数 3 桁"><span class="cat-label">件数 3 桁</span>
       <div class="segs"><button class="seg" aria-selected="false">今期アニメ<span class="c">248</span></button></div>
     </div>
-    <div class="cat-item"><span class="cat-label">無効 <small>取得に失敗したとき</small></span>
+    <div class="cat-item" data-story="タブ 1 個の状態 / 無効"><span class="cat-label">無効 <small>取得に失敗したとき</small></span>
       <div class="segs"><button class="seg" aria-selected="false" disabled>もうすぐ配信<span class="c">—</span></button></div>
     </div>
   </div>
@@ -291,7 +291,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>件数バッジの有無</h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">件数あり <small>母数が決まっている 4 タブ</small></span>
+    <div class="cat-item cat-full is-key" data-story="件数バッジの有無 / 件数あり"><span class="cat-label">件数あり <small>母数が決まっている 4 タブ</small></span>
       <div class="segs">
         <button class="seg" aria-selected="true">今期アニメ<span class="c">48</span></button>
         <button class="seg" aria-selected="false">新着追加<span class="c">12</span></button>
@@ -299,13 +299,13 @@ svg { display: block; flex: none; }
         <button class="seg" aria-selected="false">配信終了予定<span class="c">2</span></button>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">件数なし <small>「配信元から探す」は入口なので数を持たない</small></span>
+    <div class="cat-item cat-full" data-story="件数バッジの有無 / 件数なし"><span class="cat-label">件数なし <small>「配信元から探す」は入口なので数を持たない</small></span>
       <div class="segs">
         <button class="seg" aria-selected="true">配信元から探す</button>
         <button class="seg" aria-selected="false">今期アニメ<span class="c">48</span></button>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">件数を読み込み中 <small>丸の幅を保ったまま — を置く</small></span>
+    <div class="cat-item cat-full" data-story="件数バッジの有無 / 件数を読み込み中"><span class="cat-label">件数を読み込み中 <small>丸の幅を保ったまま — を置く</small></span>
       <div class="segs">
         <button class="seg" aria-selected="true">今期アニメ<span class="c is-zero">—</span></button>
         <button class="seg" aria-selected="false">新着追加<span class="c is-zero">—</span></button>
@@ -318,7 +318,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>入り切らないとき <span class="cat-hint">横スクロールか折り返し</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w320"><span class="cat-label is-key">横スクロール <small>帯の高さを保つ既定の形</small></span>
+    <div class="cat-item cat-w320" data-story="入り切らないとき / 横スクロール"><span class="cat-label is-key">横スクロール <small>帯の高さを保つ既定の形</small></span>
       <div class="segs-wrap is-over"><div class="segs" role="tablist">
         <button class="seg" role="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
         <button class="seg" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
@@ -327,7 +327,7 @@ svg { display: block; flex: none; }
         <button class="seg" role="tab" aria-selected="false">配信元から探す</button>
       </div></div>
     </div>
-    <div class="cat-item cat-w320"><span class="cat-label">折り返し <small>下に伸ばせる場所でだけ使う</small></span>
+    <div class="cat-item cat-w320" data-story="入り切らないとき / 折り返し"><span class="cat-label">折り返し <small>下に伸ばせる場所でだけ使う</small></span>
       <div class="segs is-wrap" role="tablist">
         <button class="seg" role="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
         <button class="seg" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
@@ -342,7 +342,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>切り替えた直後 <span class="cat-hint">パネルだけが差し替わる</span></h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="切り替えた直後">
     <div class="segs-wrap"><div class="segs" role="tablist">
       <button class="seg" role="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
       <button class="seg" role="tab" aria-selected="true">新着追加<span class="c">12</span></button>
@@ -365,7 +365,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>中身が 0 件のパネル</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="中身が 0 件のパネル">
     <div class="segs-wrap"><div class="segs" role="tablist">
       <button class="seg" role="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
       <button class="seg" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>

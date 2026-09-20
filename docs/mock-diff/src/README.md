@@ -5,6 +5,7 @@
 ```
 src/build.ts                       ビルド (page / comp の 2 モード)
 src/check.ts                       検証 (はみ出し・衝突)
+src/story.ts                       カタログの各状態に data-story を打つ (comp のみ)
 src/parts/tokens.css               OKLCH デザイントークン (両案共通)
 src/parts/base.css                 リセットと最小限の共通定義 (両案共通)
 src/parts/harness.css              コンポーネントカタログの枠 (.cat*) — ページでは使わない

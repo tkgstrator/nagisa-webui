@@ -184,7 +184,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">2 階層</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本 / アニメ詳細 (一覧 → 詳細)">
     <span class="cat-label">アニメ詳細 (一覧 → 詳細)</span>
     <nav class="crumb" aria-label="パス">
       <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
@@ -197,13 +197,13 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>階層数 <span class="cat-hint">1〜3 階層</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full">
+    <div class="cat-item cat-full" data-story="階層数 / 1 階層（一覧のみ、現在地無し）">
       <span class="cat-label">1 階層（一覧のみ、現在地無し）</span>
       <nav class="crumb" aria-label="パス">
         <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
       </nav>
     </div>
-    <div class="cat-item cat-full">
+    <div class="cat-item cat-full" data-story="階層数 / 3 階層（カテゴリを挟む）">
       <span class="cat-label">3 階層（カテゴリを挟む）</span>
       <nav class="crumb" aria-label="パス">
         <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
@@ -219,7 +219,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>長いタイトル <span class="cat-hint">省略記号は付けない</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w320">
+    <div class="cat-item cat-w320" data-story="長いタイトル / 320px 幅">
       <span class="cat-label">320px 幅</span>
       <div class="cat-frame is-plain">
         <nav class="crumb" aria-label="パス">
@@ -236,8 +236,8 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>リンクの状態</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label">通常</span><nav class="crumb"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
-    <div class="cat-item is-key"><span class="cat-label">hover</span><nav class="crumb"><a class="is-hover" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item" data-story="リンクの状態 / 通常"><span class="cat-label">通常</span><nav class="crumb"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item is-key" data-story="リンクの状態 / hover"><span class="cat-label">hover</span><nav class="crumb"><a class="is-hover" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
   </div>
 </section>
 </main>

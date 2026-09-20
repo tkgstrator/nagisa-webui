@@ -242,7 +242,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">4 列 · 状態が混在した 8 話</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本">
     <div class="ep-grid">
       <div class="ep-card is-rec">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="free">無料</span><span class="n">1</span></div>
@@ -292,32 +292,32 @@ svg { display: block; flex: none; }
   <h2>タイルの状態</h2>
   <div class="cat-item cat-full">
     <div class="ep-grid is-2">
-      <div><span class="cat-label">未録画</span><div class="ep-card">
+      <div data-story="タイルの状態 / 未録画"><span class="cat-label">未録画</span><div class="ep-card">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="n">3</span></div>
       <div class="ep-body"><div class="ep-num">第3話</div><div class="ep-title">雨の日の交信記録</div><div class="ep-sub">04/19 · 24分</div></div>
       <button class="ep-toggle" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
     </div></div>
-      <div><span class="cat-label">hover</span><div class="ep-card is-hover">
+      <div data-story="タイルの状態 / hover"><span class="cat-label">hover</span><div class="ep-card is-hover">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="n">3</span></div>
       <div class="ep-body"><div class="ep-num">第3話</div><div class="ep-title">雨の日の交信記録</div><div class="ep-sub">04/19 · 24分</div></div>
       <button class="ep-toggle" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
     </div></div>
-      <div><span class="cat-label">録画済み</span><div class="ep-card is-rec">
+      <div data-story="タイルの状態 / 録画済み"><span class="cat-label">録画済み</span><div class="ep-card is-rec">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="n">3</span></div>
       <div class="ep-body"><div class="ep-num">第3話</div><div class="ep-title">雨の日の交信記録</div><div class="ep-sub">04/19 · 録画済み</div></div>
       <button class="ep-toggle st-rec" type="button" aria-label="取り消す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></button>
     </div></div>
-      <div><span class="cat-label">送信中</span><div class="ep-card is-pend">
+      <div data-story="タイルの状態 / 送信中"><span class="cat-label">送信中</span><div class="ep-card is-pend">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="n">3</span></div>
       <div class="ep-body"><div class="ep-num">第3話</div><div class="ep-title">雨の日の交信記録</div><div class="ep-sub">Nagisa へ送信中</div></div>
       <button class="ep-toggle st-pend" type="button" aria-label="送信中"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg></button>
     </div></div>
-      <div><span class="cat-label">失敗</span><div class="ep-card is-fail">
+      <div data-story="タイルの状態 / 失敗"><span class="cat-label">失敗</span><div class="ep-card is-fail">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="n">3</span></div>
       <div class="ep-body"><div class="ep-num">第3話</div><div class="ep-title">雨の日の交信記録</div><div class="ep-sub is-fail">鍵の取得でタイムアウト</div></div>
       <button class="ep-toggle st-fail" type="button" aria-label="再試行"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v7M12 17v.4"/></svg></button>
     </div></div>
-      <div><span class="cat-label">配信前</span><div class="ep-card is-future">
+      <div data-story="タイルの状態 / 配信前"><span class="cat-label">配信前</span><div class="ep-card is-future">
       <div class="ep-thumb" style="--h: 265"><span class="art"></span><span class="n">3</span></div>
       <div class="ep-body"><div class="ep-num">第3話</div><div class="ep-title">雨の日の交信記録</div><div class="ep-sub">05/17 配信予定</div></div>
       <button class="ep-toggle" type="button" aria-label="配信前" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
@@ -330,14 +330,14 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>録画トグル</h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label is-key">未録画</span><button class="ep-toggle" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">hover</span><button class="ep-toggle is-hover" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">録画済み</span><button class="ep-toggle st-rec" type="button" aria-label="取り消す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">録画済み hover</span><button class="ep-toggle st-rec is-hover" type="button" aria-label="取り消す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">送信中</span><button class="ep-toggle st-pend" type="button" aria-label="送信中"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">失敗</span><button class="ep-toggle st-fail" type="button" aria-label="再試行"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v7M12 17v.4"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">配信前</span><button class="ep-toggle" type="button" aria-label="配信前" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><button class="ep-toggle is-focus" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / 未録画"><span class="cat-label is-key">未録画</span><button class="ep-toggle" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / hover"><span class="cat-label">hover</span><button class="ep-toggle is-hover" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / 録画済み"><span class="cat-label">録画済み</span><button class="ep-toggle st-rec" type="button" aria-label="取り消す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / 録画済み hover"><span class="cat-label">録画済み hover</span><button class="ep-toggle st-rec is-hover" type="button" aria-label="取り消す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / 送信中"><span class="cat-label">送信中</span><button class="ep-toggle st-pend" type="button" aria-label="送信中"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / 失敗"><span class="cat-label">失敗</span><button class="ep-toggle st-fail" type="button" aria-label="再試行"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v7M12 17v.4"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / 配信前"><span class="cat-label">配信前</span><button class="ep-toggle" type="button" aria-label="配信前" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button></div>
+    <div class="cat-item" data-story="録画トグル / フォーカス"><span class="cat-label">フォーカス</span><button class="ep-toggle is-focus" type="button" aria-label="録画する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
   </div>
   <p class="cat-note">丸ボタンだけでは意味が伝わらないので、下の凡例と組にして必ず同じ画面に出す。</p>
 </section>
@@ -345,7 +345,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>凡例と進捗</h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full"><span class="cat-label is-key">見出しと凡例</span>
+    <div class="cat-item cat-full" data-story="凡例と進捗 / 見出しと凡例"><span class="cat-label is-key">見出しと凡例</span>
       <div class="sec-head">
         <h3>エピソード</h3>
         <div class="legend">
@@ -356,13 +356,13 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">1 本帯</span>
+    <div class="cat-item cat-full" data-story="凡例と進捗 / 1 本帯"><span class="cat-label">1 本帯</span>
       <div class="progress-row">
         <span class="strip"><i class="rec" style="width:33%"></i><i class="pend" style="width:4%"></i><i class="fail" style="width:4%"></i></span>
         <span class="cnt">8 <small>/ 24 話</small></span>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">表示の切り替え</span>
+    <div class="cat-item cat-full" data-story="凡例と進捗 / 表示の切り替え"><span class="cat-label">表示の切り替え</span>
       <div class="seg"><button aria-pressed="true" type="button">すべて</button><button type="button">未録画</button><button class="is-hover" type="button">録画済み</button></div>
     </div>
   </div>
@@ -372,12 +372,12 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>サムネイル <span class="cat-hint">16:9 · 話数を重ねる</span></h2>
   <div class="cat-row">
-    <div class="cat-item"><span class="cat-label is-key">通常</span><div class="ep-thumb" style="--h: 265; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
-    <div class="cat-item"><span class="cat-label">無料話</span><div class="ep-thumb" style="--h: 152; height: 68px"><span class="art"></span><span class="free">無料</span><span class="n">3</span></div></div>
-    <div class="cat-item"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 40; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
-    <div class="cat-item"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 130; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
-    <div class="cat-item"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 300; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
-    <div class="cat-item"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 210; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
+    <div class="cat-item" data-story="サムネイル / 通常"><span class="cat-label is-key">通常</span><div class="ep-thumb" style="--h: 265; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
+    <div class="cat-item" data-story="サムネイル / 無料話"><span class="cat-label">無料話</span><div class="ep-thumb" style="--h: 152; height: 68px"><span class="art"></span><span class="free">無料</span><span class="n">3</span></div></div>
+    <div class="cat-item" data-story="サムネイル / 別の作品"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 40; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
+    <div class="cat-item" data-story="サムネイル / 別の作品 2"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 130; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
+    <div class="cat-item" data-story="サムネイル / 別の作品 3"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 300; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
+    <div class="cat-item" data-story="サムネイル / 別の作品 4"><span class="cat-label">別の作品</span><div class="ep-thumb" style="--h: 210; height: 68px"><span class="art"></span><span class="n">3</span></div></div>
   </div>
 </section>
 </main>

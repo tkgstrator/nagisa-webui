@@ -273,7 +273,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">2 列グリッドに並べる</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本">
     <div class="rgrid">
       <div class="rcard s-busy" style="--h:265">
         <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
@@ -343,7 +343,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>タイルの状態 <span class="cat-hint">左端 3px のアクセント</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">未録画 <small>border</small></span>
+    <div class="cat-item cat-full is-key" data-story="タイルの状態 / 未録画"><span class="cat-label">未録画 <small>border</small></span>
       <div class="rdemo">
       <div class="rcard" style="--h:290">
         <input type="checkbox" class="cbx" aria-label="銀河鉄道の車掌さん を選択">
@@ -357,7 +357,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">録画中 <small>info</small></span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / 録画中"><span class="cat-label">録画中 <small>info</small></span>
       <div class="rdemo">
       <div class="rcard s-busy" style="--h:265">
         <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
@@ -371,7 +371,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">録画済み <small>success</small></span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / 録画済み"><span class="cat-label">録画済み <small>success</small></span>
       <div class="rdemo">
       <div class="rcard s-ok" style="--h:100">
         <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
@@ -385,7 +385,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">失敗 <small>destructive</small></span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / 失敗"><span class="cat-label">失敗 <small>destructive</small></span>
       <div class="rdemo">
       <div class="rcard s-err" style="--h:330">
         <input type="checkbox" class="cbx" aria-label="魔法少女は二度目の朝を迎える を選択">
@@ -399,7 +399,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">配信終了予定 <small>warning</small></span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / 配信終了予定"><span class="cat-label">配信終了予定 <small>warning</small></span>
       <div class="rdemo">
       <div class="rcard s-warn" style="--h:180">
         <input type="checkbox" class="cbx" aria-label="海辺のカフェテラス を選択">
@@ -413,7 +413,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">hover <small>2px 右にずれる</small></span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / hover"><span class="cat-label">hover <small>2px 右にずれる</small></span>
       <div class="rdemo">
       <div class="rcard s-busy is-hover" style="--h:265">
         <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
@@ -427,7 +427,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">選択中</span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / 選択中"><span class="cat-label">選択中</span>
       <div class="rdemo">
       <div class="rcard s-err is-sel" style="--h:330">
         <input type="checkbox" class="cbx" checked aria-label="魔法少女は二度目の朝を迎える を選択">
@@ -441,7 +441,7 @@ svg { display: block; flex: none; }
       </div>
       </div>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">フォーカス</span>
+    <div class="cat-item cat-full" data-story="タイルの状態 / フォーカス"><span class="cat-label">フォーカス</span>
       <div class="rdemo">
       <div class="rcard s-ok is-focus" style="--h:100">
         <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
@@ -462,22 +462,22 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>プロバイダ</h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">amazon</span><span class="pbadge p-amazon">Prime Video</span></div>
-    <div class="cat-item"><span class="cat-label">hulu</span><span class="pbadge p-hulu">Hulu</span></div>
-    <div class="cat-item"><span class="cat-label">crunchyroll</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div>
-    <div class="cat-item"><span class="cat-label">abema</span><span class="pbadge p-abema">ABEMA</span></div>
-    <div class="cat-item"><span class="cat-label">netflix</span><span class="pbadge p-netflix">Netflix</span></div>
+    <div class="cat-item is-key" data-story="プロバイダ / amazon"><span class="cat-label">amazon</span><span class="pbadge p-amazon">Prime Video</span></div>
+    <div class="cat-item" data-story="プロバイダ / hulu"><span class="cat-label">hulu</span><span class="pbadge p-hulu">Hulu</span></div>
+    <div class="cat-item" data-story="プロバイダ / crunchyroll"><span class="cat-label">crunchyroll</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item" data-story="プロバイダ / abema"><span class="cat-label">abema</span><span class="pbadge p-abema">ABEMA</span></div>
+    <div class="cat-item" data-story="プロバイダ / netflix"><span class="cat-label">netflix</span><span class="pbadge p-netflix">Netflix</span></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>放送ステータス <span class="cat-hint">プロバイダとは形を変えて見分ける</span></h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">releasing</span><span class="sbadge st-releasing">放送中</span></div>
-    <div class="cat-item"><span class="cat-label">finished</span><span class="sbadge st-finished">完結</span></div>
-    <div class="cat-item"><span class="cat-label">not-yet</span><span class="sbadge st-not-yet">未放送</span></div>
-    <div class="cat-item"><span class="cat-label">cancelled</span><span class="sbadge st-cancelled">中止</span></div>
-    <div class="cat-item"><span class="cat-label">hiatus</span><span class="sbadge st-hiatus">休止</span></div>
+    <div class="cat-item is-key" data-story="放送ステータス / releasing"><span class="cat-label">releasing</span><span class="sbadge st-releasing">放送中</span></div>
+    <div class="cat-item" data-story="放送ステータス / finished"><span class="cat-label">finished</span><span class="sbadge st-finished">完結</span></div>
+    <div class="cat-item" data-story="放送ステータス / not-yet"><span class="cat-label">not-yet</span><span class="sbadge st-not-yet">未放送</span></div>
+    <div class="cat-item" data-story="放送ステータス / cancelled"><span class="cat-label">cancelled</span><span class="sbadge st-cancelled">中止</span></div>
+    <div class="cat-item" data-story="放送ステータス / hiatus"><span class="cat-label">hiatus</span><span class="sbadge st-hiatus">休止</span></div>
   </div>
   <p class="cat-note">プロバイダは角丸 4px の四角、放送ステータスは丸いピル。色を落としても形で区別できる。</p>
 </section>
@@ -485,17 +485,17 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>進捗の帯 <span class="cat-hint">5px の積み上げ 1 本</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w220 is-key"><span class="cat-label">全話完了 <small>24 / 24話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div></div>
-    <div class="cat-item cat-w220"><span class="cat-label">途中 <small>8 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div></div>
-    <div class="cat-item cat-w220"><span class="cat-label">失敗混在 <small>10 / 13話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div></div>
-    <div class="cat-item cat-w220"><span class="cat-label">未着手 <small>0 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="none" style="flex:12"></span></div></div></div>
+    <div class="cat-item cat-w220 is-key" data-story="進捗の帯 / 全話完了"><span class="cat-label">全話完了 <small>24 / 24話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div></div>
+    <div class="cat-item cat-w220" data-story="進捗の帯 / 途中"><span class="cat-label">途中 <small>8 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div></div>
+    <div class="cat-item cat-w220" data-story="進捗の帯 / 失敗混在"><span class="cat-label">失敗混在 <small>10 / 13話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div></div>
+    <div class="cat-item cat-w220" data-story="進捗の帯 / 未着手"><span class="cat-label">未着手 <small>0 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="none" style="flex:12"></span></div></div></div>
   </div>
   <p class="cat-note">1 話ずつ刻まず、録画済み・録画中・失敗・未録画の 4 区画を積み上げる。どの話が欠けたかは行の注記で伝える。</p>
 </section>
 
 <section class="cat-sec">
   <h2>凡例</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="凡例">
     <div class="rlegend">
       <span><i class="rec"></i>録画済み</span>
       <span><i class="busy"></i>録画中</span>

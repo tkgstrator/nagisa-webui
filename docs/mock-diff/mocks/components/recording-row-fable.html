@@ -321,7 +321,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 
 <section class="cat-sec">
   <h2>基本 <span class="cat-hint">見出し行 + 代表的な 5 行</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="基本">
     <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <thead>
           <tr>
@@ -416,7 +416,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 <section class="cat-sec">
   <h2>行の状態 <span class="cat-hint">左端 3px のアクセントで区別する</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">未録画 <small>border</small></span>
+    <div class="cat-item cat-full is-key" data-story="行の状態 / 未録画"><span class="cat-label">未録画 <small>border</small></span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row idle">
@@ -436,7 +436,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">録画中 <small>info</small></span>
+    <div class="cat-item cat-full" data-story="行の状態 / 録画中"><span class="cat-label">録画中 <small>info</small></span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row busy">
@@ -456,7 +456,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">録画済み <small>success</small></span>
+    <div class="cat-item cat-full" data-story="行の状態 / 録画済み"><span class="cat-label">録画済み <small>success</small></span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row done">
@@ -476,7 +476,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">失敗 <small>destructive</small></span>
+    <div class="cat-item cat-full" data-story="行の状態 / 失敗"><span class="cat-label">失敗 <small>destructive</small></span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row bad">
@@ -496,7 +496,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">配信終了予定 <small>warning</small></span>
+    <div class="cat-item cat-full" data-story="行の状態 / 配信終了予定"><span class="cat-label">配信終了予定 <small>warning</small></span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row warn">
@@ -516,7 +516,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">hover</span>
+    <div class="cat-item cat-full" data-story="行の状態 / hover"><span class="cat-label">hover</span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row busy is-hover">
@@ -536,7 +536,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">選択中</span>
+    <div class="cat-item cat-full" data-story="行の状態 / 選択中"><span class="cat-label">選択中</span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row bad sel">
@@ -556,7 +556,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
         </tbody>
       </table>
     </div>
-    <div class="cat-item cat-full"><span class="cat-label">フォーカス</span>
+    <div class="cat-item cat-full" data-story="行の状態 / フォーカス"><span class="cat-label">フォーカス</span>
       <table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
         <tbody>
             <tr class="row done is-focus">
@@ -583,41 +583,41 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 <section class="cat-sec">
   <h2>プロバイダ</h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">amazon</span><span class="badge amazon">Prime Video</span></div>
-    <div class="cat-item"><span class="cat-label">hulu</span><span class="badge hulu">Hulu</span></div>
-    <div class="cat-item"><span class="cat-label">crunchyroll</span><span class="badge crunchyroll">Crunchyroll</span></div>
-    <div class="cat-item"><span class="cat-label">abema</span><span class="badge abema">ABEMA</span></div>
-    <div class="cat-item"><span class="cat-label">netflix</span><span class="badge netflix">Netflix</span></div>
+    <div class="cat-item is-key" data-story="プロバイダ / amazon"><span class="cat-label">amazon</span><span class="badge amazon">Prime Video</span></div>
+    <div class="cat-item" data-story="プロバイダ / hulu"><span class="cat-label">hulu</span><span class="badge hulu">Hulu</span></div>
+    <div class="cat-item" data-story="プロバイダ / crunchyroll"><span class="cat-label">crunchyroll</span><span class="badge crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item" data-story="プロバイダ / abema"><span class="cat-label">abema</span><span class="badge abema">ABEMA</span></div>
+    <div class="cat-item" data-story="プロバイダ / netflix"><span class="cat-label">netflix</span><span class="badge netflix">Netflix</span></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>放送ステータス</h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">releasing</span><span class="badge releasing">放送中</span></div>
-    <div class="cat-item"><span class="cat-label">finished</span><span class="badge finished">完結</span></div>
-    <div class="cat-item"><span class="cat-label">not-yet</span><span class="badge not-yet">未放送</span></div>
-    <div class="cat-item"><span class="cat-label">cancelled</span><span class="badge cancelled">中止</span></div>
-    <div class="cat-item"><span class="cat-label">hiatus</span><span class="badge hiatus">休止</span></div>
-    <div class="cat-item"><span class="cat-label">配信終了の注記</span><span class="badge expiring">9/30 配信終了</span></div>
+    <div class="cat-item is-key" data-story="放送ステータス / releasing"><span class="cat-label">releasing</span><span class="badge releasing">放送中</span></div>
+    <div class="cat-item" data-story="放送ステータス / finished"><span class="cat-label">finished</span><span class="badge finished">完結</span></div>
+    <div class="cat-item" data-story="放送ステータス / not-yet"><span class="cat-label">not-yet</span><span class="badge not-yet">未放送</span></div>
+    <div class="cat-item" data-story="放送ステータス / cancelled"><span class="cat-label">cancelled</span><span class="badge cancelled">中止</span></div>
+    <div class="cat-item" data-story="放送ステータス / hiatus"><span class="cat-label">hiatus</span><span class="badge hiatus">休止</span></div>
+    <div class="cat-item" data-story="放送ステータス / 配信終了の注記"><span class="cat-label">配信終了の注記</span><span class="badge expiring">9/30 配信終了</span></div>
   </div>
 </section>
 
 <section class="cat-sec">
   <h2>進捗の帯 <span class="cat-hint">1 マス = 1 話</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w260 is-key"><span class="cat-label">全話完了 <small>24話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct full">完了</span></div></div>
-    <div class="cat-item cat-w260"><span class="cat-label">途中 <small>8 / 12話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="a"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">67%</span></div></div>
-    <div class="cat-item cat-w260"><span class="cat-label">失敗混在 <small>22 / 24話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct">92%</span></div></div>
-    <div class="cat-item cat-w260"><span class="cat-label">未着手 <small>0 / 12話</small></span><div class="strip"><div class="eps"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">0%</span></div></div>
-    <div class="cat-item cat-w260"><span class="cat-label">最終話だけ失敗 <small>11 / 12話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i></div><span class="pct">92%</span></div></div>
+    <div class="cat-item cat-w260 is-key" data-story="進捗の帯 / 全話完了"><span class="cat-label">全話完了 <small>24話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct full">完了</span></div></div>
+    <div class="cat-item cat-w260" data-story="進捗の帯 / 途中"><span class="cat-label">途中 <small>8 / 12話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="a"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">67%</span></div></div>
+    <div class="cat-item cat-w260" data-story="進捗の帯 / 失敗混在"><span class="cat-label">失敗混在 <small>22 / 24話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct">92%</span></div></div>
+    <div class="cat-item cat-w260" data-story="進捗の帯 / 未着手"><span class="cat-label">未着手 <small>0 / 12話</small></span><div class="strip"><div class="eps"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">0%</span></div></div>
+    <div class="cat-item cat-w260" data-story="進捗の帯 / 最終話だけ失敗"><span class="cat-label">最終話だけ失敗 <small>11 / 12話</small></span><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i></div><span class="pct">92%</span></div></div>
   </div>
   <p class="cat-note">帯は作品ごとに話数が変わるため <code>flex: 1</code> で等分する。24話でも 1 マス 2px を下回らない。</p>
 </section>
 
 <section class="cat-sec">
   <h2>凡例</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="凡例">
     <div class="legend">
       <span><i class="r"></i>録画済み</span>
       <span><i class="a"></i>録画中</span>

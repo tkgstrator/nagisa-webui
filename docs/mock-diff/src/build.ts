@@ -17,6 +17,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { mark } from './story'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const MOCKS = join(ROOT, '..', 'mocks')
@@ -136,7 +137,7 @@ function buildComp(cid: string, author: string): [string, string] {
     `${meta.TITLE} — ${author} 案 | Nagisa WebUI コンポーネントモック`,
     css.join('\n'),
     '',
-    `<main class="cat">\n${body}\n</main>`,
+    `<main class="cat">\n${mark(body)}\n</main>`,
   )
   const dst = join(MOCKS, 'components', `${cid}-${author}.html`)
   mkdirSync(dirname(dst), { recursive: true })
