@@ -19,9 +19,12 @@ services:
   # デザイン候補の選定(Deciding)・実装(Building)・ピクセル差分検証(Checking)を行う
   # mock-diff-viewer sidecar。詳細は docs/mock-diff.md を参照。
   #
-  # ホストのブラウザからは http://localhost:12355 で直接開く。vite の server.proxy 経由で
+  # ホストのブラウザからは http://localhost:14756 で直接開く。vite の server.proxy 経由で
   # 覗く構成は成立しない。viewer の client が /api/screens などルート相対 URL を出すため、
   # アプリ側 Worker の /api ルートに先に捕まって Hono が 404 を返し、UI が空になる。
+  #
+  # ポート番号は「vite の port (14755) + 1」。mock-diff sidecar を持つ repo を複数同時に
+  # 起動するため固定値だと衝突する。vite の port は repo ごとに固有なので +1 も固有になる。
   # Claude Code (mock-diff MCP プラグイン) は devcontainer.json の
   # containerEnv.MOCK_DIFF_URL=http://mock-diff:3000 を使い、compose ネットワーク内の
   # サービス名 (mock-diff) とコンテナ内部の固定ポート (3000) に直接名前解決して接続する。
@@ -29,7 +32,7 @@ services:
   mock-diff:
     image: ghcr.io/qtmleap/mock-diff-viewer:latest
     ports:
-      - "12355:3000"
+      - "14756:3000"
     volumes:
       - ../docs/mock-diff:/workspace
       - mock_diff_data:/data

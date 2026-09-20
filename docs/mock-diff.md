@@ -30,7 +30,11 @@ docker compose -f .devcontainer/compose.yaml up -d mock-diff
 docker compose -f .devcontainer/compose.yaml config
 ```
 
-起動後、`http://localhost:12355` を開くと viewer の UI が見られる。
+起動後、`http://localhost:14756` を開くと viewer の UI が見られる。
+
+ホスト公開ポートは「vite の port (`14755`) + 1」で決めている。mock-diff sidecar を持つ repo を複数同時に起動するため、`12355` のような固定値だと repo 間で衝突する。vite の port は repo ごとに固有なので、+1 も自動的に固有になる。
+
+なお vite の `server.proxy` でアプリ側のポートに相乗りさせる構成は成立しない。viewer の client が `/api/screens` などをルート相対 URL で要求するため、アプリ側 Worker の `/api` ルートに先に捕まって Hono が `404 Not Found` を返し、HTML と assets だけ通って UI が空になる。
 
 ## 画面(screen)の追加方法
 
@@ -87,7 +91,7 @@ mock-diff プラグインをプロジェクトスコープでインストール�
 claude plugin install mock-diff@qtmleap-plugins --scope project -y
 ```
 
-デフォルトでは `MOCK_DIFF_URL=http://127.0.0.1:12355` を見に行く。compose 側のホスト公開ポートも `12355` に合わせてあるため、追加の環境変数設定は不要。
+プラグインのデフォルトは `MOCK_DIFF_URL=http://127.0.0.1:12355` だが、この repo では `devcontainer.json` の `containerEnv.MOCK_DIFF_URL=http://mock-diff:3000` で上書きしている。devcontainer 内からは compose ネットワークのサービス名で直接引けるため、ホスト公開ポートの番号はこの経路に影響しない。
 
 ## 提供される MCP ツール
 
