@@ -3,6 +3,12 @@
   "dockerComposeFile": ["compose.yaml"],
   "service": "app",
   "workspaceFolder": "/home/vscode/app",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "mock-diff viewer"
+    }
+  },
   "shutdownAction": "stopCompose",
   "remoteUser": "vscode",
   "remoteEnv": {
