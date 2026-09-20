@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "version": {
+    "source": "package.json",
+    "derivedFiles": [],
+    "bumpCommand": null
+  },
+  "branches": {
+    "source": "develop",
+    "target": "master"
+  },
+  "pullRequest": {
+    "titleTemplate": "chore: release v{version}",
+    "mergeMethod": "merge"
+  },
+  "tag": {
+    "template": "v{version}",
+    "annotated": true
+  },
+  "checks": {
+    "required": [
+      "Build",
+      "Code Check",
+      "CommitLint",
+      "Deploy Dry-Run",
+      "Run Tests",
+      "Type Check"
+    ]
+  },
+  "workflows": {
+    "releaseFiles": [
+      ".github/workflows/deployment.yaml",
+      ".github/workflows/backmerge.yaml",
+      ".github/workflows/integration.yaml"
+    ],
+    "triggerFingerprint": "pr-closed:develop,master|push:*|pr-closed:master"
+  },
+  "notes": {
+    "mode": "github-generated",
+    "file": null
+  },
+  "artifacts": {
+    "buildCommands": [],
+    "paths": []
+  }
+}
