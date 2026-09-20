@@ -1,4 +1,4 @@
-import { Zodios } from '@zodios/core'
+import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
 import { AnimeInfoSchema, AnimeSchema, BadgedAnimeSchema, PaginatedAnimeSchema } from '@/schemas/anime.dto'
 import {
