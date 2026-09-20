@@ -3,8 +3,13 @@
  * provider の new_episode / coming_soon / catalog カテゴリのタイトル一覧を整形して返す。
  */
 import dayjs from 'dayjs'
+import type { z } from 'zod'
+import type { TitleListCategorySchema, TitleListResponse } from '../../../src/schemas/lambda.dto'
 import { logger } from '../logger'
-import { getProvider } from '../provider'
+import { getProvider, type ProviderName } from '../provider'
+
+/** `/title_list` が受け付けるカテゴリ。`TitleListCategorySchema` (lambda.dto) から導出する。 */
+type TitleListCategory = z.infer<typeof TitleListCategorySchema>
 
 /**
  * 指定 provider / category の title 一覧を取得して整形する。
@@ -15,22 +20,14 @@ import { getProvider } from '../provider'
  * @returns fetchedAt と entries の pair
  */
 export async function fetchTitleList(
-  providerName: string,
-  category: 'new_episode' | 'coming_soon' | 'catalog'
-) {
+  providerName: ProviderName,
+  category: TitleListCategory
+): Promise<TitleListResponse> {
   const provider = getProvider(providerName)
   const titles = await provider.fetchTitleList({ category })
 
-  const entries = titles.map((t) => ({
-    contentId: t.contentId,
-    title: t.title,
-    description: t.description,
-    entityType: t.entityType,
-    imageUrl: t.imageUrl,
-    maturityRating: t.maturityRating,
-    nextEpisodeDate: t.nextEpisodeDate,
-    badge: t.badge
-  }))
+  // expiring は `/expiring` 側の責務なので落とし、それ以外のフィールドはそのまま通す
+  const entries = titles.map(({ expiring: _expiring, ...entry }) => entry)
 
   logger.info({
     action: 'fetch-title-list',

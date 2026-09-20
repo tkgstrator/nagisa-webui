@@ -16,31 +16,28 @@ const LambdaEventSchema = z
     rawPath: z.string().optional(),
     path: z.string().optional(),
     body: z.string().nullable().optional(),
-    requestContext: z
-      .object({ requestId: z.string().optional() })
-      .partial()
-      .passthrough()
-      .optional()
+    requestContext: z.object({ requestId: z.string().optional() }).partial().passthrough().optional()
   })
   .passthrough()
 
-/** parseEvent の結果。bodyParseError が true なら body の JSON パースに失敗している。 */
-export type ParsedEvent = {
-  path: string
-  body: unknown
-  requestId: string | null
-  bodyParseError: boolean
-}
+/**
+ * parseEvent の結果。
+ * ok=true なら body が routing に渡せる状態、ok=false なら body の JSON パースに失敗している
+ * (handler で 400 化する)。path / requestId はどちらの場合もログ用に取り出せる。
+ */
+export type ParsedEvent =
+  | { ok: true; path: string; body: unknown; requestId: string | null }
+  | { ok: false; path: string; requestId: string | null }
 
 /**
  * Lambda invocation event を parse し、routing path / body / requestId を取り出す。
- * body が文字列で JSON.parse に失敗した場合は bodyParseError=true を返す (handler で 400 化する)。
+ * body が文字列で JSON.parse に失敗した場合は ok=false を返す。
  * 直接 invoke で event 全体が body の場合はそのまま body として扱う。
  */
 export function parseEvent(raw: unknown): ParsedEvent {
   const parsed = LambdaEventSchema.safeParse(raw)
   if (!parsed.success) {
-    return { path: '/', body: raw, requestId: null, bodyParseError: false }
+    return { ok: true, path: '/', body: raw, requestId: null }
   }
 
   const { rawPath, path, body, requestContext } = parsed.data
@@ -49,11 +46,11 @@ export function parseEvent(raw: unknown): ParsedEvent {
 
   if (typeof body === 'string' && body.length > 0) {
     try {
-      return { path: routePath, body: JSON.parse(body), requestId, bodyParseError: false }
+      return { ok: true, path: routePath, body: JSON.parse(body), requestId }
     } catch {
-      return { path: routePath, body: null, requestId, bodyParseError: true }
+      return { ok: false, path: routePath, requestId }
     }
   }
 
-  return { path: routePath, body: raw, requestId, bodyParseError: false }
+  return { ok: true, path: routePath, body: raw, requestId }
 }

@@ -13,8 +13,6 @@
  *
  * 実処理は handlers/ 配下に分割している。このファイルは entry と routing のみ。
  */
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import { setupLogger } from '../../src/lib/logger'
 import {
   ExpiringResponseSchema,
@@ -35,9 +33,8 @@ import { identifyTitles } from './handlers/identify'
 import { fetchTitleInfo } from './handlers/title-info'
 import { fetchTitleList } from './handlers/title-list'
 import { logger } from './logger'
-import { handleRoute, type LambdaResponse, ok, zodFail } from './response'
+import { fail, handleRoute, type LambdaResponse } from './response'
 
-dayjs.extend(utc)
 setupLogger()
 
 /**
@@ -46,13 +43,13 @@ setupLogger()
  * 400 (bad request) / 404 (unknown path) / 500 (unhandled error) / 502 (upstream error) を返し得る。
  */
 export async function handler(event: unknown): Promise<LambdaResponse> {
-  const { path, body, requestId, bodyParseError } = parseEvent(event)
+  const parsed = parseEvent(event)
+  const { path, requestId } = parsed
 
   logger.info({ action: 'request', path, requestId })
 
-  if (bodyParseError) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) }
-  }
+  if (!parsed.ok) return fail(400, 'Invalid JSON body')
+  const { body } = parsed
 
   try {
     switch (path) {
@@ -72,15 +69,10 @@ export async function handler(event: unknown): Promise<LambdaResponse> {
           }
         )
       case '/title_info':
-        return await handleRoute(
-          body,
-          FetchTitleInfoRequestSchema,
-          TitleInfoSchema,
-          ({ provider, contentId }) => {
-            logger.debug({ action: 'route-title-info', provider, contentId, requestId })
-            return fetchTitleInfo(provider, contentId)
-          }
-        )
+        return await handleRoute(body, FetchTitleInfoRequestSchema, TitleInfoSchema, ({ provider, contentId }) => {
+          logger.debug({ action: 'route-title-info', provider, contentId, requestId })
+          return fetchTitleInfo(provider, contentId)
+        })
       case '/abema_archive':
         return await handleRoute(
           body,
@@ -96,28 +88,18 @@ export async function handler(event: unknown): Promise<LambdaResponse> {
             return fetchAbemaArchives(programIds, targetHeight ?? 0)
           }
         )
-      case '/identify': {
-        const requestParsed = IdentifyRequestSchema.safeParse(body)
-        if (!requestParsed.success) return zodFail(400, 'request', requestParsed.error)
-        logger.debug({ action: 'route-identify', count: requestParsed.data.titles.length, requestId })
-        const outcome = await identifyTitles(requestParsed.data.titles)
-        if (outcome.kind === 'upstream_error') {
-          return {
-            statusCode: 502,
-            body: JSON.stringify({ error: `AniList API error: ${outcome.upstreamStatus}` })
-          }
-        }
-        const responseParsed = IdentifyResponseSchema.safeParse({ results: outcome.results })
-        if (!responseParsed.success) return zodFail(500, 'response', responseParsed.error)
-        return ok(responseParsed.data)
-      }
+      case '/identify':
+        return await handleRoute(body, IdentifyRequestSchema, IdentifyResponseSchema, ({ titles }) => {
+          logger.debug({ action: 'route-identify', count: titles.length, requestId })
+          return identifyTitles(titles)
+        })
       default:
-        return { statusCode: 404, body: JSON.stringify({ error: `Unknown path: ${path}` }) }
+        return fail(404, `Unknown path: ${path}`)
     }
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     const stack = e instanceof Error ? e.stack : undefined
     logger.error({ action: 'unhandled-error', path, requestId, message, stack })
-    return { statusCode: 500, body: JSON.stringify({ error: message }) }
+    return fail(500, message)
   }
 }

@@ -3,12 +3,20 @@
  * 与えられた raw タイトル文字列を cleanTitle で正規化して AniList にバッチ検索し、
  * native title / status / year / quarter を返す。
  */
-import type { z } from 'zod'
+import { z } from 'zod'
 import { cleanTitle } from '../../../src/lib/metadata/anilist'
 import type { IdentifyResponseSchema } from '../../../src/schemas/lambda.dto'
+import type { TitleSeasonTypeEnum } from '../../../src/schemas/providers/common.dto'
 import { MetadataMediaSchema } from '../../../src/schemas/providers/metadata.dto'
 import { fetchWithRetry } from '../http'
 import { logger } from '../logger'
+import { UpstreamError } from '../response'
+
+/** `/identify` のレスポンス型。`IdentifyResponseSchema` (lambda.dto) から導出する。 */
+type IdentifyResponse = z.infer<typeof IdentifyResponseSchema>
+
+/** AniList の season 値 (WINTER / SPRING / SUMMER / FALL)。 */
+type TitleSeason = z.infer<typeof TitleSeasonTypeEnum>
 
 /** AniList GraphQL エンドポイント。 */
 const ANILIST_API = 'https://graphql.anilist.co'
@@ -24,8 +32,18 @@ const MEDIA_FIELDS = `
   startDate { year month day }
 `
 
+/**
+ * AniList バッチ検索レスポンスの envelope。
+ * `data.q<i>` に各検索の Page が入る。media 要素の検証は個別に {@link MetadataMediaSchema} で行うので
+ * ここでは unknown のまま通す。GraphQL errors で Page 単位が null になるケースは許容し、
+ * `data` 自体が欠ける / null のケースは schema 不一致として扱う。
+ */
+const AniListBatchResponseSchema = z.object({
+  data: z.record(z.string(), z.object({ media: z.array(z.unknown()).nullish() }).nullish())
+})
+
 /** AniList season → 四半期 (0..3) 変換テーブル。WINTER=Q1, SPRING=Q2, SUMMER=Q3, FALL=Q4。 */
-const SEASON_TO_QUARTER: Record<string, number> = {
+const SEASON_TO_QUARTER: Record<TitleSeason, number> = {
   WINTER: 0,
   SPRING: 1,
   SUMMER: 2,
@@ -47,20 +65,17 @@ function buildBatchQuery(searches: string[]): string {
   return `query { ${fragments.join('\n')} }`
 }
 
-/** identifyTitles の戻り値。 upstream が 4xx/5xx を返した場合は kind='upstream_error'。 */
-export type IdentifyOutcome =
-  | { kind: 'ok'; results: (z.infer<typeof IdentifyResponseSchema>['results'][number])[] }
-  | { kind: 'upstream_error'; upstreamStatus: number }
-
 /**
  * AniList でタイトルを検索し、native title / status / year / quarter を返す。
  * ヒット無し・schema 不一致・year/quarter 特定不可の要素は null で返す。
  *
  * @param rawTitles  検索対象の raw title 文字列。cleanTitle で正規化してから検索する。
- * @returns kind='ok' の場合は入力順に results、kind='upstream_error' の場合は upstream の status。
+ * @returns 入力順の results
+ * @throws {UpstreamError} AniList が 4xx/5xx を返した場合 (handleRoute が 502 化する)
+ * @throws {Error} AniList の 200 応答が期待する envelope 形状でない場合 (500 化される)
  */
-export async function identifyTitles(rawTitles: string[]): Promise<IdentifyOutcome> {
-  if (rawTitles.length === 0) return { kind: 'ok', results: [] }
+export async function identifyTitles(rawTitles: string[]): Promise<IdentifyResponse> {
+  if (rawTitles.length === 0) return { results: [] }
 
   const searches = rawTitles.map((t) => cleanTitle(t))
   const query = buildBatchQuery(searches)
@@ -73,13 +88,17 @@ export async function identifyTitles(rawTitles: string[]): Promise<IdentifyOutco
 
   if (!res.ok) {
     logger.error({ action: 'anilist-error', status: res.status })
-    return { kind: 'upstream_error', upstreamStatus: res.status }
+    throw new UpstreamError(res.status, `AniList API error: ${res.status}`)
   }
 
-  const data = (await res.json()) as { data: Record<string, { media: unknown[] }> }
+  const envelope = AniListBatchResponseSchema.safeParse(await res.json())
+  if (!envelope.success) {
+    logger.error({ action: 'anilist-envelope-mismatch', error: envelope.error.message })
+    throw new Error(`AniList response schema mismatch: ${envelope.error.message}`)
+  }
 
   const results = searches.map((_, i) => {
-    const page = data.data[`q${i}`]
+    const page = envelope.data.data[`q${i}`]
     if (!page?.media?.length) return null
     const parsed = MetadataMediaSchema.safeParse(page.media[0])
     if (!parsed.success) {
@@ -110,5 +129,5 @@ export async function identifyTitles(rawTitles: string[]): Promise<IdentifyOutco
     total: rawTitles.length,
     matched: results.filter(Boolean).length
   })
-  return { kind: 'ok', results }
+  return { results }
 }
