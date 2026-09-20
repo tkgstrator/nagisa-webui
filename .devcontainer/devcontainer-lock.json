@@ -30,6 +30,11 @@
       "resolved": "ghcr.io/dhoeric/features/act@sha256:2e99eed677768dff36de20e856f2f6fd285a30ea868dae229e848a2871c4462d",
       "integrity": "sha256:2e99eed677768dff36de20e856f2f6fd285a30ea868dae229e848a2871c4462d"
     },
+    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+      "version": "1.0.2",
+      "resolved": "ghcr.io/rocker-org/devcontainer-features/apt-packages@sha256:87a4d7750a596a5db034ba8508782f31aebdc2ffe955c66aaecb33d9de2ecdae",
+      "integrity": "sha256:87a4d7750a596a5db034ba8508782f31aebdc2ffe955c66aaecb33d9de2ecdae"
+    },
     "ghcr.io/shyim/devcontainers-features/bun:0": {
       "version": "0.0.1",
       "resolved": "ghcr.io/shyim/devcontainers-features/bun@sha256:689eae681aa08981175829a59953ba67a7d311f6a05c15d1bbbcb2da2839827e",
@@ -39,6 +44,11 @@
       "version": "0.1.0",
       "resolved": "ghcr.io/stu-bell/devcontainer-features/claude-code@sha256:f87b4da3f8648db9111cb25c6bd3817d096018d81f3fb596340f7ffdba14409a",
       "integrity": "sha256:f87b4da3f8648db9111cb25c6bd3817d096018d81f3fb596340f7ffdba14409a"
+    },
+    "ghcr.io/thamaji/devcontainer-features/codex-cli:1": {
+      "version": "1.2.3",
+      "resolved": "ghcr.io/thamaji/devcontainer-features/codex-cli@sha256:3723837b6956ec2e706cdc81b0e5bbd0cd609a06743722388421624acee882b1",
+      "integrity": "sha256:3723837b6956ec2e706cdc81b0e5bbd0cd609a06743722388421624acee882b1"
     }
   }
 }

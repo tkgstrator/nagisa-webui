@@ -15,7 +15,7 @@ LAMBDA_FUNCTION_URL = "https://esxey6x7zbx2c3fdm6kkla4v4q0ftaol.lambda-url.ap-no
 LAMBDA_FUNCTION_URL_US = "https://ytyebcratcyemkikzh3427i7eu0lasjk.lambda-url.us-east-1.on.aws/"
 
 [assets]
-directory = "dist"
+directory = "dist/client"
 not_found_handling = "single-page-application"
 binding = "ASSETS"
 run_worker_first = ["/api/*", "/__scheduled", "/anime/*"]
