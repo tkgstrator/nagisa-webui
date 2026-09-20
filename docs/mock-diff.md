@@ -19,8 +19,10 @@
 `docker compose` サービスとして `.devcontainer/compose.yaml` に `mock-diff` を定義済み。通常は以下で起動する。
 
 ```bash
-docker compose -f .devcontainer/compose.yaml up -d mock-diff
+docker compose -p nagisa-webui_devcontainer -f .devcontainer/compose.yaml up -d mock-diff
 ```
+
+`-p nagisa-webui_devcontainer` は必須。compose はプロジェクト名を省略すると compose ファイルの親ディレクトリ名(`.devcontainer` → `devcontainer`)から勝手に名前を作るため、devcontainer CLI が起動した本物のサービス群とは別のプロジェクトに、中身が空の二重起動コンテナができてしまう。見分け方は `docker ps` のコンテナ名で、正しいのは `nagisa-webui_devcontainer-mock-diff-1`。
 
 **注意: devcontainer 内(コンテナ内のシェル)からこのコマンドを実行しないこと。** このプロジェクトの devcontainer は docker-outside-of-docker 構成のため、コンテナ内から `docker compose up` を実行すると `compose.yaml` 内の相対パスの volume マウント(`../docs/mock-diff` など)が「ホスト側」の Docker デーモンで解決されてしまい、存在しないパスが誤って空ディレクトリとして作成される。
 
@@ -35,6 +37,14 @@ docker compose -f .devcontainer/compose.yaml config
 ホスト公開ポートは「vite の port (`14755`) + 1」で決めている。mock-diff sidecar を持つ repo を複数同時に起動するため、`12355` のような固定値だと repo 間で衝突する。vite の port は repo ごとに固有なので、+1 も自動的に固有になる。
 
 なお vite の `server.proxy` でアプリ側のポートに相乗りさせる構成は成立しない。viewer の client が `/api/screens` などをルート相対 URL で要求するため、アプリ側 Worker の `/api` ルートに先に捕まって Hono が `404 Not Found` を返し、HTML と assets だけ通って UI が空になる。
+
+## 撮影先のホスト名が `webui` な理由
+
+`docs/mock-diff/mock-diff.yaml` の `actual` は `http://webui:14755/<path>` を指す。compose のサービス名は `app` なので一見 `http://app:14755/` で良さそうに見えるが、それでは撮影が必ず `net::ERR_SSL_PROTOCOL_ERROR` で落ちる。
+
+Chromium は `.app` gTLD を HSTS preload リストに丸ごと載せており、単一ラベルのホスト名 `app` もこれに一致する。そのため `http://app:14755/` は問答無用で `https://app:14755/` に昇格され、TLS を話さない vite dev server が平文で応答した時点でハンドシェイク失敗になる。preload に載っていない別名であれば昇格されないので、`.devcontainer/compose.yaml` の app サービスに `webui` という network alias を足し、`vite.config.ts` の `server.allowedHosts` にも同じ名前を許可している。
+
+alias は既存コンテナには後付けされないため、この設定を入れた後は devcontainer を作り直す(Rebuild Container)まで撮影は失敗したままになる。
 
 ## 画面(screen)の追加方法
 
