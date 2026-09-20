@@ -3,12 +3,6 @@
   "dockerComposeFile": ["compose.yaml"],
   "service": "app",
   "workspaceFolder": "/home/vscode/app",
-  "forwardPorts": [3000],
-  "portsAttributes": {
-    "3000": {
-      "label": "mock-diff viewer"
-    }
-  },
   "shutdownAction": "stopCompose",
   "remoteUser": "vscode",
   "remoteEnv": {
@@ -25,7 +19,7 @@
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
     "CODEX_HOME": "/home/vscode/.codex",
     "CODEX_MODEL": "${localEnv:CODEX_MODEL}",
-    "MOCK_DIFF_URL": "http://localhost:3000"
+    "MOCK_DIFF_URL": "http://mock-diff:3000"
   },
   "mounts": [
     "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached,readonly",
