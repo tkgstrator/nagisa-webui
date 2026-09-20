@@ -19,23 +19,22 @@ services:
   # デザイン候補の選定(Deciding)・実装(Building)・ピクセル差分検証(Checking)を行う
   # mock-diff-viewer sidecar。詳細は docs/mock-diff.md を参照。
   #
-  # ports は宣言しない。app のネットワーク名前空間を共有しているので viewer の 3000 番は
-  # devcontainer 自身が listen しているのと同じに見え、VS Code の自動フォワードがホストに
-  # 出してくれる。空いていなければ VS Code が別のローカルポートを選ぶので、mock-diff
-  # sidecar を持つ repo を何個同時に立てても衝突しない (固定の公開ポートだとここが割れる)。
-  # なお vite の server.proxy 経由で覗く構成は成立しない。viewer の client が /api/screens
-  # などルート相対 URL を出すため、アプリ側 Worker の /api ルートに先に捕まって Hono が
-  # 404 を返し、UI が空になる。
+  # ports は宣言しない。ホストへの公開は VS Code の自動フォワードに任せる
+  # (devcontainer.json の forwardPorts)。空いていなければ VS Code が別のローカルポートを
+  # 選ぶので、mock-diff sidecar を持つ repo を何個同時に立てても衝突しない
+  # (固定の公開ポートだとここが割れる)。なお vite の server.proxy 経由で覗く構成は
+  # 成立しない。viewer の client が /api/screens などルート相対 URL を出すため、アプリ側
+  # Worker の /api ルートに先に捕まって Hono が 404 を返し、UI が空になる。
   #
-  # app のネットワーク名前空間をそのまま共有する。こうすると viewer の Playwright は
-  # http://localhost:14755/ で dev server に届き、compose のサービス名もエイリアスも
-  # 一切要らなくなる。ホスト名を使う経路には罠がある: Chromium は `.app` gTLD を HSTS
-  # preload list に丸ごと載せていて単一ラベルの `app` もこれに一致するため、
-  # http://app:14755/ は https に昇格され、TLS を話さない vite は
-  # net::ERR_SSL_PROTOCOL_ERROR になる。localhost は昇格対象外で、vite の
-  # server.allowedHosts も素通しするので、この経路だけが追加設定なしで成立する。
-  # Claude Code (mock-diff MCP プラグイン) も同じ名前空間にいるので
-  # devcontainer.json の containerEnv.MOCK_DIFF_URL=http://localhost:3000 で届く。
+  # network_mode が効いているのは撮影経路の一点だけ。app のネットワーク名前空間を共有すると
+  # viewer の Playwright は http://localhost:14755/ で dev server に届き、compose の
+  # サービス名もエイリアスも一切要らなくなる。ホスト名を使う経路には罠が二つある:
+  # (1) Chromium は `.app` gTLD を HSTS preload list に丸ごと載せていて単一ラベルの `app` も
+  # これに一致するため、http://app:14755/ は https に昇格され、TLS を話さない vite は
+  # net::ERR_SSL_PROTOCOL_ERROR になる。(2) vite 5.4.12 以降は Host ヘッダが localhost 以外
+  # だと既定で 403 なので server.allowedHosts への追記が要る。localhost はどちらも最初から
+  # 関係ない。副作用として MOCK_DIFF_URL も http://localhost:3000 になる
+  # (名前空間を分ければ http://mock-diff:3000 でも届く)。
   mock-diff:
     image: ghcr.io/qtmleap/mock-diff-viewer:latest
     network_mode: "service:app"
