@@ -9,69 +9,95 @@ import { defineConfig } from 'vite'
 
 const version = JSON.parse(readFileSync('./package.json', 'utf-8')).version
 const hash = execSync('git rev-parse --short HEAD').toString().trim()
-const gitLog = execSync('git log --format="%h %aI %s" -50').toString().trim().split('\n').map((line) => {
-  const [hash, date, ...rest] = line.split(' ')
-  return { hash, date: date.slice(0, 10), message: rest.join(' ') }
-})
+const gitLog = execSync('git log --format="%h %aI %s" -50')
+  .toString()
+  .trim()
+  .split('\n')
+  .map((line) => {
+    // noUncheckedIndexedAccess 下では分割代入の各要素が undefined を含むため既定値を置く。
+    const [hash = '', date = '', ...rest] = line.split(' ')
+    return { hash, date: date.slice(0, 10), message: rest.join(' ') }
+  })
 
-// https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-  process.env.NODE_ENV = mode === 'development' ? 'development' : 'production'
-  return {
-    server: {
-      port: 25173,
-      proxy: {}
+export default defineConfig(({ mode }) => ({
+  server: {
+    port: 14755,
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Resource-Policy': 'same-origin',
     },
-    plugins: [
-      {
-        name: 'build-info',
-        buildStart() {
-          console.log(`Environment: ${process.env.NODE_ENV}`)
-          console.log(`Building app version: ${version} (git hash: ${hash}) in ${mode} mode`)
-        },
-        configureServer(server) {
-          server.middlewares.use('/commits.json', (_req, res) => {
-            res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify(gitLog))
-          })
-        },
-        writeBundle() {
-          const outDir = resolve(import.meta.dirname, 'dist/client')
-          mkdirSync(outDir, { recursive: true })
-          writeFileSync(resolve(outDir, 'commits.json'), JSON.stringify(gitLog))
-        }
+    proxy: {
+      '/mock-diff': {
+        target: 'http://mock-diff:3000',
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/mock-diff/, '') || '/',
       },
-      tanstackRouter({
-        target: 'react',
-        autoCodeSplitting: true,
-        routesDirectory: resolve(import.meta.dirname, './src/app/routes'),
-        generatedRouteTree: resolve(import.meta.dirname, './src/app/routeTree.gen.ts')
-      }),
-      react(),
-      tailwindcss(),
-      cloudflare({
-        configPath: './wrangler.toml'
-      }),
-    ],
-    build: {
-      target: 'esnext',
-      minify: true
+      // ビューアの client は /mock-diff 配下に居てもルート相対 URL を出すため、
+      // 使うパスをここで個別に横流しする必要がある。漏れるとアプリ側の SPA が
+      // 200 で index.html を返してしまい、404 にならないぶん原因が見えにくい。
+      '/assets': { target: 'http://mock-diff:3000', changeOrigin: true },
+      '/api/screens': { target: 'http://mock-diff:3000', changeOrigin: true },
+      '/api/compare': { target: 'http://mock-diff:3000', changeOrigin: true },
+      '/api/workspace': { target: 'http://mock-diff:3000', changeOrigin: true },
     },
-    worker: {
-      format: 'es'
+  },
+  plugins: [
+    {
+      name: 'build-info',
+      buildStart() {
+        console.log(`Environment: ${process.env.NODE_ENV}`)
+        console.log(`Building app version: ${version} (git hash: ${hash}) in ${mode} mode`)
+      },
+      configureServer(server) {
+        server.middlewares.use('/commits.json', (_req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(gitLog))
+        })
+      },
+      writeBundle() {
+        const outDir = resolve(import.meta.dirname, 'dist/client')
+        mkdirSync(outDir, { recursive: true })
+        writeFileSync(resolve(outDir, 'commits.json'), JSON.stringify(gitLog))
+      },
     },
-    ssr: {
-      target: 'webworker'
+    // Worker (src/index.ts の Hono API) をビルドする。クライアントは index.html を
+    // 起点にした通常の SPA ビルドで、出力はどちらも dist/ 配下に分かれる
+    // (クライアント = dist/client、Worker = dist/<worker 名>)。
+    cloudflare({ configPath: './wrangler.toml' }),
+    // tanstackRouter() は react() より前に置く必要がある
+    // (ルート生成とコード分割の変換を React Refresh の変換前に走らせるため)。
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+      routesDirectory: 'src/app/routes',
+      generatedRouteTree: 'src/app/routeTree.gen.ts',
+    }),
+    react(),
+    tailwindcss(),
+  ],
+  // `/engine` サブパスを明示しないと初回 dynamic import で
+  // 「Failed to fetch dynamically imported module」になる (subpath は自動推定されない)。
+  // engine.worker.ts がこれを動的 import する。
+  // optimizeDeps: {
+  //   include: ['@ultemica/yaneuraou-wasm-pthread-kp256/engine'],
+  // },
+  build: {
+    target: 'esnext',
+    minify: true,
+  },
+  worker: {
+    format: 'es',
+  },
+  resolve: {
+    alias: {
+      '@': resolve(import.meta.dirname, './src'),
     },
-    resolve: {
-      alias: {
-        '@': resolve(import.meta.dirname, './src')
-      }
-    },
-    define: {
-      __APP_VERSION__: JSON.stringify(version),
-      __GIT_HASH__: JSON.stringify(hash),
-      __GIT_DATE__: JSON.stringify(execSync('git log -1 --format=%aI').toString().trim())
-    }
-  }
-})
+  },
+  define: {
+    __APP_VERSION__: JSON.stringify(version),
+    __GIT_HASH__: JSON.stringify(hash),
+    __GIT_DATE__: JSON.stringify(execSync('git log -1 --format=%aI').toString().trim()),
+  },
+}))
