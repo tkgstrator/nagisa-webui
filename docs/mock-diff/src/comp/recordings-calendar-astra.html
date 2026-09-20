@@ -1,0 +1,126 @@
+TITLE: 週間スケジュール カレンダー
+---
+<header class="cat-head">
+  <h1>週間スケジュール カレンダー <span class="cat-id">recordings-calendar</span></h1>
+  <p>録画一覧ページの週間ビュー。7 列のカードを敷き詰めたグリッドで、各列の中にその日の配信タイトル (<code>.week-item</code>) をカード状に積む。fable 版と違い枠線は使わず、列間の 1px ギャップだけで区切る。時刻の無い項目もある。</p>
+  <div class="cat-meta">
+    <span>列間はグリッド gap のみ（縦罫線なし）</span>
+    <span>プロバイダは <code>.pbadge</code> だがここでは項目名のみ、色は左罫で表現しない</span>
+    <span>時刻表示 (<code>.week-time</code>) は項目ごとに任意</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">1 週間分</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">月〜日（複数件・時刻なし・空きを含む）</span>
+    <div class="week">
+      <div class="week-grid">
+        <div class="week-col">
+          <div class="week-col-head">月<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">蒼穹のリベリオン</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>25:30</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">火<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">放課後クロノグラフ</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>23:00</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">水<span class="week-col-cnt">2件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">海辺のカフェテラス</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>22:00</div>
+          </div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">春待ちレコード</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24:30</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">木<span class="week-col-cnt">0件</span></div>
+          <p class="week-empty">配信予定なし</p>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">金<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">魔法少女は二度目の朝を迎える</span></div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">土<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">王都パン屋のスローライフ</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>23:30</div>
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-col-head">日<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">雨上がりのガーデナー</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>列の状態 <span class="cat-hint">1 件 / 複数件 / 時刻なし / 空き</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220 is-key">
+      <span class="cat-label">1 件</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">月<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">蒼穹のリベリオン</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>25:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220">
+      <span class="cat-label">複数件（積み重なる）</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">水<span class="week-col-cnt">2件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">海辺のカフェテラス</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>22:00</div>
+          </div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">春待ちレコード</span></div>
+            <div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220">
+      <span class="cat-label">時刻なし</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">金<span class="week-col-cnt">1件</span></div>
+          <div class="week-item">
+            <div class="week-title-row"><span class="week-title">魔法少女は二度目の朝を迎える</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220">
+      <span class="cat-label">空き</span>
+      <div class="cat-frame is-plain">
+        <div class="week-col">
+          <div class="week-col-head">木<span class="week-col-cnt">0件</span></div>
+          <p class="week-empty">配信予定なし</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タイトル (<code>.week-title</code>) は 1 行省略 (ellipsis)。列幅が狭いため fable 版のように折り返さない。</p>
+</section>

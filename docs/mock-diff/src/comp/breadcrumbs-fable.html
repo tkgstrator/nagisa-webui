@@ -1,0 +1,77 @@
+TITLE: パンくず
+---
+<header class="cat-head">
+  <h1>パンくず <span class="cat-id">breadcrumbs</span></h1>
+  <p>アニメ詳細ページの最上部に置く現在地表示。先頭は SVG アイコン付きの「戻る」リンクで固定、以降は区切り <code>/</code> を挟んで一覧・カテゴリ・現在地を並べる。現在地 (<code>.cur</code>) だけリンクにせず、長い作品名は 1 行で省略する。</p>
+  <div class="cat-meta">
+    <span>先頭は常に <code>戻る</code></span>
+    <span>現在地は <code>&lt;span class="cur"&gt;</code>（非リンク）</span>
+    <span>親要素の幅で <code>.cur</code> が省略される</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">2 階層</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">アニメ詳細 (一覧 → 詳細)</span>
+    <nav class="crumbs" aria-label="パンくず">
+      <a class="back" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>戻る</a>
+      <span class="sep">/</span>
+      <a href="#">アニメ一覧</a>
+      <span class="sep">/</span>
+      <span class="cur">星降る夜のカルテット</span>
+    </nav>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>階層数 <span class="cat-hint">1〜3 階層</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full">
+      <span class="cat-label">1 階層（戻るのみ）</span>
+      <nav class="crumbs" aria-label="パンくず">
+        <a class="back" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>戻る</a>
+      </nav>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">3 階層（カテゴリを挟む）</span>
+      <nav class="crumbs" aria-label="パンくず">
+        <a class="back" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>戻る</a>
+        <span class="sep">/</span>
+        <a href="#">アニメ一覧</a>
+        <span class="sep">/</span>
+        <a href="#">放送中</a>
+        <span class="sep">/</span>
+        <span class="cur">星降る夜のカルテット</span>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>長いタイトルの省略 <span class="cat-hint">モバイル幅を想定</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260">
+      <span class="cat-label">260px 幅</span>
+      <div class="cat-frame is-plain">
+        <nav class="crumbs" aria-label="パンくず" style="margin-bottom: 0">
+          <a class="back" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>戻る</a>
+          <span class="sep">/</span>
+          <a href="#">アニメ一覧</a>
+          <span class="sep">/</span>
+          <span class="cur">とある小さな町の魔法使いと不思議な仲間たちの物語 第二部</span>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note"><code>.cur</code> は <code>overflow: hidden</code> + <code>text-overflow: ellipsis</code> の 1 行省略。折り返さない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>リンク単体の状態</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><nav class="crumbs"><a href="#">アニメ一覧</a></nav></div>
+    <div class="cat-item"><span class="cat-label">hover</span><nav class="crumbs"><a class="is-hover" href="#">アニメ一覧</a></nav></div>
+    <div class="cat-item is-key"><span class="cat-label">戻る hover</span><nav class="crumbs"><a class="back is-hover" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>戻る</a></nav></div>
+  </div>
+</section>

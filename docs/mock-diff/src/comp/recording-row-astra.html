@@ -1,0 +1,241 @@
+TITLE: 録画一覧の行
+---
+<header class="cat-head">
+  <h1>録画一覧の行 <span class="cat-id">recording-row</span></h1>
+  <p>録画予約している 1 作品 = 1 枚のタイル。2 列グリッドに並べる。左端 3px のアクセントで録画状態を示し、録画済みと全話数は別々の数として置く。</p>
+  <div class="cat-meta"><span>astra 案 = 2 列グリッドの軽いタイル</span><span>角丸 <code>0 9px 9px 0</code></span><span>サムネ 96px / 16:9</span><span>進捗は 5px の積み上げ 1 本</span><span>予約解除は 28px の丸ボタン</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">2 列グリッドに並べる</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="rgrid">
+      <div class="rcard s-busy" style="--h:265">
+        <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">星</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>8</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 25:00</div><div class="rfoot"><span class="fetching">第9話 取得中</span><span>12分前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="星降る夜のアストロノーツ の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard s-err" style="--h:330">
+        <input type="checkbox" class="cbx" aria-label="魔法少女は二度目の朝を迎える を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">魔</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">魔法少女は二度目の朝を迎える</span><span class="pbadge p-amazon">Prime Video</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>10</b>録画</span><span class="rnum tot open"><b>13</b>全話</span><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:00</div><div class="rfoot"><span class="exp">第7話 失敗 · DRM エラー</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="魔法少女は二度目の朝を迎える の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard s-ok" style="--h:100">
+        <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">転</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">転生したら図書館の司書だった件</span><span class="pbadge p-netflix">Netflix</span><span class="sbadge st-finished">完結</span></div>
+          <div class="rnums"><span class="rnum"><b>24</b>録画</span><span class="rnum tot"><b>24</b>全話</span><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div>
+          <div class="rfoot"><span>1日前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="転生したら図書館の司書だった件 の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard s-warn" style="--h:180">
+        <input type="checkbox" class="cbx" aria-label="海辺のカフェテラス を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">海</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">海辺のカフェテラス</span><span class="pbadge p-abema">ABEMA</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>7</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:7"></span><span class="none" style="flex:5"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週水曜 22:00</div><div class="rfoot"><span class="warn">配信終了まで12日</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="海辺のカフェテラス の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard" style="--h:290">
+        <input type="checkbox" class="cbx" aria-label="銀河鉄道の車掌さん を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">銀</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">銀河鉄道の車掌さん</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-not-yet">未放送</span></div>
+          <div class="rnums"><span class="rnum"><b>0</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="none" style="flex:12"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週日曜 23:00</div><div class="rfoot"><span>初回 9/20 配信 · 待機中</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="銀河鉄道の車掌さん の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="rcard" style="--h:20">
+        <input type="checkbox" class="cbx" aria-label="春待ちレコード を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">春</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">春待ちレコード</span><span class="pbadge p-abema">ABEMA</span><span class="sbadge st-hiatus">休止</span></div>
+          <div class="rnums"><span class="rnum"><b>6</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:6"></span><span class="none" style="flex:6"></span></div></div>
+          <div class="rfoot"><span>第7話以降 未定</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="春待ちレコード の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タイル内では <b>録画</b> と <b>全話</b> を別の数として並べる。<code>7/9話</code> のように 1 つの語に詰めない。放送中は全話数に <code>+</code> を付けて未確定だと示す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>タイルの状態 <span class="cat-hint">左端 3px のアクセント</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">未録画 <small>border</small></span>
+      <div class="rdemo">
+      <div class="rcard" style="--h:290">
+        <input type="checkbox" class="cbx" aria-label="銀河鉄道の車掌さん を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">銀</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">銀河鉄道の車掌さん</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-not-yet">未放送</span></div>
+          <div class="rnums"><span class="rnum"><b>0</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="none" style="flex:12"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週日曜 23:00</div><div class="rfoot"><span>初回 9/20 配信 · 待機中</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="銀河鉄道の車掌さん の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画中 <small>info</small></span>
+      <div class="rdemo">
+      <div class="rcard s-busy" style="--h:265">
+        <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">星</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>8</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 25:00</div><div class="rfoot"><span class="fetching">第9話 取得中</span><span>12分前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="星降る夜のアストロノーツ の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画済み <small>success</small></span>
+      <div class="rdemo">
+      <div class="rcard s-ok" style="--h:100">
+        <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">転</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">転生したら図書館の司書だった件</span><span class="pbadge p-netflix">Netflix</span><span class="sbadge st-finished">完結</span></div>
+          <div class="rnums"><span class="rnum"><b>24</b>録画</span><span class="rnum tot"><b>24</b>全話</span><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div>
+          <div class="rfoot"><span>1日前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="転生したら図書館の司書だった件 の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">失敗 <small>destructive</small></span>
+      <div class="rdemo">
+      <div class="rcard s-err" style="--h:330">
+        <input type="checkbox" class="cbx" aria-label="魔法少女は二度目の朝を迎える を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">魔</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">魔法少女は二度目の朝を迎える</span><span class="pbadge p-amazon">Prime Video</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>10</b>録画</span><span class="rnum tot open"><b>13</b>全話</span><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:00</div><div class="rfoot"><span class="exp">第7話 失敗 · DRM エラー</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="魔法少女は二度目の朝を迎える の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">配信終了予定 <small>warning</small></span>
+      <div class="rdemo">
+      <div class="rcard s-warn" style="--h:180">
+        <input type="checkbox" class="cbx" aria-label="海辺のカフェテラス を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">海</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">海辺のカフェテラス</span><span class="pbadge p-abema">ABEMA</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>7</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:7"></span><span class="none" style="flex:5"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週水曜 22:00</div><div class="rfoot"><span class="warn">配信終了まで12日</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="海辺のカフェテラス の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">hover <small>2px 右にずれる</small></span>
+      <div class="rdemo">
+      <div class="rcard s-busy is-hover" style="--h:265">
+        <input type="checkbox" class="cbx" aria-label="星降る夜のアストロノーツ を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">星</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-crunchyroll">Crunchyroll</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>8</b>録画</span><span class="rnum tot open"><b>12</b>全話</span><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 25:00</div><div class="rfoot"><span class="fetching">第9話 取得中</span><span>12分前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="星降る夜のアストロノーツ の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">選択中</span>
+      <div class="rdemo">
+      <div class="rcard s-err is-sel" style="--h:330">
+        <input type="checkbox" class="cbx" checked aria-label="魔法少女は二度目の朝を迎える を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">魔</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">魔法少女は二度目の朝を迎える</span><span class="pbadge p-amazon">Prime Video</span><span class="sbadge st-releasing">放送中</span></div>
+          <div class="rnums"><span class="rnum"><b>10</b>録画</span><span class="rnum tot open"><b>13</b>全話</span><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div>
+          <div class="rsched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:00</div><div class="rfoot"><span class="exp">第7話 失敗 · DRM エラー</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="魔法少女は二度目の朝を迎える の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">フォーカス</span>
+      <div class="rdemo">
+      <div class="rcard s-ok is-focus" style="--h:100">
+        <input type="checkbox" class="cbx" aria-label="転生したら図書館の司書だった件 を選択">
+        <div class="rthumb"><div class="art"></div><span class="ini">転</span></div>
+        <div class="rbody">
+          <div class="rtitle-row"><span class="rtitle">転生したら図書館の司書だった件</span><span class="pbadge p-netflix">Netflix</span><span class="sbadge st-finished">完結</span></div>
+          <div class="rnums"><span class="rnum"><b>24</b>録画</span><span class="rnum tot"><b>24</b>全話</span><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div>
+          <div class="rfoot"><span>1日前に更新</span></div>
+        </div>
+        <button class="unsched" type="button" aria-label="転生したら図書館の司書だった件 の予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">選択中はタイル全体を <code>accent</code> にして、hover のずれを止める。アクセント色は録画状態のままにして、選択と状態を同時に読ませる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>プロバイダ</h2>
+  <div class="cat-row">
+    <div class="cat-item is-key"><span class="cat-label">amazon</span><span class="pbadge p-amazon">Prime Video</span></div>
+    <div class="cat-item"><span class="cat-label">hulu</span><span class="pbadge p-hulu">Hulu</span></div>
+    <div class="cat-item"><span class="cat-label">crunchyroll</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item"><span class="cat-label">abema</span><span class="pbadge p-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">netflix</span><span class="pbadge p-netflix">Netflix</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>放送ステータス <span class="cat-hint">プロバイダとは形を変えて見分ける</span></h2>
+  <div class="cat-row">
+    <div class="cat-item is-key"><span class="cat-label">releasing</span><span class="sbadge st-releasing">放送中</span></div>
+    <div class="cat-item"><span class="cat-label">finished</span><span class="sbadge st-finished">完結</span></div>
+    <div class="cat-item"><span class="cat-label">not-yet</span><span class="sbadge st-not-yet">未放送</span></div>
+    <div class="cat-item"><span class="cat-label">cancelled</span><span class="sbadge st-cancelled">中止</span></div>
+    <div class="cat-item"><span class="cat-label">hiatus</span><span class="sbadge st-hiatus">休止</span></div>
+  </div>
+  <p class="cat-note">プロバイダは角丸 4px の四角、放送ステータスは丸いピル。色を落としても形で区別できる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>進捗の帯 <span class="cat-hint">5px の積み上げ 1 本</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220 is-key"><span class="cat-label">全話完了 <small>24 / 24話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:24"></span></div></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">途中 <small>8 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:8"></span><span class="busy" style="flex:1"></span><span class="none" style="flex:3"></span></div></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">失敗混在 <small>10 / 13話</small></span><div class="sbox"><div class="mini-strip"><span class="rec" style="flex:10"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:2"></span></div></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">未着手 <small>0 / 12話</small></span><div class="sbox"><div class="mini-strip"><span class="none" style="flex:12"></span></div></div></div>
+  </div>
+  <p class="cat-note">1 話ずつ刻まず、録画済み・録画中・失敗・未録画の 4 区画を積み上げる。どの話が欠けたかは行の注記で伝える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>凡例</h2>
+  <div class="cat-item cat-full">
+    <div class="rlegend">
+      <span><i class="rec"></i>録画済み</span>
+      <span><i class="busy"></i>録画中</span>
+      <span><i class="fail"></i>失敗</span>
+      <span><i></i>未録画</span>
+    </div>
+  </div>
+</section>

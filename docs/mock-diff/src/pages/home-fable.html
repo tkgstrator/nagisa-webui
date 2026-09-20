@@ -1,0 +1,327 @@
+TITLE: Nagisa — ホーム
+USES: app-header summary-stats anime-carousel anime-card scheduled-updates home-tabs app-footer
+---
+
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="nav">
+      <a class="active" href="#">ホーム</a>
+      <a href="#browse">一覧</a>
+      <a href="#recordings">録画 <span class="count-pill">16</span></a>
+    </nav>
+    <div class="search" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span>作品を検索</span>
+      <kbd>/</kbd>
+    </div>
+    <div class="srv" title="サーバー稼働中"><i></i><span>稼働中</span></div>
+  </div>
+</header>
+
+<main class="pg">
+
+  <!-- ===== ページヘッド + サマリ ===== -->
+  <section class="pg-head" aria-labelledby="h-summary">
+    <p class="pg-eyebrow"><b>2026年 夏クール</b><span>·</span><span>9月18日 (金)</span></p>
+    <h1 id="h-summary">今日の録画状況</h1>
+
+    <div class="ss-grid">
+      <a class="ss" href="#new">
+        <span class="lab">今日の新着エピソード</span>
+        <span class="val">6<small>件</small></span>
+        <span class="note">うち 2 件が未録画</span>
+      </a>
+      <a class="ss ok" href="#recordings">
+        <span class="lab">録画中</span>
+        <span class="val">2<small>件</small></span>
+        <span class="note">次回は 21:00 に 1 件</span>
+      </a>
+      <a class="ss err" href="#recordings">
+        <span class="lab">失敗</span>
+        <span class="val">1<small>件</small></span>
+        <span class="note">再試行が必要</span>
+      </a>
+      <a class="ss" href="#recordings">
+        <span class="lab">録画予約中</span>
+        <span class="val">16<small>作品</small></span>
+        <span class="note">全 1,204 作品を追跡</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== 新着エピソード カルーセル ===== -->
+  <section id="new" aria-labelledby="h-new">
+    <div class="car-head">
+      <h3 id="h-new">新着エピソード<span class="sub">直近 24 時間</span></h3>
+      <a class="car-more" href="#browse?badge=NEW_EPISODE">すべて見る <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+    </div>
+    <div class="car-wrap">
+      <div class="car-rail">
+        <a class="car-tile" href="#anime">
+          <div class="car-thumb" style="--h:265"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">星</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-netflix">Netflix</span><span class="state done">録画済み</span></div>
+          <p class="car-title">星降る夜のアストロノーツ</p>
+          <div class="car-meta"><span class="no">第 11 話</span><span class="ttl">軌道上の再会</span><span class="time">22:30</span></div>
+        </a>
+        <a class="car-tile" href="#anime">
+          <div class="car-thumb" style="--h:30"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">魔</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-amazon">Prime Video</span><span class="state rec"><i></i>録画中</span></div>
+          <p class="car-title">転生したら魔王城の家政婦でした</p>
+          <div class="car-meta"><span class="no">第 7 話</span><span class="ttl">掃除機と禁呪</span><span class="time">21:00</span></div>
+        </a>
+        <a class="car-tile" href="#anime">
+          <div class="car-thumb" style="--h:210"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">蒼</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-crunchyroll">Crunchyroll</span><span class="state">録画する</span></div>
+          <p class="car-title">蒼海のリヴァイアサン</p>
+          <div class="car-meta"><span class="no">第 12 話</span><span class="ttl">最終潜航</span><span class="time">20:00</span></div>
+        </a>
+        <a class="car-tile" href="#anime">
+          <div class="car-thumb" style="--h:340"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">喫</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-abema">ABEMA</span><span class="state done">録画済み</span></div>
+          <p class="car-title">ぼっち喫茶のラテアート</p>
+          <div class="car-meta"><span class="no">第 9 話</span><span class="ttl">常連さんの正体</span><span class="time">12:00</span></div>
+        </a>
+        <a class="car-tile" href="#anime">
+          <div class="car-thumb" style="--h:150"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">鋼</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-hulu">Hulu</span><span class="state">録画する</span></div>
+          <p class="car-title">鋼鉄の花嫁と機械仕掛けの王国</p>
+          <div class="car-meta"><span class="no">第 4 話</span><span class="ttl">歯車の婚礼</span><span class="time">0:00</span></div>
+        </a>
+        <a class="car-tile" href="#anime">
+          <div class="car-thumb" style="--h:290"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">月</span><span class="prov car-badge b-netflix">Netflix</span><span class="state fail">失敗</span></div>
+          <p class="car-title">月光カルテット</p>
+          <div class="car-meta"><span class="no">第 8 話</span><span class="ttl">第二ヴァイオリン</span><span class="time">昨日</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 直近更新の録画予約中作品 (最大6件) ===== -->
+  <section aria-labelledby="h-recent">
+    <div class="su-box">
+      <div class="su-head">
+        <h3 id="h-recent">録画予約中の更新<span class="sub">更新日時が新しい順・最大6件</span></h3>
+        <a class="more" href="#recordings">録画一覧へ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+      <div class="su-cols"><span></span><span>作品</span><span class="bar">進捗</span><span class="num">録画</span><span class="num all">全話</span><span class="upd">更新</span></div>
+      <div class="su-list">
+        <a class="su-row is-rec" href="#anime">
+          <span class="su-thumb" style="--h:30" aria-hidden="true">魔</span>
+          <span class="su-body">
+            <span class="su-title">転生したら魔王城の家政婦でした</span>
+            <span class="su-sub"><span class="pv pv-amazon">Prime Video</span><span class="tag tag-rec"><i></i>録画中</span><span>第 7 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:58%"></i></span>
+          <span class="su-n"><b>6</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></span>
+        </a>
+        <a class="su-row" href="#anime">
+          <span class="su-thumb" style="--h:210" aria-hidden="true">蒼</span>
+          <span class="su-body">
+            <span class="su-title">蒼海のリヴァイアサン</span>
+            <span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-done">録画済み</span><span>第 12 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:92%"></i></span>
+          <span class="su-n"><b>11</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">45 分前</span><span class="abs">9/18 13:47</span></span>
+        </a>
+        <a class="su-row" href="#anime">
+          <span class="su-thumb" style="--h:340" aria-hidden="true">喫</span>
+          <span class="su-body">
+            <span class="su-title">ぼっち喫茶のラテアート</span>
+            <span class="su-sub"><span class="pv pv-abema">ABEMA</span><span class="tag tag-done">録画済み</span><span>第 9 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:75%"></i></span>
+          <span class="su-n"><b>9</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></span>
+        </a>
+        <a class="su-row" href="#anime">
+          <span class="su-thumb" style="--h:150" aria-hidden="true">鋼</span>
+          <span class="su-body">
+            <span class="su-title">鋼鉄の花嫁と機械仕掛けの王国</span>
+            <span class="su-sub"><span class="pv pv-hulu">Hulu</span><span class="tag">待機中</span><span>第 4 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:12%"></i></span>
+          <span class="su-n"><b>3</b></span>
+          <span class="su-n all">24</span>
+          <span class="su-upd"><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></span>
+        </a>
+        <a class="su-row" href="#anime">
+          <span class="su-thumb" style="--h:95" aria-hidden="true">放</span>
+          <span class="su-body">
+            <span class="su-title">放課後クロノスタシス</span>
+            <span class="su-sub"><span class="pv pv-amazon">Prime Video</span><span class="tag tag-done">録画済み</span><span>第 10 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:77%"></i></span>
+          <span class="su-n"><b>10</b></span>
+          <span class="su-n all">13</span>
+          <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 23:30</span></span>
+        </a>
+        <a class="su-row" href="#anime">
+          <span class="su-thumb" style="--h:190" aria-hidden="true">深</span>
+          <span class="su-body">
+            <span class="su-title">深層ダイバーズ</span>
+            <span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-exp">配信終了予定</span><span>第 2 話</span></span>
+          </span>
+          <span class="su-bar"><i style="width:17%"></i></span>
+          <span class="su-n"><b>2</b></span>
+          <span class="su-n all">12</span>
+          <span class="su-upd"><span class="rel">昨日</span><span class="abs">9/17 22:04</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== タブ切り替え: 今期 / 新着追加 / もうすぐ配信 / 配信終了予定 / 配信元から探す ===== -->
+  <section aria-labelledby="h-tabs">
+    <h2 id="h-tabs" class="sr">カタログを探す</h2>
+    <div class="tabs-wrap" id="hometabs">
+      <div class="tabs" role="tablist" aria-label="カタログの絞り込み">
+        <label class="tab"><input type="radio" name="ht" id="ht-season" class="sr" checked>今期アニメ<span class="c">48</span></label>
+        <label class="tab"><input type="radio" name="ht" id="ht-added" class="sr">新着追加<span class="c">12</span></label>
+        <label class="tab"><input type="radio" name="ht" id="ht-soon" class="sr">もうすぐ配信<span class="c">6</span></label>
+        <label class="tab"><input type="radio" name="ht" id="ht-exp" class="sr">配信終了予定<span class="c">2</span></label>
+        <label class="tab"><input type="radio" name="ht" id="ht-provider" class="sr">配信元から探す</label>
+      </div>
+
+      <!-- 今期アニメ -->
+      <div class="panel" data-p="season">
+        <div class="car-wrap">
+          <div class="car-rail">
+            <a class="tile p-netflix" href="#anime" style="--h:265"><div class="poster"><div class="art"><span class="kana">星降</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 6 6.6.5-5 4.3 1.6 6.4L12 16.8 6.4 20.2 8 13.8 3 9.5l6.6-.5z"/></svg></div><span class="prov">Netflix</span></div><p class="title">星降る夜のアストロノーツ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">11/12</span></div></a>
+            <a class="tile p-amazon" href="#anime" style="--h:30"><div class="poster"><div class="art"><span class="kana">転生</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8h5v12M9 20v-6h6v6M15 20V4h5v16"/></svg></div><span class="prov">Prime Video</span></div><p class="title">転生したら魔王城の家政婦でした</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">6/12</span></div></a>
+            <a class="tile p-crunchyroll" href="#anime" style="--h:210"><div class="poster"><div class="art"><span class="kana">蒼海</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c4-8 12-8 16 0M12 4v6M8 8l4-4 4 4"/></svg></div><span class="prov">Crunchyroll</span></div><p class="title">蒼海のリヴァイアサン</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">11/12</span></div></a>
+            <a class="tile p-abema" href="#anime" style="--h:340"><div class="poster"><div class="art"><span class="kana">ぼっ</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div><span class="prov">ABEMA</span></div><p class="title">ぼっち喫茶のラテアート</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">9/12</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:150"><div class="poster"><div class="art"><span class="kana">鋼鉄</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3zM5 4v19"/></svg></div><span class="prov">Hulu</span></div><p class="title">鋼鉄の花嫁と機械仕掛けの王国</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">3/24</span></div></a>
+            <a class="tile p-amazon" href="#anime" style="--h:95"><div class="poster"><div class="art"><span class="kana">放課</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg></div><span class="prov">Prime Video</span></div><p class="title">放課後クロノスタシス</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">10/13</span></div></a>
+            <a class="tile p-crunchyroll" href="#anime" style="--h:60"><div class="poster"><div class="art"><span class="kana">猫と</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11z"/></svg></div><span class="prov">Crunchyroll</span></div><p class="title">猫と魔王とカフェラテ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">3/12</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:15"><div class="poster"><div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg></div><span class="prov">Hulu</span></div><p class="title">花咲く季節に君を待つ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2/12</span></div></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 新着追加 -->
+      <div class="panel" data-p="added">
+        <div class="car-wrap">
+          <div class="car-rail">
+            <a class="tile p-crunchyroll" href="#anime" style="--h:60"><div class="poster"><div class="art"><span class="kana">猫と</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11z"/></svg></div><span class="prov">Crunchyroll</span><span class="tag tag-new">新着追加</span></div><p class="title">猫と魔王とカフェラテ</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:15"><div class="poster"><div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg></div><span class="prov">Hulu</span><span class="tag tag-new">新着追加</span></div><p class="title">花咲く季節に君を待つ</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
+            <a class="tile p-abema" href="#anime" style="--h:110"><div class="poster"><div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2z"/></svg></div><span class="prov">ABEMA</span><span class="tag tag-new">新着追加</span></div><p class="title">幽霊部員は今日も部活中</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:225"><div class="poster"><div class="art"><span class="kana">終末</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M6 16V7h12v9"/></svg></div><span class="prov">Hulu</span><span class="tag tag-new">新着追加</span></div><p class="title">終末列車の乗客たち</p><div class="meta"><span class="status s-finished">完結</span></div></a>
+            <a class="tile p-netflix" href="#anime" style="--h:0"><div class="poster"><div class="art"><span class="kana">鉄血</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></div><span class="prov">Netflix</span><span class="tag tag-new">新着追加</span></div><p class="title">鉄血のヴァルキュリア</p><div class="meta"><span class="status s-finished">完結</span></div></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- もうすぐ配信 -->
+      <div class="panel" data-p="soon">
+        <div class="car-wrap">
+          <div class="car-rail">
+            <a class="tile p-amazon" href="#anime" style="--h:180"><div class="poster"><div class="art"><span class="kana">電脳</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8h5v12M9 20v-6h6v6M15 20V4h5v16"/></svg></div><span class="prov">Prime Video</span><span class="tag tag-soon">7/3 配信</span></div><p class="title">電脳都市シンドローム</p><div class="meta"><span class="status s-not-yet">未放送</span></div></a>
+            <a class="tile p-amazon" href="#anime" style="--h:30"><div class="poster"><div class="art"><span class="kana">錆び</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.8 5.6H20l-5 3.6 1.9 5.8L12 13.5 7.1 17l1.9-5.8-5-3.6h6.2z"/></svg></div><span class="prov">Prime Video</span><span class="tag tag-soon">10月〜</span></div><p class="title">錆びた星の子守唄</p><div class="meta"><span class="status s-not-yet">未放送</span></div></a>
+            <a class="tile p-amazon" href="#anime" style="--h:130"><div class="poster"><div class="art"><span class="kana">最強</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3zM5 4v19"/></svg></div><span class="prov">Prime Video</span><span class="tag tag-soon">7/10 配信</span></div><p class="title">最強の魔導書は喋りすぎる</p><div class="meta"><span class="status s-not-yet">未放送</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:120"><div class="poster"><div class="art"><span class="kana">迷宮</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v5l4 9a3 3 0 0 1-3 4H8a3 3 0 0 1-3-4l4-9z"/></svg></div><span class="prov">Hulu</span><span class="tag tag-soon">10/1 配信</span></div><p class="title">迷宮都市のパン職人</p><div class="meta"><span class="status s-not-yet">未放送</span></div></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 配信終了予定 -->
+      <div class="panel" data-p="exp">
+        <div class="car-wrap">
+          <div class="car-rail">
+            <a class="tile p-crunchyroll" href="#anime" style="--h:190"><div class="poster"><div class="art"><span class="kana">深層</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c3-3 6-3 9 0s6 3 9 0M3 17c3-3 6-3 9 0s6 3 9 0"/></svg></div><span class="prov">Crunchyroll</span><span class="tag tag-exp">あと 5 日</span></div><p class="title">深層ダイバーズ</p><div class="meta"><span class="season">2/12 話 録画済み</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:225"><div class="poster"><div class="art"><span class="kana">終末</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M6 16V7h12v9"/></svg></div><span class="prov">Hulu</span><span class="tag tag-exp">あと 12 日</span></div><p class="title">終末列車の乗客たち</p><div class="meta"><span class="season">12/12 話 録画済み</span></div></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 配信元から探す -->
+      <div class="panel" data-p="provider">
+        <div class="pv-group">
+          <div class="pv-group-head"><span class="pv pv-amazon">Prime Video</span><a class="more" href="#browse?provider=amazon">すべて見る <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a></div>
+          <div class="car-wrap">
+            <div class="car-rail">
+              <a class="tile" href="#anime" style="--h:30"><div class="poster"><div class="art"><span class="kana">転生</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8h5v12M9 20v-6h6v6M15 20V4h5v16"/></svg></div></div><p class="title">転生したら魔王城の家政婦でした</p></a>
+              <a class="tile" href="#anime" style="--h:95"><div class="poster"><div class="art"><span class="kana">放課</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg></div></div><p class="title">放課後クロノスタシス</p></a>
+              <a class="tile" href="#anime" style="--h:180"><div class="poster"><div class="art"><span class="kana">電脳</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8h5v12M9 20v-6h6v6M15 20V4h5v16"/></svg></div></div><p class="title">電脳都市シンドローム</p></a>
+              <a class="tile" href="#anime" style="--h:130"><div class="poster"><div class="art"><span class="kana">最強</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3zM5 4v19"/></svg></div></div><p class="title">最強の魔導書は喋りすぎる</p></a>
+            </div>
+          </div>
+        </div>
+        <div class="pv-group">
+          <div class="pv-group-head"><span class="pv pv-hulu">Hulu</span><a class="more" href="#browse?provider=hulu">すべて見る <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a></div>
+          <div class="car-wrap">
+            <div class="car-rail">
+              <a class="tile" href="#anime" style="--h:150"><div class="poster"><div class="art"><span class="kana">鋼鉄</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3zM5 4v19"/></svg></div></div><p class="title">鋼鉄の花嫁と機械仕掛けの王国</p></a>
+              <a class="tile" href="#anime" style="--h:15"><div class="poster"><div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg></div></div><p class="title">花咲く季節に君を待つ</p></a>
+              <a class="tile" href="#anime" style="--h:225"><div class="poster"><div class="art"><span class="kana">終末</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M6 16V7h12v9"/></svg></div></div><p class="title">終末列車の乗客たち</p></a>
+              <a class="tile" href="#anime" style="--h:120"><div class="poster"><div class="art"><span class="kana">迷宮</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v5l4 9a3 3 0 0 1-3 4H8a3 3 0 0 1-3-4l4-9z"/></svg></div></div><p class="title">迷宮都市のパン職人</p></a>
+            </div>
+          </div>
+        </div>
+        <div class="pv-group">
+          <div class="pv-group-head"><span class="pv pv-crunchyroll">Crunchyroll</span><a class="more" href="#browse?provider=crunchyroll">すべて見る <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a></div>
+          <div class="car-wrap">
+            <div class="car-rail">
+              <a class="tile" href="#anime" style="--h:210"><div class="poster"><div class="art"><span class="kana">蒼海</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c4-8 12-8 16 0M12 4v6M8 8l4-4 4 4"/></svg></div></div><p class="title">蒼海のリヴァイアサン</p></a>
+              <a class="tile" href="#anime" style="--h:60"><div class="poster"><div class="art"><span class="kana">猫と</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11z"/></svg></div></div><p class="title">猫と魔王とカフェラテ</p></a>
+              <a class="tile" href="#anime" style="--h:190"><div class="poster"><div class="art"><span class="kana">深層</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c3-3 6-3 9 0s6 3 9 0M3 17c3-3 6-3 9 0s6 3 9 0"/></svg></div></div><p class="title">深層ダイバーズ</p></a>
+              <a class="tile" href="#anime" style="--h:230"><div class="poster"><div class="art"><span class="kana">サイ</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6-9 9-6-6z"/></svg></div></div><p class="title">サイレント・フロンティア</p></a>
+            </div>
+          </div>
+        </div>
+        <div class="pv-group">
+          <div class="pv-group-head"><span class="pv pv-abema">ABEMA</span><a class="more" href="#browse?provider=abema">すべて見る <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a></div>
+          <div class="car-wrap">
+            <div class="car-rail">
+              <a class="tile" href="#anime" style="--h:340"><div class="poster"><div class="art"><span class="kana">ぼっ</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div></div><p class="title">ぼっち喫茶のラテアート</p></a>
+              <a class="tile" href="#anime" style="--h:110"><div class="poster"><div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2z"/></svg></div></div><p class="title">幽霊部員は今日も部活中</p></a>
+              <a class="tile" href="#anime" style="--h:10"><div class="poster"><div class="art"><span class="kana">桜舞</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3a8 8 0 1 0 7 11 6 6 0 0 1-7-11z"/></svg></div></div><p class="title">桜舞う坂道で君を待つ</p></a>
+            </div>
+          </div>
+        </div>
+        <div class="pv-group">
+          <div class="pv-group-head"><span class="pv pv-netflix">Netflix</span><a class="more" href="#browse?provider=netflix">すべて見る <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a></div>
+          <div class="car-wrap">
+            <div class="car-rail">
+              <a class="tile" href="#anime" style="--h:265"><div class="poster"><div class="art"><span class="kana">星降</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 6 6.6.5-5 4.3 1.6 6.4L12 16.8 6.4 20.2 8 13.8 3 9.5l6.6-.5z"/></svg></div></div><p class="title">星降る夜のアストロノーツ</p></a>
+              <a class="tile" href="#anime" style="--h:290"><div class="poster"><div class="art"><span class="kana">月光</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div></div><p class="title">月光カルテット</p></a>
+              <a class="tile" href="#anime" style="--h:0"><div class="poster"><div class="art"><span class="kana">鉄血</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></div></div><p class="title">鉄血のヴァルキュリア</p></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 各画面への導線 ===== -->
+  <section aria-labelledby="h-links">
+    <div class="pg-sec-head"><h2 class="pg-sec-title" id="h-links">探す</h2></div>
+    <div class="pg-links">
+      <a class="pg-link" href="#browse">
+        <span class="pg-lt">アニメ一覧</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        <span class="pg-ld">今クール <span class="num">48</span> 作品 · 全 <span class="num">1,204</span> 作品</span>
+      </a>
+      <a class="pg-link" href="#recordings">
+        <span class="pg-lt">録画一覧</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        <span class="pg-ld">予約 <span class="num">16</span> 作品 · 録画済み <span class="num">183</span> 話</span>
+      </a>
+      <a class="pg-link pg-warn" href="#browse?badge=EXPIRING">
+        <span class="pg-lt">配信終了予定</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        <span class="pg-ld"><span class="num">2</span> 作品が 30 日以内に終了 · 未録画 <span class="num">14</span> 話</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <a href="#changelog">v0.3.9 (319250c) 2026/09/18 13:04:00</a>
+  <p>&copy; 2026 Nagisa · <a href="#admin">管理</a></p>
+</footer>
+

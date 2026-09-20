@@ -1,0 +1,35 @@
+/* ---------- pagination: minimal prev/next ---------- */
+.pager { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.pager button {
+  width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--border);
+  display: grid; place-items: center; color: var(--muted-foreground);
+  transition: background .14s, color .14s, transform .1s, border-color .14s;
+}
+.pager button:hover { background: var(--muted); color: var(--foreground); }
+.pager button:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.pager button:active { transform: scale(0.9); }
+.pager button[disabled] { opacity: 0.4; pointer-events: none; }
+.pager button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pager .cur { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pager .cur b { color: var(--foreground); font-weight: 700; }
+
+/* ページ送りバー: 進捗を線で示す */
+.pager-bar { margin: 0 auto; width: 160px; height: 3px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.pager-bar i { display: block; height: 100%; border-radius: 999px; background: var(--primary); }
+
+/* 続きを読み込む (カルーセル/無限スクロール併用時) */
+.pager-more {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 34px; padding: 0 16px; border-radius: 999px;
+  border: 1px solid var(--border); font-size: 13px; color: var(--muted-foreground);
+  transition: background .14s, color .14s;
+}
+.pager-more:hover { background: var(--muted); color: var(--foreground); }
+.pager-more svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pager-more.is-loading { pointer-events: none; color: var(--muted-foreground); }
+.pager-more.is-loading svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 640px) {
+  .pager { gap: 12px; }
+  .pager .cur { font-size: 12px; }
+}

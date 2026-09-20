@@ -1,0 +1,120 @@
+
+
+/* ---------- preview modal ---------- */
+.modal {
+  position: relative; z-index: 2;
+  width: min(560px, 90%); max-height: 92%;
+  overflow-y: auto;
+  background: var(--card); color: var(--card-foreground);
+  border-radius: 16px;
+  box-shadow: 0 32px 64px -24px var(--overlay);
+  animation: popIn .26s cubic-bezier(.2,.9,.3,1.1) both;
+}
+@keyframes popIn { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+.modal.is-standalone { position: static; width: 100%; max-height: none; animation: none; box-shadow: none; border: 1px solid var(--border); }
+
+.mhero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 16px 16px 0 0; }
+.mhero .art { position: absolute; inset: 0; background: linear-gradient(140deg, oklch(0.8 0.13 var(--h, 265)) 0%, oklch(0.42 0.16 calc(var(--h, 265) + 50)) 100%); }
+.mhero .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--card) 2%, oklch(0.18 0.005 250 / 45%) 40%, transparent 75%); }
+.mhero .kana { position: absolute; left: 22px; top: 16px; font-size: 54px; font-weight: 800; color: oklch(1 0 0); opacity: .16; letter-spacing: .1em; }
+.mhero .over { position: absolute; left: 22px; right: 22px; bottom: 16px; z-index: 1; display: flex; flex-direction: column; gap: 8px; }
+.mhero h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: oklch(0.98 0.005 250); text-shadow: 0 2px 12px var(--overlay); }
+.mhero .line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.mclose {
+  position: absolute; top: 14px; right: 14px; z-index: 2;
+  width: 32px; height: 32px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: oklch(0.18 0.005 250 / 60%); color: oklch(0.98 0.005 250);
+  backdrop-filter: blur(6px);
+  transition: background .15s, transform .15s;
+}
+.mclose:hover { background: oklch(0.18 0.005 250 / 88%); transform: rotate(90deg); }
+.mclose:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.mclose:active { transform: scale(.88) rotate(90deg); }
+.mclose svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+
+.prov { height: 22px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; background: var(--brand-amazon); color: var(--brand-amazon-foreground); backdrop-filter: blur(6px); }
+.p-hulu .prov { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll .prov { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema .prov { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix .prov { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.status { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.mhero .season { font-size: 11.5px; color: oklch(0.96 0.003 250); opacity: .85; font-variant-numeric: tabular-nums; }
+
+.mbody { padding: 18px 22px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+.mactions { display: flex; gap: 8px; }
+.mbtn {
+  height: 40px; padding: 0 18px; border-radius: 999px; font-size: 13.5px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--primary); color: var(--primary-foreground);
+  transition: transform .14s, opacity .14s;
+}
+.mbtn:hover { opacity: .9; transform: translateY(-1px); }
+.mbtn:active { transform: scale(.96); }
+.mbtn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.mbtn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.mbtn.ghost { background: var(--muted); color: var(--foreground); }
+.mbtn.on { background: var(--success); color: var(--success-foreground); }
+.mbtn.busy { background: var(--muted); color: var(--muted-foreground); pointer-events: none; }
+.mbtn.busy svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.mbtn.fail { background: var(--destructive); color: var(--destructive-foreground); }
+.mbtn.icon { width: 40px; padding: 0; margin-left: auto; background: var(--muted); color: var(--muted-foreground); }
+.mbtn.icon:hover { color: var(--foreground); }
+
+.mprog { display: flex; flex-direction: column; gap: 6px; }
+.mprog .top { display: flex; align-items: baseline; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
+.mprog .top b { font-size: 13px; color: var(--foreground); font-variant-numeric: tabular-nums; font-weight: 700; }
+.mprog .top .pct { margin-left: auto; font-variant-numeric: tabular-nums; }
+.mprog .bar { height: 5px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.mprog .bar span { display: block; height: 100%; border-radius: 999px; background: var(--success); transition: width .4s ease; }
+.mprog .bar span.is-partial { background: var(--info); }
+
+.mdesc { font-size: 13px; color: var(--muted-foreground); line-height: 1.65; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+
+.mfacts { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 0; }
+.mfacts div { display: flex; align-items: baseline; gap: 6px; background: var(--muted); border-radius: 999px; padding: 4px 12px; }
+.mfacts dt { font-size: 11px; color: var(--muted-foreground); }
+.mfacts dd { margin: 0; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.mprovs { display: flex; flex-direction: column; gap: 6px; }
+.mprovs h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); font-weight: 700; margin: 0; }
+.mprovs .row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .modal { width: 100%; border-radius: 18px 18px 0 0; max-height: 86%; animation: sheetIn .26s cubic-bezier(.2,.9,.3,1) both; }
+  @keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
+  .mhero { border-radius: 18px 18px 0 0; }
+  .mhero h2 { font-size: 19px; }
+  .mactions { flex-wrap: wrap; }
+  .mbtn { flex: 1 1 auto; }
+  .mbtn.icon { flex: none; }
+}
+/* ---------- modal layer (ページ合成時に .modal を載せる実オーバーレイ) ---------- */
+.modal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.modal-layer:target { opacity: 1; visibility: visible; }
+.modal-scrim { position: absolute; inset: 0; background: var(--overlay); backdrop-filter: blur(3px); }
+
+@media (max-width: 640px) {
+  .modal-layer { padding: 12px; align-items: flex-end; }
+}

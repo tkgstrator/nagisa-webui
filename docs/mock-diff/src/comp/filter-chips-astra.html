@@ -1,0 +1,100 @@
+TITLE: 適用中フィルタのチップ
+---
+<header class="cat-head">
+  <h1>適用中フィルタのチップ <span class="cat-id">filter-chips</span></h1>
+  <p>サイドバーのフィルタパネルと対になる表示。パネル側でも選択状態は分かるので、ここは「いま何件に絞られたか」を伝えるのが主目的。種別ラベルは書かず、配信元だけブランド色の淡い下地で他と区別する。追加時は小さく弾んで入る。</p>
+  <div class="cat-meta">
+    <span>角丸 <code>999px</code> の丸いチップ</span>
+    <span>配信元はブランド色の下地</span>
+    <span>種別ラベルは省略</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本</h2>
+  <div class="cat-stack cat-full">
+    <div class="cat-item is-key"><span class="cat-label">複数適用</span>
+      <div class="active">
+        <span class="lbl">絞り込み</span>
+        <span class="achip is-query"><span class="q">検索</span>アストロ<button type="button" aria-label="検索語を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip p-amazon">Prime Video<button type="button" aria-label="Prime Video を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip p-crunchyroll">Crunchyroll<button type="button" aria-label="Crunchyroll を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip"><span class="num">2026</span> 春<button type="button" aria-label="2026 春 を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip">放送中<button type="button" aria-label="放送中 を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <button class="reset" type="button">すべて解除</button>
+        <span class="hits num">18 件</span>
+      </div>
+    </div>
+    <div class="cat-item"><span class="cat-label">1 件だけ</span>
+      <div class="active">
+        <span class="lbl">絞り込み</span>
+        <span class="achip">新着エピソード<button type="button" aria-label="新着エピソード を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="hits num">12 件</span>
+      </div>
+    </div>
+    <div class="cat-item"><span class="cat-label">適用なし</span>
+      <div class="active">
+        <span class="empty-line"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>絞り込みなし — すべての作品を表示しています</span>
+        <span class="hits num">287 件</span>
+      </div>
+    </div>
+    <div class="cat-item"><span class="cat-label">該当 0 件</span>
+      <div class="active">
+        <span class="lbl">絞り込み</span>
+        <span class="achip is-query"><span class="q">検索</span>ぬるぽ<button type="button" aria-label="検索語を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip">中止<button type="button" aria-label="中止 を解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <button class="reset" type="button">すべて解除</button>
+        <span class="hits num">0 件</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>チップ単体</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><span class="achip">放送中<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">× ボタン hover</span><span class="achip">放送中<button class="is-hover" type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">× ボタンフォーカス</span><span class="achip">放送中<button class="is-focus" type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">検索語</span><span class="achip is-query"><span class="q">検索</span>アストロ<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">年 + クール <small>(2 値をまとめる)</small></span><span class="achip"><span class="num">2026</span> 春<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">長い値</span><span class="achip">配信終了予定<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元チップ <span class="cat-hint">下地そのものがブランド色</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">Prime Video</span><span class="achip p-amazon">Prime Video<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">Hulu</span><span class="achip p-hulu">Hulu<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">Crunchyroll</span><span class="achip p-crunchyroll">Crunchyroll<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">ABEMA</span><span class="achip p-abema">ABEMA<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+    <div class="cat-item"><span class="cat-label">Netflix</span><span class="achip p-netflix">Netflix<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
+  </div>
+  <p class="cat-note">配信元だけ下地に色を持たせる。チップの列が長くなったとき、どの配信元で絞っているかを読まずに拾えるようにするため。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>すべて解除</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><button class="reset" type="button">すべて解除</button></div>
+    <div class="cat-item"><span class="cat-label">hover</span><button class="reset is-hover" type="button">すべて解除</button></div>
+    <div class="cat-item"><span class="cat-label">フォーカス</span><button class="reset is-focus" type="button">すべて解除</button></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>折り返し <span class="cat-hint">mobile 幅ではチップが複数行になる</span></h2>
+  <div class="cat-item cat-w320">
+    <div class="cat-frame is-plain">
+      <div class="active">
+        <span class="lbl">絞り込み</span>
+        <span class="achip is-query"><span class="q">検索</span>アストロ<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip p-amazon">Prime Video<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip"><span class="num">2026</span> 春<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip">放送中<button type="button" aria-label="解除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <button class="reset" type="button">すべて解除</button>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,89 @@
+/* ---------- hero ---------- */
+.hero {
+  position: relative; isolation: isolate;
+  border-radius: calc(var(--radius) * 1.4);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(120% 200% at 0% 0%, oklch(0.6 0.14 var(--h, 265) / 16%), transparent 60%),
+    radial-gradient(90% 160% at 100% 100%, oklch(0.7 0.12 calc(var(--h, 265) + 60) / 10%), transparent 60%),
+    var(--muted);
+}
+.hero-inner { display: flex; align-items: flex-start; gap: 24px; padding: 20px 24px; }
+.hero-poster { flex: none; width: 360px; max-width: 100%; }
+.hero-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.hero-heading { display: flex; flex-direction: column; gap: 4px; }
+
+/* 16:9 のサムネイル。実データに縦長ポスターは無い */
+.poster {
+  position: relative; aspect-ratio: 16 / 9; width: 100%; overflow: hidden;
+  border-radius: calc(var(--radius) * 0.75);
+  background: linear-gradient(160deg, oklch(0.72 0.14 var(--h, 265)) 0%, oklch(0.45 0.16 calc(var(--h, 265) + 30)) 55%, oklch(0.25 0.1 calc(var(--h, 265) + 60)) 100%);
+  color: oklch(0.98 0.01 var(--h, 265));
+}
+.poster svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .35; }
+.poster .kana { position: absolute; left: 14px; bottom: 10px; font-size: 26px; font-weight: 800; letter-spacing: .08em; opacity: .55; }
+
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); border: 1px solid var(--border); }
+.badge-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.badge-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.badge-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.badge-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.badge-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.badge-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.badge-releasing::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.badge-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.badge-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.badge-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.badge-new { background: var(--accent); color: var(--accent-foreground); }
+
+.hero h1 { font-size: 21px; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; }
+.alt-title { font-size: 12.5px; color: var(--muted-foreground); letter-spacing: .02em; }
+.desc { font-size: 13px; line-height: 1.6; color: var(--muted-foreground); max-width: 68ch; }
+.desc-more { display: inline; color: var(--primary); font-size: 13px; margin-left: 4px; }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, max-content)); column-gap: 28px; row-gap: 6px; margin: 0; }
+.facts div { border-left: 2px solid var(--border); padding-left: 10px; }
+.facts dt { font-size: 11px; color: var(--muted-foreground); letter-spacing: .04em; }
+.facts dd { margin: 0; font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.facts dd small { font-weight: 400; color: var(--muted-foreground); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 2px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 8px; font-size: 13.5px; font-weight: 600; border: 1px solid transparent; transition: background .15s, border-color .15s; white-space: nowrap; }
+.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); }
+.btn-primary:hover { background: color-mix(in oklch, var(--primary) 88%, var(--foreground)); }
+.btn-secondary { background: var(--secondary); color: var(--secondary-foreground); border-color: var(--border); }
+.btn-secondary:hover { background: color-mix(in oklch, var(--secondary) 80%, var(--muted-foreground)); }
+.btn-outline { background: color-mix(in oklch, var(--background) 60%, transparent); border-color: var(--border); }
+.btn-outline:hover { background: var(--muted); }
+.btn-success { background: var(--success); color: var(--success-foreground); }
+.btn-success:hover { background: color-mix(in oklch, var(--success) 88%, var(--foreground)); }
+.btn-icon { width: 36px; padding: 0; justify-content: center; }
+.btn[aria-busy="true"] { background: var(--muted); color: var(--muted-foreground); pointer-events: none; }
+.btn[aria-busy="true"] svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.updated-at { font-size: 12px; color: var(--muted-foreground); }
+
+@media (max-width: 640px) {
+  .hero-inner { flex-direction: column; gap: 14px; padding: 16px; }
+  .hero-poster { width: 100%; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* 配信ページを別タブで開くボタン。btn-outline と併用する。 */
+.btn-open svg { margin-left: -2px; }
+
+/* ---------- 放送スケジュール (aside) ---------- */
+/* 作品の放送枠。左罫だけで囲み、行ごとにラベルと値を両端に置く。 */
+.sched { border-left: 3px solid var(--primary); padding: 4px 12px; }
+.sched-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent); font-size: 13px; }
+.sched-row:last-child { border-bottom: 0; }
+.sched-row .k { color: var(--muted-foreground); }
+.sched-row .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+.sched-row .v.on { color: var(--success); }
+.sched-row .v small { color: var(--muted-foreground); font-weight: 400; }

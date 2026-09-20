@@ -1,0 +1,116 @@
+TITLE: 空状態
+---
+<header class="cat-head">
+  <h1>空状態 <span class="cat-id">empty-state</span></h1>
+  <p>録画一覧に並べるものが無いときの置き換え。予約が 1 件も無い場合はアニメ一覧への誘導を主役にし、絞り込みで 0 件になった場合は条件を消す導線を主役にする。読み込み中と取得失敗も同じ枠で扱う。</p>
+  <div class="cat-meta"><span>astra 案 = 角丸 18px のやわらかい面に中央寄せ</span><span>アイコンは 56px の円章</span><span>操作は 36px の丸ボタン</span><span>上から淡い光を差して面を起こす</span><span>囲み枠は引かない</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">録画予約が 0 件</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="es">
+      <div class="es-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg></div>
+      <div class="es-body">
+        <p class="es-title">録画予約がまだありません</p>
+        <p class="es-desc">アニメ一覧から作品を選んで録画予約すると、ここに進捗が並びます。放送中の作品は新しい話が配信されるたびに自動で録画されます。</p>
+        <div class="es-acts">
+          <a class="es-btn primary" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>アニメ一覧を見る</a>
+          <a class="es-btn" href="#"><svg viewBox="0 0 24 24"><path d="M12 3v4M5.6 5.6l2.9 2.9M3 12h4M21 12h-4M18.4 5.6l-2.9 2.9"/><circle cx="12" cy="14" r="5"/></svg>今期の新着から探す</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">主役の空状態だけ上から <code>primary</code> の光を差す。主ボタンは 1 つに絞り、他は枠線だけの丸ボタンにする。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>絞り込みの結果が 0 件 <span class="cat-hint">条件を消す導線を主役にする</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">検索語に一致なし</span>
+      <div class="es v-quiet">
+        <div class="es-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+        <div class="es-body">
+          <p class="es-title"><em>カフェ</em> に一致する録画予約はありません</p>
+          <p class="es-desc">タイトルの一部だけでも探せます。別の語で試すか、検索条件を消してすべての予約を表示してください。</p>
+          <div class="es-acts">
+            <button type="button" class="es-btn primary"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>検索条件を消す</button>
+            <a class="es-btn quiet" href="#"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>アニメ一覧から探す</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">絞り込みの結果 0 件 <small>条件を並べて示す</small></span>
+      <div class="es v-quiet">
+        <div class="es-ico"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg></div>
+        <div class="es-body">
+          <p class="es-title">条件に合う録画予約はありません</p>
+          <p class="es-desc">録画予約は 16 件ありますが、いま適用している 3 つの条件にはどれも当てはまりません。どれかを外すと表示されます。</p>
+          <div class="es-terms">
+            <span>適用中</span>
+            <span class="es-term p-amazon"><i></i>Prime Video</span>
+            <span class="es-term p-hulu"><i></i>Hulu</span>
+            <span class="es-term">未録画</span>
+            <span class="es-term">配信終了予定のみ</span>
+          </div>
+          <div class="es-acts">
+            <button type="button" class="es-btn primary"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みを解除</button>
+            <button type="button" class="es-btn quiet is-hover"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>条件を選び直す</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">0 件でも母数 (16 件) を必ず添える。データが消えたのではなく条件が絞りすぎているのだと分かる。光を落とした <code>v-quiet</code> にして、主役の空状態と重さを分ける。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">行の形のまま骨組みを出す</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="es-skel" aria-hidden="true">
+      <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w70"></div><div class="sk-l sk w30"></div></div></div>
+      <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w55"></div><div class="sk-l sk w45"></div></div></div>
+      <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w45"></div><div class="sk-l sk w30"></div></div></div>
+    </div>
+    <p class="es-loadnote">録画予約を読み込んでいます</p>
+  </div>
+  <p class="cat-note">一覧のタイルと同じ角丸・同じサムネ寸法で出すので、読み込みが終わっても位置が動かない。光を流さず、行ごとに少しずらして明滅させる。<code>prefers-reduced-motion: reduce</code> では止める。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>取得に失敗 <span class="cat-hint">再試行を主役にする</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="es v-err">
+      <div class="es-ico"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+      <div class="es-body">
+        <p class="es-title">録画予約を取得できませんでした</p>
+        <p class="es-desc">サーバーとの通信に失敗しました。予約そのものは消えていません。時間をおいて再試行してください。</p>
+        <p class="es-code">NETWORK_TIMEOUT · 10 秒で応答なし · 14:32:08</p>
+        <div class="es-acts">
+          <button type="button" class="es-btn primary"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>再試行</button>
+          <button type="button" class="es-btn quiet"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>サーバーの状態を確認</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">「消えたのではない」と本文で明言する。エラーコードと時刻は等幅の丸いピルに収めて、問い合わせのときそのまま貼れるようにする。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>コンパクト版 <span class="cat-hint">表の中に差し込む細い帯</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">ページに行が無い</span>
+      <div class="tbl-demo">
+        <div class="tbl-head"><span>作品</span><span>録画</span><span>全話</span><span>更新</span></div>
+        <div class="es-slim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>このページに表示できる行がありません<a class="lnk" href="#">1 ページ目に戻る</a></div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">部分的な失敗 <small>表を残したまま知らせる</small></span>
+      <div class="es-slim v-err"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>3 件の進捗を取得できませんでした<button type="button" class="lnk">再試行</button></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">リンク hover</span>
+      <div class="es-slim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>このページに表示できる行がありません<a class="lnk is-hover" href="#">1 ページ目に戻る</a></div>
+    </div>
+  </div>
+  <p class="cat-note">帯も 999px の丸みにして、上の空状態と同じ言語で読ませる。高さは 44px 前後に抑え、表の行の間に収まるようにする。</p>
+</section>
