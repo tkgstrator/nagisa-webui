@@ -1,0 +1,43 @@
+TITLE: フッター
+---
+<header class="cat-head">
+  <h1>フッター <span class="cat-id">app-footer</span></h1>
+  <p>全画面の最下部に常時表示する。fable 案は中央寄せ 1 カラムで、1 行目にビルド情報 (バージョン + コミット SHA + ビルド日時、変更履歴へのリンク)、2 行目にコピーライトと管理画面・GitHub へのリンクを置く。罫線は上辺のみで、囲み枠は作らない。</p>
+  <div class="cat-meta">
+    <span>文字サイズ <code>11px</code> / 色は <code>--muted-foreground</code></span>
+    <span>数値は <code>tabular-nums</code></span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本</h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">通常 (production)</span>
+    <div class="cat-frame is-plain">
+      <footer class="ftr">
+        <a class="build" href="#changelog"><span>v0.3.9</span><span class="sha">319250c</span><span>2026/09/18 13:04:00</span></a>
+        <p class="links"><span>&copy; 2026 Nagisa</span><span class="sep">·</span><a href="#admin">管理</a><span class="sep">·</span><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></p>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>ビルド情報 <span class="cat-hint">環境によって表示を足す</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item"><span class="cat-label">通常</span><div class="cat-frame is-plain"><footer class="ftr"><a class="build" href="#"><span>v0.3.9</span><span class="sha">319250c</span><span>2026/09/18 13:04:00</span></a></footer></div></div>
+    <div class="cat-item"><span class="cat-label">hover <small>(変更履歴へ遷移)</small></span><div class="cat-frame is-plain"><footer class="ftr"><a class="build is-hover" href="#"><span>v0.3.9</span><span class="sha">319250c</span><span>2026/09/18 13:04:00</span></a></footer></div></div>
+    <div class="cat-item"><span class="cat-label">staging</span><div class="cat-frame is-plain"><footer class="ftr"><a class="build" href="#"><span class="tag is-stg">staging</span><span>v0.4.0-rc.1</span><span class="sha">0e628bc</span><span>2026/09/18 09:41:12</span></a></footer></div></div>
+    <div class="cat-item"><span class="cat-label">開発ビルド <small>(SHA なし)</small></span><div class="cat-frame is-plain"><footer class="ftr"><a class="build" href="#"><span class="tag is-dev">dev</span><span>v0.4.0-dev</span><span>ローカルビルド</span></a></footer></div></div>
+    <div class="cat-item"><span class="cat-label">情報が取れない場合</span><div class="cat-frame is-plain"><footer class="ftr"><span class="build"><span>バージョン情報を取得できません</span></span></footer></div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>リンク行</h2>
+  <div class="cat-stack">
+    <div class="cat-item"><span class="cat-label">通常</span><div class="cat-frame is-plain"><footer class="ftr"><p class="links"><span>&copy; 2026 Nagisa</span><span class="sep">·</span><a href="#">管理</a><span class="sep">·</span><a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></p></footer></div></div>
+    <div class="cat-item"><span class="cat-label">hover</span><div class="cat-frame is-plain"><footer class="ftr"><p class="links"><span>&copy; 2026 Nagisa</span><span class="sep">·</span><a class="is-hover" href="#">管理</a><span class="sep">·</span><a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></p></footer></div></div>
+  </div>
+  <p class="cat-note">管理リンクは <code>/admin</code> 配下 (未識別タイトル一覧 / Nagisa ジョブ投入) への唯一の導線なので、ナビには出さずここに置く。</p>
+</section>

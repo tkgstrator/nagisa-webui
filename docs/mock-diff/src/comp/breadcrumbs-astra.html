@@ -1,0 +1,70 @@
+TITLE: パンくず
+---
+<header class="cat-head">
+  <h1>パンくず <span class="cat-id">breadcrumbs</span></h1>
+  <p>アニメ詳細ページの本文最上部に置く現在地表示。fable 案と違い「戻る」を独立させず、先頭リンクの中に左向き矢印アイコンを内包する。区切りはクラス無しの <code>/</code>。現在地 (<code>.cur</code>) は太字化のみで省略記号は付けない。</p>
+  <div class="cat-meta">
+    <span>先頭リンクにアイコンを内包</span>
+    <span>区切りはクラス無し <code>&lt;span&gt;/&lt;/span&gt;</code></span>
+    <span>現在地は太字、省略しない</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">2 階層</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">アニメ詳細 (一覧 → 詳細)</span>
+    <nav class="crumb" aria-label="パス">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
+      <span>/</span>
+      <span class="cur">星降る夜のアストロノーツ</span>
+    </nav>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>階層数 <span class="cat-hint">1〜3 階層</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full">
+      <span class="cat-label">1 階層（一覧のみ、現在地無し）</span>
+      <nav class="crumb" aria-label="パス">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
+      </nav>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">3 階層（カテゴリを挟む）</span>
+      <nav class="crumb" aria-label="パス">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
+        <span>/</span>
+        <a href="#">放送中</a>
+        <span>/</span>
+        <span class="cur">星降る夜のアストロノーツ</span>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>長いタイトル <span class="cat-hint">省略記号は付けない</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w320">
+      <span class="cat-label">320px 幅</span>
+      <div class="cat-frame is-plain">
+        <nav class="crumb" aria-label="パス">
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
+          <span>/</span>
+          <span class="cur">とある小さな町の魔法使いと不思議な仲間たちの物語 第二部</span>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">fable の <code>.crumbs .cur</code> と異なり省略記号 (ellipsis) を持たない。幅が足りない場合は折り返す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>リンクの状態</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><nav class="crumb"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item is-key"><span class="cat-label">hover</span><nav class="crumb"><a class="is-hover" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a></nav></div>
+  </div>
+</section>

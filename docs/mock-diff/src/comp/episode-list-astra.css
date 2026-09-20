@@ -1,0 +1,71 @@
+/* ---------- episodes (grid) ---------- */
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.sec-head h3 { font-size: 15px; font-weight: 700; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted-foreground); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 8px; height: 8px; border-radius: 999px; background: var(--border); }
+.legend .rec i { background: var(--success); }
+.legend .fail i { background: var(--destructive); }
+.legend .pend i { background: var(--warning); }
+
+.ep-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 14px; }
+.ep-grid.is-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ep-card {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 11px;
+  border-left: 3px solid var(--border); border-radius: 0 8px 8px 0;
+  transition: background .15s ease;
+}
+.ep-card:hover { background: var(--muted); }
+.ep-card.is-rec { border-left-color: var(--success); }
+.ep-card.is-fail { border-left-color: var(--destructive); }
+.ep-card.is-pend { border-left-color: var(--warning); }
+.ep-card.is-future { opacity: .6; }
+.ep-thumb { width: auto; height: 54px; aspect-ratio: 16 / 9; border-radius: 7px; flex: none; position: relative; overflow: hidden; transition: transform .25s ease; }
+.ep-card:hover .ep-thumb { transform: scale(1.06); }
+.ep-thumb .art { position: absolute; inset: 0; background: linear-gradient(155deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%); }
+.ep-thumb .n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; font-weight: 800; color: oklch(0.98 0.01 265); font-variant-numeric: tabular-nums; text-shadow: 0 1px 3px oklch(0.1 0 0 / 40%); }
+.ep-thumb .free { position: absolute; left: 4px; top: 4px; padding: 0 5px; border-radius: 999px; background: var(--success); color: var(--success-foreground); font-size: 9px; font-weight: 700; }
+.ep-body { flex: 1; min-width: 0; }
+.ep-num { font-size: 10.5px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.ep-title { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ep-sub { font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; margin-top: 1px; }
+.ep-sub.is-fail { color: var(--destructive); }
+.ep-toggle {
+  flex: none; width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center;
+  border: 1px solid var(--border); color: var(--muted-foreground); background: transparent;
+  transition: background .15s ease, transform .1s ease;
+}
+.ep-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ep-toggle:hover { background: var(--background); color: var(--foreground); }
+.ep-toggle:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.ep-toggle:active { transform: scale(0.88); }
+.ep-toggle[disabled] { pointer-events: none; opacity: .55; border-style: dashed; }
+.ep-toggle.st-rec { background: var(--success); color: var(--success-foreground); border-color: transparent; }
+.ep-toggle.st-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
+.ep-toggle.st-pend { background: var(--warning); color: var(--warning-foreground); border-color: transparent; }
+.ep-toggle.st-pend svg { animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 上部の 1 本帯 */
+.progress-row { display: flex; align-items: center; gap: 14px; }
+.strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
+.strip i { display: block; height: 100%; }
+.strip .rec { background: var(--success); }
+.strip .pend { background: var(--warning); }
+.strip .fail { background: var(--destructive); }
+.progress-row .cnt { font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; flex: none; }
+.progress-row .cnt small { font-weight: 400; color: var(--muted-foreground); }
+
+.seg { display: inline-flex; padding: 2px; border-radius: 999px; background: var(--muted); }
+.seg button { padding: 5px 12px; border-radius: 999px; font-size: 12px; color: var(--muted-foreground); }
+.seg button[aria-pressed="true"] { background: var(--background); color: var(--foreground); font-weight: 600; }
+.seg button:hover { color: var(--foreground); }
+
+@media (max-width: 640px) {
+  .ep-grid, .ep-grid.is-2 { grid-template-columns: minmax(0, 1fr); }
+  .legend { gap: 10px; }
+}
+
+/* 未放送・未取得。凡例もトグルも「色を置かない」で表す。 */
+.legend .none i { background: var(--border); }
+.ep-toggle.st-none { background: var(--muted); color: var(--muted-foreground); }

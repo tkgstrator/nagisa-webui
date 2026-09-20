@@ -1,0 +1,74 @@
+/* ---------- identity ---------- */
+/* 囲み枠を作らず、16:9 のバナーと情報を並べて置く */
+.identity { display: flex; align-items: flex-start; gap: 28px; }
+.hero { position: relative; flex: none; width: 400px; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px -18px oklch(0.15 0.02 265 / 40%); }
+.hero .art { position: absolute; inset: 0; background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h, 265) / 85%), transparent 55%), linear-gradient(165deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%); }
+.hero .kanji { position: absolute; right: 18px; top: 10px; font-size: 52px; font-weight: 800; opacity: .18; line-height: 1; color: oklch(0.99 0.01 265); }
+.hero .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 999px; display: grid; place-items: center; background: oklch(0.18 0.005 250 / 45%); color: oklch(0.99 0.01 265); backdrop-filter: blur(4px); }
+.hero .play svg { width: 18px; height: 18px; fill: currentColor; }
+
+.identity-body { flex: 1 1 auto; min-width: 0; }
+.id-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; }
+.b-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.b-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.b-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.b-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.b-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.b-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.b-releasing::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.b-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.b-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.b-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.b-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.b-plain { background: var(--muted); color: var(--muted-foreground); }
+
+.hero-title { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-top: 10px; color: var(--foreground); }
+.hero-alt { font-size: 12px; color: var(--muted-foreground); margin-top: 3px; }
+.id-facts { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 0; }
+.id-facts div { display: flex; flex-direction: column; gap: 2px; }
+.id-facts dt { font-size: 11px; color: var(--muted-foreground); }
+.id-facts dd { margin: 0; font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.id-syn { margin-top: 14px; max-width: 680px; font-size: 13px; color: var(--muted-foreground); line-height: 1.7; }
+.id-syn.is-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+.id-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.btn { height: 38px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: var(--foreground); transition: background .15s, transform .12s; }
+.btn:hover { background: var(--muted); }
+.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+.btn-primary:hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
+.btn-success { background: var(--success); color: var(--success-foreground); border-color: transparent; }
+.btn-success:hover { background: color-mix(in oklch, var(--success) 86%, var(--foreground)); }
+.btn-busy { background: var(--muted); color: var(--muted-foreground); border-color: transparent; pointer-events: none; }
+.btn-busy svg { animation: spin 1s linear infinite; }
+.btn-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
+.btn-icon { width: 38px; padding: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 録画の進捗を 1 本の帯で示す */
+.progress-row { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
+.progress-row .lbl { font-size: 12px; color: var(--muted-foreground); flex: none; }
+.progress-row .val { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
+.strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
+.strip span { display: block; height: 100%; }
+.strip .rec { background: var(--success); }
+.strip .busy { background: var(--info); }
+.strip .fail { background: var(--destructive); }
+
+@media (max-width: 640px) {
+  .identity { flex-direction: column; gap: 14px; }
+  .hero { width: 100%; }
+  .hero-title { font-size: 21px; }
+  .id-facts { gap: 16px; }
+  .id-actions .btn { flex: 1 1 auto; }
+  .progress-row { flex-wrap: wrap; }
+}
+
+/* 未取得ぶんは帯の残り。progress-row と対で使う。 */
+.strip .none { background: var(--border); }
+/* 情報側だけを縦に詰めたいときの調整 (バナー無し配置) */
+.hero-body { margin-top: 0; }
+/* 再取得ボタン。押している間だけアイコンが 1 回転する。 */
+.btn-refresh:active svg { animation: spin .5s linear; }

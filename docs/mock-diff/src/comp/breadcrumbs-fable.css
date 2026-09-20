@@ -1,0 +1,6 @@
+.crumbs { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted-foreground); margin-bottom: 12px; }
+.crumbs a:hover { color: var(--foreground); }
+.crumbs .back { display: inline-flex; align-items: center; gap: 2px; padding: 4px 8px 4px 4px; margin-left: -4px; border-radius: 6px; }
+.crumbs .back:hover { background: var(--muted); }
+.crumbs .sep { opacity: 0.5; }
+.crumbs .cur { color: var(--foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

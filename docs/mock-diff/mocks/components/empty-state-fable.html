@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>空状態 — fable 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: empty-state ---------- */
+/* ---------- empty state (dense, square, border-left accent) ---------- */.es {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 24px 22px;
+  border-left: 3px solid var(--border);
+  background: color-mix(in oklch, var(--muted) 45%, transparent);
+}
+.es-ico {
+  flex: none; width: 40px; height: 40px; border-radius: 6px;
+  display: grid; place-items: center;
+  background: var(--muted); color: var(--muted-foreground);
+}
+.es-ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.es-body { flex: 1; min-width: 0; }
+.es-title { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+.es-title em { font-style: normal; color: var(--accent-foreground); background: var(--accent); padding: 0 5px; border-radius: 3px; }
+.es-desc { margin-top: 6px; font-size: 12.5px; line-height: 1.75; color: var(--muted-foreground); max-width: 56ch; }
+.es-code { margin-top: 8px; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--muted-foreground); }
+
+/* 適用中の条件 */.es-terms { margin-top: 11px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted-foreground); }
+.es-term { height: 22px; padding: 0 8px; border-radius: 4px; background: var(--accent); color: var(--accent-foreground); font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.es-term i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.es-term.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.es-term.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+
+/* 操作 */.es-acts { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.es-btn {
+  height: 32px; padding: 0 13px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--background);
+  font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.es-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.es-btn:hover, .es-btn.is-hover { background: var(--muted); }
+.es-btn:focus-visible, .es-btn.is-focus { outline: 2px solid var(--ring); outline-offset: 1px; }
+.es-btn.primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+.es-btn.primary:hover, .es-btn.primary.is-hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
+.es-btn.danger { color: var(--destructive); }
+.es-btn.danger:hover, .es-btn.danger.is-hover { background: var(--status-cancelled); }
+
+/* 種類ごとのアクセント */.es.v-key { border-left-color: var(--primary); }
+.es.v-key .es-ico { background: var(--accent); color: var(--accent-foreground); }
+.es.v-load { border-left-color: var(--info); }
+.es.v-err { border-left-color: var(--destructive); background: color-mix(in oklch, var(--destructive) 7%, transparent); }
+.es.v-err .es-ico { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.es.v-err .es-title { color: var(--destructive); }
+
+/* 読み込み中のスケルトン */.es-skel { display: flex; flex-direction: column; gap: 2px; }
+.sk-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px 11px 12px; border-left: 3px solid var(--border); }
+.sk-th { flex: none; width: 96px; aspect-ratio: 16 / 9; border-radius: 4px; }
+.sk-lines { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+.sk-l { height: 9px; border-radius: 2px; }
+.sk-l.w70 { width: 70%; } .sk-l.w45 { width: 45%; } .sk-l.w30 { width: 30%; } .sk-l.w55 { width: 55%; }
+.sk {
+  background: linear-gradient(90deg, var(--muted) 0%, color-mix(in oklch, var(--muted) 50%, var(--background)) 50%, var(--muted) 100%);
+  background-size: 220% 100%;
+  animation: sweep 1.5s linear infinite;
+}
+@keyframes sweep { from { background-position: 220% 0; } to { background-position: -20% 0; } }
+.es-loadnote { margin-top: 10px; padding-left: 15px; font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; gap: 7px; }
+.es-loadnote::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--info); animation: pulseDot 1.4s ease-in-out infinite; }
+@keyframes pulseDot { 50% { opacity: .3; } }
+
+/* 表の中に差し込む細い帯 */.es-slim {
+  display: flex; align-items: center; gap: 9px;
+  padding: 12px 14px; border-left: 3px solid var(--border);
+  background: color-mix(in oklch, var(--muted) 45%, transparent);
+  font-size: 12.5px; color: var(--muted-foreground);
+}
+.es-slim svg { width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.es-slim .lnk { margin-left: auto; color: var(--primary); font-weight: 600; white-space: nowrap; }
+.es-slim .lnk:hover, .es-slim .lnk.is-hover { text-decoration: underline; }
+.es-slim.v-err { border-left-color: var(--destructive); background: color-mix(in oklch, var(--destructive) 7%, transparent); color: var(--destructive); }
+.es-slim.v-err .lnk { color: var(--destructive); }
+
+/* 表の見出しだけ添えて、帯が行の位置に入ることを示す当て木 */.tbl-demo { border-top: 1px solid var(--border); }
+.tbl-head { display: flex; gap: 12px; padding: 8px 14px 8px 15px; border-bottom: 1px solid var(--border); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); }
+.tbl-head span:first-child { flex: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sk { animation: none; background: var(--muted); }
+  .es-loadnote::before { animation: none; }}
+
+@media (max-width: 640px) {
+  .es { flex-direction: column; gap: 13px; padding: 20px 16px; }
+  .es-desc { max-width: none; }
+  .es-acts { width: 100%; }
+  .es-acts .es-btn { flex: 1 1 auto; justify-content: center; }
+  .sk-th { width: 74px; }
+  .sk-row { gap: 10px; padding: 11px 8px 11px 10px; }
+  .es-slim { flex-wrap: wrap; }
+  .es-slim .lnk { margin-left: 24px; }}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>空状態 <span class="cat-id">empty-state</span></h1>
+  <p>録画一覧に並べるものが無いときの置き換え。予約が 1 件も無い場合はアニメ一覧への誘導を主役にし、絞り込みで 0 件になった場合は条件を消す導線を主役にする。読み込み中と取得失敗も同じ枠で扱う。</p>
+  <div class="cat-meta"><span>fable 案 = 角の立った左寄せの平面</span><span>左端 3px のアクセントで種類を示す</span><span>アイコンは 40px の角丸 6px タイル</span><span>操作の高さは 32px</span><span>囲み枠と影は使わない</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">録画予約が 0 件</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="es v-key">
+      <div class="es-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg></div>
+      <div class="es-body">
+        <p class="es-title">録画予約がまだありません</p>
+        <p class="es-desc">アニメ一覧から作品を選んで録画予約すると、ここに進捗が並びます。放送中の作品は新しい話が配信されるたびに自動で録画されます。</p>
+        <div class="es-acts">
+          <a class="es-btn primary" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧を見る</a>
+          <a class="es-btn" href="#"><svg viewBox="0 0 24 24"><path d="M12 3v4M5.6 5.6l2.9 2.9M3 12h4M21 12h-4M18.4 5.6l-2.9 2.9"/><circle cx="12" cy="14" r="5"/></svg>今期の新着から探す</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">ここだけ左端を <code>primary</code> にして、他の空状態と役割の重さを分ける。主ボタンは 1 つに絞る。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>絞り込みの結果が 0 件 <span class="cat-hint">条件を消す導線を主役にする</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">検索語に一致なし</span>
+      <div class="es">
+        <div class="es-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+        <div class="es-body">
+          <p class="es-title"><em>カフェ</em> に一致する録画予約はありません</p>
+          <p class="es-desc">タイトルの一部だけでも探せます。別の語で試すか、検索条件を消してすべての予約を表示してください。</p>
+          <div class="es-acts">
+            <button type="button" class="es-btn"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>検索条件を消す</button>
+            <a class="es-btn" href="#"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>アニメ一覧から探す</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">絞り込みの結果 0 件 <small>条件を並べて示す</small></span>
+      <div class="es">
+        <div class="es-ico"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg></div>
+        <div class="es-body">
+          <p class="es-title">条件に合う録画予約はありません</p>
+          <p class="es-desc">録画予約は 16 件ありますが、いま適用している 3 つの条件にはどれも当てはまりません。どれかを外すと表示されます。</p>
+          <div class="es-terms">
+            <span>適用中</span>
+            <span class="es-term p-amazon"><i></i>Prime Video</span>
+            <span class="es-term p-hulu"><i></i>Hulu</span>
+            <span class="es-term">未録画</span>
+            <span class="es-term">配信終了予定のみ</span>
+          </div>
+          <div class="es-acts">
+            <button type="button" class="es-btn primary"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みを解除</button>
+            <button type="button" class="es-btn is-hover"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>条件を選び直す</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">0 件でも母数 (16 件) を必ず添える。データが消えたのではなく条件が絞りすぎているのだと分かる。下の例はボタンの hover を固定した状態。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">行の形のまま骨組みを出す</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="es-skel" aria-hidden="true">
+      <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w70"></div><div class="sk-l sk w30"></div></div></div>
+      <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w55"></div><div class="sk-l sk w45"></div></div></div>
+      <div class="sk-row"><div class="sk-th sk"></div><div class="sk-lines"><div class="sk-l sk w45"></div><div class="sk-l sk w30"></div></div></div>
+    </div>
+    <p class="es-loadnote">録画予約を読み込んでいます</p>
+  </div>
+  <p class="cat-note">一覧と同じ行の形・同じサムネ寸法で出すので、読み込みが終わっても位置が動かない。<code>prefers-reduced-motion: reduce</code> では流れる光を止めて無地にする。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>取得に失敗 <span class="cat-hint">再試行を主役にする</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="es v-err">
+      <div class="es-ico"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+      <div class="es-body">
+        <p class="es-title">録画予約を取得できませんでした</p>
+        <p class="es-desc">サーバーとの通信に失敗しました。予約そのものは消えていません。時間をおいて再試行してください。</p>
+        <p class="es-code">NETWORK_TIMEOUT · 10 秒で応答なし · 14:32:08</p>
+        <div class="es-acts">
+          <button type="button" class="es-btn primary"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>再試行</button>
+          <button type="button" class="es-btn danger"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>サーバーの状態を確認</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">「消えたのではない」と本文で明言する。エラーコードと時刻は等幅で 1 行に置き、問い合わせのときそのまま貼れるようにする。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>コンパクト版 <span class="cat-hint">表の中に差し込む細い帯</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">ページに行が無い</span>
+      <div class="tbl-demo">
+        <div class="tbl-head"><span>作品</span><span>録画</span><span>全話</span><span>更新</span></div>
+        <div class="es-slim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>このページに表示できる行がありません<a class="lnk" href="#">1 ページ目に戻る</a></div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">部分的な失敗 <small>表を残したまま知らせる</small></span>
+      <div class="es-slim v-err"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>3 件の進捗を取得できませんでした<button type="button" class="lnk">再試行</button></div>
+    </div>
+  </div>
+  <p class="cat-note">表の途中に出す帯は高さを 44px 前後に抑え、行と同じ左 3px のアクセントで列位置を崩さない。</p>
+</section>
+</main>
+</body>
+</html>

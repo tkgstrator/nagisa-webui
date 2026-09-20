@@ -1,0 +1,108 @@
+TITLE: 他の配信元
+---
+<header class="cat-head">
+  <h1>他の配信元 <span class="cat-id">related-providers</span></h1>
+  <p>同じ作品を配信している別のプロバイダを横スクロールで並べる。詳細画面の下に置く。右端をぼかして続きがあると分からせる。</p>
+  <div class="cat-meta"><span>AniList ID で関連付け</span><span>ロゴの色でプロバイダを見分ける</span><span>狭い画面では縦積みに切り替える</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">横スクロール・右端フェード</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="sec-head"><h3>他の配信元<span class="n">5</span></h3><a class="more" href="#">一覧で見る</a></div>
+    <div class="prov-scroller">
+      <a class="prov-tile is-cur" href="#">
+        <span class="prov-logo prov-amazon">PV</span>
+        <span class="prov-body"><span class="prov-name">Prime Video</span><span class="prov-sub"><b>8</b> / 24話 録画済み</span><div class="prov-flag cur">表示中</div></span>
+      </a>
+      <a class="prov-tile " href="#">
+        <span class="prov-logo prov-crunchyroll">CR</span>
+        <span class="prov-body"><span class="prov-name">Crunchyroll</span><span class="prov-sub">全 24話 · 字幕</span></span>
+      </a>
+      <a class="prov-tile is-exp" href="#">
+        <span class="prov-logo prov-abema">ABEMA</span>
+        <span class="prov-body"><span class="prov-name">ABEMA</span><span class="prov-sub">全 12話 · 見放題</span><div class="prov-flag exp">6/30 まで</div></span>
+      </a>
+      <a class="prov-tile " href="#">
+        <span class="prov-logo prov-hulu">hulu</span>
+        <span class="prov-body"><span class="prov-name">Hulu</span><span class="prov-sub">全 24話 · 吹替あり</span></span>
+      </a>
+      <a class="prov-tile is-off" href="#">
+        <span class="prov-logo prov-netflix">N</span>
+        <span class="prov-body"><span class="prov-name">Netflix</span><span class="prov-sub">全 6話 · 配信終了</span><div class="prov-flag off">配信終了</div></span>
+      </a>
+    </div>
+  </div>
+  <p class="cat-note">1 枚の中で行を分ける。話数は <b>録画</b> と <b>全話</b> を同じ語に詰めず、太字の数だけを録画済みとして読ませる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>タイルの状態</h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260"><span class="cat-label is-key">通常</span>
+      <a class="prov-tile " href="#">
+        <span class="prov-logo prov-crunchyroll">CR</span>
+        <span class="prov-body"><span class="prov-name">Crunchyroll</span><span class="prov-sub">全 24話 · 字幕</span></span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">hover</span>
+      <a class="prov-tile is-hover" href="#">
+        <span class="prov-logo prov-crunchyroll">CR</span>
+        <span class="prov-body"><span class="prov-name">Crunchyroll</span><span class="prov-sub">全 24話 · 字幕</span></span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">表示中</span>
+      <a class="prov-tile is-cur" href="#">
+        <span class="prov-logo prov-amazon">PV</span>
+        <span class="prov-body"><span class="prov-name">Prime Video</span><span class="prov-sub"><b>8</b> / 24話 録画済み</span><div class="prov-flag cur">表示中</div></span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">配信終了予定</span>
+      <a class="prov-tile is-exp" href="#">
+        <span class="prov-logo prov-abema">ABEMA</span>
+        <span class="prov-body"><span class="prov-name">ABEMA</span><span class="prov-sub">全 12話 · 見放題</span><div class="prov-flag exp">6/30 まで</div></span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">配信終了済み</span>
+      <a class="prov-tile is-off" href="#">
+        <span class="prov-logo prov-netflix">N</span>
+        <span class="prov-body"><span class="prov-name">Netflix</span><span class="prov-sub">全 6話 · 配信終了</span><div class="prov-flag off">配信終了</div></span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">フォーカス</span>
+      <a class="prov-tile is-focus" href="#">
+        <span class="prov-logo prov-hulu">hulu</span>
+        <span class="prov-body"><span class="prov-name">Hulu</span><span class="prov-sub">全 24話 · 吹替あり</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元のロゴ</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label is-key">Prime Video</span><span class="prov-logo prov-amazon">PV</span></div>
+    <div class="cat-item"><span class="cat-label">Hulu</span><span class="prov-logo prov-hulu">hulu</span></div>
+    <div class="cat-item"><span class="cat-label">Crunchyroll</span><span class="prov-logo prov-crunchyroll">CR</span></div>
+    <div class="cat-item"><span class="cat-label">ABEMA</span><span class="prov-logo prov-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">Netflix</span><span class="prov-logo prov-netflix">N</span></div>
+  </div>
+  <p class="cat-note">ロゴ画像は持たないので、ブランド色の下地に略称を置いて代わりにする。色は必ずトークン経由で参照する。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>付記</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label is-key">表示中</span><span class="prov-flag cur">表示中</span></div>
+    <div class="cat-item"><span class="cat-label">配信終了予定</span><span class="prov-flag exp">6/30 まで</span></div>
+    <div class="cat-item"><span class="cat-label">配信終了済み</span><span class="prov-flag off">配信終了</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>他に無いとき</h2>
+  <div class="cat-item cat-full">
+    <div class="sec-head"><h3>他の配信元<span class="n">0</span></h3></div>
+    <p class="prov-empty">この作品を配信している他のプロバイダは見つかりませんでした。カタログの取得後に再度表示されます。</p>
+  </div>
+</section>

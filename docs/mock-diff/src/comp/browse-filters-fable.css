@@ -1,0 +1,50 @@
+/* ---------- toolbar: filters + sort ---------- */
+.toolbar { padding: 10px 0 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.toolbar-row { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px 20px; flex: 1 1 auto; }
+.fgroup { display: flex; align-items: center; gap: 4px; }
+.fgroup .flabel { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-foreground); margin-right: 4px; white-space: nowrap; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 9px;
+  border-radius: 6px; font-size: 12px; white-space: nowrap;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.chip:hover { background: var(--muted); color: var(--foreground); }
+.chip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.chip[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .7; }
+.chip.p-amazon .dot { background: var(--brand-amazon-foreground); }
+.chip.p-hulu .dot { background: var(--brand-hulu-foreground); }
+.chip.p-crunchyroll .dot { background: var(--brand-crunchyroll-foreground); }
+.chip.p-abema .dot { background: var(--brand-abema-foreground); }
+.chip.p-netflix .dot { background: var(--brand-netflix-foreground); }
+.chip .cnt { font-size: 11px; opacity: .6; font-variant-numeric: tabular-nums; }
+
+.seg { display: inline-flex; padding: 2px; border-radius: 7px; background: var(--muted); gap: 2px; }
+.seg .chip { height: 22px; border-radius: 5px; padding: 0 8px; }
+.seg .chip:hover { background: var(--background); }
+.seg .chip[aria-pressed="true"] { background: var(--background); color: var(--foreground); box-shadow: 0 1px 2px var(--overlay); }
+
+.sort { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
+.sort select {
+  height: 28px; padding: 0 26px 0 10px;
+  border: 1px solid var(--input); border-radius: 6px;
+  background: var(--background); color: var(--foreground);
+  appearance: none; -webkit-appearance: none; font-size: 12px;
+}
+.sort select:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.sort .sel { position: relative; }
+.sort .sel svg { position: absolute; right: 8px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+
+@media (max-width: 640px) {
+  .filters { gap: 6px 12px; }
+  .fgroup { flex-wrap: wrap; }
+  .seg { flex-wrap: wrap; }
+}
+
+.sort-lbl { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; }

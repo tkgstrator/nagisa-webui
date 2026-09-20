@@ -1,0 +1,115 @@
+TITLE: アプリヘッダー (サイドバー)
+---
+<header class="cat-head">
+  <h1>アプリヘッダー <span class="cat-id">app-header</span></h1>
+  <p>astra 案はトップバーではなく幅 236px の常設サイドバーにナビを置く。ブランド・主要ナビ・グローバル検索に加えて「今日のサマリ」(新着 / 録画中 / 失敗 / 継続視聴中) を常時表示し、最下段にサーバー稼働状態を置く。mobile では畳んでアイコンだけの横並びバーになる。</p>
+  <div class="cat-meta">
+    <span>関連実装 <code>global-search-bar.tsx</code> / <code>server-status-dialog.tsx</code></span>
+    <span>幅 <code>236px</code> / <code>position: sticky</code></span>
+    <span>背景は <code>--sidebar</code></span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">サイドバー全体</span></h2>
+  <div class="cat-row">
+    <div class="cat-item is-key">
+      <span class="cat-label">通常 (ホームを表示中)</span>
+      <aside class="side is-tall">
+        <a class="side-brand" href="#"><span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>Nagisa</a>
+        <div class="side-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
+        <nav class="side-nav" aria-label="メイン">
+          <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>変更履歴</a>
+        </nav>
+        <div class="side-widget">
+          <h3>今日のサマリ</h3>
+          <a class="side-stat d-new" href="#"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+          <a class="side-stat d-rec" href="#"><span class="dot"></span>録画中<span class="v num">1</span></a>
+          <a class="side-stat d-err" href="#"><span class="dot"></span>失敗<span class="v num">1</span></a>
+          <a class="side-stat d-watch" href="#"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+        </div>
+        <div class="side-status"><i></i>サーバー稼働中</div>
+      </aside>
+    </div>
+    <div class="cat-item">
+      <span class="cat-label">録画一覧を表示中</span>
+      <aside class="side is-tall">
+        <a class="side-brand" href="#"><span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>Nagisa</a>
+        <div class="side-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
+        <nav class="side-nav" aria-label="メイン">
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+          <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a>
+          <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>変更履歴</a>
+        </nav>
+        <div class="side-widget">
+          <h3>今日のサマリ</h3>
+          <a class="side-stat d-new" href="#"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+          <a class="side-stat d-rec" href="#"><span class="dot"></span>録画中<span class="v num">1</span></a>
+          <a class="side-stat d-err" href="#"><span class="dot"></span>失敗<span class="v num">1</span></a>
+          <a class="side-stat d-watch" href="#"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+        </div>
+        <div class="side-status"><i></i>サーバー稼働中</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>ナビ項目 <span class="cat-hint">単体の状態</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item"><span class="cat-label">通常</span><nav class="side-nav is-solo"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item"><span class="cat-label">hover</span><nav class="side-nav is-solo"><a class="is-hover" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item"><span class="cat-label">現在地 <small>(左に primary のアクセント)</small></span><nav class="side-nav is-solo"><a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a></nav></div>
+    <div class="cat-item"><span class="cat-label">件数バッジ付き</span><nav class="side-nav is-solo"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a></nav></div>
+    <div class="cat-item"><span class="cat-label">3 桁 / 強調</span><nav class="side-nav is-solo"><a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count is-alert num">128</span></a></nav></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>今日のサマリ <span class="cat-hint">指標ごとにドットの色を変える</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item"><span class="cat-label">新着エピソード <small>--info</small></span><div class="side-nav is-solo"><a class="side-stat d-new" href="#"><span class="dot"></span>新着エピソード<span class="v num">6</span></a></div></div>
+    <div class="cat-item"><span class="cat-label">録画中 <small>--warning</small></span><div class="side-nav is-solo"><a class="side-stat d-rec" href="#"><span class="dot"></span>録画中<span class="v num">1</span></a></div></div>
+    <div class="cat-item"><span class="cat-label">失敗 <small>--destructive</small></span><div class="side-nav is-solo"><a class="side-stat d-err" href="#"><span class="dot"></span>失敗<span class="v num">1</span></a></div></div>
+    <div class="cat-item"><span class="cat-label">継続視聴中 <small>--success</small></span><div class="side-nav is-solo"><a class="side-stat d-watch" href="#"><span class="dot"></span>継続視聴中<span class="v num">10</span></a></div></div>
+    <div class="cat-item"><span class="cat-label">hover</span><div class="side-nav is-solo"><a class="side-stat d-new is-hover" href="#"><span class="dot"></span>新着エピソード<span class="v num">6</span></a></div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>グローバル検索</h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220"><span class="cat-label">通常</span><div class="side-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">hover</span><div class="side-search is-hover" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div></div>
+    <div class="cat-item cat-w220"><span class="cat-label">フォーカス</span><div class="side-search is-focus" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>ソラリス</span><kbd>/</kbd></div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>サーバーステータス</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">稼働中</span><div class="side-status"><i></i>サーバー稼働中</div></div>
+    <div class="cat-item"><span class="cat-label">確認中</span><div class="side-status is-checking"><i></i>状態を確認中</div></div>
+    <div class="cat-item"><span class="cat-label">応答なし</span><div class="side-status is-down"><i></i>サーバー応答なし</div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>mobile <span class="cat-hint">390px 未満ではアイコンだけの横並びバーに畳む</span></h2>
+  <div class="cat-item cat-full">
+    <span class="cat-label">畳んだ状態</span>
+    <aside class="side is-mobile">
+      <a class="side-brand" href="#"><span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>Nagisa</a>
+      <nav class="side-nav" aria-label="メイン">
+        <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>検索</a>
+      </nav>
+    </aside>
+  </div>
+</section>

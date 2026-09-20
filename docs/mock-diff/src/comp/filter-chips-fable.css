@@ -1,0 +1,36 @@
+/* ---------- active filter chips ---------- */
+.active { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
+.active .lbl { color: var(--muted-foreground); }
+.active .hits { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.achip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 0 4px 0 9px;
+  border-radius: 6px; font-size: 12px;
+  background: var(--secondary); color: var(--secondary-foreground);
+}
+.achip .k { color: var(--muted-foreground); }
+.achip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.achip.p-amazon .dot { background: var(--brand-amazon-foreground); }
+.achip.p-hulu .dot { background: var(--brand-hulu-foreground); }
+.achip.p-crunchyroll .dot { background: var(--brand-crunchyroll-foreground); }
+.achip.p-abema .dot { background: var(--brand-abema-foreground); }
+.achip.p-netflix .dot { background: var(--brand-netflix-foreground); }
+.achip button { width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; color: var(--muted-foreground); }
+.achip button:hover { background: var(--border); color: var(--foreground); }
+.achip button:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+.achip svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+/* 検索語だけは由来が違うので囲み方を変える */
+.achip.is-query { background: var(--accent); color: var(--accent-foreground); }
+.achip.is-query .k { color: inherit; opacity: .65; }
+
+.reset { color: var(--muted-foreground); font-size: 12px; padding: 4px 8px; border-radius: 6px; margin-left: 4px; }
+.reset:hover { background: var(--muted); color: var(--foreground); }
+.reset:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+
+.empty-line { color: var(--muted-foreground); font-size: 12px; }
+
+@media (max-width: 640px) {
+  .active .hits { margin-left: 0; width: 100%; }
+}

@@ -1,0 +1,106 @@
+/* ---------- empty state (soft, rounded, centered) ---------- */
+.es {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 40px 28px 34px; border-radius: 18px;
+  background: color-mix(in oklch, var(--muted) 40%, transparent);
+}
+/* 上から差す淡い光。面をやわらかく見せるためだけの装飾 */
+.es::before {
+  content: ""; position: absolute; left: 50%; top: -160px; width: 420px; height: 300px;
+  translate: -50% 0; pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, color-mix(in oklch, var(--primary) 26%, transparent), transparent 70%);
+}
+.es-ico {
+  position: relative; flex: none; width: 56px; height: 56px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-foreground);
+  box-shadow: 0 0 0 9px color-mix(in oklch, var(--accent) 45%, transparent);
+}
+.es-ico svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.es-body { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
+.es-title { margin-top: 20px; font-size: 16.5px; font-weight: 700; letter-spacing: -.01em; }
+.es-title em { font-style: normal; background: var(--accent); color: var(--accent-foreground); padding: 1px 8px; border-radius: 999px; }
+.es-desc { margin-top: 9px; font-size: 12.5px; line-height: 1.8; color: var(--muted-foreground); max-width: 44ch; }
+.es-code { margin-top: 10px; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--muted-foreground); background: color-mix(in oklch, var(--muted) 70%, transparent); padding: 4px 12px; border-radius: 999px; }
+
+/* 適用中の条件 */
+.es-terms { margin-top: 14px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 7px; font-size: 11.5px; color: var(--muted-foreground); }
+.es-term { height: 26px; padding: 0 12px; border-radius: 999px; background: var(--accent); color: var(--accent-foreground); font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.es-term i { width: 7px; height: 7px; border-radius: 999px; background: currentColor; flex: none; }
+.es-term.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.es-term.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+
+/* 操作 */
+.es-acts { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.es-btn {
+  height: 36px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--background);
+  font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: background .18s ease, transform .12s ease;
+}
+.es-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.es-btn:hover { background: var(--muted); }
+.es-btn:active { transform: scale(0.96); }
+.es-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.es-btn.primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; padding: 0 22px; }
+.es-btn.primary:hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
+.es-btn.quiet { border-color: transparent; background: transparent; color: var(--muted-foreground); }
+.es-btn.quiet:hover { background: var(--muted); color: var(--foreground); }
+
+/* 種類ごとの色 */
+.es.v-err { background: color-mix(in oklch, var(--destructive) 8%, transparent); }
+.es.v-err::before { background: radial-gradient(50% 50% at 50% 50%, color-mix(in oklch, var(--destructive) 24%, transparent), transparent 70%); }
+.es.v-err .es-ico { background: var(--status-cancelled); color: var(--status-cancelled-foreground); box-shadow: 0 0 0 9px color-mix(in oklch, var(--destructive) 10%, transparent); }
+.es.v-err .es-title { color: var(--destructive); }
+.es.v-quiet::before { display: none; }
+.es.v-quiet .es-ico { background: var(--muted); color: var(--muted-foreground); box-shadow: 0 0 0 9px color-mix(in oklch, var(--muted) 45%, transparent); }
+
+/* 読み込み中のスケルトン */
+.es-skel { display: flex; flex-direction: column; gap: 6px; }
+.sk-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px 11px 12px; border-left: 3px solid var(--border); border-radius: 0 12px 12px 0; background: color-mix(in oklch, var(--muted) 28%, transparent); }
+.sk-th { flex: none; width: 96px; aspect-ratio: 16 / 9; border-radius: 8px; }
+.sk-lines { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.sk-l { height: 9px; border-radius: 999px; }
+.sk-l.w70 { width: 70%; } .sk-l.w55 { width: 55%; } .sk-l.w45 { width: 45%; } .sk-l.w30 { width: 30%; }
+.sk { background: color-mix(in oklch, var(--muted-foreground) 22%, transparent); animation: breathe 1.7s ease-in-out infinite; }
+.sk-row:nth-child(2) .sk { animation-delay: .12s; }
+.sk-row:nth-child(3) .sk { animation-delay: .24s; }
+@keyframes breathe { 50% { opacity: .38; } }
+.es-loadnote { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.es-loadnote::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: var(--info); animation: breathe 1.4s ease-in-out infinite; }
+
+/* 表の中に差し込む細い帯 */
+.es-slim {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; border-radius: 999px;
+  background: color-mix(in oklch, var(--muted) 45%, transparent);
+  font-size: 12.5px; color: var(--muted-foreground);
+}
+.es-slim svg { width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.es-slim .lnk { margin-left: auto; height: 26px; padding: 0 13px; border-radius: 999px; background: var(--background); color: var(--primary); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; white-space: nowrap; }
+.es-slim .lnk:hover { background: var(--accent); color: var(--accent-foreground); }
+.es-slim.v-err { background: color-mix(in oklch, var(--destructive) 9%, transparent); color: var(--destructive); }
+.es-slim.v-err .lnk { color: var(--destructive); }
+
+/* 帯が行の位置に入ることを示すための当て木 */
+.tbl-demo { display: flex; flex-direction: column; gap: 8px; }
+.tbl-head { display: flex; gap: 12px; padding: 0 18px 7px; border-bottom: 1px solid var(--border); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); }
+.tbl-head span:first-child { flex: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sk, .es-loadnote::before { animation: none; }
+  .es-btn { transition: none; }
+}
+
+@media (max-width: 640px) {
+  .es { padding: 32px 18px 28px; border-radius: 14px; }
+  .es-desc { max-width: none; }
+  .es-acts { width: 100%; flex-direction: column; gap: 8px; }
+  .es-acts .es-btn { width: 100%; justify-content: center; }
+  .sk-th { width: 74px; }
+  .sk-row { gap: 10px; padding: 11px 10px; }
+  .es-slim { flex-wrap: wrap; border-radius: 16px; padding: 14px 16px; }
+  .es-slim .lnk { margin-left: 25px; }
+}

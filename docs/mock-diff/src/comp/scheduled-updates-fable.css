@@ -1,0 +1,93 @@
+/* ---------- scheduled updates (ruled list) ---------- */
+.su-box { border-left: 3px solid var(--primary); }
+.su-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 4px 10px 8px 13px; }
+.su-head h3 { font-size: 13px; font-weight: 700; }
+.su-head h3 .sub { margin-left: 8px; font-size: 11.5px; font-weight: 400; color: var(--muted-foreground); }
+.su-head .more { font-size: 11.5px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 3px; }
+.su-head .more:hover { color: var(--foreground); }
+.su-head .more svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.su-cols, .su-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 84px 42px 42px 84px; gap: 12px; align-items: center; }
+.su-cols { padding: 0 10px 6px 13px; font-size: 11px; color: var(--muted-foreground); border-bottom: 1px solid var(--border); }
+.su-cols .num { text-align: right; }
+.su-cols .upd { text-align: right; }
+
+.su-list { display: flex; flex-direction: column; }
+.su-row {
+  padding: 8px 10px; border-left: 3px solid transparent;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  transition: background .12s, border-color .12s;
+}
+.su-row:hover { background: var(--muted); border-left-color: var(--primary); }
+.su-row:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.su-row.is-err { border-left-color: var(--destructive); }
+.su-row.is-rec { border-left-color: var(--info); }
+
+.su-thumb {
+  aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; display: grid; place-items: center;
+  background: linear-gradient(160deg, oklch(0.78 0.12 var(--h)), oklch(0.45 0.16 calc(var(--h) + 40)));
+  color: oklch(0.99 0.01 var(--h) / 92%); font-size: 14px; font-weight: 800; letter-spacing: .04em;
+}
+
+.su-body { min-width: 0; }
+.su-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.su-sub { margin-top: 3px; font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.su-row.is-err .su-sub .why { color: var(--destructive); }
+
+/* 進捗バー: 数字は別列に出す。バーは割合だけを示す */
+.su-bar { height: 4px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.su-bar > i { display: block; height: 100%; border-radius: 999px; background: var(--success); }
+.su-row.is-rec .su-bar > i {
+  background: var(--info);
+  background-image: repeating-linear-gradient(-45deg, transparent 0 4px, oklch(1 0 0 / 28%) 4px 8px);
+  background-size: 200% 100%; animation: suFlow 1.4s linear infinite;
+}
+.su-row.is-err .su-bar > i { background: var(--destructive); }
+.su-row.is-done .su-bar > i { background: var(--success); }
+@keyframes suFlow { to { background-position: 200% 0; } }
+
+.su-n { font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+.su-n b { color: var(--foreground); font-weight: 600; }
+.su-row.is-done .su-n b { color: var(--success); }
+
+.su-upd { text-align: right; font-size: 12px; color: var(--muted-foreground); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.su-upd .abs { display: block; font-size: 10.5px; opacity: .75; }
+.su-row.is-err .su-upd .rel { color: var(--destructive); }
+
+/* 配信元・状態のバッジ */
+.pv { display: inline-flex; align-items: center; height: 17px; padding: 0 6px; border-radius: 4px; font-size: 10.5px; font-weight: 600; flex: none; }
+.pv-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.pv-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.pv-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.pv-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.pv-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.tag { display: inline-flex; align-items: center; gap: 4px; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; flex: none; }
+.tag-new { border-color: transparent; background: var(--info); color: var(--info-foreground); font-weight: 600; }
+.tag-rec { border-color: transparent; background: color-mix(in oklch, var(--info) 22%, transparent); color: var(--foreground); font-weight: 600; }
+.tag-rec i { width: 5px; height: 5px; border-radius: 999px; background: var(--info); animation: suPulse 1.4s ease-in-out infinite; }
+.tag-err { border-color: transparent; background: var(--destructive); color: var(--destructive-foreground); font-weight: 600; }
+.tag-exp { border-color: color-mix(in oklch, var(--warning) 45%, transparent); background: color-mix(in oklch, var(--warning) 22%, transparent); color: var(--warning-foreground); }
+.tag-done { border-color: color-mix(in oklch, var(--success) 45%, transparent); color: var(--success); }
+@keyframes suPulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* 空・読み込み中 */
+.su-empty { padding: 20px 13px; border-left: 3px solid var(--border); }
+.su-empty p { font-size: 12.5px; color: var(--muted-foreground); }
+.su-empty .cta { margin-top: 8px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--primary); }
+.su-empty .cta:hover { text-decoration: underline; }
+.su-empty .cta svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.su-skel .sk { border-radius: 3px; background: var(--muted); background-image: linear-gradient(90deg, transparent 0 35%, color-mix(in oklch, var(--background) 55%, transparent) 50%, transparent 65% 100%); background-size: 220% 100%; animation: suSkel 1.3s linear infinite; }
+.su-skel .su-thumb { background: var(--muted); }
+.su-skel .sk-t { height: 11px; width: 62%; }
+.su-skel .sk-s { height: 9px; width: 38%; margin-top: 6px; }
+.su-skel .sk-n { height: 9px; }
+@keyframes suSkel { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+
+@media (max-width: 640px) {
+  .su-cols, .su-row { grid-template-columns: 56px minmax(0, 1fr) 38px 60px; gap: 10px; }
+  .su-cols .bar, .su-cols .all, .su-row .su-bar, .su-row .su-n.all { display: none; }
+  .su-upd .abs { display: none; }
+  .su-head h3 .sub { display: block; margin-left: 0; }
+}

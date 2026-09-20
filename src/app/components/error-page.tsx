@@ -3,14 +3,26 @@ import { AlertCircle } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Button } from '@/app/components/ui/button'
 
-function getStatusCode(error: Error): number | undefined {
-  if ('status' in error && typeof (error as Record<string, unknown>).status === 'number') {
-    return (error as Record<string, unknown>).status as number
+// TanStack Router の errorComponent は unknown を渡してくるため Error 以外も受ける
+function getStatusCode(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null) {
+    return undefined
   }
-  if ('statusCode' in error && typeof (error as Record<string, unknown>).statusCode === 'number') {
-    return (error as Record<string, unknown>).statusCode as number
+  const record = error as Record<string, unknown>
+  if (typeof record.status === 'number') {
+    return record.status
+  }
+  if (typeof record.statusCode === 'number') {
+    return record.statusCode
   }
   return undefined
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
+  return typeof error === 'string' ? error : ''
 }
 
 function getStatusLabel(code: number): string {
@@ -26,7 +38,7 @@ function getStatusLabel(code: number): string {
   return labels[code] ?? 'Error'
 }
 
-export function ErrorPage({ error }: { error: Error }) {
+export function ErrorPage({ error }: { error: unknown }) {
   const router = useRouter()
   const statusCode = getStatusCode(error)
 
@@ -67,7 +79,7 @@ export function ErrorPage({ error }: { error: Error }) {
         >
           <h1 className='text-2xl font-bold tracking-tight'>問題が発生しました</h1>
           <p className='max-w-sm text-sm leading-relaxed text-muted-foreground'>
-            {error.message || '予期しないエラーが発生しました。しばらく経ってからもう一度お試しください。'}
+            {getErrorMessage(error) || '予期しないエラーが発生しました。しばらく経ってからもう一度お試しください。'}
           </p>
         </motion.div>
 

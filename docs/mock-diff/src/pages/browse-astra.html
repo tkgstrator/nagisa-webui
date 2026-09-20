@@ -1,0 +1,141 @@
+TITLE: Nagisa — アニメ一覧 (astra 案)
+USES: app-header anime-card browse-filters filter-chips anime-drawer pagination app-footer
+---
+
+<div class="pg-shell">
+  <aside class="side">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メイン">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+
+    <div class="pg-side-filters" aria-label="絞り込み">
+      <div class="fgroup">
+        <h3>配信元</h3>
+        <div class="flist">
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-amazon-foreground)"></span>Prime Video<span class="cnt num">84</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-hulu-foreground)"></span>Hulu<span class="cnt num">41</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-crunchyroll-foreground)"></span>Crunchyroll<span class="cnt num">67</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-abema-foreground)"></span>ABEMA<span class="cnt num">59</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-netflix-foreground)"></span>Netflix<span class="cnt num">36</span></label>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>年</h3>
+        <div class="fpills">
+          <button class="fpill" type="button" aria-pressed="false">すべて</button>
+          <button class="fpill" type="button" aria-pressed="true">2026</button>
+          <button class="fpill" type="button" aria-pressed="false">2025</button>
+          <button class="fpill" type="button" aria-pressed="false">2024</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>クール</h3>
+        <div class="fpills">
+          <button class="fpill" type="button" aria-pressed="false">冬</button>
+          <button class="fpill" type="button" aria-pressed="true">春</button>
+          <button class="fpill" type="button" aria-pressed="false">夏</button>
+          <button class="fpill" type="button" aria-pressed="false">秋</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>ステータス</h3>
+        <div class="fpills">
+          <button class="fpill" type="button" aria-pressed="true">放送中</button>
+          <button class="fpill" type="button" aria-pressed="false">完結</button>
+          <button class="fpill" type="button" aria-pressed="false">未放送</button>
+          <button class="fpill" type="button" aria-pressed="false">休止</button>
+          <button class="fpill" type="button" aria-pressed="false">中止</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>バッジ</h3>
+        <div class="flist">
+          <label class="fcheck"><input type="checkbox">新着エピソード</label>
+          <label class="fcheck"><input type="checkbox">新着追加</label>
+          <label class="fcheck"><input type="checkbox">配信予定</label>
+          <label class="fcheck"><input type="checkbox">配信終了予定</label>
+        </div>
+      </div>
+      <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg">
+
+      <div class="pg-head">
+        <div>
+          <h1 class="pg-title">アニメ一覧</h1>
+          <p class="pg-sub num"><b>287</b> 件中 <b>142</b> 件に絞り込み中</p>
+        </div>
+        <div class="pg-headctl">
+          <label class="search">
+            <span class="sr">タイトルで検索</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" placeholder="タイトルで検索">
+          </label>
+          <div class="sort">
+            <div class="sel">
+              <select aria-label="並び替え">
+                <option>タイトル 昇順</option>
+                <option selected>リリース年 新しい順</option>
+                <option>リリース年 古い順</option>
+              </select>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="active" aria-label="適用中のフィルタ">
+        <span class="lbl">適用中</span>
+        <span class="achip"><span class="num">2026</span><button aria-label="2026年 を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span>
+        <span class="achip">春<button aria-label="春 を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span>
+        <span class="achip">放送中<button aria-label="放送中 を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span>
+      </div>
+
+      <div class="grid">
+        <a class="tile" href="#" style="--h:265;--i:0"><div class="poster"><div class="art"></div><span class="kanji">星</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">星降る夜のアストロノーツ</p><div class="pmeta"><span>Prime Video</span><span class="ep num">第9話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:40;--i:1"><div class="poster"><div class="art"></div><span class="kanji">剣</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">蒼き剣と忘れられた王国</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:340;--i:2"><div class="poster"><div class="art"></div><span class="kanji">魔</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">魔法少女は残業しない</p><div class="pmeta"><span>Netflix</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:150;--i:3"><div class="poster"><div class="art"></div><span class="kanji">庭</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">ぼくらの空中庭園</p><div class="pmeta"><span>ABEMA</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:60;--i:4"><div class="poster"><div class="art"></div><span class="kanji">猫</span><span class="tag tag-added">新着追加</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">猫と魔王とカフェラテ</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第3話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:200;--i:5"><div class="poster"><div class="art"></div><span class="kanji">静</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">サイレント・ハーモニクス</p><div class="pmeta"><span>Hulu</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:240;--i:6"><div class="poster"><div class="art"></div><span class="kanji">廊</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">天空回廊アルカディア</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:110;--i:7"><div class="poster"><div class="art"></div><span class="kanji">霊</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">幽霊部員は今日も部活中</p><div class="pmeta"><span>ABEMA</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:90;--i:8"><div class="poster"><div class="art"></div><span class="kanji">聖</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">剣聖見習いのスローライフ</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:15;--i:9"><div class="poster"><div class="art"></div><span class="kanji">花</span><span class="tag tag-added">新着追加</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">花咲く季節に君を待つ</p><div class="pmeta"><span>Hulu</span><span class="ep num">第2話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:290;--i:10"><div class="poster"><div class="art"></div><span class="kanji">月</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">月面基地ガールズ</p><div class="pmeta"><span>ABEMA</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:320;--i:11"><div class="poster"><div class="art"></div><span class="kanji">双</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">双子探偵と真夜中の学園</p><div class="pmeta"><span>Netflix</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2026 冬</span></div></a>
+        <a class="tile" href="#" style="--h:180;--i:12"><div class="poster"><div class="art"></div><span class="kanji">電</span><span class="tag tag-soon">配信予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">電脳都市シンドローム</p><div class="pmeta"><span>Prime Video</span><span class="ep">7/3〜</span></div></div></div><div class="meta2"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div></a>
+        <a class="tile" href="#" style="--h:210;--i:13"><div class="poster"><div class="art"></div><span class="kanji">課</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">放課後クロノスタシス</p><div class="pmeta"><span>ABEMA</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2026 冬</span></div></a>
+        <a class="tile" href="#" style="--h:250;--i:14"><div class="poster"><div class="art"></div><span class="kanji">灰</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">灰色の楽園</p><div class="pmeta"><span>Netflix</span><span class="ep">第5話で休止</span></div></div></div><div class="meta2"><span class="status s-hiatus">休止</span><span class="season">2026 冬</span></div></a>
+        <a class="tile" href="#" style="--h:30;--i:15"><div class="poster"><div class="art"></div><span class="kanji">錆</span><span class="tag tag-soon">配信予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">錆びた星の子守唄</p><div class="pmeta"><span>Prime Video</span><span class="ep">10月〜</span></div></div></div><div class="meta2"><span class="status s-not-yet">未放送</span><span class="season">2026 秋</span></div></a>
+        <a class="tile" href="#" style="--h:130;--i:16"><div class="poster"><div class="art"></div><span class="kanji">導</span><span class="tag tag-soon">配信予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">最強の魔導書は喋りすぎる</p><div class="pmeta"><span>Prime Video</span><span class="ep">7/10〜</span></div></div></div><div class="meta2"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div></a>
+        <a class="tile" href="#" style="--h:165;--i:17"><div class="poster"><div class="art"></div><span class="kanji">辺</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">辺境の錬金術師、今日も店番</p><div class="pmeta"><span>Hulu</span><span class="ep num">全13話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a>
+        <a class="tile" href="#" style="--h:355;--i:18"><div class="poster"><div class="art"></div><span class="kanji">夜</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">白夜のレクイエム</p><div class="pmeta"><span>Netflix</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a>
+        <a class="tile" href="#" style="--h:75;--i:19"><div class="poster"><div class="art"></div><span class="kanji">転</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">転生したら図書館だった件</p><div class="pmeta"><span>Prime Video</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 夏</span></div></a>
+        <a class="tile" href="#" style="--h:225;--i:20"><div class="poster"><div class="art"></div><span class="kanji">終</span><span class="tag tag-exp">配信終了予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">終末列車の乗客たち</p><div class="pmeta"><span>Hulu</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 春</span></div></a>
+        <a class="tile" href="#" style="--h:0;--i:21"><div class="poster"><div class="art"></div><span class="kanji">鉄</span><span class="tag tag-exp">配信終了予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">鉄血のヴァルキュリア</p><div class="pmeta"><span>Netflix</span><span class="ep num">全24話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div></a>
+        <a class="tile" href="#" style="--h:195;--i:22"><div class="poster"><div class="art"></div><span class="kanji">深</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">深海メトロポリス</p><div class="pmeta"><span>ABEMA</span><span class="ep">第4話で中止</span></div></div></div><div class="meta2"><span class="status s-cancelled">中止</span><span class="season">2025 冬</span></div></a>
+        <a class="tile" href="#" style="--h:50;--i:23"><div class="poster"><div class="art"></div><span class="kanji">受</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">冒険者ギルドの受付嬢</p><div class="pmeta"><span>ABEMA</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2024 秋</span></div></a>
+      </div>
+
+      <div class="pager">
+        <button type="button" disabled aria-label="前のページ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <span class="cur num"><b>1</b> / 6 ページ · 142件</span>
+        <button type="button" aria-label="次のページ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+
+    </div>
+  </main>
+</div>
+
