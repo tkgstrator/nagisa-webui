@@ -13,11 +13,17 @@
  * 外側の枠 (`.cat-item cat-full` が中に何個も並べている場合など) には付けない。
  * 外側を隠すと中身ごと消えてしまうため。ラベルを一切含まない `.cat-item` は
  * それ自体が 1 つの見本なので、節の見出しを名前にして打つ。
+ *
+ * 目印が 1 つも立たなかった節 (グリッドをそのまま並べた節など) は、節ごと 1 つの
+ * 状態として打つ。打たないと「どの状態を選んでも残る」ものになってしまう。逆に
+ * 見出し (`cat-head` と各節の `<h2>`) には打たない。viewer が「選んだ状態を含まない
+ * 入れ物」を隠すので、残るのは選んだ状態が属する節の見出しだけになる。
  */
 
 const H2 = /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi
 const LABEL = /<span\s+class="cat-label[^"]*"\s*>/gi
 const CAT_ITEM = /<div\s+class="cat-item[^"]*"\s*>/gi
+const CAT_SEC = /<section\s+class="cat-sec[^"]*"\s*>/gi
 /** 見出しやラベルに添えられた補足。名前には入れない。 */
 const ASIDE =
   /<(small|span)\b[^>]*class="[^"]*cat-hint[^"]*"[^>]*>[\s\S]*?<\/\1>|<small\b[^>]*>[\s\S]*?<\/small>/gi
@@ -30,9 +36,9 @@ const text = (html: string): string =>
 const escapeAttr = (value: string): string =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
 
-/** `<div ...>` の開始位置から、対応する `</div>` の直後まで。div は自己閉じしない。 */
-function divExtent(html: string, start: number): number {
-  const scan = /<div\b|<\/div\s*>/gi
+/** 開始タグの位置から、対応する閉じタグの直後まで。div も section も自己閉じしない。 */
+function extent(html: string, start: number, tag: 'div' | 'section'): number {
+  const scan = new RegExp(`<${tag}\\b|</${tag}\\s*>`, 'gi')
   scan.lastIndex = start
   let depth = 0
   for (const match of matches(scan, html)) {
@@ -126,8 +132,18 @@ export function mark(body: string): string {
   for (const match of body.matchAll(CAT_ITEM)) {
     const end = match.index + match[0].length
     if (marks.has(end - 1)) continue
-    if (body.slice(match.index, divExtent(body, match.index)).includes('cat-label')) continue
+    if (body.slice(match.index, extent(body, match.index, 'div')).includes('cat-label')) continue
     marks.set(end - 1, unique(heading(sections, match.index)))
+  }
+
+  // 節がまるごと 1 つの見本になっているもの (中に目印が 1 つも立たなかった節)。
+  // 目印が無いと他の状態を選んだときに残ってしまうので、節ごと 1 つの状態にする。
+  for (const match of body.matchAll(CAT_SEC)) {
+    const start = match.index
+    const end = extent(body, start, 'section')
+    if ([...marks.keys()].some((at) => at > start && at < end)) continue
+    const inner = sections.find((section) => section.at > start && section.at < end)
+    marks.set(start + match[0].length - 1, unique(inner === undefined ? '' : inner.name))
   }
 
   // 後ろから差し込む。前を書き換えると後ろの位置がずれるため。
