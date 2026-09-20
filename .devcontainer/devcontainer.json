@@ -1,7 +1,7 @@
 {
   "name": "Nagisa WebUI",
   "dockerComposeFile": ["compose.yaml"],
-  "service": "app",
+  "service": "webui",
   "workspaceFolder": "/home/vscode/app",
   "shutdownAction": "stopCompose",
   "remoteUser": "vscode",

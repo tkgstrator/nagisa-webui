@@ -23,8 +23,8 @@
 # ホスト名が `app` ではなく `webui` なのは意図的。Chromium は `.app` gTLD を HSTS preload
 # リストに丸ごと載せているため、単一ラベルのホスト名 `app` への http:// アクセスも問答無用で
 # https:// に昇格される。vite dev server は TLS を話さないので撮影が必ず
-# net::ERR_SSL_PROTOCOL_ERROR で落ちる。`webui` は .devcontainer/compose.yaml で app
-# サービスに付けた network alias で、preload リストに載っていないので昇格されない。
+# net::ERR_SSL_PROTOCOL_ERROR で落ちる。そのため compose のサービス名自体を `webui` にして
+# ある (.devcontainer/compose.yaml)。
 #
 # 画面を追加する場合は screens 配列にエントリを足し、
 # mocks/ (デザイン原案) / variants/ (候補違い) / actual/ (実装のスナップショット) に

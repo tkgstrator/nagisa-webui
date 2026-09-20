@@ -23,10 +23,9 @@ export default defineConfig(({ mode }) => ({
   server: {
     port: 14755,
     // mock-diff の Playwright は compose ネットワーク内から http://webui:14755/ を開くため
-    // Host ヘッダが compose のサービス名 / alias になる。vite 5.4.12 以降はこれを既定で
-    // 403 で弾くので明示的に許可する。webui は .devcontainer/compose.yaml で app サービスに
-    // 付けた alias (Chromium の .app HSTS preload を避けるため撮影はこちらを使う)。
-    allowedHosts: ['app', 'webui'],
+    // Host ヘッダが compose のサービス名 (webui) になる。vite 5.4.12 以降はこれを既定で
+    // 403 で弾くので明示的に許可する。
+    allowedHosts: ['webui'],
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Cross-Origin-Embedder-Policy': 'require-corp',

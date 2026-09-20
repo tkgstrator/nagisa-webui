@@ -1,5 +1,9 @@
 services:
-  app:
+  # サービス名を `app` にしないこと。Chromium は `.app` gTLD を HSTS preload リストに丸ごと
+  # 載せており、単一ラベルのホスト名 `app` もこれにマッチする。mock-diff の Playwright が
+  # compose ネットワーク内から http://app:14755/ を開くと問答無用で https:// に昇格され、
+  # TLS を話さない vite は net::ERR_SSL_PROTOCOL_ERROR を返す。
+  webui:
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,15 +17,6 @@ services:
       - ../:/home/vscode/app:cached
     environment:
       NODE_OPTIONS: "--no-deprecation"
-    # mock-diff の Playwright (Chromium) から dev server を引くための別名。
-    # Chromium は `.app` gTLD を HSTS preload リストに丸ごと載せているので、compose の
-    # サービス名そのままの `app` へ http:// で入ると問答無用で https:// に昇格され、TLS を
-    # 話さない vite は net::ERR_SSL_PROTOCOL_ERROR を返す。preload に載っていない別名を
-    # 足して撮影側 (docs/mock-diff/mock-diff.yaml の actual URL) はこちらを使う。
-    networks:
-      default:
-        aliases:
-          - webui
     tty: true
     stdin_open: true
 

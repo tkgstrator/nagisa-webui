@@ -38,13 +38,15 @@ docker compose -f .devcontainer/compose.yaml config
 
 なお vite の `server.proxy` でアプリ側のポートに相乗りさせる構成は成立しない。viewer の client が `/api/screens` などをルート相対 URL で要求するため、アプリ側 Worker の `/api` ルートに先に捕まって Hono が `404 Not Found` を返し、HTML と assets だけ通って UI が空になる。
 
-## 撮影先のホスト名が `webui` な理由
+## compose のサービス名が `app` ではなく `webui` な理由
 
-`docs/mock-diff/mock-diff.yaml` の `actual` は `http://webui:14755/<path>` を指す。compose のサービス名は `app` なので一見 `http://app:14755/` で良さそうに見えるが、それでは撮影が必ず `net::ERR_SSL_PROTOCOL_ERROR` で落ちる。
+`docs/mock-diff/mock-diff.yaml` の `actual` は `http://webui:14755/<path>` を指す。この `webui` は compose のサービス名で、devcontainer が動くコンテナそのものを指している。
 
-Chromium は `.app` gTLD を HSTS preload リストに丸ごと載せており、単一ラベルのホスト名 `app` もこれに一致する。そのため `http://app:14755/` は問答無用で `https://app:14755/` に昇格され、TLS を話さない vite dev server が平文で応答した時点でハンドシェイク失敗になる。preload に載っていない別名であれば昇格されないので、`.devcontainer/compose.yaml` の app サービスに `webui` という network alias を足し、`vite.config.ts` の `server.allowedHosts` にも同じ名前を許可している。
+サービス名を `app` にしてはいけない。Chromium は `.app` gTLD を HSTS preload リストに丸ごと載せており、単一ラベルのホスト名 `app` もこれに一致する。そのため `http://app:14755/` は問答無用で `https://app:14755/` に昇格され、TLS を話さない vite dev server が平文で応答した時点でハンドシェイク失敗になり、撮影が必ず `net::ERR_SSL_PROTOCOL_ERROR` で落ちる。
 
-alias は既存コンテナには後付けされないため、この設定を入れた後は devcontainer を作り直す(Rebuild Container)まで撮影は失敗したままになる。
+`vite.config.ts` の `server.allowedHosts` に `webui` を許可しているのも同じ理由。vite 5.4.12 以降は Host ヘッダが localhost 以外だと既定で 403 を返すため、サービス名を明示的に通す必要がある。
+
+サービス名を変えるとコンテナ名が変わるため、この設定を入れた後は devcontainer を作り直す(Rebuild Container)まで撮影は失敗したままになる。
 
 ## 画面(screen)の追加方法
 
@@ -78,10 +80,10 @@ screens:
             path: variants/welcome-fable-5-1-v2.html
         actual:
           type: url
-          url: http://app:14755/welcome
+          url: http://webui:14755/welcome
 ```
 
-既存アプリの画面を `actual` として比較する場合は `type: url` で `http://app:14755/<path>` を指定する(devcontainer 内の vite dev server のポートは `vite.config.ts` で `14755` に設定済み、compose ネットワーク内では `app` サービス名で名前解決できる)。
+既存アプリの画面を `actual` として比較する場合は `type: url` で `http://webui:14755/<path>` を指定する(devcontainer 内の vite dev server のポートは `vite.config.ts` で `14755` に設定済み、compose ネットワーク内では `webui` サービス名で名前解決できる)。
 
 ただし `actual` を有効にして比較するには dev server が実際に起動している必要がある。このリポジトリでは開発サーバー(`bun run dev` / vite)を Claude が勝手に起動しない運用のため、`actual` との比較確認は必ずユーザー側で行うこと。
 
