@@ -22,25 +22,13 @@ const gitLog = execSync('git log --format="%h %aI %s" -50')
 export default defineConfig(({ mode }) => ({
   server: {
     port: 14755,
+    // mock-diff の Playwright は compose ネットワーク内から http://app:14755/ を開くため
+    // Host ヘッダが "app" になる。vite 5.4.12 以降はこれを既定で 403 で弾くので明示的に許可する。
+    allowedHosts: ['app'],
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Resource-Policy': 'same-origin',
-    },
-    proxy: {
-      '/mock-diff': {
-        target: 'http://mock-diff:3000',
-        changeOrigin: true,
-        ws: true,
-        rewrite: (path) => path.replace(/^\/mock-diff/, '') || '/',
-      },
-      // ビューアの client は /mock-diff 配下に居てもルート相対 URL を出すため、
-      // 使うパスをここで個別に横流しする必要がある。漏れるとアプリ側の SPA が
-      // 200 で index.html を返してしまい、404 にならないぶん原因が見えにくい。
-      '/assets': { target: 'http://mock-diff:3000', changeOrigin: true },
-      '/api/screens': { target: 'http://mock-diff:3000', changeOrigin: true },
-      '/api/compare': { target: 'http://mock-diff:3000', changeOrigin: true },
-      '/api/workspace': { target: 'http://mock-diff:3000', changeOrigin: true },
     },
   },
   plugins: [

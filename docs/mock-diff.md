@@ -64,10 +64,10 @@ screens:
             path: variants/welcome-fable-5-1-v2.html
         actual:
           type: url
-          url: http://app:25173/welcome
+          url: http://app:14755/welcome
 ```
 
-既存アプリの画面を `actual` として比較する場合は `type: url` で `http://app:25173/<path>` を指定する(devcontainer 内の vite dev server のポートは `vite.config.ts` で `25173` に設定済み、compose ネットワーク内では `app` サービス名で名前解決できる)。
+既存アプリの画面を `actual` として比較する場合は `type: url` で `http://app:14755/<path>` を指定する(devcontainer 内の vite dev server のポートは `vite.config.ts` で `14755` に設定済み、compose ネットワーク内では `app` サービス名で名前解決できる)。
 
 ただし `actual` を有効にして比較するには dev server が実際に起動している必要がある。このリポジトリでは開発サーバー(`bun run dev` / vite)を Claude が勝手に起動しない運用のため、`actual` との比較確認は必ずユーザー側で行うこと。
 

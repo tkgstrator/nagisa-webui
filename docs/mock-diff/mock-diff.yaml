@@ -18,7 +18,7 @@
 #                                     url は稼働中のページを指す url を指定する
 #   screens[].devices[].actual       実装結果。type: url で稼働中アプリの URL を指定するのが基本
 #                                     (このリポジトリでは devcontainer 内の vite dev server
-#                                     http://app:25173/<path> を指すことを想定)
+#                                     http://app:14755/<path> を指すことを想定)
 #
 # 画面を追加する場合は screens 配列にエントリを足し、
 # mocks/ (デザイン原案) / variants/ (候補違い) / actual/ (実装のスナップショット) に
@@ -45,7 +45,7 @@ screens:
             path: mocks/browse-astra.html
         actual:
           type: url
-          url: http://app:25173/browse
+          url: http://app:14755/browse
       - id: iphone
         name: iPhone
         viewport:
@@ -62,7 +62,7 @@ screens:
             path: mocks/browse-astra.html
         actual:
           type: url
-          url: http://app:25173/browse
+          url: http://app:14755/browse
   - id: anime-detail
     name: アニメ詳細
     category: ページ
@@ -117,7 +117,7 @@ screens:
             path: mocks/recordings-astra.html
         actual:
           type: url
-          url: http://app:25173/recordings
+          url: http://app:14755/recordings
       - id: iphone
         name: iPhone
         viewport:
@@ -134,7 +134,7 @@ screens:
             path: mocks/recordings-astra.html
         actual:
           type: url
-          url: http://app:25173/recordings
+          url: http://app:14755/recordings
   - id: home
     name: トップ
     category: ページ
@@ -156,7 +156,7 @@ screens:
             path: mocks/home-astra.html
         actual:
           type: url
-          url: http://app:25173/
+          url: http://app:14755/
       - id: iphone
         name: iPhone
         viewport:
@@ -173,7 +173,7 @@ screens:
             path: mocks/home-astra.html
         actual:
           type: url
-          url: http://app:25173/
+          url: http://app:14755/
 
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。
