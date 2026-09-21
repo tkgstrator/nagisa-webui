@@ -19,8 +19,10 @@
 `docker compose` サービスとして `.devcontainer/compose.yaml` に `mock-diff` を定義済み。通常は以下で起動する。
 
 ```bash
-docker compose -f .devcontainer/compose.yaml up -d mock-diff
+docker compose -p nagisa-webui_devcontainer -f .devcontainer/compose.yaml up -d mock-diff
 ```
+
+`-p nagisa-webui_devcontainer` は必須。compose はプロジェクト名を省略すると compose ファイルの親ディレクトリ名(`.devcontainer` → `devcontainer`)から勝手に名前を作るため、devcontainer CLI が起動した本物のサービス群とは別のプロジェクトに、中身が空の二重起動コンテナができてしまう。見分け方は `docker ps` のコンテナ名で、正しいのは `nagisa-webui_devcontainer-mock-diff-1`。
 
 **注意: devcontainer 内(コンテナ内のシェル)からこのコマンドを実行しないこと。** このプロジェクトの devcontainer は docker-outside-of-docker 構成のため、コンテナ内から `docker compose up` を実行すると `compose.yaml` 内の相対パスの volume マウント(`../docs/mock-diff` など)が「ホスト側」の Docker デーモンで解決されてしまい、存在しないパスが誤って空ディレクトリとして作成される。
 
@@ -30,7 +32,25 @@ docker compose -f .devcontainer/compose.yaml up -d mock-diff
 docker compose -f .devcontainer/compose.yaml config
 ```
 
-起動後、`http://localhost:12355` を開くと viewer の UI が見られる。
+起動後、ホストのブラウザから `http://localhost:14755/mock-diff` を開くと viewer の UI が見られる。
+
+compose では `ports` を宣言していない。viewer の UI は vite dev server (`14755`) の `/mock-diff` に相乗りさせている(`vite.config.ts` の `server.proxy`)。ホストに増えるポートが無いので、mock-diff sidecar を持つ repo を何個同時に立てても衝突しない。固定の公開ポートを compose に書くとここが割れる。
+
+ただし viewer の client は `/mock-diff` 配下に居てもルート相対 URL(`/api/screens` など)を出すので、`/assets` も `server.proxy` に並べてある。
+
+`/api/*` だけは `server.proxy` では勝てない。`@cloudflare/vite-plugin` が `configureServer` の中で middleware を直接 `use` するため、vite が proxy を挟むより前にアプリ側 Worker が並び、`/api/screens` は Hono の `404`(`text/plain`)になる。そこで `vite.config.ts` に `enforce: 'pre'` の `mock-diff-api-proxy` plugin を置き、Worker より手前で sidecar へ横流ししている。対象は `MOCK_DIFF_API_PATHS`(現在は `/api/screens` `/api/compare` `/api/workspace`)で、viewer 側にエンドポイントが増えたらここに足す。
+
+アプリ側の API 名前空間(`/api/admin` `/api/anime` `/api/img` `/api/nagisa` `/api/recordings` `/api/webhooks`)とは衝突していない。将来 viewer 側と同名のパスが生えると先取りされる点にだけ注意する。
+
+## 撮影先が compose のサービス名ではなくコンテナ名な理由
+
+`docs/mock-diff/mock-diff.yaml` の `actual` は `http://nagisa-webui_devcontainer-app-1:14755/<path>` を指す。app と mock-diff は同じ compose ネットワークに居るので、素直に考えればサービス名の `app` で届くはずで、実際 HTTP としては届いている。問題は Chromium 側にある。
+
+Chromium は `.app` gTLD を HSTS preload リストに丸ごと載せており、単一ラベルのホスト名 `app` もこれに一致する。`http://app:14755/` は問答無用で `https://app:14755/` に昇格され、TLS を話さない vite が平文で応答した時点でハンドシェイク失敗になり、撮影が必ず `net::ERR_SSL_PROTOCOL_ERROR` で落ちる。末尾ドット(`http://app.:14755/`)でも同じだった。コンテナ名 `nagisa-webui_devcontainer-app-1` はこの gTLD に当たらないので昇格されない。
+
+もう一つのゲートが vite 側で、5.4.12 以降は Host ヘッダが localhost 以外だと既定で `403` を返す。そのためこのホスト名は `vite.config.ts` の `server.allowedHosts` にも入れてある。ホスト名がコンテナ名である以上、compose のプロジェクト名(`nagisa-webui_devcontainer`)に依存する点には注意する — 起動時に `-p` を付けるべき理由がここにもある。
+
+なお IP アドレス直指定(`http://172.x.x.x:14755/`)は HSTS にも `allowedHosts` にも当たらず `200` で撮れるが、IP はコンテナ再作成で変わるため yaml には書けない。
 
 ## 画面(screen)の追加方法
 
@@ -64,10 +84,10 @@ screens:
             path: variants/welcome-fable-5-1-v2.html
         actual:
           type: url
-          url: http://app:25173/welcome
+          url: http://localhost:14755/welcome
 ```
 
-既存アプリの画面を `actual` として比較する場合は `type: url` で `http://app:25173/<path>` を指定する(devcontainer 内の vite dev server のポートは `vite.config.ts` で `25173` に設定済み、compose ネットワーク内では `app` サービス名で名前解決できる)。
+既存アプリの画面を `actual` として比較する場合は `type: url` で `http://localhost:14755/<path>` を指定する(devcontainer 内の vite dev server のポートは `vite.config.ts` で `14755` に設定済み、sidecar はそのコンテナのネットワーク名前空間を共有している)。
 
 ただし `actual` を有効にして比較するには dev server が実際に起動している必要がある。このリポジトリでは開発サーバー(`bun run dev` / vite)を Claude が勝手に起動しない運用のため、`actual` との比較確認は必ずユーザー側で行うこと。
 
@@ -87,7 +107,7 @@ mock-diff プラグインをプロジェクトスコープでインストール�
 claude plugin install mock-diff@qtmleap-plugins --scope project -y
 ```
 
-デフォルトでは `MOCK_DIFF_URL=http://127.0.0.1:12355` を見に行く。compose 側のホスト公開ポートも `12355` に合わせてあるため、追加の環境変数設定は不要。
+プラグインのデフォルトは `MOCK_DIFF_URL=http://127.0.0.1:12355` だが、この repo では `devcontainer.json` の `containerEnv.MOCK_DIFF_URL=http://mock-diff:3000` で上書きしている。MCP から sidecar を叩く経路はブラウザを経由しないので、compose のサービス名がそのまま使える(HSTS も Host ヘッダのゲートも関係ない)。ホストからの見え方(`/mock-diff` への相乗り)とは別の経路である点に注意。
 
 ## 提供される MCP ツール
 
