@@ -11,15 +11,14 @@ import {
   Loader2,
   MemoryStick,
   Power,
-  Server,
   Wifi,
   WifiOff,
   Zap
 } from 'lucide-react'
+import type { ReactElement } from 'react'
 import type { NagisaStatusJob } from '@/schemas/nagisa.dto'
 import { Badge } from '../lib/../components/ui/badge'
 import { nagisaStatusAtom } from '../lib/atoms'
-import { Button } from './ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 
 const formatUptime = (seconds: number): string => {
@@ -69,35 +68,13 @@ const JobItem = ({ job }: { job: NagisaStatusJob }) => {
   )
 }
 
-export const ServerStatusDialog = () => {
+/** 開くための要素は呼び出し側が渡す。サイドバー最下段のステータス行がそれを兼ねる。 */
+export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
   const { data: status, isPending, isError } = useAtomValue(nagisaStatusAtom)
 
   return (
     <Dialog>
-      <DialogTrigger
-        render={
-          <Button
-            variant='ghost'
-            size='icon-sm'
-            className='relative ml-auto text-muted-foreground hover:text-foreground'
-            aria-label={
-              isPending
-                ? 'サーバ状態: 接続中'
-                : isError || !status
-                  ? 'サーバ状態: オフライン'
-                  : 'サーバ状態: オンライン'
-            }
-          />
-        }
-      >
-        <Server className='size-4' />
-        <span
-          aria-hidden='true'
-          className={`pointer-events-none absolute right-0.5 bottom-0.5 size-1.5 rounded-full ring-2 ring-background ${
-            isPending ? 'animate-pulse bg-muted-foreground' : isError || !status ? 'bg-destructive' : 'bg-success'
-          }`}
-        />
-      </DialogTrigger>
+      <DialogTrigger render={trigger} />
       <DialogContent className='max-h-[80vh] select-none overflow-y-auto sm:max-w-lg'>
         <DialogHeader>
           <DialogTitle>Nagisa</DialogTitle>

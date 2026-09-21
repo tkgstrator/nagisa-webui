@@ -4,6 +4,7 @@
     "src/app/**/*.ts",
     "src/app/**/*.tsx",
     "src/schemas/anime.dto.ts",
+    "src/schemas/archive.dto.ts",
     "src/schemas/nagisa.dto.ts",
     "src/schemas/recording.dto.ts",
     "src/schemas/message.dto.ts",

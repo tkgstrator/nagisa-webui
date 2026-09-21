@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
+import { PageContainer } from '@/app/components/page-container'
 import { type ChangelogEntry, changelogQueryOptions } from '@/app/lib/query-options'
 
 export const Route = createFileRoute('/changelog/')({
@@ -19,7 +20,7 @@ function ChangelogPage() {
   }, {})
 
   return (
-    <div className='space-y-6'>
+    <PageContainer className='gap-6'>
       <h1 className='text-2xl font-bold tracking-tight'>Changelog</h1>
       {Object.entries(grouped).map(([date, entries]) => (
         <section key={date}>
@@ -34,6 +35,6 @@ function ChangelogPage() {
           </ul>
         </section>
       ))}
-    </div>
+    </PageContainer>
   )
 }
