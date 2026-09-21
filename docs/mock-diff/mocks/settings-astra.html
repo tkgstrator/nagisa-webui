@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nagisa — 設定 (astra 案) — astra 案 | Nagisa WebUI モック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- page skeleton (astra) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   astra はサイドバー (app-header の .side) と本文の 2 ペイン構成。 */
+
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  flex: 1;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 26px 36px 46px;
+}
+.pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .06s; }
+.pg > *:nth-child(3) { animation-delay: .12s; }
+.pg > *:nth-child(4) { animation-delay: .18s; }
+.pg > *:nth-child(5) { animation-delay: .24s; }
+.pg > *:nth-child(6) { animation-delay: .3s; }
+.pg > *:nth-child(7) { animation-delay: .36s; }
+.pg-narrow { max-width: 1060px; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 600; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- page body ---------- */
+/* ヒーローの直下から始まる本文。セクションより詰める。 */
+.pg-body { margin-top: 22px; }
+
+/* ---------- section ---------- */
+.pg-sec { margin-top: 36px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.pg-sec-title { font-size: 16px; font-weight: 700; }
+.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ---------- sidebar filter slot ---------- */
+/* astra はフィルタをサイドバー内に差す。中身は browse-filters が持つ。 */
+.pg-side-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 32px; }
+  .pg-title { font-size: 20px; }
+  .pg-sec { margin-top: 28px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- quick link ---------- */
+/* pg-links の中に並ぶ 1 枚。左罫の色で注意を促す。 */
+.pg-link {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  border-left: 3px solid var(--primary); border-radius: 0 10px 10px 0;
+  transition: background .18s ease, transform .18s ease;
+}
+.pg-link:hover { background: var(--muted); transform: translateX(3px); }
+.pg-link.pg-warn { border-left-color: var(--destructive); }
+.pg-link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
+.pg-link.pg-warn svg { color: var(--destructive); }
+.pg-link .t { font-size: 13px; font-weight: 700; }
+.pg-link .s { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); }
+
+/* ---------- header search ---------- */
+/* ページ見出しの右に置く検索欄。部品側のフィルタとは別物。 */
+.pg-search { position: relative; width: 260px; }
+.pg-search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
+.pg-search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.pg-search input:focus-visible { outline: 2px solid var(--ring); }
+/* ---------- component: app-header ---------- */
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.6); } }
+
+.side {
+  width: 236px; flex: 0 0 236px;
+  background: var(--sidebar); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 18px 14px 16px;
+}
+.side.is-tall { min-height: 420px; }
+.side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
+.side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
+.side-logo svg { width: 13px; height: 13px; }
+
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
+.side-nav a svg { width: 16px; height: 16px; }
+.side-nav a:hover { background: var(--muted); color: var(--foreground); }
+.side-nav a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-left-color: var(--primary); font-weight: 600; }
+.side-count { margin-left: auto; font-size: 10px; background: var(--secondary); color: var(--secondary-foreground); border-radius: 999px; padding: 1px 6px; }
+.side-count.is-alert { background: color-mix(in oklch, var(--primary) 20%, transparent); color: var(--accent-foreground); }
+.side-nav.is-solo { width: 208px; }
+
+.side-widget { border-top: 1px solid var(--border); padding-top: 14px; }
+.side-widget h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 8px; font-weight: 600; }
+.side-stat { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
+.side-stat:hover { background: var(--muted); }
+.side-stat .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.side-stat .v { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.side-stat.d-new .dot { background: var(--info); }
+.side-stat.d-rec .dot { background: var(--warning); }
+.side-stat.d-err .dot { background: var(--destructive); }
+.side-stat.d-watch .dot { background: var(--success); }
+
+.side-search { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin: 0 2px; border-radius: 8px; border: 1px solid var(--input); background: var(--background); color: var(--muted-foreground); font-size: 12.5px; transition: border-color .15s, box-shadow .15s; }
+.side-search svg { width: 13px; height: 13px; flex: none; }
+.side-search:hover { border-color: var(--ring); }
+.side-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
+.side-search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+
+.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.side-status.is-checking i { background: var(--warning); }
+.side-status.is-down { color: var(--destructive); }
+.side-status.is-down i { background: var(--destructive); animation: none; }
+
+/* mobile: サイドバーを畳んで上端の横並びバーにする */
+.side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
+.side.is-mobile .side-brand { padding: 0; font-size: 14px; }
+.side.is-mobile .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+.side.is-mobile .side-nav a { padding: 7px; border-left: 0; border-radius: 8px; }
+.side.is-mobile .side-nav a span, .side.is-mobile .side-nav a { font-size: 0; }
+.side.is-mobile .side-nav a svg { width: 18px; height: 18px; }
+.side.is-mobile .side-nav a[aria-current="page"] { background: var(--accent); }
+
+@media (max-width: 640px) {
+  .side, .side.is-tall { width: 100%; flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-brand { padding: 0; font-size: 14px; }
+  .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+  .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
+  .side-nav a svg { width: 18px; height: 18px; }
+  .side-count, .side-widget, .side-status, .side-search { display: none; }
+  .side.is-mobile { width: 100%; }
+}
+
+/* ---------- sidebar: 放送スケジュール ---------- */
+/* side-widget の中に敷く行。放送中の回だけ左罫と背景が付く。 */
+.side-sched-row { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px; border-left: 3px solid transparent; border-radius: 0 7px 7px 0; }
+.side-sched-row.now { border-left-color: var(--primary); background: var(--accent); }
+.side-sched-row .k { font-size: 11.5px; color: var(--muted-foreground); }
+.side-sched-row .v { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 数値の性質で左罫と値の見え方を変える (成功 / 失敗) */
+.side-stat.ok { border-left-color: var(--success); }
+.side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
+.side-stat.err { border-left-color: var(--destructive); }
+.side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
+
+/* ---------- プロバイダの pill ---------- */
+.pill { display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; flex: none; }
+.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+/* 設定行では左端の位置を st-ico と揃えたいので、少しだけ大きく取る */
+.st-row .pill { height: 24px; min-width: 108px; padding: 0 12px; justify-content: center; font-size: 11px; }
+
+/* ---------- settings: 2 カラム内の調整 ---------- */
+/* 本文カラムの先頭セクションだけは見出しの直下に付ける */
+.pg-cols > div > .pg-sec:first-child { margin-top: 0; }
+/* 見出しと本文の間は 1 カラムのときより少し空ける */
+.pg-cols.pg-body { margin-top: 30px; }
+/* 本文カラムは 1060 - 280 と狭いので、リンクは 2 列で置く */
+.pg-cols .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 640px) {
+  .pg-cols .pg-links { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- settings: 設定パネル (1px 罫線で連結したひと続きの面) ---------- */
+.st-panel {
+  display: flex; flex-direction: column; gap: 1px;
+  background: var(--border); border-radius: 14px; overflow: hidden;
+}
+.st-row {
+  background: var(--background); padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  border-left: 3px solid transparent;
+  transition: background .2s ease, border-left-color .2s ease;
+  animation: fadeUp .42s cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+.st-row:hover, .st-row.is-hover { background: var(--muted); border-left-color: var(--primary); }
+.st-row:focus-within, .st-row.is-focus { border-left-color: var(--primary); }
+
+.st-rt { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.st-ico {
+  width: 30px; height: 30px; border-radius: 999px; flex: none;
+  display: grid; place-items: center;
+  background: var(--muted); color: var(--muted-foreground);
+  transition: background .22s ease, color .22s ease;
+}
+.st-ico svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.st-row:hover .st-ico, .st-row.is-hover .st-ico { background: color-mix(in oklch, var(--primary) 16%, transparent); color: var(--primary); }
+.st-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.st-desc { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
+.st-ctl { flex: none; display: flex; align-items: center; gap: 10px; }
+.st-note { font-size: 11.5px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.st-tag {
+  display: inline-flex; align-items: center; height: 18px; padding: 0 8px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: .03em;
+  background: var(--secondary); color: var(--secondary-foreground);
+}
+
+/* ---------- settings: pill セグメント ---------- */
+.st-seg { display: flex; gap: 3px; padding: 3px; border-radius: 999px; background: var(--muted); flex: none; }
+.st-seg button {
+  height: 26px; padding: 0 12px; border-radius: 999px; flex: none;
+  font-size: 12.5px; color: var(--muted-foreground); white-space: nowrap;
+  transition: background .18s ease, color .18s ease, transform .12s ease;
+}
+.st-seg button:hover { color: var(--foreground); }
+.st-seg button:active { transform: scale(.95); }
+.st-seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); font-weight: 700; }
+
+/* ---------- settings: スイッチ ---------- */
+.st-sw {
+  width: 40px; height: 23px; border-radius: 999px; background: var(--input);
+  position: relative; flex: none; transition: background .2s ease;
+}
+.st-sw::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px;
+  border-radius: 999px; background: var(--background);
+  transition: transform .24s cubic-bezier(.16, 1, .3, 1);
+}
+.st-sw.on { background: var(--primary); }
+.st-sw.on::after { transform: translateX(17px); background: var(--primary-foreground); }
+.st-sw:focus-visible, .st-sw.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* ---------- settings: pill セレクト ---------- */
+.st-sel {
+  display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px;
+  border: 1px solid var(--input); border-radius: 999px;
+  font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap;
+  transition: border-color .18s ease, background .18s ease;
+}
+.st-sel:hover, .st-sel.is-hover { border-color: var(--primary); background: var(--background); }
+.st-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
+
+/* ---------- settings: ボタン ---------- */
+.st-btn {
+  height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--input);
+  font-size: 12.5px; font-weight: 700; white-space: nowrap;
+  transition: background .18s ease, border-color .18s ease, transform .12s ease;
+}
+.st-btn:hover, .st-btn.is-hover { background: var(--muted); }
+.st-btn:active { transform: scale(.96); }
+.st-btn.is-danger { border-color: color-mix(in oklch, var(--destructive) 45%, transparent); color: var(--destructive); }
+.st-btn.is-danger:hover, .st-btn.is-danger.is-hover { background: color-mix(in oklch, var(--destructive) 12%, transparent); }
+
+/* 取り消せない操作の行だけ左罫を destructive にする */
+.st-row.is-danger { border-left-color: var(--destructive); }
+.st-row.is-danger .st-ico { background: color-mix(in oklch, var(--destructive) 14%, transparent); color: var(--destructive); }
+.st-row.is-danger:hover .st-ico { background: color-mix(in oklch, var(--destructive) 20%, transparent); color: var(--destructive); }
+
+/* ---------- settings: 右カラムの目次 ---------- */
+.st-toc { display: flex; flex-direction: column; gap: 2px; }
+.st-toc h3 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted-foreground); font-weight: 700; padding: 0 12px 8px;
+}
+.st-toc a {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  border-left: 3px solid transparent; border-radius: 0 9px 9px 0;
+  font-size: 12.5px; color: var(--muted-foreground);
+  transition: background .18s ease, color .18s ease;
+}
+.st-toc a:hover, .st-toc a.is-hover { background: var(--muted); color: var(--foreground); }
+.st-toc a[aria-current="true"] {
+  background: var(--accent); color: var(--accent-foreground);
+  border-left-color: var(--primary); font-weight: 700;
+}
+.st-toc a .c { margin-left: auto; font-size: 10.5px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+
+/* ---------- settings: 保存状態 (変更は即時反映、保存ボタンは持たない) ---------- */
+.st-saved {
+  display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px;
+  border-radius: 999px; background: color-mix(in oklch, var(--success) 14%, transparent);
+  font-size: 11.5px; font-weight: 700; color: var(--success);
+}
+.st-saved svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.st-hint {
+  border-left: 3px solid var(--border); border-radius: 0 11px 11px 0;
+  background: var(--muted); padding: 14px 16px;
+  font-size: 11.5px; color: var(--muted-foreground); line-height: 1.6;
+}
+.st-hint b { color: var(--foreground); font-weight: 700; }
+
+/* ---------- settings: バージョン表 (1 セル 1 値) ---------- */
+.st-meta {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden;
+}
+.st-meta > div {
+  background: var(--background); padding: 14px 16px; min-width: 0;
+  border-left: 3px solid var(--border);
+}
+.st-meta dt { font-size: 11px; color: var(--muted-foreground); }
+.st-meta dd { margin: 5px 0 0; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.st-meta dd.mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 14px; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .st-row { animation: none; }
+}
+
+@media (max-width: 1024px) {
+  /* 目次は本文の上に回り、横スクロールする pill になる */
+  .pg-cols .pg-aside { order: -1; position: static; gap: 0; }
+  /* 同じ断りは見出し脇に出ているので、狭い画面では畳む */
+  .pg-cols .pg-aside .st-hint { display: none; }
+  .st-toc { flex-direction: row; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .st-toc::-webkit-scrollbar { display: none; }
+  .st-toc h3 { display: none; }
+  .st-toc a { flex: none; border-left: 0; border-radius: 999px; background: var(--muted); padding: 7px 14px; }
+  .st-toc a[aria-current="true"] { background: var(--primary); color: var(--primary-foreground); }
+  .st-toc a[aria-current="true"] .c { color: var(--primary-foreground); }
+}
+@media (max-width: 640px) {
+  .st-row { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px 16px; }
+  .st-ctl { width: 100%; justify-content: space-between; }
+  .st-seg { width: 100%; justify-content: stretch; }
+  .st-seg button { flex: 1; padding: 0 8px; }
+  .st-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .st-meta dd { font-size: 17px; }
+}
+/* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
+.ftr {
+  padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted-foreground);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.ftr .r { display: inline-flex; align-items: center; gap: 14px; }
+.ftr a { transition: color .12s; }
+.ftr a:hover { color: var(--foreground); }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
+.ftr .dot.is-down { background: var(--destructive); }
+@media (max-width: 640px) {
+  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr .r { gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メイン">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">16</span></a>
+      <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg pg-narrow">
+
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">設定 · <b>このブラウザにだけ</b>保存される</p>
+          <h1 class="pg-title">表示と録画のふるまい</h1>
+          <p class="pg-sub">変更はその場で反映される。保存ボタンはない。</p>
+        </div>
+        <div class="pg-headctl">
+          <span class="st-saved">
+            <svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>
+            保存済み <span class="num">13:04</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="pg-cols pg-body">
+        <div>
+
+          <section class="pg-sec" id="s-view">
+            <div class="pg-sec-head">
+              <h2 class="pg-sec-title">表示</h2>
+              <span class="pg-sec-count">一覧とカードの見え方</span>
+            </div>
+            <div class="st-panel">
+              <div class="st-row" style="--i:0">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+                  <div>
+                    <p class="st-label">テーマ</p>
+                    <p class="st-desc">「システム」は OS の外観設定に追従する。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <div class="st-seg" role="group" aria-label="テーマ">
+                    <button type="button" aria-pressed="false">ライト</button>
+                    <button type="button" aria-pressed="false">ダーク</button>
+                    <button type="button" aria-pressed="true">システム</button>
+                  </div>
+                </div>
+              </div>
+              <div class="st-row" style="--i:1">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg></span>
+                  <div>
+                    <p class="st-label">1 ページの表示件数</p>
+                    <p class="st-desc">アニメ一覧・録画一覧・未識別タイトルに適用される。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-sel"><span class="num">24</span> 件
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </div>
+              </div>
+              <div class="st-row" style="--i:2">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M3 6h13M3 12h9M3 18h5M17 10v10M17 20l-3-3M17 20l3-3"/></svg></span>
+                  <div>
+                    <p class="st-label">既定の並び順</p>
+                    <p class="st-desc">URL に指定があればそちらが優先される。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-sel">放送年 (新しい順)
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </div>
+              </div>
+              <div class="st-row" style="--i:3">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+                  <div>
+                    <p class="st-label">カードの密度</p>
+                    <p class="st-desc">1 行あたりの枚数とサムネイルの大きさが変わる。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <div class="st-seg" role="group" aria-label="カードの密度">
+                    <button type="button" aria-pressed="false">ゆったり</button>
+                    <button type="button" aria-pressed="true">標準</button>
+                    <button type="button" aria-pressed="false">詰める</button>
+                  </div>
+                </div>
+              </div>
+              <div class="st-row" style="--i:4">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13H11l-1 9 8.5-11H12z"/></svg></span>
+                  <div>
+                    <p class="st-label">アニメーション</p>
+                    <p class="st-desc">OS で「視差を減らす」が有効なときは、この設定によらず抑制される。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-note">有効</span>
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="アニメーション"></button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pg-sec" id="s-provider">
+            <div class="pg-sec-head">
+              <h2 class="pg-sec-title">配信プロバイダ</h2>
+              <span class="pg-sec-count"><span class="num">4</span> / <span class="num">5</span> 有効</span>
+            </div>
+            <div class="st-panel">
+              <div class="st-row" style="--i:0">
+                <div class="st-rt">
+                  <span class="pill p-amazon">Prime Video</span>
+                  <div>
+                    <p class="st-desc"><span class="num">1,284</span> 作品 · 最終取得 <span class="num">9/18 12:40</span></p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="Prime Video を表示"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:1">
+                <div class="st-rt">
+                  <span class="pill p-hulu">Hulu</span>
+                  <div>
+                    <p class="st-desc"><span class="num">612</span> 作品 · 最終取得 <span class="num">9/18 12:40</span></p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="Hulu を表示"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:2">
+                <div class="st-rt">
+                  <span class="pill p-crunchyroll">Crunchyroll</span>
+                  <div>
+                    <p class="st-desc"><span class="num">948</span> 作品 · 最終取得 <span class="num">9/18 12:41</span></p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="Crunchyroll を表示"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:3">
+                <div class="st-rt">
+                  <span class="pill p-abema">ABEMA</span>
+                  <div>
+                    <p class="st-desc"><span class="num">431</span> 作品 · 最終取得 <span class="num">9/18 12:38</span></p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="ABEMA を表示"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:4">
+                <div class="st-rt">
+                  <span class="pill p-netflix">Netflix</span>
+                  <div>
+                    <p class="st-label"><span class="st-tag">未連携</span></p>
+                    <p class="st-desc">カタログの取得がまだ設定されていない。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-sw" role="switch" aria-checked="false" aria-label="Netflix を表示"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:5">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span>
+                  <div>
+                    <p class="st-label">既定のクール</p>
+                    <p class="st-desc">ホームの「今期アニメ」と一覧の初期フィルタに使われる。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <div class="st-seg" role="group" aria-label="既定のクール">
+                    <button type="button" aria-pressed="true">今期に追従</button>
+                    <button type="button" aria-pressed="false">2026年 夏</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pg-sec" id="s-rec">
+            <div class="pg-sec-head">
+              <h2 class="pg-sec-title">録画</h2>
+              <span class="pg-sec-count">Nagisa への依頼と予約のふるまい</span>
+            </div>
+            <div class="st-panel">
+              <div class="st-row" style="--i:0">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg></span>
+                  <div>
+                    <p class="st-label">録画済みにしたら録画も依頼する</p>
+                    <p class="st-desc">詳細画面で「録画済み」を ON にしたとき、Nagisa へ録画リクエストも送る。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-note">依頼する</span>
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="録画済みにしたら録画も依頼する"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:1">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+                  <div>
+                    <p class="st-label">一括解除の前に確認する</p>
+                    <p class="st-desc">録画一覧で複数まとめて予約解除するとき、確認を挟む。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-note">確認する</span>
+                  <button type="button" class="st-sw on" role="switch" aria-checked="true" aria-label="一括解除の前に確認する"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:2">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <div>
+                    <p class="st-label">配信終了の予告</p>
+                    <p class="st-desc">この日数を切った予約作品に「配信終了予定」のバッジを出す。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-sel"><span class="num">14</span> 日前から
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </div>
+              </div>
+              <div class="st-row" style="--i:3">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3.5-7.1"/><path d="M21 4v5h-5"/></svg></span>
+                  <div>
+                    <p class="st-label">新着エピソードを自動で予約する</p>
+                    <p class="st-desc">予約中の作品に新しい話数が来たら、確認せずに録画を依頼する。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-note">手動</span>
+                  <button type="button" class="st-sw" role="switch" aria-checked="false" aria-label="新着エピソードを自動で予約する"></button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:4">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M4 5h9M9 3v2M11 5c0 4.5-2.7 8.5-7 10M7 9c1.2 2.6 3.4 4.7 6 5.8M13 21l4.5-10 4.5 10M15.2 17.5h4.6"/></svg></span>
+                  <div>
+                    <p class="st-label">既定の言語</p>
+                    <p class="st-desc">ジョブ投入フォームの language に初期値として入る。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-sel">日本語 (ja-JP)
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pg-sec" id="s-admin">
+            <div class="pg-sec-head">
+              <h2 class="pg-sec-title">管理</h2>
+              <a class="pg-sec-more" href="#admin">管理ハブを開く
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="pg-links">
+              <a class="pg-link pg-warn" href="#admin-unidentified">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v3M11 14h.01"/></svg>
+                <div>
+                  <p class="t">未識別タイトル <span class="num">38</span> 件</p>
+                  <p class="s">AniList で照合できなかった作品を手当てする</p>
+                </div>
+              </a>
+              <a class="pg-link" href="#admin-nagisa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M12 15l-4-4M12 15l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                <div>
+                  <p class="t">Nagisa ジョブ投入</p>
+                  <p class="s">provider / content_id を指定して直接依頼する</p>
+                </div>
+              </a>
+              <a class="pg-link" href="#server-status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7.5h.01M7 17h.01"/></svg>
+                <div>
+                  <p class="t">サーバーステータス</p>
+                  <p class="s">API・D1・Nagisa の疎通を確認する</p>
+                </div>
+              </a>
+              <a class="pg-link" href="#abema-keys">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8 2 2-2 2 2 2-3 3-2-2-2 2"/></svg>
+                <div>
+                  <p class="t">ABEMA 鍵アーカイブ</p>
+                  <p class="s">進捗 <span class="num">82%</span> · 手動で取得を走らせる</p>
+                </div>
+              </a>
+              <a class="pg-link" href="#changelog">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><path d="M3.1 13a9 9 0 1 0 2-6.4"/><path d="M3 4v5h5"/></svg>
+                <div>
+                  <p class="t">変更履歴</p>
+                  <p class="s">直近のデプロイとコミットを日付ごとに見る</p>
+                </div>
+              </a>
+              <a class="pg-link" href="#cron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17v-4a4 4 0 0 1 4-4h10"/><path d="m14 6 3 3-3 3"/><path d="M21 7v4a4 4 0 0 1-4 4H7"/><path d="m10 18-3-3 3-3"/></svg>
+                <div>
+                  <p class="t">取得ジョブの履歴</p>
+                  <p class="s">最終実行 <span class="num">9/18 12:41</span> · 失敗 <span class="num">0</span> 件</p>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section class="pg-sec" id="s-data">
+            <div class="pg-sec-head">
+              <h2 class="pg-sec-title">データ</h2>
+              <span class="pg-sec-count">このブラウザに残っているもの</span>
+            </div>
+            <div class="st-panel">
+              <div class="st-row" style="--i:0">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m6 15 4-4 3 3 2-2 3 3"/><circle cx="9" cy="9" r="1.4"/></svg></span>
+                  <div>
+                    <p class="st-label">画像キャッシュ</p>
+                    <p class="st-desc">ポスターの WebP を端末に保持している分。消しても作品データは残る。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <span class="st-note"><span class="num">128.4</span> MB</span>
+                  <button type="button" class="st-btn">削除</button>
+                </div>
+              </div>
+              <div class="st-row" style="--i:1">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg></span>
+                  <div>
+                    <p class="st-label">設定の書き出しと読み込み</p>
+                    <p class="st-desc">この画面の内容を JSON で保存し、別の端末に持ち込める。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-btn">書き出す</button>
+                  <button type="button" class="st-btn">読み込む</button>
+                </div>
+              </div>
+              <div class="st-row is-danger" style="--i:2">
+                <div class="st-rt">
+                  <span class="st-ico"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span>
+                  <div>
+                    <p class="st-label">すべての設定を初期化する</p>
+                    <p class="st-desc">この画面の内容だけが既定に戻る。録画予約と作品データには触れない。</p>
+                  </div>
+                </div>
+                <div class="st-ctl">
+                  <button type="button" class="st-btn is-danger">初期化</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pg-sec" id="s-about">
+            <div class="pg-sec-head">
+              <h2 class="pg-sec-title">アプリ情報</h2>
+              <a class="pg-sec-more" href="#changelog">変更履歴
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            </div>
+            <dl class="st-meta">
+              <div>
+                <dt>バージョン</dt>
+                <dd class="num">v0.4.0</dd>
+              </div>
+              <div>
+                <dt>ビルド</dt>
+                <dd class="mono">319250c</dd>
+              </div>
+              <div>
+                <dt>登録作品</dt>
+                <dd class="num">3,275</dd>
+              </div>
+              <div>
+                <dt>録画予約</dt>
+                <dd class="num">16</dd>
+              </div>
+            </dl>
+          </section>
+
+        </div>
+
+        <aside class="pg-aside">
+          <nav class="st-toc" aria-label="設定の節">
+            <h3>この画面の中身</h3>
+            <a href="#s-view" aria-current="true">表示<span class="c num">5</span></a>
+            <a href="#s-provider">配信プロバイダ<span class="c num">4 / 5</span></a>
+            <a href="#s-rec">録画<span class="c num">5</span></a>
+            <a href="#s-admin">管理<span class="c num">6</span></a>
+            <a href="#s-data">データ<span class="c num">3</span></a>
+            <a href="#s-about">アプリ情報</a>
+          </nav>
+          <p class="st-hint">
+            ここの設定は<b>このブラウザにだけ</b>保存される。別の端末やシークレットウィンドウには引き継がれない。
+            持ち運ぶときは<b>データ</b>の「書き出す」を使う。
+          </p>
+        </aside>
+      </div>
+
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.4.0<span class="sha">319250c</span>2026/09/18 13:04</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>
+
+</body>
+</html>

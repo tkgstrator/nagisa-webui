@@ -11,6 +11,7 @@ UI モック作成時にドメイン機能を理解するために参照する�
 | `/browse` | アニメ一覧 | `src/app/routes/browse/index.tsx` |
 | `/anime/:id` | アニメ詳細 | `src/app/routes/anime/$id/index.tsx` |
 | `/recordings` | 録画一覧 | `src/app/routes/recordings/index.tsx` |
+| `/settings` | 設定 | (未実装 — `docs/mock-diff/mocks/settings-*.html` が先行) |
 | `/changelog` | 変更履歴 | `src/app/routes/changelog/index.tsx` |
 | `/admin` | 管理ハブ | `src/app/routes/admin/index.tsx` |
 | `/admin/unidentified` | 未識別タイトル一覧 | `src/app/routes/admin/unidentified/index.tsx` |
@@ -18,7 +19,8 @@ UI モック作成時にドメイン機能を理解するために参照する�
 | `/_errors/:statusCode` | エラー画面 (404等) | `src/app/routes/_errors/$statusCode/index.tsx` |
 
 mock-diff-viewer (`docs/mock-diff/mock-diff.yaml`) でモック比較対象になっているのは
-`browse` / `anime-detail` / `recordings` / `home` の4画面 (screen-id) 。
+`browse` / `anime-detail` / `recordings` / `home` / `settings` の5画面 (screen-id) 。
+このうち `settings` だけは実装が存在しないため、実装との比較 (Checking) は行わず案の選定のみを行う。
 
 ## 画面ごとの機能
 
