@@ -98,6 +98,9 @@ screens:
           final:
             type: html
             path: mocks/anime-detail-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/anime/77c1ab93-b36f-5b6d-a699-dfeb2ae1c369
       - id: iphone
         name: iPhone
         viewport:
@@ -115,6 +118,9 @@ screens:
           final:
             type: html
             path: mocks/anime-detail-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/anime/77c1ab93-b36f-5b6d-a699-dfeb2ae1c369
   - id: recordings
     name: 録画一覧
     category: ページ
@@ -226,6 +232,9 @@ screens:
           astra:
             type: html
             path: mocks/settings-astra.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/settings
       - id: iphone
         name: iPhone
         viewport:
@@ -240,6 +249,9 @@ screens:
           astra:
             type: html
             path: mocks/settings-astra.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/settings
 
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。

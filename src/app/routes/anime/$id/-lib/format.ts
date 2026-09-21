@@ -3,13 +3,47 @@ import duration from 'dayjs/plugin/duration'
 
 dayjs.extend(duration)
 
+const WEEKDAY = ['日', '月', '火', '水', '木', '金', '土']
+
 export function formatDuration(seconds: number): string {
   const d = dayjs.duration(seconds, 'seconds')
   return d.hours() > 0 ? d.format('H:mm:ss') : d.format('m:ss')
 }
 
+/** ヒーロー領域の「総再生時間」向け。3時間36分 / 24分 の形にする。 */
+export function formatRuntime(seconds: number): string {
+  const minutes = Math.round(seconds / 60)
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return h > 0 ? `${h}時間${m}分` : `${m}分`
+}
+
 export function formatDate(dateStr: string): string {
   return dayjs(dateStr).format('YYYY/MM/DD')
+}
+
+/** サイドバーの放送スケジュール向け。7/25 (金) の形にする。 */
+export function formatMonthDay(dateStr: string): string {
+  const d = dayjs(dateStr)
+  return `${d.format('M/D')} (${WEEKDAY[d.day()]})`
+}
+
+export type EpisodeStatus = 'done' | 'todo' | 'future'
+
+/**
+ * エピソードの録画状態。API が持つのは recorded と配信日だけなので、
+ * 録画済み / 未録画 / 配信予定 の3状態に落とす。
+ */
+export function episodeStatus(episode: { recorded: boolean; releaseDate: string }): EpisodeStatus {
+  if (episode.recorded) return 'done'
+  return dayjs(episode.releaseDate).isAfter(dayjs()) ? 'future' : 'todo'
+}
+
+/** タイトルごとに安定した色相を返す。サムネイル未取得時のプレースホルダに使う。 */
+export function hueOf(seed: string): number {
+  let hash = 0
+  for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) % 360
+  return hash
 }
 
 export function getWatchUrl(provider: string, episodeId: string): string | null {

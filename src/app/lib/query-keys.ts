@@ -10,6 +10,7 @@ export const queryKeys = {
   },
   changelog: ['changelog'] as const,
   admin: {
+    archiveStats: ['admin', 'archive-stats'] as const,
     unidentified: (filters: Record<string, unknown>) => ['admin', 'unidentified', filters] as const
   }
 }

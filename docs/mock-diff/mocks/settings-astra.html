@@ -130,10 +130,10 @@ svg { display: block; flex: none; }
 
 .pg {
   flex: 1;
-  max-width: 1180px;
+  /* 幅の上限は持たない。236px の常設サイドバーを除いた残りを全部使う。
+     下余白の 90px は本来の 46px + 固定フッターの高さ 44px。 */
   width: 100%;
-  margin: 0 auto;
-  padding: 26px 36px 46px;
+  padding: 26px 36px 90px;
 }
 .pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
 .pg > *:nth-child(1) { animation-delay: 0s; }
@@ -143,7 +143,6 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(5) { animation-delay: .24s; }
 .pg > *:nth-child(6) { animation-delay: .3s; }
 .pg > *:nth-child(7) { animation-delay: .36s; }
-.pg-narrow { max-width: 1060px; }
 
 /* ---------- page head ---------- */
 .pg-head {
@@ -238,7 +237,7 @@ svg { display: block; flex: none; }
   .pg-shell { flex-direction: column; }
 }
 @media (max-width: 640px) {
-  .pg { padding: 18px 16px 32px; }
+  .pg { padding: 18px 16px 76px; }
   .pg-title { font-size: 20px; }
   .pg-sec { margin-top: 28px; }
   .pg-links { grid-template-columns: minmax(0, 1fr); }
@@ -523,10 +522,14 @@ svg { display: block; flex: none; }
 /* ---------- component: app-footer ---------- */
 /* ---------- footer ---------- */
 .ftr {
-  padding-top: 16px; border-top: 1px solid var(--border);
+  /* 画面下端に常時固定する。左端は常設サイドバー (236px) の右から。
+     高さ 44px は .pg の下余白 90px (= 46 + 44) と対になっている。 */
+  position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
+  padding: 0 36px; background: var(--background); border-top: 1px solid var(--border);
   font-size: 11px; color: var(--muted-foreground);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
+@media (max-width: 860px) { .ftr { left: 0; } }
 .ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
 .ftr .r { display: inline-flex; align-items: center; gap: 14px; }
 .ftr a { transition: color .12s; }
@@ -540,7 +543,7 @@ svg { display: block; flex: none; }
 .ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
 .ftr .dot.is-down { background: var(--destructive); }
 @media (max-width: 640px) {
-  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr { padding: 0 16px; gap: 10px; }
   .ftr .r { gap: 12px; }
 }
 </style>
@@ -977,7 +980,7 @@ svg { display: block; flex: none; }
     </div>
 
     <footer class="ftr">
-      <span class="l"><span class="dot"></span>Nagisa WebUI v0.4.0<span class="sha">319250c</span>2026/09/18 13:04</span>
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.7.0<span class="sha">319250c</span>2026/09/18 13:04</span>
       <span class="r">
         <a href="#changelog">変更履歴</a>
         <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>

@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2, Send } from 'lucide-react'
 import { useState } from 'react'
+import { PageContainer } from '@/app/components/page-container'
 import { Button } from '@/app/components/ui/button'
 import { Checkbox } from '@/app/components/ui/checkbox'
 import { Input } from '@/app/components/ui/input'
@@ -9,6 +10,7 @@ import { Label } from '@/app/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
 import api from '@/app/lib/api'
 import { providerLabel } from '@/app/lib/constants'
+import { useSettings } from '@/app/routes/settings/-lib/settings'
 import type { NagisaEnqueueRequest, NagisaEnqueueResponse } from '@/schemas/nagisa.dto'
 
 export const Route = createFileRoute('/admin/nagisa/')({
@@ -40,12 +42,13 @@ const languageValueLabel = (v: unknown) =>
   v === UNSET || v == null ? '未指定' : (LANGUAGES.find((l) => l.value === v)?.label ?? String(v))
 
 function NagisaJobEditorPage() {
+  const { settings } = useSettings()
   const [provider, setProvider] = useState<Provider>('amazon')
   const [contentId, setContentId] = useState('')
   const [seasonNumberText, setSeasonNumberText] = useState('')
   const [episodesText, setEpisodesText] = useState('')
   const [marketplace, setMarketplace] = useState<Marketplace | typeof UNSET>(UNSET)
-  const [language, setLanguage] = useState<Language | typeof UNSET>(UNSET)
+  const [language, setLanguage] = useState<Language | typeof UNSET>(settings.defaultLanguage)
   const [force, setForce] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
 
@@ -136,7 +139,7 @@ function NagisaJobEditorPage() {
   })()
 
   return (
-    <div className='space-y-6'>
+    <PageContainer className='gap-6'>
       <div>
         <h1 className='text-2xl font-bold tracking-tight'>Nagisa ジョブ投入</h1>
         <p className='mt-1 text-sm text-muted-foreground'>
@@ -296,6 +299,6 @@ function NagisaJobEditorPage() {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   )
 }

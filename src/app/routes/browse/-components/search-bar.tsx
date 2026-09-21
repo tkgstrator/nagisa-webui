@@ -1,10 +1,14 @@
+import { useAtomValue } from 'jotai'
 import { Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Input } from '@/app/components/ui/input'
+import { searchFocusAtom } from '@/app/lib/atoms'
 
 export function SearchBar({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const [localValue, setLocalValue] = useState(value)
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const focusSignal = useAtomValue(searchFocusAtom)
 
   useEffect(() => {
     setLocalValue(value)
@@ -22,16 +26,23 @@ export function SearchBar({ value, onChange }: { value: string; onChange: (value
     }
   }, [])
 
+  useEffect(() => {
+    if (focusSignal === 0) return
+    inputRef.current?.focus()
+    inputRef.current?.select()
+  }, [focusSignal])
+
   return (
-    <div className='relative'>
-      <Search className='pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+    <div className='relative w-full sm:w-60'>
+      <Search className='pointer-events-none absolute top-1/2 left-2.5 size-[15px] -translate-y-1/2 text-muted-foreground' />
       <Input
+        ref={inputRef}
         type='search'
-        placeholder='タイトル検索...'
+        placeholder='タイトルで検索'
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
-        className='h-9 pl-9 md:text-base'
-        aria-label='タイトル検索'
+        className='h-[34px] rounded-full bg-background pr-3 pl-8 text-[12.5px] focus-visible:border-primary md:text-[12.5px]'
+        aria-label='タイトルで検索'
       />
     </div>
   )

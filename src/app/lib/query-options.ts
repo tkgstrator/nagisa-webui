@@ -30,6 +30,9 @@ export const unidentifiedListQueryOptions = (filters: Record<string, unknown>) =
     queryFn: () => api.getUnidentifiedList({ queries: filters })
   })
 
+export const archiveStatsQueryOptions = () =>
+  queryOptions({ queryKey: queryKeys.admin.archiveStats, queryFn: () => api.getArchiveStats() })
+
 export type ChangelogEntry = { hash: string; date: string; message: string }
 
 export const changelogQueryOptions = () =>

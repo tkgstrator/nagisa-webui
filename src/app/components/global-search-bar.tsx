@@ -1,50 +1,28 @@
 import { useNavigate } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { Input } from './ui/input'
+import { useSetAtom } from 'jotai'
+import { useEffect } from 'react'
+import { searchFocusAtom } from '@/app/lib/atoms'
 
-export function GlobalSearchBar() {
+/**
+ * 決定稿のサイドバーには検索ボックスが無く、検索はページ内 (`/browse` のツールバー) に置かれる。
+ * ⌘K / Ctrl+K を殺さないため、表示を持たないホットキーだけを常駐させ、
+ * 押下時に `/browse` へ移動してページ内検索へ焦点を渡す。
+ */
+export function GlobalSearchHotkey() {
   const navigate = useNavigate()
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [value, setValue] = useState('')
+  const requestFocus = useSetAtom(searchFocusAtom)
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const isModK = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k'
       if (!isModK) return
       event.preventDefault()
-      inputRef.current?.focus()
-      inputRef.current?.select()
+      navigate({ to: '/browse' })
+      requestFocus((n) => n + 1)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [navigate, requestFocus])
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmed = value.trim()
-    if (trimmed.length === 0) return
-    navigate({ to: '/browse', search: { q: trimmed } })
-    inputRef.current?.blur()
-  }
-
-  return (
-    <search className='max-w-md flex-1'>
-      <form onSubmit={onSubmit} className='relative'>
-        <Search className='pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground' />
-        <Input
-          ref={inputRef}
-          type='search'
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          placeholder='タイトル検索'
-          aria-label='タイトル検索'
-          className='h-9 pl-8 pr-14'
-        />
-        <kbd className='pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 select-none rounded border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline-flex'>
-          ⌘K
-        </kbd>
-      </form>
-    </search>
-  )
+  return null
 }
