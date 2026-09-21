@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nagisa — アニメ一覧 — 決定稿 | Nagisa WebUI モック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- page skeleton (astra) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   astra はサイドバー (app-header の .side) と本文の 2 ペイン構成。 */
+
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  flex: 1;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 26px 36px 46px;
+  /* 節と節の間隔。astra 原案は margin も gap も持たず密着していたので、
+     fable 側 (home / recordings) と同じ縦リズムをここで入れて 4 画面を揃える。 */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .06s; }
+.pg > *:nth-child(3) { animation-delay: .12s; }
+.pg > *:nth-child(4) { animation-delay: .18s; }
+.pg > *:nth-child(5) { animation-delay: .24s; }
+.pg > *:nth-child(6) { animation-delay: .3s; }
+.pg > *:nth-child(7) { animation-delay: .36s; }
+.pg-narrow { max-width: 1060px; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 600; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- page body ---------- */
+/* ヒーローの直下から始まる本文。セクションより詰める。 */
+.pg-body { margin-top: 22px; }
+
+/* ---------- section ---------- */
+.pg-sec { margin-top: 36px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.pg-sec-title { font-size: 16px; font-weight: 700; }
+.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ---------- sidebar filter slot ---------- */
+/* astra はフィルタをサイドバー内に差す。中身は browse-filters が持つ。 */
+.pg-side-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 32px; gap: 30px; }
+  .pg-title { font-size: 20px; }
+  .pg-sec { margin-top: 28px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- quick link ---------- */
+/* pg-links の中に並ぶ 1 枚。左罫の色で注意を促す。 */
+.pg-link {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0;
+  transition: background .18s ease, transform .18s ease;
+}
+.pg-link:hover { background: var(--muted); transform: translateX(3px); }
+.pg-link.pg-warn { border-left-color: var(--destructive); }
+.pg-link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
+.pg-link.pg-warn svg { color: var(--destructive); }
+.pg-link .t { font-size: 13px; font-weight: 700; }
+.pg-link .s { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); }
+
+/* ---------- header search ---------- */
+/* ページ見出しの右に置く検索欄。部品側のフィルタとは別物。 */
+.pg-search { position: relative; width: 260px; }
+.pg-search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
+.pg-search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.pg-search input:focus-visible { outline: 2px solid var(--ring); }
+/* ---------- component: app-header ---------- */
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.6); } }
+
+.side {
+  width: 236px; flex: 0 0 236px;
+  background: var(--sidebar); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 18px 14px 16px;
+}
+.side.is-tall { min-height: 420px; }
+.side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
+.side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
+.side-logo svg { width: 13px; height: 13px; }
+
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 0 8px 8px 0; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
+.side-nav a svg { width: 16px; height: 16px; }
+.side-nav a:hover { background: var(--muted); color: var(--foreground); }
+.side-nav a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-left-color: var(--primary); font-weight: 600; }
+.side-count { margin-left: auto; font-size: 10px; background: var(--secondary); color: var(--secondary-foreground); border-radius: 999px; padding: 1px 6px; }
+.side-count.is-alert { background: color-mix(in oklch, var(--primary) 20%, transparent); color: var(--accent-foreground); }
+.side-nav.is-solo { width: 208px; }
+
+.side-widget { border-top: 1px solid var(--border); padding-top: 14px; }
+.side-widget h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 8px; font-weight: 600; }
+.side-stat { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
+.side-stat:hover { background: var(--muted); }
+.side-stat .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.side-stat .v { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.side-stat.d-new .dot { background: var(--info); }
+.side-stat.d-rec .dot { background: var(--warning); }
+.side-stat.d-err .dot { background: var(--destructive); }
+.side-stat.d-watch .dot { background: var(--success); }
+
+.side-search { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin: 0 2px; border-radius: 8px; border: 1px solid var(--input); background: var(--background); color: var(--muted-foreground); font-size: 12.5px; transition: border-color .15s, box-shadow .15s; }
+.side-search svg { width: 13px; height: 13px; flex: none; }
+.side-search:hover { border-color: var(--ring); }
+.side-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
+.side-search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+
+.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.side-status.is-checking i { background: var(--warning); }
+.side-status.is-down { color: var(--destructive); }
+.side-status.is-down i { background: var(--destructive); animation: none; }
+
+/* mobile: サイドバーを畳んで上端の横並びバーにする */
+.side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
+.side.is-mobile .side-brand { padding: 0; font-size: 14px; }
+.side.is-mobile .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+.side.is-mobile .side-nav a { padding: 7px; border-left: 0; border-radius: 8px; }
+.side.is-mobile .side-nav a span, .side.is-mobile .side-nav a { font-size: 0; }
+.side.is-mobile .side-nav a svg { width: 18px; height: 18px; }
+.side.is-mobile .side-nav a[aria-current="page"] { background: var(--accent); }
+
+@media (max-width: 640px) {
+  .side, .side.is-tall { width: 100%; flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-brand { padding: 0; font-size: 14px; }
+  .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+  .side-nav a { padding: 7px; border-left: 0; font-size: 0; border-radius: 8px; }
+  .side-nav a svg { width: 18px; height: 18px; }
+  .side-count, .side-widget, .side-status, .side-search { display: none; }
+  /* サイドバーが横並びのトップバーに変形する幅では、絞り込み一式は畳む。
+     モバイルの絞り込み導線は本文側の filter-chips (適用中の行) が担う。 */
+  .pg-side-filters, .side .reset-btn { display: none; }
+  .side.is-mobile { width: 100%; }
+}
+
+/* ---------- sidebar: 放送スケジュール ---------- */
+/* side-widget の中に敷く行。放送中の回だけ左罫と背景が付く。 */
+.side-sched-row { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; }
+.side-sched-row.now { border-left-color: var(--primary); background: var(--accent); }
+.side-sched-row .k { font-size: 11.5px; color: var(--muted-foreground); }
+.side-sched-row .v { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 数値の性質で左罫と値の見え方を変える (成功 / 失敗) */
+.side-stat.ok { border-left-color: var(--success); }
+.side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
+.side-stat.err { border-left-color: var(--destructive); }
+.side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
+/* ---------- component: anime-card ---------- */
+@keyframes pulseDot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .35; } }
+
+/* ---------- anime card: netflix-style overlay + hover preview ---------- */
+.tile {
+  display: block; min-width: 0;
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+.poster {
+  position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
+}
+.tile:hover .poster, .tile:focus-visible .poster {
+  transform: translateY(-6px) scale(1.045);
+  box-shadow: 0 22px 34px -16px oklch(0.15 0.02 250 / 45%);
+}
+.tile:focus-visible .poster { outline: 2px solid var(--ring); outline-offset: 2px; }
+.poster .art {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%),
+              linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%);
+}
+.poster .kanji {
+  position: absolute; right: -4px; top: -8px;
+  font-size: 40px; font-weight: 800; opacity: 0.16; line-height: 1;
+  color: oklch(0.99 0.01 var(--h));
+}
+.poster::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 28%, var(--overlay) 100%);
+}
+.poster .peek {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .25s ease; background: oklch(0.14 0.02 250 / 35%);
+}
+.tile:hover .poster .peek, .tile:focus-visible .poster .peek { opacity: 1; }
+.poster .peek svg { width: 20px; height: 20px; color: oklch(0.99 0.005 250); filter: drop-shadow(0 2px 5px oklch(0 0 0 / 45%)); }
+
+.poster .tag {
+  position: absolute; top: 8px; left: 8px; z-index: 1;
+  font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.tag-new { background: var(--info); color: var(--info-foreground); }
+.tag-added { background: var(--success); color: var(--success-foreground); }
+.tag-soon { background: var(--warning); color: var(--warning-foreground); }
+.tag-exp { background: var(--destructive); color: var(--destructive-foreground); }
+.tag .pulse { width: 5px; height: 5px; border-radius: 999px; background: currentColor; animation: pulseDot 1.6s ease-in-out infinite; }
+
+.poster .info { position: absolute; left: 9px; right: 9px; bottom: 9px; z-index: 1; color: oklch(0.99 0.01 var(--h)); }
+.poster .ptitle {
+  font-size: 12px; font-weight: 700; line-height: 1.3;
+  text-shadow: 0 1px 3px oklch(0.1 0.02 var(--h) / 60%);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.poster .pmeta { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10px; opacity: 0.9; }
+.poster .pmeta .ep { font-variant-numeric: tabular-nums; }
+
+.meta2 { margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; }
+.status { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.s-releasing { color: var(--status-releasing-foreground); }
+.s-finished { color: var(--status-finished-foreground); }
+.s-not-yet { color: var(--status-not-yet-foreground); }
+.s-cancelled { color: var(--status-cancelled-foreground); }
+.s-hiatus { color: var(--status-hiatus-foreground); }
+.season { color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* 実際の並び (5 カラム) */
+.grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; }
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
+  .poster .kanji { font-size: 32px; }
+}
+
+/* 視聴の進捗。ポスターの下端に細い帯で重ねる。 */
+.poster .pbar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--overlay); z-index: 1; }
+.poster .pbar span { display: block; height: 100%; background: var(--primary); transform-origin: left center; animation: growX .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: .25s; }
+/* 録画中を示すタグ。tag-new などと同じ枠。 */
+.tag-rec { background: var(--warning); color: var(--warning-foreground); }
+/* ---------- component: browse-filters ---------- */
+/* ---------- filter panel (sidebar embedded) ---------- */
+.fpanel {
+  width: 236px; max-width: 100%;
+  background: var(--sidebar);
+  border-radius: 12px;
+  padding: 14px 6px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.fpanel > .ftitle {
+  font-size: 12px; font-weight: 700; padding: 0 10px 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.fpanel > .ftitle .n {
+  margin-left: auto; font-size: 11px; font-variant-numeric: tabular-nums;
+  color: var(--primary-foreground); background: var(--primary);
+  border-radius: 999px; padding: 1px 7px;
+}
+
+.fgroup h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 6px; font-weight: 600; }
+.fgroup .flist { display: flex; flex-direction: column; gap: 1px; }
+
+.fcheck { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px; font-size: 12.5px; color: var(--foreground); cursor: pointer; }
+.fcheck:hover { background: var(--muted); }
+.fcheck:focus-within { background: var(--muted); box-shadow: 0 0 0 2px var(--ring); }
+.fcheck input { width: 14px; height: 14px; accent-color: var(--primary); flex: none; }
+.fcheck .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.6; flex: none; }
+.fcheck .cnt { margin-left: auto; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.fpills { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px; }
+.fpill { height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; color: var(--muted-foreground); transition: background .12s, color .12s, border-color .12s; }
+.fpill:hover { background: var(--muted); color: var(--foreground); }
+.fpill:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.fpill:active { transform: scale(0.94); }
+.fpill[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); border-color: transparent; font-weight: 600; }
+
+.reset-btn { margin: 4px 10px 0; height: 30px; border: 1px dashed var(--border); border-radius: 8px; font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.reset-btn:hover { background: var(--muted); color: var(--foreground); }
+.reset-btn:active { transform: scale(0.96); }
+.reset-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* 検索・並び替え (コンテンツ側ヘッダに置く) */
+.search { position: relative; width: 240px; max-width: 100%; }
+.search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+.search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.search input:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.search input::placeholder { color: var(--muted-foreground); }
+
+.sort { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted-foreground); }
+.sort select { height: 34px; padding: 0 26px 0 12px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--foreground); appearance: none; -webkit-appearance: none; font-size: 12.5px; }
+.sort select:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.sort .sel { position: relative; }
+.sort .sel svg { position: absolute; right: 10px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+
+@media (max-width: 640px) {
+  .fpanel { width: 100%; }
+  .search { width: 100%; }
+}
+/* ---------- component: filter-chips ---------- */
+/* ---------- active filter chips ---------- */
+.active { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
+.active .lbl { color: var(--muted-foreground); }
+.active .hits { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.achip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 0 4px 0 9px;
+  border-radius: 6px; font-size: 12px;
+  background: var(--secondary); color: var(--secondary-foreground);
+}
+.achip .k { color: var(--muted-foreground); }
+.achip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.achip.p-amazon .dot { background: var(--brand-amazon-foreground); }
+.achip.p-hulu .dot { background: var(--brand-hulu-foreground); }
+.achip.p-crunchyroll .dot { background: var(--brand-crunchyroll-foreground); }
+.achip.p-abema .dot { background: var(--brand-abema-foreground); }
+.achip.p-netflix .dot { background: var(--brand-netflix-foreground); }
+.achip button { width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; color: var(--muted-foreground); }
+.achip button:hover { background: var(--border); color: var(--foreground); }
+.achip button:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+.achip svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+/* 検索語だけは由来が違うので囲み方を変える */
+.achip.is-query { background: var(--accent); color: var(--accent-foreground); }
+.achip.is-query .k { color: inherit; opacity: .65; }
+
+.reset { color: var(--muted-foreground); font-size: 12px; padding: 4px 8px; border-radius: 6px; margin-left: 4px; }
+.reset:hover { background: var(--muted); color: var(--foreground); }
+.reset:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+
+.empty-line { color: var(--muted-foreground); font-size: 12px; }
+
+@media (max-width: 640px) {
+  .active .hits { margin-left: 0; width: 100%; }
+}
+/* ---------- component: anime-drawer ---------- */
+
+
+/* ---------- detail drawer ---------- */
+.drawer {
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 2;
+  width: min(420px, 92%);
+  background: var(--popover); color: var(--popover-foreground);
+  border-left: 1px solid var(--border);
+  box-shadow: -24px 0 48px -24px var(--overlay);
+  overflow-y: auto;
+  animation: slideIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes slideIn { from { transform: translateX(105%); } to { transform: none; } }
+.drawer.is-standalone { position: static; width: 100%; border-left: 0; box-shadow: none; border: 1px solid var(--border); border-radius: 10px; animation: none; }
+
+.drawer-hero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.drawer-hero .art { position: absolute; inset: 0; background: linear-gradient(135deg, oklch(0.78 0.11 var(--h, 265)) 0%, oklch(0.5 0.15 calc(var(--h, 265) + 45)) 100%); }
+.drawer-hero .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--overlay) 0%, transparent 55%); }
+.drawer-hero .kana { position: absolute; right: 14px; top: 10px; font-size: 40px; font-weight: 800; color: oklch(1 0 0); opacity: .2; letter-spacing: .08em; }
+.drawer-hero .prov {
+  position: absolute; left: 12px; bottom: 12px; z-index: 1;
+  height: 22px; padding: 0 9px; border-radius: 5px;
+  display: inline-flex; align-items: center; font-size: 11px; font-weight: 600;
+  background: var(--brand-amazon); color: var(--brand-amazon-foreground);
+  backdrop-filter: blur(4px);
+}
+.p-hulu .drawer-hero .prov { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll .drawer-hero .prov { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema .drawer-hero .prov { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix .drawer-hero .prov { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.drawer-close {
+  position: absolute; top: 12px; right: 12px; z-index: 1;
+  width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--overlay); color: var(--overlay-foreground);
+  transition: background .15s;
+}
+.drawer-close:hover { background: var(--foreground); }
+.drawer-close:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.drawer-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.drawer-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.drawer-body h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.drawer-status { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.drawer-status .status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.drawer-status .status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.drawer-status .s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.drawer-status .s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.drawer-status .s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.drawer-status .s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.drawer-status .s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.drawer-status .season { color: var(--muted-foreground); }
+
+.drawer-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; font-size: 12.5px; margin: 0; }
+.drawer-facts dt { color: var(--muted-foreground); }
+.drawer-facts dd { margin: 2px 0 0; font-weight: 500; }
+.drawer-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+.drawer-desc.is-clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+
+.drawer-actions { display: flex; gap: 8px; margin-top: 4px; }
+.dbtn {
+  flex: 1; height: 36px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--primary); color: var(--primary-foreground); transition: opacity .15s;
+}
+.dbtn:hover { opacity: .88; }
+.dbtn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.dbtn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.dbtn.outline { background: transparent; border: 1px solid var(--border); color: var(--foreground); }
+.dbtn.outline:hover { background: var(--muted); opacity: 1; }
+.dbtn.on { background: var(--success); color: var(--success-foreground); }
+.dbtn.busy { background: var(--muted); color: var(--muted-foreground); pointer-events: none; }
+.dbtn.busy svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.dbtn.fail { background: var(--destructive); color: var(--destructive-foreground); }
+
+.drawer-eps { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.drawer-eps h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); font-weight: 600; margin: 0 0 2px; }
+.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 0 8px 8px 0; border-left: 3px solid transparent; }
+.epline:hover { background: var(--muted); }
+.epline .n { color: var(--muted-foreground); font-variant-numeric: tabular-nums; width: 42px; flex: none; }
+.epline .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.epline .rec { margin-left: auto; font-size: 11px; color: var(--muted-foreground); flex: none; }
+.epline.is-done { border-left-color: var(--success); }
+.epline.is-done .rec { color: var(--success); }
+.epline.is-rec { border-left-color: var(--info); }
+.epline.is-rec .rec { color: var(--info); }
+.epline.is-fail { border-left-color: var(--destructive); }
+.epline.is-fail .rec { color: var(--destructive); }
+
+@media (max-width: 640px) {
+  .drawer { width: 100%; }
+  .drawer-facts { grid-template-columns: 1fr; }
+  .drawer-actions { flex-wrap: wrap; }
+}
+/* ---------- page scrim (ページ合成時にドロワー背後へ敷く) ---------- */
+.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.drawer:target ~ .drawer-scrim { opacity: 1; visibility: visible; }
+/* ---------- component: pagination ---------- */
+/* ---------- chips / segmented ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 9px;
+  border-radius: 6px; font-size: 12px; white-space: nowrap;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.chip:hover { background: var(--muted); color: var(--foreground); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.seg { display: inline-flex; padding: 2px; border-radius: 7px; background: var(--muted); gap: 2px; }
+.seg .chip { height: 22px; border-radius: 5px; padding: 0 8px; font-variant-numeric: tabular-nums; }
+.seg .chip:hover { background: var(--background); }
+.seg .chip[aria-pressed="true"] { background: var(--background); color: var(--foreground); box-shadow: 0 1px 2px var(--overlay); }
+
+/* ---------- pagination ---------- */
+.pager { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.pager .range { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pager .range b { color: var(--foreground); font-weight: 600; }
+.pages { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.pnum {
+  min-width: 32px; height: 32px; padding: 0 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 6px; font-size: 13px; font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.pnum:hover { background: var(--muted); color: var(--foreground); }
+.pnum:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.pnum[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.pnum[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+.pnum svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pnum.ellipsis { pointer-events: none; }
+.perpage { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
+@media (max-width: 640px) {
+  .pager { gap: 10px; }
+  .pages { margin-left: 0; width: 100%; justify-content: space-between; }
+  .hide-m { display: none; }
+}
+
+/* 凡例とページャを両端に置く一覧の脚 */
+.foot { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; font-size: 12px; color: var(--muted-foreground); }
+/* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
+.ftr {
+  padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted-foreground);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.ftr .r { display: inline-flex; align-items: center; gap: 14px; }
+.ftr a { transition: color .12s; }
+.ftr a:hover { color: var(--foreground); }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
+.ftr .dot.is-down { background: var(--destructive); }
+@media (max-width: 640px) {
+  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr .r { gap: 12px; }
+}
+/* ---------- 決定稿での調整 ---------- */
+/* ページに組むドロワーは :target のときだけ前面に出す (単体カタログは .is-standalone を使う) */
+.drawer:not(.is-standalone) {
+  position: fixed; z-index: 91;
+  animation: none;
+  transform: translateX(105%);
+  visibility: hidden;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), visibility .28s;
+}
+.drawer:not(.is-standalone):target { transform: none; visibility: visible; }
+
+/* 静止撮影と差分比較を安定させるため、入場アニメーションは最終状態で静止させる。
+   実装側では上の fadeUp / growX をそのまま使ってよい。 */
+.pg > *, .tile, .poster .pbar span { animation: none; }
+
+/* infinite なループも止める。いずれも opacity / transform しか動かさず、
+   keyframes の 0%/100% が基底状態と一致するので animation: none だけでよい。
+   keyframes 定義自体は実装側でそのまま使うので残してある。 */
+.side-status i,                    /* pulseDot: opacity/scale, 基底 = opacity 1 / scale 1 */
+.tag .pulse,                       /* pulseDot: opacity/scale, 同上 */
+.dbtn.busy svg {                   /* spin: rotate のみ。基底 = rotate(0) */
+  animation: none;
+}
+</style>
+</head>
+<body>
+
+<div class="pg-shell">
+  <aside class="side">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メイン">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+
+    <div class="pg-side-filters" aria-label="絞り込み">
+      <div class="fgroup">
+        <h3>配信元</h3>
+        <div class="flist">
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-amazon-foreground)"></span>Prime Video<span class="cnt num">84</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-hulu-foreground)"></span>Hulu<span class="cnt num">41</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-crunchyroll-foreground)"></span>Crunchyroll<span class="cnt num">67</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-abema-foreground)"></span>ABEMA<span class="cnt num">59</span></label>
+          <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-netflix-foreground)"></span>Netflix<span class="cnt num">36</span></label>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>年</h3>
+        <div class="fpills">
+          <button class="fpill" type="button" aria-pressed="false">すべて</button>
+          <button class="fpill" type="button" aria-pressed="true">2026</button>
+          <button class="fpill" type="button" aria-pressed="false">2025</button>
+          <button class="fpill" type="button" aria-pressed="false">2024</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>クール</h3>
+        <div class="fpills">
+          <button class="fpill" type="button" aria-pressed="false">冬</button>
+          <button class="fpill" type="button" aria-pressed="true">春</button>
+          <button class="fpill" type="button" aria-pressed="false">夏</button>
+          <button class="fpill" type="button" aria-pressed="false">秋</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>ステータス</h3>
+        <div class="fpills">
+          <button class="fpill" type="button" aria-pressed="true">放送中</button>
+          <button class="fpill" type="button" aria-pressed="false">完結</button>
+          <button class="fpill" type="button" aria-pressed="false">未放送</button>
+          <button class="fpill" type="button" aria-pressed="false">休止</button>
+          <button class="fpill" type="button" aria-pressed="false">中止</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h3>バッジ</h3>
+        <div class="flist">
+          <label class="fcheck"><input type="checkbox">新着エピソード</label>
+          <label class="fcheck"><input type="checkbox">新着追加</label>
+          <label class="fcheck"><input type="checkbox">配信予定</label>
+          <label class="fcheck"><input type="checkbox">配信終了予定</label>
+        </div>
+      </div>
+      <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg">
+
+      <div class="pg-head">
+        <div>
+          <h1 class="pg-title">アニメ一覧</h1>
+          <p class="pg-sub num"><b>287</b> 件中 <b>142</b> 件に絞り込み中</p>
+        </div>
+        <div class="pg-headctl">
+          <label class="search">
+            <span class="sr">タイトルで検索</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" placeholder="タイトルで検索">
+          </label>
+          <div class="sort">
+            <div class="sel">
+              <select aria-label="並び替え">
+                <option>タイトル 昇順</option>
+                <option selected>リリース年 新しい順</option>
+                <option>リリース年 古い順</option>
+              </select>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="active" aria-label="適用中のフィルタ">
+        <span class="lbl">適用中</span>
+        <span class="achip"><span class="k">年</span><span class="num">2026</span><button aria-label="2026年 を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip"><span class="k">クール</span>春<button aria-label="春 を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <span class="achip"><span class="k">ステータス</span>放送中<button aria-label="放送中 を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+        <button class="reset">すべて解除</button>
+      </div>
+
+      <div class="grid">
+        <a class="tile" href="#drawer-1" style="--h:265;--i:0"><div class="poster"><div class="art"></div><span class="kanji">星</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">星降る夜のアストロノーツ</p><div class="pmeta"><span>Prime Video</span><span class="ep num">第9話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:40;--i:1"><div class="poster"><div class="art"></div><span class="kanji">剣</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">蒼き剣と忘れられた王国</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:340;--i:2"><div class="poster"><div class="art"></div><span class="kanji">魔</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">魔法少女は残業しない</p><div class="pmeta"><span>Netflix</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:150;--i:3"><div class="poster"><div class="art"></div><span class="kanji">庭</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">ぼくらの空中庭園</p><div class="pmeta"><span>ABEMA</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:60;--i:4"><div class="poster"><div class="art"></div><span class="kanji">猫</span><span class="tag tag-added">新着追加</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">猫と魔王とカフェラテ</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第3話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:200;--i:5"><div class="poster"><div class="art"></div><span class="kanji">静</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">サイレント・ハーモニクス</p><div class="pmeta"><span>Hulu</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:240;--i:6"><div class="poster"><div class="art"></div><span class="kanji">廊</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">天空回廊アルカディア</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:110;--i:7"><div class="poster"><div class="art"></div><span class="kanji">霊</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">幽霊部員は今日も部活中</p><div class="pmeta"><span>ABEMA</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:90;--i:8"><div class="poster"><div class="art"></div><span class="kanji">聖</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">剣聖見習いのスローライフ</p><div class="pmeta"><span>Crunchyroll</span><span class="ep num">第7話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:15;--i:9"><div class="poster"><div class="art"></div><span class="kanji">花</span><span class="tag tag-added">新着追加</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">花咲く季節に君を待つ</p><div class="pmeta"><span>Hulu</span><span class="ep num">第2話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:290;--i:10"><div class="poster"><div class="art"></div><span class="kanji">月</span><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">月面基地ガールズ</p><div class="pmeta"><span>ABEMA</span><span class="ep num">第8話</span></div></div></div><div class="meta2"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+        <a class="tile" href="#" style="--h:320;--i:11"><div class="poster"><div class="art"></div><span class="kanji">双</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">双子探偵と真夜中の学園</p><div class="pmeta"><span>Netflix</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2026 冬</span></div></a>
+        <a class="tile" href="#" style="--h:180;--i:12"><div class="poster"><div class="art"></div><span class="kanji">電</span><span class="tag tag-soon">配信予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">電脳都市シンドローム</p><div class="pmeta"><span>Prime Video</span><span class="ep">7/3〜</span></div></div></div><div class="meta2"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div></a>
+        <a class="tile" href="#" style="--h:210;--i:13"><div class="poster"><div class="art"></div><span class="kanji">課</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">放課後クロノスタシス</p><div class="pmeta"><span>ABEMA</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2026 冬</span></div></a>
+        <a class="tile" href="#" style="--h:250;--i:14"><div class="poster"><div class="art"></div><span class="kanji">灰</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">灰色の楽園</p><div class="pmeta"><span>Netflix</span><span class="ep">第5話で休止</span></div></div></div><div class="meta2"><span class="status s-hiatus">休止</span><span class="season">2026 冬</span></div></a>
+        <a class="tile" href="#" style="--h:30;--i:15"><div class="poster"><div class="art"></div><span class="kanji">錆</span><span class="tag tag-soon">配信予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">錆びた星の子守唄</p><div class="pmeta"><span>Prime Video</span><span class="ep">10月〜</span></div></div></div><div class="meta2"><span class="status s-not-yet">未放送</span><span class="season">2026 秋</span></div></a>
+        <a class="tile" href="#" style="--h:130;--i:16"><div class="poster"><div class="art"></div><span class="kanji">導</span><span class="tag tag-soon">配信予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">最強の魔導書は喋りすぎる</p><div class="pmeta"><span>Prime Video</span><span class="ep">7/10〜</span></div></div></div><div class="meta2"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div></a>
+        <a class="tile" href="#" style="--h:165;--i:17"><div class="poster"><div class="art"></div><span class="kanji">辺</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">辺境の錬金術師、今日も店番</p><div class="pmeta"><span>Hulu</span><span class="ep num">全13話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a>
+        <a class="tile" href="#" style="--h:355;--i:18"><div class="poster"><div class="art"></div><span class="kanji">夜</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">白夜のレクイエム</p><div class="pmeta"><span>Netflix</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a>
+        <a class="tile" href="#" style="--h:75;--i:19"><div class="poster"><div class="art"></div><span class="kanji">転</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">転生したら図書館だった件</p><div class="pmeta"><span>Prime Video</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 夏</span></div></a>
+        <a class="tile" href="#" style="--h:225;--i:20"><div class="poster"><div class="art"></div><span class="kanji">終</span><span class="tag tag-exp">配信終了予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">終末列車の乗客たち</p><div class="pmeta"><span>Hulu</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 春</span></div></a>
+        <a class="tile" href="#" style="--h:0;--i:21"><div class="poster"><div class="art"></div><span class="kanji">鉄</span><span class="tag tag-exp">配信終了予定</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">鉄血のヴァルキュリア</p><div class="pmeta"><span>Netflix</span><span class="ep num">全24話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div></a>
+        <a class="tile" href="#" style="--h:195;--i:22"><div class="poster"><div class="art"></div><span class="kanji">深</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">深海メトロポリス</p><div class="pmeta"><span>ABEMA</span><span class="ep">第4話で中止</span></div></div></div><div class="meta2"><span class="status s-cancelled">中止</span><span class="season">2025 冬</span></div></a>
+        <a class="tile" href="#" style="--h:50;--i:23"><div class="poster"><div class="art"></div><span class="kanji">受</span><span class="peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg></span><div class="info"><p class="ptitle">冒険者ギルドの受付嬢</p><div class="pmeta"><span>ABEMA</span><span class="ep num">全12話</span></div></div></div><div class="meta2"><span class="status s-finished">完結</span><span class="season">2024 秋</span></div></a>
+      </div>
+
+      <nav class="pager" aria-label="ページネーション">
+        <div class="range"><b>1–24</b> / 142 件</div>
+        <div class="perpage">
+          表示件数
+          <div class="seg">
+            <button class="chip" aria-pressed="true">24</button>
+            <button class="chip" aria-pressed="false">48</button>
+            <button class="chip" aria-pressed="false">96</button>
+          </div>
+        </div>
+        <div class="pages">
+          <a class="pnum" href="#" aria-disabled="true" aria-label="前のページ"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+          <a class="pnum" href="#" aria-current="page">1</a>
+          <a class="pnum" href="#">2</a>
+          <a class="pnum" href="#">3</a>
+          <a class="pnum hide-m" href="#">4</a>
+          <a class="pnum hide-m" href="#">5</a>
+          <span class="pnum ellipsis">…</span>
+          <a class="pnum" href="#">6</a>
+          <a class="pnum" href="#" aria-label="次のページ"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+        </div>
+      </nav>
+
+      <footer class="ftr">
+        <span class="l"><span>Nagisa WebUI</span><span>v0.4.0</span><span class="sha">319250c</span></span>
+        <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></span>
+      </footer>
+
+    </div>
+  </main>
+</div>
+<!-- 詳細ドロワー (CSS :target のみで開閉・画面遷移せず概要確認できることのデモ用に1件のみ実装) -->
+<div id="drawer-1" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-1-title">
+  <div class="drawer-hero" style="--h: 265">
+    <div class="art"></div>
+    <span class="kana">星</span>
+    <span class="prov">Prime Video</span>
+    <a class="drawer-close" href="#" aria-label="閉じる"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+  </div>
+  <div class="drawer-body">
+    <h2 id="drawer-1-title">星降る夜のアストロノーツ</h2>
+    <div class="drawer-status"><span class="status s-releasing">放送中</span><span class="season">2026 春クール · 毎週土曜 22:30</span></div>
+    <p class="drawer-desc is-clamp">宇宙飛行士訓練校に入学した主人公が、仲間たちと共に未知の軌道ステーションの謎に挑む青春SF。第2クールでは新たな星域が舞台に。</p>
+    <dl class="drawer-facts">
+      <div><dt>話数 / 尺</dt><dd class="num">全 12 話 · 24 分</dd></div>
+      <div><dt>配信済み</dt><dd class="num">8 / 12 話</dd></div>
+      <div><dt>録画状態</dt><dd class="num">7 / 8 話 録画済み</dd></div>
+      <div><dt>配信元</dt><dd>Prime Video</dd></div>
+    </dl>
+    <div class="drawer-actions">
+      <a class="dbtn" href="#anime">詳細を見る</a>
+      <button class="dbtn outline">録画予約する</button>
+    </div>
+    <div class="drawer-eps">
+      <h3>直近のエピソード</h3>
+      <div class="epline is-done"><span class="n num">第 8 話</span><span class="t">静止軌道の向こう側</span><span class="rec">録画済み</span></div>
+      <div class="epline is-rec"><span class="n num">第 7 話</span><span class="t">流星のシグナル</span><span class="rec">録画中</span></div>
+      <div class="epline is-fail"><span class="n num">第 6 話</span><span class="t">月面基地の後輩</span><span class="rec">失敗</span></div>
+    </div>
+  </div>
+</div>
+<a class="drawer-scrim" href="#" aria-hidden="true" tabindex="-1"></a>
+</body>
+</html>
