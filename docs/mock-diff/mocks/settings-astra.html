@@ -358,7 +358,7 @@ svg { display: block; flex: none; }
 .pg-cols > div > .pg-sec:first-child { margin-top: 0; }
 /* 見出しと本文の間は 1 カラムのときより少し空ける */
 .pg-cols.pg-body { margin-top: 30px; }
-/* 本文カラムは 1060 - 280 と狭いので、リンクは 2 列で置く */
+/* 本文カラムは 1180 から目次 280 と gap 32 を引いた 796px しかないので、リンクは 2 列で置く */
 .pg-cols .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 640px) {
   .pg-cols .pg-links { grid-template-columns: minmax(0, 1fr); }
@@ -571,7 +571,7 @@ svg { display: block; flex: none; }
   </aside>
 
   <main class="pg-main">
-    <div class="pg pg-narrow">
+    <div class="pg">
 
       <div class="pg-head">
         <div>
