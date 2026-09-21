@@ -1,8 +1,8 @@
 adopted:
   browse: final
-  anime-detail: fable
-  recordings: fable
-  home: fable
+  anime-detail: final
+  recordings: final
+  home: final
   app-header: astra
   app-footer: astra
   pagination: fable
