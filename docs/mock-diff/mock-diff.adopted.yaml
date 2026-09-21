@@ -1,4 +1,24 @@
-# mock-diff-viewer が選定済みデザイン(採用したバリアント)を書き込むファイル。
-# viewer の UI 上でデザイン候補を選ぶと自動的に更新される。手動で編集しない。
-
-adopted: {}
+adopted:
+  browse: final
+  anime-detail: final
+  recordings: final
+  home: final
+  app-header: astra
+  app-footer: astra
+  pagination: fable
+  anime-card: astra
+  browse-filters: astra
+  filter-chips: fable
+  anime-drawer: fable
+  anime-hero: astra
+  episode-list: fable
+  related-providers: fable
+  breadcrumbs: astra
+  recording-row: fable
+  recordings-toolbar: fable
+  empty-state: fable
+  recordings-calendar: fable
+  summary-stats: fable
+  anime-carousel: fable
+  scheduled-updates: fable
+  home-tabs: fable

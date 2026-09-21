@@ -50,6 +50,9 @@ screens:
           astra:
             type: html
             path: mocks/browse-astra.html
+          final:
+            type: html
+            path: mocks/browse-final.html
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/browse
@@ -67,6 +70,9 @@ screens:
           astra:
             type: html
             path: mocks/browse-astra.html
+          final:
+            type: html
+            path: mocks/browse-final.html
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/browse
@@ -89,6 +95,9 @@ screens:
           astra:
             type: html
             path: mocks/anime-detail-astra.html
+          final:
+            type: html
+            path: mocks/anime-detail-final.html
       - id: iphone
         name: iPhone
         viewport:
@@ -103,6 +112,9 @@ screens:
           astra:
             type: html
             path: mocks/anime-detail-astra.html
+          final:
+            type: html
+            path: mocks/anime-detail-final.html
   - id: recordings
     name: 録画一覧
     category: ページ
@@ -122,6 +134,9 @@ screens:
           astra:
             type: html
             path: mocks/recordings-astra.html
+          final:
+            type: html
+            path: mocks/recordings-final.html
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/recordings
@@ -139,6 +154,9 @@ screens:
           astra:
             type: html
             path: mocks/recordings-astra.html
+          final:
+            type: html
+            path: mocks/recordings-final.html
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/recordings
@@ -161,6 +179,9 @@ screens:
           astra:
             type: html
             path: mocks/home-astra.html
+          final:
+            type: html
+            path: mocks/home-final.html
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/
@@ -178,6 +199,9 @@ screens:
           astra:
             type: html
             path: mocks/home-astra.html
+          final:
+            type: html
+            path: mocks/home-final.html
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/

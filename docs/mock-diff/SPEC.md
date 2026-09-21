@@ -16,7 +16,10 @@ mock-diff-viewer 上で複数案を並べて比較・選定するための共通
 | `recordings` | 録画一覧 | `src/app/routes/recordings/index.tsx` |
 | `home` | トップ | `src/app/routes/index.tsx` |
 
-`<author>` は `fable` または `astra`。
+`<author>` は `fable` / `astra` / `final`。`final` は fable と astra から画面・部品ごとに採用案を
+選んで 1 枚に合成した決定稿で、どちらを採ったかの唯一の正は
+[mock-diff.adopted.yaml](mock-diff.adopted.yaml)。既存 2 案の合成物なので、
+新しく案を起こすときの出力先にはしない。
 
 ### コンポーネントモック
 
