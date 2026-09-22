@@ -4,6 +4,13 @@ import { ImageUrlSchema, stripQueryParams } from './common.dto'
 
 // --- Browse schemas (Palette API / Filtered API) ---
 
+/**
+ * Hulu は経路・時期によって slug を "/black-torch" のように先頭スラッシュ付きで返すことがある。
+ * slug はそのまま contentId (= レコードの一意キー) になるので、剥がさないと同じ作品が
+ * "black-torch" と "/black-torch" の 2 レコードに割れる。
+ */
+const SlugSchema = z.string().transform((v) => v.replace(/^\/+/, ''))
+
 const EpisodeInfo = z.object({
   meta_id: z.number(),
   name: z.string(),
@@ -38,7 +45,7 @@ const BrowseAdditionalInfo = z.object({
   schema_key: z.string(),
   service: z.string(),
   series_id: z.number().optional(),
-  slug: z.string().nullable(),
+  slug: SlugSchema.nullable(),
   type: z.string(),
   rating_v2: z.string(),
   rating: z.string(),
@@ -50,7 +57,7 @@ export const VodItemSchema = z.object({
   id_in_schema: z.number(),
   title: z.string(),
   description: z.string(),
-  slug: z.string(),
+  slug: SlugSchema,
   imageUrl: z.string().transform(stripQueryParams),
   rental: z.boolean(),
   startAt: z.string().nonempty(),
