@@ -148,13 +148,22 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(7) { animation-delay: .3s; }
 
 /* ---------- page head ---------- */
+/* 左＝見出しブロック / 右＝サマリタイル の 2 カラム。見出しを左端に固定して、
+   タイル側に残りを全部渡す。1024px 以下では縦に落とす。 */
 .pg-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  column-gap: 40px;
 }
+.pg-headline { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pg-head h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.pg-headdate { font-size: 12px; line-height: 1.5; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
 .pg-eyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -230,6 +239,7 @@ svg { display: block; flex: none; }
 .pg-link.pg-warn { border-left-color: var(--warning); }
 
 @media (max-width: 1024px) {
+  .pg-head { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
   .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .pg-aside { position: static; }
   .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -345,7 +355,8 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
 }
 .ss .val small { font-size: 13px; font-weight: 500; color: var(--muted-foreground); margin-left: 4px; letter-spacing: 0; }
-.ss .note { font-size: 12px; color: var(--muted-foreground); }
+/* note は行動が要るときだけ文言を入れる。空でも高さは確保してタイルの底を揃える。 */
+.ss .note { font-size: 12px; line-height: 1.5; min-height: 18px; color: var(--muted-foreground); }
 .ss.err .note { color: var(--destructive); }
 
 .ss.is-zero { border-left-color: var(--border); }
@@ -821,13 +832,6 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
       <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
     </nav>
 
-    <div class="side-widget">
-      <h3>今日のサマリ</h3>
-      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">126</span></a>
-      <a class="side-stat d-watch" href="#added"><span class="dot"></span>新着追加<span class="v num">248</span></a>
-      <a class="side-stat d-rec" href="#coming"><span class="dot"></span>もうすぐ配信<span class="v num">13</span></a>
-      <a class="side-stat d-err" href="#expiring"><span class="dot"></span>配信終了予定<span class="v num">0</span></a>
-    </div>
     <div class="side-status"><i></i>サーバー稼働中</div>
   </aside>
 
@@ -836,8 +840,11 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 
       <!-- ===== ページヘッド + サマリ ===== -->
       <section class="pg-head" aria-labelledby="h-summary">
-        <p class="pg-eyebrow"><b>2026年 夏クール</b><span>·</span><span>9月21日 (月)</span></p>
-        <h1 id="h-summary">今日の録画状況</h1>
+        <div class="pg-headline">
+          <p class="pg-eyebrow">2026年 夏クール</p>
+          <h1 id="h-summary">今日の録画状況</h1>
+          <p class="pg-headdate">9月21日 (月)</p>
+        </div>
 
         <div class="ss-grid">
           <a class="ss" href="#new">
@@ -848,17 +855,17 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
           <a class="ss ok is-zero" href="#recordings">
             <span class="lab">録画予約中</span>
             <span class="val">0<small>作品</small></span>
-            <span class="note">直近 0 作品が更新</span>
+            <span class="note"></span>
           </a>
           <a class="ss warn" href="#coming">
             <span class="lab">もうすぐ配信</span>
             <span class="val">13<small>作品</small></span>
-            <span class="note">配信開始を待機中</span>
+            <span class="note"></span>
           </a>
           <a class="ss is-zero" href="#expiring">
             <span class="lab">配信終了予定</span>
             <span class="val">0<small>作品</small></span>
-            <span class="note">すべて録画済み</span>
+            <span class="note"></span>
           </a>
         </div>
       </section>

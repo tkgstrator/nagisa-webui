@@ -50,7 +50,7 @@ const SettingsPage = () => {
         <div className='flex items-center gap-2.5 max-sm:w-full max-sm:flex-wrap'>
           <span
             aria-live='polite'
-            className='inline-flex h-7 items-center gap-[7px] rounded-full bg-success/15 px-3 text-[11.5px] font-bold text-success'
+            className='inline-flex h-7 items-center gap-[7px] rounded-full bg-success/15 px-3 text-[11.5px] font-bold text-success dark:text-foreground'
           >
             <CheckIcon />
             保存済み <span className='tabular-nums'>{savedAt}</span>
