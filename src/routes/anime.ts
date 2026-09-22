@@ -3,6 +3,7 @@ import { cache } from 'hono/cache'
 import { archiveMissingAbemaKeysForAnime } from '../lib/abema-archive'
 import { flattenAnime, QUARTER_TO_SEASON } from '../lib/anime-flatten'
 import { createPrismaClient } from '../lib/db'
+import { enqueueImageWarm } from '../lib/image-warm'
 import { createFetchClient } from '../lib/lambda'
 import { localDetailFetchers } from '../lib/local-detail-fetchers'
 import { getAppLogger } from '../lib/logger'
@@ -14,6 +15,7 @@ import {
   BadgedAnimeSchema,
   PaginatedAnimeSchema
 } from '../schemas/anime.dto'
+import type { Message } from '../schemas/message.dto'
 import { ProviderTypeEnum } from '../schemas/message.dto'
 import { NagisaQueueResponseSchema } from '../schemas/nagisa.dto'
 
@@ -31,6 +33,7 @@ type Bindings = {
   LAMBDA_FUNCTION_URL_US: string
   KV: KVNamespace
   IMAGES: R2Bucket
+  WARM_QUEUE: Queue<Message>
 }
 
 type BadgedRow = {
@@ -488,16 +491,16 @@ anime.openapi(
     if (!result.success) return c.json({ error: `Unsupported provider: ${row.provider}` }, 500)
 
     const lambda = createFetchClient(c.env)
-    const service = new SyncService(prisma, lambda, c.env.IMAGES)
+    const service = new SyncService(prisma, lambda)
     const fetcher = localDetailFetchers[result.data]
 
     try {
-      if (fetcher) {
-        const detail = await fetcher(row.contentId)
-        await service.applyDetail(result.data, row.contentId, detail)
-      } else {
-        await service.update({ type: 'update', message: { provider: result.data, contentId: row.contentId } })
-      }
+      // 新規に入った / URL が変わった画像は queue 経由で warm する。
+      // SyncService は副作用を持たず URL を返すだけなので、送信はこの呼び出し元の責務。
+      const newImageUrls = fetcher
+        ? await service.applyDetail(result.data, row.contentId, await fetcher(row.contentId))
+        : await service.update({ type: 'update', message: { provider: result.data, contentId: row.contentId } })
+      await enqueueImageWarm(c.env.WARM_QUEUE, result.data, newImageUrls)
       if (result.data === 'abema') {
         try {
           const archive = await archiveMissingAbemaKeysForAnime(prisma, id, async (programIds) => {

@@ -43,6 +43,22 @@ head_sampling_rate = 1
 [triggers]
 crons = ["0 */1 * * *", "0 0 * * *", "0 3 * * *", "0 4 * * *", "0 5 * * SUN"]
 
+# Amazon 専用 queue。スクレイピング先を叩きすぎてスロットル(200で headerDetail 欠落)される
+# のを防ぐため、他 provider と分離した上で並行数を最も絞る (batch 2 × concurrency 1 = 実効 2)。
+# 以前は sync queue を共有し max_concurrency = 2 (実効 10) だったが、Amazon の遅さが同じ
+# batch の他 provider (hulu/crunchyroll/abema) を head-of-line blocking で待たせていたため分離した。
+[[queues.producers]]
+binding = "AMAZON_QUEUE"
+queue = "anime-tracker-amazon-staging"
+
+[[queues.consumers]]
+queue = "anime-tracker-amazon-staging"
+max_batch_size = 2
+max_retries = 3
+max_concurrency = 1
+dead_letter_queue = "anime-tracker-amazon-dlq-staging"
+
+# hulu / crunchyroll / abema 共有 queue。Amazon 分離後も従来の実効並列度 (batch 5 × concurrency 2 = 10) を維持。
 [[queues.producers]]
 binding = "SYNC_QUEUE"
 queue = "anime-tracker-sync-staging"
@@ -51,8 +67,19 @@ queue = "anime-tracker-sync-staging"
 queue = "anime-tracker-sync-staging"
 max_batch_size = 5
 max_retries = 3
-# Amazon 等のスクレイピング先を叩きすぎてスロットル(200で headerDetail 欠落)されるのを防ぐため並行数を抑える
 max_concurrency = 2
+dead_letter_queue = "anime-tracker-sync-dlq-staging"
+
+[[queues.producers]]
+binding = "WARM_QUEUE"
+queue = "anime-tracker-warm-staging"
+
+[[queues.consumers]]
+queue = "anime-tracker-warm-staging"
+max_batch_size = 3
+max_retries = 3
+max_concurrency = 3
+dead_letter_queue = "anime-tracker-warm-dlq-staging"
 
 [dev]
 port = 8787
@@ -88,6 +115,19 @@ database_id = "e1e78f23-da35-4d74-8de0-667a8d7ddefc"
 migrations_dir = "prisma/migrations"
 migrations_pattern = "prisma/migrations/*/migration.sql"
 
+# Amazon 専用 queue。他 provider の head-of-line blocking を防ぐため分離し、並行数を最も絞る (実効 2)。詳細は共通設定側のコメント参照。
+[[env.staging.queues.producers]]
+binding = "AMAZON_QUEUE"
+queue = "anime-tracker-amazon-staging"
+
+[[env.staging.queues.consumers]]
+queue = "anime-tracker-amazon-staging"
+max_batch_size = 2
+max_retries = 3
+max_concurrency = 1
+dead_letter_queue = "anime-tracker-amazon-dlq-staging"
+
+# hulu / crunchyroll / abema 共有 queue。実効並列度は従来通り 10 (batch 5 × concurrency 2)。
 [[env.staging.queues.producers]]
 binding = "SYNC_QUEUE"
 queue = "anime-tracker-sync-staging"
@@ -96,8 +136,19 @@ queue = "anime-tracker-sync-staging"
 queue = "anime-tracker-sync-staging"
 max_batch_size = 5
 max_retries = 3
-# Amazon 等のスクレイピング先を叩きすぎてスロットル(200で headerDetail 欠落)されるのを防ぐため並行数を抑える
 max_concurrency = 2
+dead_letter_queue = "anime-tracker-sync-dlq-staging"
+
+[[env.staging.queues.producers]]
+binding = "WARM_QUEUE"
+queue = "anime-tracker-warm-staging"
+
+[[env.staging.queues.consumers]]
+queue = "anime-tracker-warm-staging"
+max_batch_size = 3
+max_retries = 3
+max_concurrency = 3
+dead_letter_queue = "anime-tracker-warm-dlq-staging"
 
 # ---- Production ----
 
@@ -128,6 +179,19 @@ database_id = "77211ef4-1b88-4f25-8c79-d66e4ef8b5aa"
 migrations_dir = "prisma/migrations"
 migrations_pattern = "prisma/migrations/*/migration.sql"
 
+# Amazon 専用 queue。他 provider の head-of-line blocking を防ぐため分離し、並行数を最も絞る (実効 2)。詳細は共通設定側のコメント参照。
+[[env.production.queues.producers]]
+binding = "AMAZON_QUEUE"
+queue = "anime-tracker-amazon-production"
+
+[[env.production.queues.consumers]]
+queue = "anime-tracker-amazon-production"
+max_batch_size = 2
+max_retries = 3
+max_concurrency = 1
+dead_letter_queue = "anime-tracker-amazon-dlq-production"
+
+# hulu / crunchyroll / abema 共有 queue。実効並列度は従来通り 10 (batch 5 × concurrency 2)。
 [[env.production.queues.producers]]
 binding = "SYNC_QUEUE"
 queue = "anime-tracker-sync-production"
@@ -136,5 +200,16 @@ queue = "anime-tracker-sync-production"
 queue = "anime-tracker-sync-production"
 max_batch_size = 5
 max_retries = 3
-# Amazon 等のスクレイピング先を叩きすぎてスロットル(200で headerDetail 欠落)されるのを防ぐため並行数を抑える
 max_concurrency = 2
+dead_letter_queue = "anime-tracker-sync-dlq-production"
+
+[[env.production.queues.producers]]
+binding = "WARM_QUEUE"
+queue = "anime-tracker-warm-production"
+
+[[env.production.queues.consumers]]
+queue = "anime-tracker-warm-production"
+max_batch_size = 3
+max_retries = 3
+max_concurrency = 3
+dead_letter_queue = "anime-tracker-warm-dlq-production"
