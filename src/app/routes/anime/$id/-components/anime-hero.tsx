@@ -10,7 +10,7 @@ import { Artwork } from './artwork'
 const badgeClass = 'inline-flex items-center gap-[5px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold'
 
 const btnClass =
-  'inline-flex h-[38px] items-center justify-center gap-[7px] rounded-full border border-border px-[18px] text-[13px] font-semibold transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-60 max-sm:flex-auto'
+  'inline-flex h-[34px] items-center justify-center gap-[7px] rounded-full border border-border px-[15px] text-[13px] font-semibold transition-colors hover:bg-muted disabled:pointer-events-none max-sm:flex-auto'
 
 const Fact = ({ label, value }: { label: string; value: string }) => (
   <div className='flex flex-col gap-0.5'>
@@ -104,19 +104,21 @@ export function AnimeHero({
               {anime.scheduled ? <Check className='size-[15px]' /> : <Circle className='size-[15px]' />}
               {anime.scheduled ? '録画予約中' : '録画を予約'}
             </button>
+            {/* 録画を取り消す API がないので、録画済みになったら押せない。位置と見た目は保ったまま意味だけ変える。 */}
             <button
               type='button'
               onClick={onToggleRecorded}
-              disabled={updating}
+              disabled={updating || anime.recorded}
               aria-pressed={anime.recorded}
-              className={`${btnClass} ${anime.recorded ? 'border-transparent bg-success text-success-foreground hover:bg-success/90' : ''}`}
+              title={anime.recorded ? '録画済みの取り消しには対応していない' : undefined}
+              className={`${btnClass} ${anime.recorded ? 'border-transparent bg-success text-success-foreground' : ''}`}
             >
               {anime.recorded ? <Check className='size-[15px]' /> : <Circle className='size-[15px]' />}
               {anime.recorded ? `録画済み (${recordedCount}話)` : '今すぐ録画'}
             </button>
             <button type='button' onClick={onRefresh} disabled={updating} className={btnClass}>
               <RefreshCw className={`size-[15px] ${refreshing ? 'animate-spin' : ''}`} />
-              タイトル情報を再取得
+              再取得
             </button>
           </div>
         </div>

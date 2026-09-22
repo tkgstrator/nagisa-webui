@@ -41,6 +41,7 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
       {isPending ? (
         <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>読み込み中</p>
       ) : (
+        // 左バーはこの箱が 1 本だけ持つ。行にも持たせるとホバーで 2 本に見える。
         <div className='border-l-[3px] border-l-primary py-0.5'>
           <div className={`${colClass} px-2.5 py-1.5 pl-[13px] text-[11px] text-muted-foreground`}>
             <span>配信元</span>
@@ -49,9 +50,7 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
             <span />
           </div>
           <div className='flex flex-col'>
-            <div
-              className={`${colClass} items-center border-b border-b-border/60 border-l-[3px] border-l-primary bg-accent/60 px-2.5 py-2`}
-            >
+            <div className={`${colClass} items-center border-b border-b-border/60 bg-accent/60 px-2.5 py-2 pl-[13px]`}>
               <span className='flex min-w-0 flex-col gap-[3px]'>
                 <span className='truncate text-[13px]'>{anime.title}</span>
                 <span className='flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground'>
@@ -82,7 +81,7 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
                   key={item.id}
                   to='/anime/$id'
                   params={{ id: item.id }}
-                  className={`${colClass} items-center border-b border-b-border/60 border-l-[3px] border-l-transparent px-2.5 py-2 transition-colors hover:border-l-primary hover:bg-muted ${expired ? 'text-muted-foreground' : ''}`}
+                  className={`${colClass} items-center border-b border-b-border/60 px-2.5 py-2 pl-[13px] transition-colors hover:bg-muted ${expired ? 'text-muted-foreground' : ''}`}
                 >
                   <span className='flex min-w-0 flex-col gap-[3px]'>
                     <span className={`truncate text-[13px] ${expired ? 'line-through' : ''}`}>{item.title}</span>

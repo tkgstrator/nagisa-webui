@@ -82,12 +82,16 @@ function AnimeDetailPage() {
     updateAnimeMutation.mutate({ scheduled: !anime.scheduled })
   }
 
-  /** 録画済みに印を付けるとき、設定次第で未録画エピソードの録画リクエストも同時に送る。 */
-  const toggleRecorded = async () => {
-    if (!anime.recorded && settings.requestRecordingOnMark) {
+  /**
+   * 録画済みに印を付けるとき、設定次第で未録画エピソードの録画リクエストも同時に送る。
+   * 録画を削除する API がないので、録画済みからは戻せない (ボタン側も押せなくしてある)。
+   */
+  const markRecorded = async () => {
+    if (anime.recorded) return
+    if (settings.requestRecordingOnMark) {
       await recordAnimeMutation.mutateAsync()
     }
-    updateAnimeMutation.mutate({ recorded: !anime.recorded })
+    updateAnimeMutation.mutate({ recorded: true })
   }
 
   const totalEpisodes = anime.seasons.reduce((sum, s) => sum + s.episodes.length, 0)
@@ -117,7 +121,7 @@ function AnimeDetailPage() {
         updating={updating}
         refreshing={refreshAnimeMutation.isPending}
         onToggleScheduled={toggleScheduled}
-        onToggleRecorded={toggleRecorded}
+        onToggleRecorded={markRecorded}
         onRefresh={() => refreshAnimeMutation.mutate()}
       />
 
