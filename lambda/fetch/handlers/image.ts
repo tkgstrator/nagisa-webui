@@ -61,6 +61,20 @@ const MAX_RESULT_BASE64_BYTES = 512 * 1024
 sharp.concurrency(1)
 sharp.cache(false)
 
+/**
+ * base64 化。
+ *
+ * `sharp` が返す `Buffer<ArrayBuffer>` に対して直接 `toString('base64')` を呼ぶと
+ * `TS2554: Expected 0 arguments, but got 1` になる。typescript 7 + @types/node 26 では
+ * `Buffer` の宣言マージ (buffer.d.ts の非ジェネリック版が持つ Node 固有メソッド +
+ * buffer.buffer.d.ts のジェネリック版) が成立せず、型からエンコーディング引数付きの
+ * `toString` が落ちているため。`Buffer.from(buffer, offset, length)` はビューを作るだけで
+ * コピーしないので、迂回の実行時コストはない。
+ */
+function toBase64(data: Uint8Array): string {
+  return Buffer.from(data.buffer, data.byteOffset, data.byteLength).toString('base64')
+}
+
 /** 使わないレスポンスの本文を明示的に捨てる。放置すると接続と受信バッファが残る。 */
 async function discard(res: Response): Promise<void> {
   try {
@@ -137,7 +151,7 @@ async function convertOne(url: string): Promise<FetchImageResult> {
       if (encoded > MAX_RESULT_BASE64_BYTES) {
         return { url, widths: null, error: `output exceeds ${MAX_RESULT_BASE64_BYTES} bytes` }
       }
-      widths[String(width)] = data.toString('base64')
+      widths[String(width)] = toBase64(data)
     }
     return { url, widths }
   } catch (e) {
