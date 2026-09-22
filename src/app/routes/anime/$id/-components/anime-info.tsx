@@ -19,7 +19,7 @@ export function AnimeInfo({ anime }: { anime: AnimeInfoSchema }) {
     <section aria-labelledby='info-heading'>
       <h3
         id='info-heading'
-        className='flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
+        className='mb-2 flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
       >
         作品情報
       </h3>
