@@ -53,7 +53,7 @@ export function AnimeInfo({ anime }: { anime: AnimeInfoSchema }) {
         <Row label='最終更新'>
           <span className='tabular-nums'>{dayjs(anime.updatedAt).format('YYYY/MM/DD')}</span>
         </Row>
-        <Row label='contentId' mono>
+        <Row label='コンテンツID' mono>
           {anime.contentId}
         </Row>
       </div>

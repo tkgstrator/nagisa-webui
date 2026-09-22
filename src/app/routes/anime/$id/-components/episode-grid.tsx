@@ -36,9 +36,10 @@ const chipClass =
   'inline-flex h-7 items-center gap-1.5 rounded-full border border-border px-2.5 text-[12.5px] text-muted-foreground transition-colors hover:bg-muted aria-pressed:border-transparent aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground'
 
 /**
- * 1話ぶんの録画状態トグル。`PUT /api/recordings` に繋がっていて、
- * 押すと録画済み ⇄ 未録画が入れ替わる。未配信の回だけは操作できない
- * (ボタン自体は同じ位置に残し、意味だけ変える)。
+ * 1話ぶんの録画状態トグル。`PUT /api/recordings` に繋がっている。
+ * 押せるのは未録画の回だけで、未配信の回と録画済みの回は操作できない
+ * (録画を削除する API がないので、録画済みからは戻せない)。
+ * 押せない場合もボタン自体は同じ位置に残し、意味だけ変える。
  */
 const RecordState = ({
   status,
@@ -52,7 +53,7 @@ const RecordState = ({
   const style = pending
     ? 'border-info/40 bg-info/10 text-info'
     : status === 'done'
-      ? 'border-success/40 bg-success/10 text-success hover:bg-success/20'
+      ? 'cursor-default border-success/40 bg-success/10 text-success'
       : status === 'future'
         ? 'cursor-default border-dashed border-border text-muted-foreground'
         : 'border-border bg-background text-foreground hover:bg-secondary'
@@ -68,10 +69,11 @@ const RecordState = ({
     <button
       type='button'
       aria-pressed={status === 'done'}
-      aria-label={status === 'done' ? '録画済みを取り消す' : '録画する'}
-      disabled={status === 'future' || pending}
+      aria-label={status === 'done' ? '録画済み' : '録画する'}
+      title={status === 'done' ? '録画済みの取り消しには対応していない' : undefined}
+      disabled={status !== 'todo' || pending}
       onClick={onToggle}
-      className={`group/rec inline-flex h-8 w-[136px] items-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${style} max-sm:w-[34px] max-sm:justify-center max-sm:px-0`}
+      className={`inline-flex h-8 w-[104px] items-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${style} max-sm:w-[34px] max-sm:justify-center max-sm:px-0`}
     >
       <span className={`grid size-4 shrink-0 place-items-center rounded-full ${icon}`}>
         {status === 'done' && !pending && <Check className='size-2.5' />}
@@ -81,10 +83,7 @@ const RecordState = ({
       ) : status === 'future' ? (
         <span className='max-sm:sr-only'>配信予定</span>
       ) : status === 'done' ? (
-        <>
-          <span className='group-hover/rec:hidden max-sm:sr-only'>録画済み</span>
-          <span className='hidden group-hover/rec:inline max-sm:hidden'>取り消す</span>
-        </>
+        <span className='max-sm:sr-only'>録画済み</span>
       ) : (
         <span className='max-sm:sr-only'>録画する</span>
       )}
@@ -110,7 +109,7 @@ const EpisodeRow = ({
   return (
     <li
       id={`ep-${episode.id}`}
-      className={`grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_136px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${rowAccent[status]}`}
+      className={`grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${rowAccent[status]}`}
     >
       <span className='text-right text-sm font-semibold leading-[21px] text-muted-foreground tabular-nums'>
         {episode.episodeNumber}
@@ -190,8 +189,9 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
     onError: () => toast.error('録画状態の更新に失敗しました')
   })
 
-  const toggleRecorded = (episode: Episode) => {
-    updateRecording.mutate({ episodeId: episode.id, recorded: !episode.recorded })
+  /** 録画済みから戻す手段がない (録画を削除する API がない) ので、録画する方向にしか動かさない。 */
+  const markRecorded = (episode: Episode) => {
+    updateRecording.mutate({ episodeId: episode.id, recorded: true })
   }
 
   const pendingEpisodeId = updateRecording.isPending ? (updateRecording.variables?.episodeId ?? null) : null
@@ -305,7 +305,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
         </div>
       </section>
 
-      <fieldset className='flex flex-wrap gap-1.5 border-0 p-0' aria-label='絞り込み'>
+      <fieldset className='mb-3 flex flex-wrap gap-1.5 border-0 p-0' aria-label='絞り込み'>
         <button type='button' aria-pressed={filter === 'all'} onClick={() => setFilter('all')} className={chipClass}>
           すべて <span className='opacity-80 tabular-nums'>{season.episodes.length}</span>
         </button>
@@ -332,7 +332,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             episode={episode}
             provider={anime.provider}
             pending={pendingEpisodeId === episode.id}
-            onToggle={toggleRecorded}
+            onToggle={markRecorded}
           />
         ))}
       </ol>

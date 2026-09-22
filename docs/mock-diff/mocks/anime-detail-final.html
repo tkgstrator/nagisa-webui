@@ -387,7 +387,7 @@ svg { display: block; flex: none; }
 .id-syn.is-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 .id-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
-.btn { height: 38px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: var(--foreground); transition: background .15s, transform .12s; }
+.btn { height: 34px; padding: 0 15px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: var(--foreground); transition: background .15s, transform .12s; }
 .btn:hover { background: var(--muted); }
 .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
@@ -398,7 +398,9 @@ svg { display: block; flex: none; }
 .btn-busy { background: var(--muted); color: var(--muted-foreground); border-color: transparent; pointer-events: none; }
 .btn-busy svg { animation: spin 1s linear infinite; }
 .btn-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
-.btn-icon { width: 38px; padding: 0; }
+.btn-icon { width: 34px; padding: 0; }
+/* 録画済みは取り消せない (録画を削除する API を持たない)。押せないことを見た目で示す。 */
+.btn[disabled] { pointer-events: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 録画の進捗を 1 本の帯で示していた .progress-row / .strip は、episode-list (fable) の
@@ -422,7 +424,7 @@ svg { display: block; flex: none; }
 .ep-list { display: flex; flex-direction: column; }
 .ep {
   display: grid;
-  grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 136px;
+  grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 104px;
   gap: 14px; align-items: center;
   padding: 8px 12px;
   border-left: 3px solid var(--border);
@@ -451,8 +453,8 @@ svg { display: block; flex: none; }
 .ep-msg { font-size: 12px; color: var(--destructive); margin-top: 2px; }
 .ep-msg-info { color: var(--info); }
 
-/* 録画状態のトグル。幅を固定して語が動かないようにする */
-.rec { display: inline-flex; align-items: center; gap: 7px; width: 136px; height: 32px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 600; background: var(--background); transition: background .12s, border-color .12s; white-space: nowrap; }
+/* 録画状態のトグル。幅を固定して語が動かないようにする (最長の語 + アイコンぶんだけ取る) */
+.rec { display: inline-flex; align-items: center; gap: 7px; width: 104px; height: 32px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 600; background: var(--background); transition: background .12s, border-color .12s; white-space: nowrap; }
 .rec:hover { background: var(--secondary); }
 .rec:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
 .rec .ico { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; flex: none; }
@@ -461,7 +463,8 @@ svg { display: block; flex: none; }
 .rec[data-s="todo"] .ico { border: 1.5px solid var(--muted-foreground); }
 .rec[data-s="done"] { color: var(--success); border-color: color-mix(in oklch, var(--success) 40%, transparent); background: color-mix(in oklch, var(--success) 10%, transparent); }
 .rec[data-s="done"] .ico { background: var(--success); color: var(--success-foreground); }
-.rec[data-s="done"]:hover { background: color-mix(in oklch, var(--success) 18%, transparent); }
+/* 録画済みは取り消す手段がない (録画を削除する API を持たない) ので、押せる見た目にしない。 */
+.rec[data-s="done"] { cursor: default; }
 .rec[data-s="rec"] { color: var(--info); border-color: color-mix(in oklch, var(--info) 40%, transparent); background: color-mix(in oklch, var(--info) 10%, transparent); }
 .rec[data-s="rec"] .ico { border: 2px solid color-mix(in oklch, var(--info) 30%, transparent); border-top-color: var(--info); animation: spin .9s linear infinite; }
 .rec[data-s="rec"] .pct { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 500; }
@@ -470,8 +473,8 @@ svg { display: block; flex: none; }
 .rec[data-s="future"] { color: var(--muted-foreground); border-style: dashed; cursor: default; background: transparent; }
 .rec[data-s="future"] .ico { border: 1.5px dashed var(--muted-foreground); }
 .rec .lbl-hover { display: none; }
-.rec[data-s="done"]:hover .lbl, .rec[data-s="fail"]:hover .lbl { display: none; }
-.rec[data-s="done"]:hover .lbl-hover, .rec[data-s="fail"]:hover .lbl-hover { display: inline; }
+.rec[data-s="fail"]:hover .lbl { display: none; }
+.rec[data-s="fail"]:hover .lbl-hover { display: inline; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 話数の帯 */
@@ -487,7 +490,7 @@ svg { display: block; flex: none; }
 .strip-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; margin-top: 6px; }
 
 /* 絞り込みチップ / シーズンタブ */
-.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .chip { height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12.5px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; }
 .chip:hover { background: var(--muted); color: var(--foreground); }
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); border-color: transparent; font-weight: 600; }
@@ -537,13 +540,15 @@ svg { display: block; flex: none; }
 .rel-list { display: flex; flex-direction: column; }
 .rel {
   display: grid; grid-template-columns: minmax(0, 1fr) 52px 52px 14px; gap: 10px; align-items: center;
-  padding: 8px 10px; border-left: 3px solid transparent;
+  /* 左バーは .rel-box が 1 本持つ。行にも持たせるとホバーで 2 本に見えるので、
+     ここでは持たず padding だけ .rel-head と揃える。 */
+  padding: 8px 10px 8px 13px;
   border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
-  transition: background .12s, border-color .12s;
+  transition: background .12s;
 }
-.rel:hover { background: var(--muted); border-left-color: var(--primary); }
+.rel:hover { background: var(--muted); }
 .rel:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
-.rel.cur { border-left-color: var(--primary); background: color-mix(in oklch, var(--accent) 60%, transparent); cursor: default; }
+.rel.cur { background: color-mix(in oklch, var(--accent) 60%, transparent); cursor: default; }
 .rel.cur:hover { background: color-mix(in oklch, var(--accent) 60%, transparent); }
 .rel.off { color: var(--muted-foreground); }
 .rel.off .rel-title { text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent); }
@@ -683,7 +688,7 @@ svg { display: block; flex: none; }
               </button>
               <button class="btn btn-refresh" type="button" title="AniList / プロバイダから再同期">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
-                タイトル情報を再取得
+                再取得
               </button>
             </div>
           </div>
@@ -855,7 +860,7 @@ svg { display: block; flex: none; }
             <div class="info-row"><span class="k">AniList</span><span class="v"><a href="#anilist">#116589</a></span></div>
             <div class="info-row"><span class="k">制作</span><span class="v">スタジオ白夜</span></div>
             <div class="info-row"><span class="k">ジャンル</span><span class="v">SF · 青春</span></div>
-            <div class="info-row"><span class="k">contentId</span><span class="v mono">GVDHX8DM5</span></div>
+            <div class="info-row"><span class="k">コンテンツID</span><span class="v mono">GVDHX8DM5</span></div>
           </div>
         </section>
       </aside>
