@@ -22,6 +22,19 @@ const DOCKERFILE = 'lambda/fetch/Dockerfile'
 
 const repoRoot = resolve(import.meta.dir, '..', '..')
 
+/**
+ * aws CLI に渡す env。
+ *
+ * ~/.aws/config の [default] には R2 の endpoint_url が入っている (ホストからマウントされた
+ * ファイルで、R2 操作用に意図的にそうなっている)。そのままだと sts / ecr のリクエストまで
+ * R2 に飛んで `InvalidRequest: Missing x-amz-content-sha256` で落ちるので、config ファイル
+ * 自体を読ませない。資格情報はシェルの AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
+ * (IAM user Terraform) を使う。
+ *
+ * config を捨てる副作用で region も消えるため、aws を叩く箇所では必ず --region を明示する。
+ */
+const AWS_ENV: Record<string, string> = { AWS_CONFIG_FILE: '/dev/null' }
+
 async function run(cmd: string[], opts: { cwd?: string; env?: Record<string, string> } = {}): Promise<{ stdout: string }> {
   const proc = Bun.spawn(cmd, {
     cwd: opts.cwd ?? repoRoot,
@@ -37,13 +50,31 @@ async function run(cmd: string[], opts: { cwd?: string; env?: Record<string, str
 }
 
 async function getAccountId(): Promise<string> {
-  const { stdout } = await run(['aws', 'sts', 'get-caller-identity', '--query', 'Account', '--output', 'text'])
+  const { stdout } = await run(
+    ['aws', 'sts', 'get-caller-identity', '--region', REGIONS[0], '--query', 'Account', '--output', 'text'],
+    { env: AWS_ENV }
+  )
   return stdout.trim()
 }
 
 async function getGitSha(): Promise<string> {
   const { stdout } = await run(['git', 'rev-parse', '--short', 'HEAD'])
   return stdout.trim()
+}
+
+/**
+ * GitHub Packages (@qtmleap/*) 用の .npmrc を組み立てる。
+ *
+ * repo root の .npmrc は個人のトークンで失効しがちなので、gh CLI の生きたトークンを使う。
+ * 中身は image layer に残さず BuildKit の secret mount で渡すので、ファイルには書かない。
+ */
+async function getNpmrc(): Promise<string> {
+  const { stdout } = await run(['gh', 'auth', 'token'])
+  const token = stdout.trim()
+  if (token.length === 0) {
+    throw new Error('gh auth token が空。read:packages を持つトークンで gh auth login すること')
+  }
+  return `@qtmleap:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${token}\n`
 }
 
 async function ensureBuildx(): Promise<void> {
@@ -62,6 +93,7 @@ async function ensureBuildx(): Promise<void> {
 async function ecrLogin(region: string, registry: string): Promise<void> {
   console.log(`Logging in to ECR ${registry}...`)
   const pw = Bun.spawn(['aws', 'ecr', 'get-login-password', '--region', region], {
+    env: { ...process.env, ...AWS_ENV },
     stdout: 'pipe',
     stderr: 'inherit'
   })
@@ -83,7 +115,7 @@ async function ecrLogin(region: string, registry: string): Promise<void> {
  * buildx は arm64 image を一度ビルドしてから複数タグに push できるので、
  * リージョンごとに build し直す必要はない。
  */
-async function buildAndPush(tags: string[]): Promise<void> {
+async function buildAndPush(tags: string[], npmrc: string): Promise<void> {
   console.log(`Building & pushing image with tags:`)
   for (const t of tags) console.log(`  ${t}`)
 
@@ -94,20 +126,26 @@ async function buildAndPush(tags: string[]): Promise<void> {
   //      Docker media type で書く (OCI media type だと同じく Lambda が拒絶)
   // 詳細: aws/containers-roadmap#2172, #1985。片方だけでは動かない。
   const tagArgs = tags.flatMap((t) => ['--tag', t])
-  await run([
-    'docker', 'buildx', 'build',
-    '--platform', PLATFORM,
-    '--file', DOCKERFILE,
-    '--provenance=false',
-    '--sbom=false',
-    '--output', 'type=image,push=true,oci-mediatypes=false',
-    ...tagArgs,
-    '.'
-  ])
+  await run(
+    [
+      'docker', 'buildx', 'build',
+      '--platform', PLATFORM,
+      '--file', DOCKERFILE,
+      '--provenance=false',
+      '--sbom=false',
+      // bun install が @qtmleap/* を GitHub Packages から引くのに要る。env 経由なので
+      // ディスクにもイメージにもトークンは残らない。
+      '--secret', 'id=npmrc,env=NPMRC',
+      '--output', 'type=image,push=true,oci-mediatypes=false',
+      ...tagArgs,
+      '.'
+    ],
+    { env: { NPMRC: npmrc } }
+  )
 }
 
 async function main(): Promise<void> {
-  const [accountId, sha] = await Promise.all([getAccountId(), getGitSha()])
+  const [accountId, sha, npmrc] = await Promise.all([getAccountId(), getGitSha(), getNpmrc()])
 
   const registries = REGIONS.map((region) => ({
     region,
@@ -124,7 +162,7 @@ async function main(): Promise<void> {
     `${registry}/${REPOSITORY}:latest`
   ])
 
-  await buildAndPush(tags)
+  await buildAndPush(tags, npmrc)
 
   console.log('')
   console.log('✔ push complete.')

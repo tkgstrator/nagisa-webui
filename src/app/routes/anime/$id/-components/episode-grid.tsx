@@ -120,7 +120,7 @@ const EpisodeRow = ({
         src={episode.imageUrl}
         alt={title}
         seed={episode.id}
-        width={240}
+        slotWidth={96}
         variant='thumb'
         className={`rounded-md ${status === 'future' ? 'opacity-55' : ''}`}
       >

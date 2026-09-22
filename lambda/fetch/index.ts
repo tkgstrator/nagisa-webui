@@ -10,6 +10,7 @@
  *   POST /title_info     — タイトル詳細取得
  *   POST /abema_archive  — ABEMA archive key/segment fetch
  *   POST /identify       — AniList でタイトルを検索して aniListId 等を返す
+ *   POST /image          — 画像を取得して WebP のラダー各幅に変換して返す
  *
  * 実処理は handlers/ 配下に分割している。このファイルは entry と routing のみ。
  */
@@ -19,6 +20,8 @@ import {
   FetchAbemaArchiveRequestSchema,
   FetchAbemaArchiveResponseSchema,
   FetchExpiringRequestSchema,
+  FetchImageRequestSchema,
+  FetchImageResponseSchema,
   FetchTitleInfoRequestSchema,
   FetchTitleListRequestSchema,
   IdentifyRequestSchema,
@@ -30,6 +33,7 @@ import { parseEvent } from './event'
 import { fetchAbemaArchives } from './handlers/abema-archive'
 import { fetchExpiring } from './handlers/expiring'
 import { identifyTitles } from './handlers/identify'
+import { fetchImages } from './handlers/image'
 import { fetchTitleInfo } from './handlers/title-info'
 import { fetchTitleList } from './handlers/title-list'
 import { logger } from './logger'
@@ -92,6 +96,11 @@ export async function handler(event: unknown): Promise<LambdaResponse> {
         return await handleRoute(body, IdentifyRequestSchema, IdentifyResponseSchema, ({ titles }) => {
           logger.debug({ action: 'route-identify', count: titles.length, requestId })
           return identifyTitles(titles)
+        })
+      case '/image':
+        return await handleRoute(body, FetchImageRequestSchema, FetchImageResponseSchema, ({ urls }) => {
+          logger.debug({ action: 'route-image', count: urls.length, requestId })
+          return fetchImages(urls)
         })
       default:
         return fail(404, `Unknown path: ${path}`)

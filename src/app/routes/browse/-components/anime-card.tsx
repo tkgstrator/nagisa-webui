@@ -76,7 +76,7 @@ export function AnimeCard({
           <ProxyImage
             src={anime.imageUrl}
             alt=''
-            width={480}
+            slotWidth={350}
             className='absolute inset-0 size-full object-cover [&[role=img]]:hidden'
           />
 

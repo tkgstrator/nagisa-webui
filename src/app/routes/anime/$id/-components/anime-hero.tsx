@@ -50,7 +50,7 @@ export function AnimeHero({
         src={anime.imageUrl}
         alt={anime.title}
         seed={anime.id}
-        width={600}
+        slotWidth={400}
         variant='hero'
         initial={anime.title.slice(0, 1)}
         className='w-[400px] max-w-full shrink-0 rounded-[14px] shadow-[0_20px_40px_-18px_oklch(0.15_0.02_265/40%)] max-sm:w-full'

@@ -16,6 +16,22 @@ services:
     tty: true
     stdin_open: true
 
+  proxy:
+    image: serjs/go-socks5-proxy:latest
+    network_mode: service:vpn
+    environment:
+      - PROXY_PORT=1080
+      - REQUIRE_AUTH=false
+
+  vpn:
+    image: linuxserver/wireguard:latest
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ./wireguard:/config/wg_confs:ro
+
   # デザイン候補の選定(Deciding)・実装(Building)・ピクセル差分検証(Checking)を行う
   # mock-diff-viewer sidecar。詳細は docs/mock-diff.md を参照。
   #

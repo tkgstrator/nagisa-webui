@@ -117,7 +117,7 @@ function UnidentifiedAdminPage() {
                     <ProxyImage
                       src={item.imageUrl}
                       alt={item.title}
-                      width={480}
+                      slotWidth={400}
                       className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-105'
                     />
                   ) : (

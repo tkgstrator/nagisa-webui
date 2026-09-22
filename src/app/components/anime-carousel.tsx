@@ -191,7 +191,7 @@ function CarouselCard({
         <ProxyImage
           src={anime.imageUrl}
           alt={anime.title}
-          width={400}
+          slotWidth={240}
           className='absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105 [&[role=img]]:hidden'
         />
         {flag !== undefined && (
@@ -243,7 +243,7 @@ function PosterTile({
         <ProxyImage
           src={anime.imageUrl}
           alt={anime.title}
-          width={400}
+          slotWidth={176}
           className='absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105 [&[role=img]]:hidden'
         />
         <span aria-hidden='true' className='absolute inset-0 bg-gradient-to-b from-transparent to-overlay' />

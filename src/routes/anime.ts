@@ -30,6 +30,7 @@ type Bindings = {
   LAMBDA_FUNCTION_URL: string
   LAMBDA_FUNCTION_URL_US: string
   KV: KVNamespace
+  IMAGES: R2Bucket
 }
 
 type BadgedRow = {
@@ -249,7 +250,7 @@ anime.openapi(
 anime.openapi(
   createRoute({
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
     tags: ['Anime'],
     summary: 'アニメ詳細取得（シーズン・エピソード含む）',
     request: { params: z.object({ id: z.string() }) },
@@ -266,7 +267,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
       include: {
@@ -301,7 +302,7 @@ anime.openapi(
 anime.openapi(
   createRoute({
     method: 'patch',
-    path: '/:id',
+    path: '/{id}',
     tags: ['Anime'],
     summary: 'アニメの録画予約・録画済み状態を更新',
     request: {
@@ -330,7 +331,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const body = c.req.valid('json')
     try {
       const result = await prisma.anime.update({
@@ -352,7 +353,7 @@ anime.openapi(
 anime.openapi(
   createRoute({
     method: 'post',
-    path: '/:id/record',
+    path: '/{id}/record',
     tags: ['Anime'],
     summary: 'バックエンドに録画リクエストを送信',
     request: { params: z.object({ id: z.string() }) },
@@ -377,7 +378,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
       select: { provider: true, contentId: true }
@@ -476,7 +477,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
       select: { provider: true, contentId: true }
@@ -487,7 +488,7 @@ anime.openapi(
     if (!result.success) return c.json({ error: `Unsupported provider: ${row.provider}` }, 500)
 
     const lambda = createFetchClient(c.env)
-    const service = new SyncService(prisma, lambda)
+    const service = new SyncService(prisma, lambda, c.env.IMAGES)
     const fetcher = localDetailFetchers[result.data]
 
     try {

@@ -8,7 +8,8 @@ type ArtworkProps = {
   alt: string
   /** 色相を決めるキー。同じタイトル/話数なら常に同じ色になる。 */
   seed: string
-  width: number
+  /** 表示枠の CSS ピクセル幅。ProxyImage がここからラダーの段を決める。 */
+  slotWidth: number
   variant: 'hero' | 'thumb'
   /** プレースホルダに重ねる文字。ヒーローでのみ使う。 */
   initial?: string
@@ -21,7 +22,7 @@ type ArtworkProps = {
  * 16:9 のアートワーク枠。実画像が載るまでの下地としてモックのグラデーションを敷き、
  * 画像はその上に重ねる。縦長・正方形は使わない (SPEC の絶対条件)。
  */
-export const Artwork = ({ src, alt, seed, width, variant, initial, className, children }: ArtworkProps) => {
+export const Artwork = ({ src, alt, seed, slotWidth, variant, initial, className, children }: ArtworkProps) => {
   const h = hueOf(seed)
   const art: CSSProperties =
     variant === 'hero'
@@ -46,7 +47,7 @@ export const Artwork = ({ src, alt, seed, width, variant, initial, className, ch
         <ProxyImage
           src={src}
           alt={alt}
-          width={width}
+          slotWidth={slotWidth}
           className='absolute inset-0 size-full object-cover [&[role=img]]:hidden'
         />
       )}

@@ -85,7 +85,7 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
             <ProxyImage
               src={item.imageUrl}
               alt={item.title}
-              width={200}
+              slotWidth={76}
               className='aspect-video w-full rounded object-cover'
             />
             <span className='min-w-0'>

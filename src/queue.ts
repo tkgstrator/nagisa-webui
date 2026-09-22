@@ -20,6 +20,7 @@ interface Env {
   LAMBDA_FUNCTION_URL: string
   LAMBDA_FUNCTION_URL_US: string
   DISCORD_WEBHOOK_URL: string
+  IMAGES: R2Bucket
 }
 
 /** 失敗通知に載せるため、メッセージ対象のアニメ（識別済みなら）を引く */
@@ -76,7 +77,7 @@ function truncateForFieldValue(lines: string[]): string {
 export async function queue(batch: MessageBatch<Message>, env: Env): Promise<void> {
   const prisma = createPrismaClient(env.DB)
   const lambda = createFetchClient(env)
-  const service = new SyncService(prisma, lambda)
+  const service = new SyncService(prisma, lambda, env.IMAGES)
 
   logger.info({ action: 'batch-start', batchSize: batch.messages.length, queue: batch.queue })
 

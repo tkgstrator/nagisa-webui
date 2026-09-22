@@ -101,7 +101,7 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
             <ProxyImage
               src={anime.imageUrl}
               alt={anime.title}
-              width={176}
+              slotWidth={88}
               className='size-full object-cover transition-transform duration-300 group-hover:scale-[1.06]'
             />
           </div>

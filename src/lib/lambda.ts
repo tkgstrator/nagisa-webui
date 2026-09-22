@@ -5,6 +5,8 @@ import {
   type FetchAbemaArchiveRequestSchema,
   FetchAbemaArchiveResponseSchema,
   type FetchExpiringRequestSchema,
+  type FetchImageRequestSchema,
+  FetchImageResponseSchema,
   type FetchTitleInfoRequestSchema,
   type FetchTitleListRequestSchema,
   IdentifyResponseSchema,
@@ -31,6 +33,12 @@ function getBaseUrl(env: FetchClientEnv, provider: string): string {
 }
 
 /**
+ * 1 回の Lambda 呼び出しの締め切り。Lambda 側のタイムアウトより長く待っても意味がなく、
+ * queue consumer から呼ばれた場合は無期限待機が message の再配信に直結する。
+ */
+const REQUEST_TIMEOUT_MS = 120_000
+
+/**
  * Lambda Function URL に SigV4 署名付き POST リクエストを送る。
  */
 async function post<T>(
@@ -49,7 +57,8 @@ async function post<T>(
     const response = await aws.fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: payload
+      body: payload,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
     })
     const elapsedMs = Date.now() - startedAt
 
@@ -96,6 +105,8 @@ export function createFetchClient(env: FetchClientEnv) {
     fetchAbemaArchives: (body: z.infer<typeof FetchAbemaArchiveRequestSchema>) =>
       post(aws, getBaseUrl(env, 'abema'), '/abema_archive', body, FetchAbemaArchiveResponseSchema),
     identifyTitles: (body: { titles: string[] }) =>
-      post(aws, env.LAMBDA_FUNCTION_URL, '/identify', body, IdentifyResponseSchema)
+      post(aws, env.LAMBDA_FUNCTION_URL, '/identify', body, IdentifyResponseSchema),
+    fetchImage: (body: z.infer<typeof FetchImageRequestSchema>) =>
+      post(aws, getBaseUrl(env, body.provider), '/image', body, FetchImageResponseSchema)
   }
 }
