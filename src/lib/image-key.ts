@@ -8,7 +8,7 @@ const NAMESPACE = uuidv5('animetracker', uuidv5.DNS)
  *
  * フロント (`ProxyImage` の LADDER) が実際に要求する幅と同じ値にすること。片方だけずれると、
  * その幅は「変換はするが保存しない」状態になり、毎リクエストでオリジン取得と変換が走る。
- * `src/routes/img.ts` のホワイトリストと `src/lib/image-warm.ts` の事前 warm がここを見る。
+ * `src/routes/img.ts` のラダー永続化と `src/lib/image-warm.ts` の事前 warm がここを見る。
  */
 export const PERSISTED_WIDTHS = [200, 400, 800] as const
 
@@ -38,7 +38,10 @@ export function webpKey(imageUrl: string, width?: number): string {
 
 /**
  * 変換前の元バイナリの R2 キー。
- * 配信終了で元URLが 404 になった後も、ここから別の幅を再生成できる。
+ *
+ * Worker はこのキーを読み書きしない。原本のアーカイブはローカル (`.cache/originals/`) が正で、
+ * R2 に原寸を置くと Class A/B と容量が増えるだけなので持たない方針
+ * (docs/features/image-persistence-r2-plan.md の P6)。過去に投入した分のキー計算用に残している。
  */
 export function originalKey(imageUrl: string): string {
   return `${imageBaseKey(imageUrl)}/original`
