@@ -98,6 +98,9 @@ screens:
           final:
             type: html
             path: mocks/anime-detail-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/anime/77c1ab93-b36f-5b6d-a699-dfeb2ae1c369
       - id: iphone
         name: iPhone
         viewport:
@@ -115,6 +118,9 @@ screens:
           final:
             type: html
             path: mocks/anime-detail-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/anime/77c1ab93-b36f-5b6d-a699-dfeb2ae1c369
   - id: recordings
     name: 録画一覧
     category: ページ
@@ -205,6 +211,47 @@ screens:
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/
+
+  # 実装にはまだ /settings ルートが無いため、この画面だけ actual を持たない。
+  - id: settings
+    name: 設定
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/settings-fable.html
+          astra:
+            type: html
+            path: mocks/settings-astra.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/settings
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/settings-fable.html
+          astra:
+            type: html
+            path: mocks/settings-astra.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/settings
 
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。

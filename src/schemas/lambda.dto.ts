@@ -89,3 +89,21 @@ export const IdentifyResponseSchema = z.object({
 export const IdentifyRequestSchema = z.object({
   titles: z.array(z.string().nonempty()).max(50)
 })
+
+// ---- image ----
+
+export const FetchImageRequestSchema = z.object({
+  provider: z.string().nonempty(),
+  urls: z.array(z.url()).min(1).max(10)
+})
+
+export const FetchImageResultSchema = z.object({
+  url: z.url(),
+  /** 幅 (文字列) -> WebP の base64。取得か変換に失敗した URL は null */
+  widths: z.record(z.string(), z.string()).nullable(),
+  error: z.string().optional()
+})
+
+export const FetchImageResponseSchema = z.object({
+  results: z.array(FetchImageResultSchema)
+})

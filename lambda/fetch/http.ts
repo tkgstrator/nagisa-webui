@@ -21,6 +21,15 @@ function sleep(sec: number): Promise<void> {
 }
 
 /**
+ * abort / timeout 由来の error かどうか。
+ * 呼び出し側が `AbortSignal.timeout` で締め切りを設けている場合、これをリトライすると
+ * 締め切りが効かなくなる (signal は abort 済みなので即座に失敗し、待機だけが積み上がる)。
+ */
+function isAbortError(e: unknown): boolean {
+  return e instanceof Error && (e.name === 'AbortError' || e.name === 'TimeoutError')
+}
+
+/**
  * attempt 回目のリトライ待機秒数を計算する。
  * Retry-After ヘッダ (秒) が正の有限値なら優先し、それ以外は 2^attempt の指数バックオフ。
  * いずれも {@link RETRY_BACKOFF_CEILING_SEC} で頭打ちにする。
@@ -40,6 +49,7 @@ function backoffSec(attempt: number, retryAfterHeader?: string | null): number {
  * @param maxRetries  リトライ最大回数 (デフォルト {@link DEFAULT_MAX_RETRIES})
  * @returns 最終的な Response。リトライ後も 4xx/5xx が続く場合はそのまま返す。
  * @throws  最後の attempt でもネットワークエラーが起きた場合はその error を再 throw する。
+ *          `init.signal` の abort / timeout はリトライせず即座に再 throw する。
  */
 export async function fetchWithRetry(
   url: string,
@@ -60,9 +70,12 @@ export async function fetchWithRetry(
         maxRetries,
         waitSec
       })
+      // 捨てるレスポンスの本文は待機前に閉じる (待機中に接続を握り続けない)
+      await res.body?.cancel().catch(() => {})
       await sleep(waitSec)
     } catch (e) {
-      if (attempt === maxRetries) throw e
+      // 締め切り超過はリトライしても意味がない。そのまま呼び出し側に返す。
+      if (isAbortError(e) || attempt === maxRetries) throw e
       const waitSec = backoffSec(attempt)
       logger.warn({
         action: 'fetch-retry-network',

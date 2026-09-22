@@ -18,7 +18,12 @@ WORKDIR /app
 
 # 依存を先に (キャッシュ最適化)
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+
+# @qtmleap/* は GitHub Packages にあり認証が要る。トークンを image layer に焼かないよう
+# BuildKit の secret mount で repo root の .npmrc を bun install の間だけ見せる。
+# build.ts が --secret id=npmrc,src=.npmrc を渡す。
+RUN --mount=type=secret,id=npmrc,target=/app/.npmrc,required=true \
+    bun install --frozen-lockfile
 
 # ソース (lambda/fetch は src/ 配下の provider 群を import している)
 COPY lambda/fetch/ ./lambda/fetch/
@@ -27,12 +32,15 @@ COPY src/ ./src/
 # bun build → /app/lambda/fetch/dist/index.mjs
 # lambda/fetch/build.ts は最後に zip コマンドで function.zip を作るが、container
 # image では zip 化不要なので bun build を直接叩く。
+# sharp はネイティブアドオン (libvips) なのでバンドルできない。--external で参照のまま残し、
+# node_modules ごと Stage 2 にコピーする。
 RUN bun build lambda/fetch/index.ts \
     --outdir lambda/fetch/dist \
     --target node \
     --format esm \
     --minify \
-    --entry-naming '[name].mjs'
+    --entry-naming '[name].mjs' \
+    --external sharp
 
 # ---- Stage 2: runtime ----
 FROM oven/bun:1.3.11
@@ -45,6 +53,14 @@ RUN chmod +x /var/runtime/bootstrap
 # アプリコード: bun build 済 index.mjs
 WORKDIR /var/task
 COPY --from=builder /app/lambda/fetch/dist/index.mjs ./index.mjs
+
+# --external で残した sharp の実行時依存。sharp -> @img/colour / detect-libc / semver で
+# クロージャは閉じている (いずれも更に依存を持たない)。@img には arm64 のネイティブ本体
+# (@img/sharp-linux-arm64 + @img/sharp-libvips-linux-arm64) が入る。
+COPY --from=builder /app/node_modules/sharp       ./node_modules/sharp
+COPY --from=builder /app/node_modules/@img        ./node_modules/@img
+COPY --from=builder /app/node_modules/semver      ./node_modules/semver
+COPY --from=builder /app/node_modules/detect-libc ./node_modules/detect-libc
 
 # Lambda が起動する ENTRYPOINT (custom runtime を Bun で起動)。
 # oven/bun base には default ENTRYPOINT が無いので bootstrap を明示。

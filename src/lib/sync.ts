@@ -5,6 +5,7 @@ import type { FetchMessage, UpdateMessage } from '@/schemas/message.dto.ts'
 import type { Episode, Season, TitleInfo } from '@/schemas/providers/common.dto.ts'
 import type { PrismaClient } from '../generated/prisma/client.ts'
 import { withD1Retry } from './db'
+import { warmImages } from './image-warm'
 import type { FetchClient } from './lambda'
 import { getAppLogger } from './logger'
 import { cleanTitle } from './metadata/anilist'
@@ -73,7 +74,12 @@ const fetchLogger = getAppLogger('fetch')
 export class SyncService {
   constructor(
     private readonly prisma: PrismaClient,
-    private readonly lambda: FetchClient
+    private readonly lambda: FetchClient,
+    /**
+     * 画像の事前 warm 先。省略すると warm しない。
+     * scripts/sync/ からの呼び出しなど、R2 binding を持たない実行経路があるので任意にしてある。
+     */
+    private readonly images?: R2Bucket
   ) {}
 
   /** プロバイダのエピソード情報を取得し、不足しているシーズン・エピソードを同期する */
@@ -114,6 +120,8 @@ export class SyncService {
     seasons: Season[]
   ): Promise<{ seasonsCreated: number; episodesCreated: number; episodesUpdated: number }> {
     const stats = { seasonsCreated: 0, episodesCreated: 0, episodesUpdated: 0 }
+    /** 新規に入った / URL が変わったエピソード画像。D1 書き込みが全部通った後に warm する */
+    const newImageUrls: string[] = []
     const anime = await this.prisma.anime.findUniqueOrThrow({
       where: { provider_contentId: { provider, contentId } },
       include: {
@@ -159,6 +167,7 @@ export class SyncService {
         try {
           await withD1Retry(() => this.createSeason(animeId, provider, contentId, season))
           stats.seasonsCreated += 1
+          newImageUrls.push(...season.episodes.map((e) => e.imageUrl))
           syncLogger.info({
             action: 'create-season',
             provider,
@@ -183,6 +192,7 @@ export class SyncService {
           try {
             await withD1Retry(() => this.createEpisode(dbSeason.id, provider, contentId, dbSeason.seasonId, episode))
             stats.episodesCreated += 1
+            newImageUrls.push(episode.imageUrl)
           } catch (e) {
             if (!isUniqueConstraintError(e)) throw e
           }
@@ -207,9 +217,15 @@ export class SyncService {
             })
           )
           stats.episodesUpdated += 1
+          if (existing.imageUrl !== episode.imageUrl) newImageUrls.push(episode.imageUrl)
         }
       }
     }
+
+    // D1 への書き込みが全部通った後に warm する。warmImages は例外を投げないので、
+    // ここで sync が巻き戻ることはない。
+    if (this.images) await warmImages(this.images, this.lambda, provider, newImageUrls)
+
     return stats
   }
 

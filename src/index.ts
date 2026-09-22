@@ -18,6 +18,7 @@ type Bindings = {
   TMDB_API_KEY: string
   SYNC_QUEUE: Queue
   KV: KVNamespace
+  IMAGES: R2Bucket
   AWS_ACCESS_KEY_ID: string
   AWS_SECRET_ACCESS_KEY: string
   LAMBDA_FUNCTION_URL: string

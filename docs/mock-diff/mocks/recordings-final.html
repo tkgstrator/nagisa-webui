@@ -126,17 +126,14 @@ svg { display: block; flex: none; }
    衝突を避けるため骨格クラスは pg- 名前空間に統一する。 */
 
 .pg {
-  /* astra 系 (browse / anime-detail) と同じ幅・余白に揃える。
-     236px の常設サイドバーがあるので 1392px だと desktop 1440 で溢れる。
-     margin: 0 auto 自体は astra も持っていて問題ない。効かなくなるのは width: 100%
-     が無いときで、column flex の .pg-main の中では cross 軸の auto margin が
-     stretch を打ち消し、幅が max-content で確定してしまう。width: 100% で
-     利用可能幅に戻す。伸び (flex: 1) は末尾の決定稿での調整ブロックで付けている。
+  /* 幅の上限は持たない。236px の常設サイドバーを除いた残りを全部使い、
+     左右 36px の余白だけで内容を落ち着かせる。column flex の .pg-main の中では
+     width: 100% が無いと幅が max-content で確定してしまうのでこれは残す。
+     伸び (flex: 1) は末尾の決定稿での調整ブロックで付けている。
+     下余白の 90px は本来の 46px + 固定フッターの高さ 44px。
      下の display / flex-direction / gap は fable 側の縦リズムなのでそのまま残す。 */
-  max-width: 1180px;
   width: 100%;
-  margin: 0 auto;
-  padding: 26px 36px 46px;
+  padding: 26px 36px 90px;
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -149,7 +146,6 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(5) { animation-delay: .2s; }
 .pg > *:nth-child(6) { animation-delay: .25s; }
 .pg > *:nth-child(7) { animation-delay: .3s; }
-.pg-narrow { max-width: 1280px; }
 
 /* ---------- page head ---------- */
 .pg-head {
@@ -239,7 +235,7 @@ svg { display: block; flex: none; }
   .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
-  .pg { padding: 18px 16px 40px; gap: 30px; }
+  .pg { padding: 18px 16px 76px; gap: 30px; }
   .pg-title { font-size: 20px; }
   .pg-links { grid-template-columns: minmax(0, 1fr); }
   .pg-headctl { width: 100%; flex-wrap: wrap; }
@@ -588,17 +584,22 @@ td.exp .days { display: block; font-size: 11px; }
 td.upd .m-num { display: none; }
 td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 /* ---------- component: recordings-calendar ---------- */
+/* 曜日は左端の固定列。全幅を使えるので、その日の作品は右側で折り返して並べる。 */
 .week-grid {
-  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
 }
-.day { border-left: 1px solid var(--border); padding: 10px 12px 14px; min-height: 96px; }
-.day-head { display: flex; align-items: baseline; gap: 6px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.day {
+  display: grid; grid-template-columns: 72px minmax(0, 1fr);
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.day:last-child { border-bottom: 0; }
+.day-head { display: flex; align-items: baseline; gap: 6px; padding: 4px 12px 0 2px; }
 .day-head .dname { font-size: 12px; font-weight: 700; color: var(--muted-foreground); }
 .day-head .dcount { font-size: 11px; color: var(--muted-foreground); opacity: .7; }
 .day.weekend .day-head .dname { color: var(--accent-foreground); }
-.slot { border-left: 3px solid var(--border); padding: 6px 0 6px 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
-.slot:last-child { margin-bottom: 0; }
+/* 件数が少ない日でも 1 枠の幅が間延びしないよう、最小幅を決めて左から詰める。 */
+.day-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px 14px; }
+.slot { border-left: 3px solid var(--border); padding: 6px 0 6px 10px; display: flex; flex-direction: column; gap: 3px; }
 .slot .stime { font-size: 11px; color: var(--muted-foreground); }
 .slot .sname { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
 .slot .snote { font-size: 11px; color: var(--muted-foreground); }
@@ -610,9 +611,12 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 .day-empty { font-size: 11px; color: var(--muted-foreground); opacity: .65; padding: 6px 0; }
 
 @media (max-width: 640px) {
-  .week-grid { grid-template-columns: 1fr; border-top: 0; border-bottom: 0; }
-  .day { border-left: 3px solid var(--border); border-bottom: 1px solid var(--border); min-height: 0; padding: 10px 4px 14px; }
+  .week-grid { border-top: 0; border-bottom: 0; }
+  .day { grid-template-columns: 1fr; gap: 8px; border-left: 3px solid var(--border); padding: 10px 4px 14px; }
+  .day:last-child { border-bottom: 1px solid var(--border); }
   .day.weekend { border-left-color: var(--accent); }
+  .day-head { padding: 0 0 8px; border-bottom: 1px solid var(--border); }
+  .day-slots { grid-template-columns: 1fr; }
 }
 /* ---------- component: empty-state ---------- */
 /* ---------- empty state (dense, square, border-left accent) ---------- */
@@ -825,10 +829,14 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 /* ---------- component: app-footer ---------- */
 /* ---------- footer ---------- */
 .ftr {
-  padding-top: 16px; border-top: 1px solid var(--border);
+  /* 画面下端に常時固定する。左端は常設サイドバー (236px) の右から。
+     高さ 44px は .pg の下余白 90px (= 46 + 44) と対になっている。 */
+  position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
+  padding: 0 36px; background: var(--background); border-top: 1px solid var(--border);
   font-size: 11px; color: var(--muted-foreground);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
+@media (max-width: 860px) { .ftr { left: 0; } }
 .ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
 .ftr .r { display: inline-flex; align-items: center; gap: 14px; }
 .ftr a { transition: color .12s; }
@@ -842,7 +850,7 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 .ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
 .ftr .dot.is-down { background: var(--destructive); }
 @media (max-width: 640px) {
-  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr { padding: 0 16px; gap: 10px; }
   .ftr .r { gap: 12px; }
 }
 /* ---------- 決定稿での調整 ---------- */
@@ -1293,77 +1301,91 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
         <div class="week-grid">
           <div class="day">
             <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
-            <div class="slot">
-              <span class="stime num">25:30</span>
-              <span class="sname">蒼穹のリベリオン</span>
-              <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+            <div class="day-slots">
+              <div class="slot">
+                <span class="stime num">25:30</span>
+                <span class="sname">蒼穹のリベリオン</span>
+                <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+              </div>
             </div>
           </div>
           <div class="day">
             <div class="day-head"><span class="dname">火</span><span class="dcount num">1</span></div>
-            <div class="slot">
-              <span class="stime num">23:00</span>
-              <span class="sname">放課後クロノグラフ</span>
-              <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+            <div class="day-slots">
+              <div class="slot">
+                <span class="stime num">23:00</span>
+                <span class="sname">放課後クロノグラフ</span>
+                <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+              </div>
             </div>
           </div>
           <div class="day">
             <div class="day-head"><span class="dname">水</span><span class="dcount num">2</span></div>
-            <div class="slot">
-              <span class="stime num">22:00</span>
-              <span class="sname">海辺のカフェテラス</span>
-              <span class="sbadges"><span class="badge abema">ABEMA</span></span>
-            </div>
-            <div class="slot hiatus">
-              <span class="stime num">24:30</span>
-              <span class="sname">春待ちレコード</span>
-              <span class="snote">休止中</span>
-              <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+            <div class="day-slots">
+              <div class="slot">
+                <span class="stime num">22:00</span>
+                <span class="sname">海辺のカフェテラス</span>
+                <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+              </div>
+              <div class="slot hiatus">
+                <span class="stime num">24:30</span>
+                <span class="sname">春待ちレコード</span>
+                <span class="snote">休止中</span>
+                <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+              </div>
             </div>
           </div>
           <div class="day">
             <div class="day-head"><span class="dname">木</span><span class="dcount num">1</span></div>
-            <div class="slot">
-              <span class="stime num">25:00</span>
-              <span class="sname">星降る夜のアストロノーツ</span>
-              <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+            <div class="day-slots">
+              <div class="slot">
+                <span class="stime num">25:00</span>
+                <span class="sname">星降る夜のアストロノーツ</span>
+                <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+              </div>
             </div>
           </div>
           <div class="day">
             <div class="day-head"><span class="dname">金</span><span class="dcount num">1</span></div>
-            <div class="slot">
-              <span class="stime num">24:00</span>
-              <span class="sname">魔法少女は二度目の朝を迎える</span>
-              <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+            <div class="day-slots">
+              <div class="slot">
+                <span class="stime num">24:00</span>
+                <span class="sname">魔法少女は二度目の朝を迎える</span>
+                <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+              </div>
             </div>
           </div>
           <div class="day weekend">
             <div class="day-head"><span class="dname">土</span><span class="dcount num">1</span></div>
-            <div class="slot">
-              <span class="stime num">23:30</span>
-              <span class="sname">王都パン屋のスローライフ</span>
-              <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+            <div class="day-slots">
+              <div class="slot">
+                <span class="stime num">23:30</span>
+                <span class="sname">王都パン屋のスローライフ</span>
+                <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+              </div>
             </div>
           </div>
           <div class="day weekend">
             <div class="day-head"><span class="dname">日</span><span class="dcount num">2</span></div>
-            <div class="slot upcoming">
-              <span class="stime num">23:00</span>
-              <span class="sname">銀河鉄道の車掌さん</span>
-              <span class="snote">初回 9/20〜</span>
-              <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
-            </div>
-            <div class="slot">
-              <span class="stime num">24:00</span>
-              <span class="sname">雨上がりのガーデナー</span>
-              <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+            <div class="day-slots">
+              <div class="slot upcoming">
+                <span class="stime num">23:00</span>
+                <span class="sname">銀河鉄道の車掌さん</span>
+                <span class="snote">初回 9/20〜</span>
+                <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+              </div>
+              <div class="slot">
+                <span class="stime num">24:00</span>
+                <span class="sname">雨上がりのガーデナー</span>
+                <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <footer class="ftr">
-        <span class="l"><span>Nagisa WebUI</span><span>v0.4.0</span><span class="sha">319250c</span></span>
+        <span class="l"><span>Nagisa WebUI</span><span>v0.7.0</span><span class="sha">319250c</span></span>
         <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></span>
       </footer>
 

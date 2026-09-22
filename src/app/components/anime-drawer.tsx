@@ -148,7 +148,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
             <ProxyImage
               src={anime.imageUrl}
               alt={anime.title}
-              width={800}
+              slotWidth={416}
               className='aspect-video w-full object-cover'
             />
           </div>

@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { FileQuestion, Send } from 'lucide-react'
+import { FileQuestion, KeyRound, Send } from 'lucide-react'
+import { PageContainer } from '@/app/components/page-container'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminHubPage
 })
 
 const ADMIN_ITEMS: {
-  to: '/admin/unidentified' | '/admin/nagisa'
+  to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema'
   title: string
   description: string
   icon: typeof FileQuestion
@@ -22,12 +23,18 @@ const ADMIN_ITEMS: {
     title: 'Nagisa ジョブ投入',
     description: 'プロバイダと content_id を指定して Nagisa に録画ジョブを直接投入する',
     icon: Send
+  },
+  {
+    to: '/admin/abema',
+    title: 'ABEMA 鍵アーカイブ',
+    description: '復号鍵が未取得の ABEMA 作品を確認し、取得ジョブをキューに投入する',
+    icon: KeyRound
   }
 ]
 
 function AdminHubPage() {
   return (
-    <div className='space-y-6'>
+    <PageContainer className='gap-6'>
       <div>
         <h1 className='text-2xl font-bold tracking-tight'>管理</h1>
         <p className='mt-1 text-sm text-muted-foreground'>運用・デバッグ用のツール</p>
@@ -53,6 +60,6 @@ function AdminHubPage() {
           )
         })}
       </div>
-    </div>
+    </PageContainer>
   )
 }

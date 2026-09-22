@@ -1,6 +1,7 @@
 import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
 import { AnimeInfoSchema, AnimeSchema, BadgedAnimeSchema, PaginatedAnimeSchema } from '@/schemas/anime.dto'
+import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
 import {
   NagisaEnqueueRequestSchema,
   NagisaEnqueueResponseSchema,
@@ -126,6 +127,18 @@ const api = new Zodios('/api', [
       { name: 'order', type: 'Query', schema: z.enum(['asc', 'desc']).optional() }
     ],
     response: PaginatedUnidentifiedSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/abema/archive-stats',
+    alias: 'getArchiveStats',
+    response: ArchiveStatsSchema
+  },
+  {
+    method: 'post',
+    path: '/admin/abema/enqueue-archive',
+    alias: 'enqueueArchive',
+    response: ArchiveEnqueueResponseSchema
   },
   {
     method: 'post',
