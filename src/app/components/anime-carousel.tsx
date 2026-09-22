@@ -156,7 +156,8 @@ function seasonLabel(anime: AnimeSchema): string {
 function RecordingState({ anime }: { anime: AnimeSchema }) {
   if (anime.recorded) {
     return (
-      <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-success'>
+      <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-success dark:text-overlay-foreground'>
+        <i className='size-1.5 rounded-full bg-success' />
         録画済み
       </span>
     )

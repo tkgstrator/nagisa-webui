@@ -206,11 +206,13 @@
   --success: oklch(0.55 0.18 152);
   --success-foreground: oklch(0.98 0.005 250);
 
-  --info: oklch(0.7 0.15 245);
-  --info-foreground: oklch(0.18 0.005 250);
+  /* ダークのバッジは文字を白で固定するため、塗りは白が乗る明度まで落とす。
+     success / destructive は元から 0.55 なので、info / warning もそこへそろえる。 */
+  --info: oklch(0.55 0.17 250);
+  --info-foreground: oklch(0.98 0.005 250);
 
-  --warning: oklch(0.82 0.15 75);
-  --warning-foreground: oklch(0.22 0.05 75);
+  --warning: oklch(0.58 0.13 70);
+  --warning-foreground: oklch(0.98 0.005 250);
 
   --overlay: oklch(0.1 0.005 250 / 70%);
   --overlay-foreground: oklch(0.98 0.005 250);
@@ -234,25 +236,27 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.7 0.13 265 / 50%);
 
-  --brand-amazon: oklch(0.55 0.16 245 / 28%);
-  --brand-amazon-foreground: oklch(0.82 0.12 245);
-  --brand-hulu: oklch(0.6 0.16 152 / 28%);
-  --brand-hulu-foreground: oklch(0.82 0.13 152);
-  --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
-  --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
-  --brand-abema: oklch(0.78 0.18 130 / 28%);
-  --brand-abema-foreground: oklch(0.85 0.16 130);
-  --brand-netflix: oklch(0.62 0.22 27 / 28%);
-  --brand-netflix-foreground: oklch(0.82 0.16 27);
+  /* ダークではバッジの文字は白で固定し、識別は背景ティントの色相だけに任せる。
+     薄い色文字だと暗い背景で潰れるため、前景は --foreground と同値にそろえる。 */
+  --brand-amazon: oklch(0.55 0.16 245 / 32%);
+  --brand-amazon-foreground: oklch(0.96 0.003 250);
+  --brand-hulu: oklch(0.6 0.16 152 / 32%);
+  --brand-hulu-foreground: oklch(0.96 0.003 250);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 32%);
+  --brand-crunchyroll-foreground: oklch(0.96 0.003 250);
+  --brand-abema: oklch(0.78 0.18 130 / 32%);
+  --brand-abema-foreground: oklch(0.96 0.003 250);
+  --brand-netflix: oklch(0.62 0.22 27 / 32%);
+  --brand-netflix-foreground: oklch(0.96 0.003 250);
 
-  --status-releasing: oklch(0.65 0.16 145 / 26%);
-  --status-releasing-foreground: oklch(0.82 0.14 145);
-  --status-finished: oklch(0.6 0.005 250 / 26%);
-  --status-finished-foreground: oklch(0.78 0.005 250);
-  --status-not-yet: oklch(0.78 0.15 80 / 26%);
-  --status-not-yet-foreground: oklch(0.85 0.13 75);
-  --status-cancelled: oklch(0.62 0.22 27 / 26%);
-  --status-cancelled-foreground: oklch(0.82 0.16 27);
-  --status-hiatus: oklch(0.7 0.18 50 / 26%);
-  --status-hiatus-foreground: oklch(0.82 0.14 50);
+  --status-releasing: oklch(0.65 0.16 145 / 30%);
+  --status-releasing-foreground: oklch(0.96 0.003 250);
+  --status-finished: oklch(0.6 0.005 250 / 30%);
+  --status-finished-foreground: oklch(0.96 0.003 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 30%);
+  --status-not-yet-foreground: oklch(0.96 0.003 250);
+  --status-cancelled: oklch(0.62 0.22 27 / 30%);
+  --status-cancelled-foreground: oklch(0.96 0.003 250);
+  --status-hiatus: oklch(0.7 0.18 50 / 30%);
+  --status-hiatus-foreground: oklch(0.96 0.003 250);
 }
