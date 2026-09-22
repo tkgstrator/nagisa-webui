@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 import { ChevronRight } from 'lucide-react'
 import { useMemo } from 'react'
 import { AnimeCarousel, AnimePosterRail, ViewAllLink } from '@/app/components/anime-carousel'
-import { SidebarSlot } from '@/app/components/app-sidebar'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
 import { ScheduledUpdatesList } from '@/app/components/scheduled-updates-list'
@@ -74,7 +73,8 @@ const SummaryTile = ({
   label: string
   value: number
   unit: string
-  note: string
+  /** 行動が要るときだけ入れる。null なら行は空のまま高さだけ確保する。 */
+  note: string | null
   tone: SummaryTone
 }) => {
   const isZero = value === 0
@@ -93,7 +93,7 @@ const SummaryTile = ({
         <small className='ml-1 text-[13px] font-medium tracking-normal text-muted-foreground'>{unit}</small>
       </span>
       <span
-        className={`text-xs leading-[1.5] ${tone === 'err' && !isZero ? 'text-destructive' : 'text-muted-foreground'}`}
+        className={`min-h-[18px] text-xs leading-[1.5] ${tone === 'err' ? 'text-destructive' : 'text-muted-foreground'}`}
       >
         {note}
       </span>
@@ -120,18 +120,6 @@ const QuickLink = ({
     <span className='text-[13.5px] font-semibold'>{title}</span>
     <ChevronRight className='size-4 text-muted-foreground transition-transform group-hover/link:translate-x-0.5' />
     <span className='col-span-full text-[11.5px] text-muted-foreground'>{description}</span>
-  </Link>
-)
-
-/** サイドバーに挿し込む「今日のサマリ」。数値はページ本体と同じデータから算出する。 */
-const SideStat = ({ to, label, value, dotClass }: { to: string; label: string; value: number; dotClass: string }) => (
-  <Link
-    to={to}
-    className='flex items-center gap-2 rounded-r-lg border-l-[3px] border-l-transparent px-2.5 py-[7px] text-[12.5px] transition-colors hover:bg-muted'
-  >
-    <span aria-hidden='true' className={`size-[7px] shrink-0 rounded-full ${dotClass}`} />
-    {label}
-    <span className='ml-auto font-bold tabular-nums'>{value}</span>
   </Link>
 )
 
@@ -189,233 +177,205 @@ function HomePage() {
     `text-xs tabular-nums text-muted-foreground group-data-active/tab:font-semibold group-data-active/tab:text-primary ${value === 0 ? 'opacity-45' : ''}`
 
   return (
-    <>
-      <SidebarSlot>
-        <div className='border-t border-border pt-3.5 max-sm:hidden'>
-          <h3 className='px-2.5 pb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground'>
-            今日のサマリ
-          </h3>
-          <SideStat
+    <PageContainer className='gap-10 max-sm:gap-[30px]'>
+      {/* ページヘッド + サマリ。左＝見出しブロック / 右＝タイル4枚 の2カラム。 */}
+      <section
+        aria-labelledby='h-summary'
+        className='grid grid-cols-[auto_minmax(0,1fr)] items-end gap-x-10 max-lg:grid-cols-1 max-lg:gap-y-6'
+      >
+        <div className='flex min-w-0 flex-col gap-1'>
+          <p className='text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground'>
+            {formatSeason(season)}クール
+          </p>
+          <h1 id='h-summary' className='text-[28px] font-bold leading-[1.2] tracking-[-0.02em]'>
+            今日の録画状況
+          </h1>
+          <p className='text-xs leading-[1.5] tabular-nums text-muted-foreground'>
+            {`${now.format('M月D日')} (${weekday})`}
+          </p>
+        </div>
+
+        <div className='grid grid-cols-4 gap-6 max-sm:grid-cols-2 max-sm:gap-x-3.5 max-sm:gap-y-4'>
+          <SummaryTile
             to='/browse?badge=NEW_EPISODE'
             label='新着エピソード'
             value={newEpisodes.length}
-            dotClass='bg-info'
+            unit='作品'
+            note={unrecordedNew === 0 ? null : `うち ${unrecordedNew} 作品が未録画`}
+            tone='primary'
           />
-          <SideStat
-            to='/browse?badge=RECENTLY_ADDED'
-            label='新着追加'
-            value={badged.RECENTLY_ADDED.length}
-            dotClass='bg-success'
+          <SummaryTile
+            to='/recordings'
+            label='録画予約中'
+            value={scheduledTotal}
+            unit='作品'
+            note={scheduledUpdates.length === 0 ? null : `直近 ${scheduledUpdates.length} 作品が更新`}
+            tone='ok'
           />
-          <SideStat
+          <SummaryTile
             to='/browse?badge=COMING_SOON'
             label='もうすぐ配信'
             value={badged.COMING_SOON.length}
-            dotClass='bg-warning'
+            unit='作品'
+            note={null}
+            tone='warn'
           />
-          <SideStat
+          <SummaryTile
             to='/browse?badge=EXPIRING'
             label='配信終了予定'
             value={badged.EXPIRING.length}
-            dotClass='bg-destructive'
+            unit='作品'
+            note={unrecordedExpiring === 0 ? null : `うち ${unrecordedExpiring} 作品が未録画`}
+            tone='err'
           />
         </div>
-      </SidebarSlot>
+      </section>
 
-      <PageContainer className='gap-10 max-sm:gap-[30px]'>
-        {/* ページヘッド + サマリ */}
-        <section aria-labelledby='h-summary' className='flex flex-wrap items-end justify-between gap-5'>
-          <p className='flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground'>
-            <b className='font-bold text-foreground'>{formatSeason(season)}クール</b>
-            <span>·</span>
-            <span className='tabular-nums'>{`${now.format('M月D日')} (${weekday})`}</span>
-          </p>
-          <h1 id='h-summary' className='text-[28px] font-bold leading-[42px]'>
-            今日の録画状況
-          </h1>
+      {/* 新着エピソード カルーセル */}
+      <AnimeCarousel
+        title='新着エピソード'
+        subtitle='最近エピソードが追加された作品'
+        anime={newEpisodes}
+        viewAllLink='/browse?badge=NEW_EPISODE'
+        badgeType='nextEpisodeDate'
+        flag={{ tone: 'new', label: '新着エピソード', pulse: true }}
+      />
 
-          <div className='grid grid-cols-4 gap-6 max-sm:grid-cols-2 max-sm:gap-x-3.5 max-sm:gap-y-4'>
-            <SummaryTile
-              to='/browse?badge=NEW_EPISODE'
-              label='新着エピソード'
-              value={newEpisodes.length}
-              unit='作品'
-              note={unrecordedNew === 0 ? 'すべて録画済み' : `うち ${unrecordedNew} 作品が未録画`}
-              tone='primary'
-            />
-            <SummaryTile
-              to='/recordings'
-              label='録画予約中'
-              value={scheduledTotal}
-              unit='作品'
-              note={`直近 ${scheduledUpdates.length} 作品が更新`}
-              tone='ok'
-            />
-            <SummaryTile
-              to='/browse?badge=COMING_SOON'
-              label='もうすぐ配信'
-              value={badged.COMING_SOON.length}
-              unit='作品'
-              note='配信開始を待機中'
-              tone='warn'
-            />
-            <SummaryTile
-              to='/browse?badge=EXPIRING'
-              label='配信終了予定'
-              value={badged.EXPIRING.length}
-              unit='作品'
-              note={unrecordedExpiring === 0 ? 'すべて録画済み' : `うち ${unrecordedExpiring} 作品が未録画`}
-              tone='err'
-            />
+      {/* 直近更新の録画予約中作品 */}
+      <ScheduledUpdatesList
+        anime={scheduledUpdates}
+        subtitle={`更新日時が新しい順・最大${SCHEDULED_PREVIEW_LIMIT}件`}
+      />
+
+      {/* タブ切り替え */}
+      <section aria-labelledby='h-tabs'>
+        <h2 id='h-tabs' className='sr-only'>
+          カタログを探す
+        </h2>
+        <Tabs defaultValue='season' className='min-w-0 gap-0'>
+          <div className='-mx-1 overflow-x-auto px-1'>
+            <TabsList variant='line' className={tabListClass}>
+              <TabsTrigger value='season' className={tabTriggerClass}>
+                今期アニメ
+                <span className={tabCountClass(seasonTotal)}>{seasonTotal}</span>
+              </TabsTrigger>
+              <TabsTrigger value='added' className={tabTriggerClass}>
+                新着追加
+                <span className={tabCountClass(badged.RECENTLY_ADDED.length)}>{badged.RECENTLY_ADDED.length}</span>
+              </TabsTrigger>
+              <TabsTrigger value='coming' className={tabTriggerClass}>
+                もうすぐ配信
+                <span className={tabCountClass(badged.COMING_SOON.length)}>{badged.COMING_SOON.length}</span>
+              </TabsTrigger>
+              <TabsTrigger value='expiring' className={tabTriggerClass}>
+                配信終了予定
+                <span className={tabCountClass(badged.EXPIRING.length)}>{badged.EXPIRING.length}</span>
+              </TabsTrigger>
+              <TabsTrigger value='provider' className={tabTriggerClass}>
+                配信元から探す
+              </TabsTrigger>
+            </TabsList>
           </div>
-        </section>
 
-        {/* 新着エピソード カルーセル */}
-        <AnimeCarousel
-          title='新着エピソード'
-          subtitle='最近エピソードが追加された作品'
-          anime={newEpisodes}
-          viewAllLink='/browse?badge=NEW_EPISODE'
-          badgeType='nextEpisodeDate'
-          flag={{ tone: 'new', label: '新着エピソード', pulse: true }}
-        />
-
-        {/* 直近更新の録画予約中作品 */}
-        <ScheduledUpdatesList
-          anime={scheduledUpdates}
-          subtitle={`更新日時が新しい順・最大${SCHEDULED_PREVIEW_LIMIT}件`}
-        />
-
-        {/* タブ切り替え */}
-        <section aria-labelledby='h-tabs'>
-          <h2 id='h-tabs' className='sr-only'>
-            カタログを探す
-          </h2>
-          <Tabs defaultValue='season' className='min-w-0 gap-0'>
-            <div className='-mx-1 overflow-x-auto px-1'>
-              <TabsList variant='line' className={tabListClass}>
-                <TabsTrigger value='season' className={tabTriggerClass}>
-                  今期アニメ
-                  <span className={tabCountClass(seasonTotal)}>{seasonTotal}</span>
-                </TabsTrigger>
-                <TabsTrigger value='added' className={tabTriggerClass}>
-                  新着追加
-                  <span className={tabCountClass(badged.RECENTLY_ADDED.length)}>{badged.RECENTLY_ADDED.length}</span>
-                </TabsTrigger>
-                <TabsTrigger value='coming' className={tabTriggerClass}>
-                  もうすぐ配信
-                  <span className={tabCountClass(badged.COMING_SOON.length)}>{badged.COMING_SOON.length}</span>
-                </TabsTrigger>
-                <TabsTrigger value='expiring' className={tabTriggerClass}>
-                  配信終了予定
-                  <span className={tabCountClass(badged.EXPIRING.length)}>{badged.EXPIRING.length}</span>
-                </TabsTrigger>
-                <TabsTrigger value='provider' className={tabTriggerClass}>
-                  配信元から探す
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value='season' className='min-w-0 pt-4'>
-              {currentSeason.length === 0 ? (
-                emptyState('今期の作品はまだありません', 'カタログの取得が終わるとここに表示されます。')
-              ) : (
-                <AnimePosterRail anime={currentSeason} />
-              )}
-            </TabsContent>
-            <TabsContent value='added' className='min-w-0 pt-4'>
-              {badged.RECENTLY_ADDED.length === 0 ? (
-                emptyState('新しく追加された作品はありません', '新規追加があるとここに並びます。')
-              ) : (
-                <AnimePosterRail anime={badged.RECENTLY_ADDED} tag={{ tone: 'added', label: () => '新着追加' }} />
-              )}
-            </TabsContent>
-            <TabsContent value='coming' className='min-w-0 pt-4'>
-              {badged.COMING_SOON.length === 0 ? (
-                emptyState('配信予定の作品はありません', '配信開始が近づくとここに表示されます。')
-              ) : (
-                <AnimePosterRail
-                  anime={badged.COMING_SOON}
-                  badgeType='nextEpisodeDate'
-                  tag={{ tone: 'soon', label: () => '配信予定' }}
-                />
-              )}
-            </TabsContent>
-            <TabsContent value='expiring' className='min-w-0 pt-4'>
-              {badged.EXPIRING.length === 0 ? (
-                emptyState('配信終了予定の作品はありません', '終了予定が決まるとここに表示されます。')
-              ) : (
-                <AnimePosterRail
-                  anime={badged.EXPIRING}
-                  badgeType='expiredAt'
-                  tag={{ tone: 'exp', label: () => '配信終了予定' }}
-                />
-              )}
-            </TabsContent>
-            <TabsContent value='provider' className='min-w-0 pt-4'>
-              {byProvider.size === 0 ? (
-                emptyState('配信元別のデータはありません', '今期の作品が揃うと配信元ごとに並びます。')
-              ) : (
-                <div className='space-y-5'>
-                  {Array.from(byProvider.entries()).map(([provider, anime]) => (
-                    <div key={provider}>
-                      <div className='mb-2.5 flex items-center justify-between gap-3'>
-                        <span
-                          className={`inline-flex h-[22px] items-center rounded px-2.5 text-xs font-semibold ${providerColor[provider] ?? 'bg-secondary text-secondary-foreground'}`}
-                        >
-                          {providerLabel[provider] ?? provider}
-                        </span>
-                        <ViewAllLink to={`/browse?provider=${provider}`} label='すべて見る' />
-                      </div>
-                      <AnimePosterRail anime={anime} showProvider={false} showMeta={false} />
+          <TabsContent value='season' className='min-w-0 pt-4'>
+            {currentSeason.length === 0 ? (
+              emptyState('今期の作品はまだありません', 'カタログの取得が終わるとここに表示されます。')
+            ) : (
+              <AnimePosterRail anime={currentSeason} />
+            )}
+          </TabsContent>
+          <TabsContent value='added' className='min-w-0 pt-4'>
+            {badged.RECENTLY_ADDED.length === 0 ? (
+              emptyState('新しく追加された作品はありません', '新規追加があるとここに並びます。')
+            ) : (
+              <AnimePosterRail anime={badged.RECENTLY_ADDED} tag={{ tone: 'added', label: () => '新着追加' }} />
+            )}
+          </TabsContent>
+          <TabsContent value='coming' className='min-w-0 pt-4'>
+            {badged.COMING_SOON.length === 0 ? (
+              emptyState('配信予定の作品はありません', '配信開始が近づくとここに表示されます。')
+            ) : (
+              <AnimePosterRail
+                anime={badged.COMING_SOON}
+                badgeType='nextEpisodeDate'
+                tag={{ tone: 'soon', label: () => '配信予定' }}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value='expiring' className='min-w-0 pt-4'>
+            {badged.EXPIRING.length === 0 ? (
+              emptyState('配信終了予定の作品はありません', '終了予定が決まるとここに表示されます。')
+            ) : (
+              <AnimePosterRail
+                anime={badged.EXPIRING}
+                badgeType='expiredAt'
+                tag={{ tone: 'exp', label: () => '配信終了予定' }}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value='provider' className='min-w-0 pt-4'>
+            {byProvider.size === 0 ? (
+              emptyState('配信元別のデータはありません', '今期の作品が揃うと配信元ごとに並びます。')
+            ) : (
+              <div className='space-y-5'>
+                {Array.from(byProvider.entries()).map(([provider, anime]) => (
+                  <div key={provider}>
+                    <div className='mb-2.5 flex items-center justify-between gap-3'>
+                      <span
+                        className={`inline-flex h-[22px] items-center rounded px-2.5 text-xs font-semibold ${providerColor[provider] ?? 'bg-secondary text-secondary-foreground'}`}
+                      >
+                        {providerLabel[provider] ?? provider}
+                      </span>
+                      <ViewAllLink to={`/browse?provider=${provider}`} label='すべて見る' />
                     </div>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </section>
+                    <AnimePosterRail anime={anime} showProvider={false} showMeta={false} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </section>
 
-        {/* 各画面への導線 */}
-        <section aria-labelledby='h-links'>
-          <div className='flex flex-wrap items-baseline justify-between gap-3'>
-            <h2 id='h-links' className='text-lg font-bold tracking-[-0.01em]'>
-              探す
-            </h2>
-          </div>
-          <div className='mt-3 grid grid-cols-3 gap-4 max-lg:grid-cols-2 max-sm:grid-cols-1'>
-            <QuickLink
-              to='/browse'
-              title='アニメ一覧'
-              description={
-                <>
-                  今クール <span className='tabular-nums'>{seasonTotal.toLocaleString('ja-JP')}</span> 作品
-                </>
-              }
-            />
-            <QuickLink
-              to='/recordings'
-              title='録画一覧'
-              description={
-                <>
-                  予約 <span className='tabular-nums'>{scheduledTotal.toLocaleString('ja-JP')}</span> 作品
-                </>
-              }
-            />
-            <QuickLink
-              to='/browse?badge=EXPIRING'
-              title='配信終了予定'
-              tone='warn'
-              description={
-                <>
-                  <span className='tabular-nums'>{badged.EXPIRING.length}</span> 作品が終了予定 · 未録画{' '}
-                  <span className='tabular-nums'>{unrecordedExpiring}</span> 作品
-                </>
-              }
-            />
-          </div>
-        </section>
-      </PageContainer>
-    </>
+      {/* 各画面への導線 */}
+      <section aria-labelledby='h-links'>
+        <div className='flex flex-wrap items-baseline justify-between gap-3'>
+          <h2 id='h-links' className='text-lg font-bold tracking-[-0.01em]'>
+            探す
+          </h2>
+        </div>
+        <div className='mt-3 grid grid-cols-3 gap-4 max-lg:grid-cols-2 max-sm:grid-cols-1'>
+          <QuickLink
+            to='/browse'
+            title='アニメ一覧'
+            description={
+              <>
+                今クール <span className='tabular-nums'>{seasonTotal.toLocaleString('ja-JP')}</span> 作品
+              </>
+            }
+          />
+          <QuickLink
+            to='/recordings'
+            title='録画一覧'
+            description={
+              <>
+                予約 <span className='tabular-nums'>{scheduledTotal.toLocaleString('ja-JP')}</span> 作品
+              </>
+            }
+          />
+          <QuickLink
+            to='/browse?badge=EXPIRING'
+            title='配信終了予定'
+            tone='warn'
+            description={
+              <>
+                <span className='tabular-nums'>{badged.EXPIRING.length}</span> 作品が終了予定 · 未録画{' '}
+                <span className='tabular-nums'>{unrecordedExpiring}</span> 作品
+              </>
+            }
+          />
+        </div>
+      </section>
+    </PageContainer>
   )
 }
