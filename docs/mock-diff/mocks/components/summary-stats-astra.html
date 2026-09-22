@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>録画状況サマリ — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: summary-stats ---------- */
+/* ---------- summary stats (astra) ---------- */@keyframes ssShimmer { 0% { background-position: -140% 0; } 100% { background-position: 240% 0; } }
+
+.ss-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden;
+}
+.ss-grid.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ss-grid.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ss-grid.is-mobile { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.ss {
+  position: relative; display: block; min-width: 0;
+  background: var(--background); padding: 16px 18px;
+  border-left: 3px solid var(--primary);
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+  transition: background .22s ease;
+}
+.ss.is-solo { border-radius: 0 14px 14px 0; }
+.ss.d-ok { border-left-color: var(--success); }
+.ss.d-warn { border-left-color: var(--warning); }
+.ss.d-err { border-left-color: var(--destructive); }
+.ss.d-mute { border-left-color: var(--border); }
+
+a.ss:hover, a.ss.is-hover { background: var(--muted); }
+a.ss:focus-visible, a.ss.is-focus { outline: 2px solid var(--ring); outline-offset: -2px; }
+
+.ss .k { font-size: 11.5px; color: var(--muted-foreground); padding-right: 38px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ss .v { margin-top: 5px; font-size: 24px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ss .v small { margin-left: 4px; font-size: 12px; font-weight: 500; color: var(--muted-foreground); letter-spacing: 0; }
+
+.ss .d {
+  margin-top: 8px; display: inline-flex; align-items: center; gap: 4px;
+  height: 20px; padding: 0 9px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: var(--muted); color: var(--muted-foreground);
+}
+.ss .d.up { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); }
+.ss .d.down { background: color-mix(in oklch, var(--destructive) 18%, transparent); color: var(--destructive); }
+.ss .d.soon { background: color-mix(in oklch, var(--warning) 26%, transparent); color: var(--warning-foreground); }
+.ss .d svg { width: 11px; height: 11px; }
+
+/* 右上のアイコンチップ */.ss .ico {
+  position: absolute; right: 14px; top: 14px;
+  width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--muted); color: var(--muted-foreground);
+  transition: transform .28s cubic-bezier(.16,1,.3,1), background .22s ease;
+}
+.ss .ico svg { width: 15px; height: 15px; }
+.ss.d-new .ico { background: color-mix(in oklch, var(--info) 16%, transparent); color: var(--info); }
+.ss.d-ok .ico { background: color-mix(in oklch, var(--success) 16%, transparent); color: var(--success); }
+.ss.d-warn .ico { background: color-mix(in oklch, var(--warning) 26%, transparent); color: var(--warning-foreground); }
+.ss.d-err .ico { background: color-mix(in oklch, var(--destructive) 16%, transparent); color: var(--destructive); }
+a.ss:hover .ico, a.ss.is-hover .ico { transform: scale(1.12) translateY(-1px); }
+
+.ss.is-zero { border-left-color: var(--border); }
+.ss.is-zero .v { color: var(--muted-foreground); font-weight: 700; }
+.ss.is-zero .ico { background: var(--muted); color: var(--muted-foreground); }
+
+/* 読み込み中 */.ss.is-load { border-left-color: var(--border); }
+.ss-bar {
+  display: block; border-radius: 999px; background-color: var(--muted);
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--foreground) 9%, transparent) 50%, transparent 100%);
+  background-size: 220% 100%; animation: ssShimmer 1.5s linear infinite;
+}
+.ss-bar.b1 { width: 84px; height: 10px; }
+.ss-bar.b2 { width: 58px; height: 22px; margin-top: 8px; }
+.ss-bar.b3 { width: 66px; height: 18px; margin-top: 9px; }
+.ss.is-load .ico { background: var(--muted); }
+
+.ss-m390 { max-width: 390px; }
+
+@media (max-width: 640px) {
+  .ss-grid, .ss-grid.n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ss { padding: 14px 14px; }
+  .ss .v { font-size: 21px; }
+  .ss .k { padding-right: 30px; }
+  .ss .ico { width: 24px; height: 24px; right: 10px; top: 12px; }
+  .ss .ico svg { width: 13px; height: 13px; }}
+
+/* ホームの 4 枠で使う色分け。新着 / 録画中 / 失敗 / 視聴中。 */.ss.d-new { border-left-color: var(--info); }
+.ss.d-rec { border-left-color: var(--warning); }
+.ss.d-watch { border-left-color: var(--success); }
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>録画状況サマリ <span class="cat-id">summary-stats</span></h1>
+  <p>ホーム最上部で今日の録画状況を示すタイル群。1px の罫線でつないだひと続きの面にして、各タイルは左 3px の色・右上のアイコン・下段の増減ピルで性質を伝える。</p>
+  <div class="cat-meta"><span>置き場所: ホーム見出しの直下</span><span>罫線 1px で連結・角丸 14px</span><span>値は <code>tabular-nums</code></span><span>登場は <code>fadeUp</code> を 60ms ずつ遅らせる</span><span>既定 4 枚 / 狭い画面は 2 列</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">4 枚を罫線でつなぐ</span></h2>
+  <div class="cat-item cat-full is-key" data-story="基本 / 既定の 4 指標"><span class="cat-label">既定の 4 指標</span>
+    <div class="ss-grid">
+      <a class="ss d-new" href="#" style="--i:0">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p>
+        <p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+      <a class="ss d-ok" href="#" style="--i:1">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p class="k">録画済み</p>
+        <p class="v">128<small>本</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span>
+      </a>
+      <a class="ss d-warn" href="#" style="--i:2">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <p class="k">配信終了間近</p>
+        <p class="v">3<small>作品</small></p>
+        <span class="d soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>最短 6/30</span>
+      </a>
+      <a class="ss d-err" href="#" style="--i:3">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <p class="k">失敗</p>
+        <p class="v">1<small>件</small></p>
+        <span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span>
+      </a>
+    </div>
+  </div>
+  <p class="cat-note">タイル同士は影や枠で分けず、1px の罫線だけで割る。増減はピルに逃がして、主数値の桁を邪魔しない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>1 枚の状態 <span class="cat-hint">左 3px とアイコンの色を揃えて差し替える</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260 is-key" data-story="1 枚の状態 / 通常"><span class="cat-label">通常 <small>primary</small></span>
+      <div class="ss is-solo">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        <p class="k">録画予約中</p><p class="v">16<small>作品</small></p>
+        <span class="d">全 1,204 作品を追跡</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="1 枚の状態 / 強調"><span class="cat-label">強調 <small>success</small></span>
+      <div class="ss is-solo d-ok">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p class="k">録画済み</p><p class="v">128<small>本</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="1 枚の状態 / 注意"><span class="cat-label">注意 <small>warning</small></span>
+      <div class="ss is-solo d-warn">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <p class="k">配信終了間近</p><p class="v">3<small>作品</small></p>
+        <span class="d soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>最短 6/30</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="1 枚の状態 / 異常"><span class="cat-label">異常 <small>destructive</small></span>
+      <div class="ss is-solo d-err">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <p class="k">失敗</p><p class="v">1<small>件</small></p>
+        <span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="1 枚の状態 / 値が 0"><span class="cat-label">値が 0</span>
+      <div class="ss is-solo is-zero">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        <p class="k">録画予約中</p><p class="v">0<small>作品</small></p>
+        <span class="d">まだ追跡していません</span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="1 枚の状態 / 読み込み中"><span class="cat-label">読み込み中</span>
+      <div class="ss is-solo is-load">
+        <span class="ico"></span>
+        <span class="ss-bar b1"></span>
+        <span class="ss-bar b2"></span>
+        <span class="ss-bar b3"></span>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">0 件のときはアクセント色とアイコンの色を外す。「無い」ことを警告として見せない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>押せるとき <span class="cat-hint">hover で下地とアイコンが動く</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260 is-key" data-story="押せるとき / リンク・通常"><span class="cat-label">リンク・通常</span>
+      <a class="ss is-solo d-new" href="#">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260" data-story="押せるとき / リンク・hover"><span class="cat-label">リンク・hover</span>
+      <a class="ss is-solo d-new is-hover" href="#">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260" data-story="押せるとき / リンク・フォーカス"><span class="cat-label">リンク・フォーカス</span>
+      <a class="ss is-solo d-new is-focus" href="#">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span>
+        <p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p>
+        <span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span>
+      </a>
+    </div>
+    <div class="cat-item cat-w260" data-story="押せるとき / 押せない"><span class="cat-label">押せない <small>表示のみ</small></span>
+      <div class="ss is-solo d-mute">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        <p class="k">追跡中の作品</p><p class="v">1,204<small>作品</small></p>
+        <span class="d">毎日 4:00 に更新</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>枚数違い <span class="cat-hint">2 / 3 / 4 枚とも 1 枚の面として扱う</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="枚数違い / 2 枚"><span class="cat-label">2 枚</span>
+      <div class="ss-grid n2">
+        <div class="ss"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><p class="k">録画予約中</p><p class="v">16<small>作品</small></p><span class="d">全 1,204 作品を追跡</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span></div>
+      </div>
+    </div>
+    <div class="cat-item cat-full" data-story="枚数違い / 3 枚"><span class="cat-label">3 枚</span>
+      <div class="ss-grid n3">
+        <div class="ss d-new"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span><p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span></div>
+        <div class="ss d-err"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><p class="k">失敗</p><p class="v">1<small>件</small></p><span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span></div>
+      </div>
+    </div>
+    <div class="cat-item cat-full" data-story="枚数違い / 4 枚"><span class="cat-label">4 枚 <small>既定</small></span>
+      <div class="ss-grid">
+        <div class="ss d-new"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span><p class="k">今日の新着エピソード</p><p class="v">6<small>件</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>昨日より +2</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>今週 +14</span></div>
+        <div class="ss d-warn"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p class="k">配信終了間近</p><p class="v">3<small>作品</small></p><span class="d soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>最短 6/30</span></div>
+        <div class="ss d-err"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><p class="k">失敗</p><p class="v">1<small>件</small></p><span class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>再試行が必要</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>狭い画面 <span class="cat-hint">390px 相当・2 列に折り返す</span></h2>
+  <div class="cat-item" data-story="狭い画面 / mobile"><span class="cat-label">mobile</span>
+    <div class="cat-frame is-plain ss-m390">
+      <div class="ss-grid is-mobile">
+        <div class="ss d-new"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></span><p class="k">新着エピソード</p><p class="v">6<small>件</small></p><span class="d up">+2</span></div>
+        <div class="ss d-ok"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><p class="k">録画済み</p><p class="v">128<small>本</small></p><span class="d up">+14</span></div>
+        <div class="ss d-warn"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p class="k">配信終了間近</p><p class="v">3<small>作品</small></p><span class="d soon">6/30</span></div>
+        <div class="ss d-err"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><p class="k">失敗</p><p class="v">1<small>件</small></p><span class="d down">要対応</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">狭い画面ではアイコンを小さくしてラベルの幅を確保する。2 列は崩さず、4 指標が一目で収まる高さを守る。</p>
+</section>
+</main>
+</body>
+</html>

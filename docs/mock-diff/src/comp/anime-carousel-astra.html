@@ -1,0 +1,151 @@
+TITLE: 作品カルーセル
+---
+<header class="cat-head">
+  <h1>作品カルーセル <span class="cat-id">anime-carousel</span></h1>
+  <p>ホームで「新着エピソード」「今期アニメ」「配信元別」などを横一列に流す帯。サムネを主役に置き、端は <code>mask-image</code> で溶かして続きを示す。タイルは並び順に少しずつ遅らせて浮き上がらせる。</p>
+  <div class="cat-meta"><span>置き場所: ホームのセクション単位</span><span>タイル幅 216px / 狭い画面は 64%</span><span>端は <code>mask-image</code> でフェード</span><span>登場は 45ms ずつ遅延</span><span>hover で 5px 持ち上げる</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">見出し + すべて見る + タイル 6 枚</span></h2>
+  <div class="cat-item cat-full is-key"><span class="cat-label">新着エピソード</span>
+    <div>
+      <div class="car-head">
+        <h3>新着エピソード<span class="sub">直近 24 時間</span></h3>
+        <a class="car-more" href="#">すべて見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+      <div class="car-rail">
+        <a class="car-tile" href="#" style="--h:265;--i:0"><div class="car-thumb"><div class="art"></div><span class="kana">星</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">録画済み</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="no">第 11 話</span><span class="ttl">軌道上の再会</span><span class="time">22:30</span></div></a>
+        <a class="car-tile" href="#" style="--h:30;--i:1"><div class="car-thumb"><div class="art"></div><span class="kana">魔</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-amazon">Prime Video</span><span class="state rec"><i></i>録画中</span></div><p class="car-title">転生したら魔王城の家政婦でした</p><div class="car-meta"><span class="no">第 7 話</span><span class="ttl">掃除機と禁呪</span><span class="time">21:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:210;--i:2"><div class="car-thumb"><div class="art"></div><span class="kana">蒼</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-crunchyroll">Crunchyroll</span><span class="state">未録画</span></div><p class="car-title">蒼海のリヴァイアサン</p><div class="car-meta"><span class="no">第 12 話</span><span class="ttl">最終潜航</span><span class="time">20:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:340;--i:3"><div class="car-thumb"><div class="art"></div><span class="kana">喫</span><span class="prov car-badge b-abema">ABEMA</span><span class="state">録画済み</span></div><p class="car-title">ぼっち喫茶のラテアート</p><div class="car-meta"><span class="no">第 9 話</span><span class="ttl">常連さんの正体</span><span class="time">12:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:150;--i:4"><div class="car-thumb"><div class="art"></div><span class="kana">鋼</span><span class="prov car-badge b-hulu">Hulu</span><span class="state">未録画</span></div><p class="car-title">鋼鉄の花嫁と機械仕掛けの王国</p><div class="car-meta"><span class="no">第 4 話</span><span class="ttl">歯車の婚礼</span><span class="time">0:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:290;--i:5"><div class="car-thumb"><div class="art"></div><span class="kana">月</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">録画済み</span></div><p class="car-title">月光カルテット</p><div class="car-meta"><span class="no">第 8 話</span><span class="ttl">第二ヴァイオリン</span><span class="time">昨日</span></div></a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">サブタイトルは省略され得るので、話数と時刻だけで行が成立するように並べる。話数と時刻は左右に離して桁を揃える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>見出しの型 <span class="cat-hint">補う情報だけを差し替える</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">補足文付き <small>既定</small></span>
+      <div class="car-head">
+        <h3>新着エピソード<span class="sub">直近 24 時間</span></h3>
+        <a class="car-more" href="#">すべて見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">件数付き</span>
+      <div class="car-head">
+        <h3>今期アニメ<span class="n">42</span></h3>
+        <a class="car-more" href="#">すべて見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">「すべて見る」なし</span>
+      <div class="car-head">
+        <h3>配信終了予定<span class="sub">30 日以内</span></h3>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">配信元別 <small>バッジを見出しに置く</small></span>
+      <div class="car-head">
+        <h3><span class="car-badge b-crunchyroll">Crunchyroll</span><span class="n">18</span></h3>
+        <a class="car-more is-hover" href="#">この配信元をすべて見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">最後の 1 つは「すべて見る」を hover 状態で見せている。下地が付いて矢印が右にずれる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>タイルの状態</h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260 is-key"><span class="cat-label">通常</span>
+      <a class="car-tile is-solo" href="#" style="--h:265"><div class="car-thumb"><div class="art"></div><span class="kana">星</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">録画済み</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="no">第 11 話</span><span class="ttl">軌道上の再会</span><span class="time">22:30</span></div></a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">hover</span>
+      <a class="car-tile is-solo is-hover" href="#" style="--h:265"><div class="car-thumb"><div class="art"></div><span class="kana">星</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">録画済み</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="no">第 11 話</span><span class="ttl">軌道上の再会</span><span class="time">22:30</span></div></a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">新着エピソード</span>
+      <a class="car-tile is-solo" href="#" style="--h:30"><div class="car-thumb"><div class="art"></div><span class="kana">魔</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-amazon">Prime Video</span><span class="state rec"><i></i>録画中</span></div><p class="car-title">転生したら魔王城の家政婦でした</p><div class="car-meta"><span class="no">第 7 話</span><span class="ttl">掃除機と禁呪</span><span class="time">21:00</span></div></a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">新着追加</span>
+      <a class="car-tile is-solo" href="#" style="--h:95"><div class="car-thumb"><div class="art"></div><span class="kana">放</span><span class="flag car-badge b-add">新着追加</span><span class="prov car-badge b-abema">ABEMA</span><span class="state">全 12 話</span></div><p class="car-title">放課後クロノスタシス</p><div class="car-meta"><span class="no">第 1 話</span><span class="ttl">停まった 3 秒</span><span class="time">本日</span></div></a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">配信終了予定</span>
+      <a class="car-tile is-solo" href="#" style="--h:290"><div class="car-thumb"><div class="art"></div><span class="kana">月</span><span class="flag car-badge b-exp">配信終了予定</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">6/30 まで</span></div><p class="car-title">月光カルテット</p><div class="car-meta"><span class="no">全 8 話</span><span class="ttl">完結</span><span class="time">あと 12 日</span></div></a>
+    </div>
+    <div class="cat-item cat-w260"><span class="cat-label">未放送 <small>彩度を落とす</small></span>
+      <a class="car-tile is-solo is-soon" href="#" style="--h:180"><div class="car-thumb"><div class="art"></div><span class="kana">電</span><span class="flag car-badge b-soon">配信予定</span><span class="prov car-badge b-amazon">Prime Video</span><span class="state">10/04 から</span></div><p class="car-title">電脳都市シンドローム</p><div class="car-meta"><span class="no">第 1 話</span><span class="ttl">未放送</span><span class="time">16 日後</span></div></a>
+    </div>
+  </div>
+  <p class="cat-note">バッジは左上、配信元は左下、録画の状態は右下に固定する。位置が意味を持つので、種類が増えても置き場所は動かさない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元別のタイル <span class="cat-hint">下地の色相は作品ごとに変える</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220 is-key"><span class="cat-label">Prime Video</span>
+      <a class="car-tile is-solo" href="#" style="--h:30"><div class="car-thumb"><div class="art"></div><span class="kana">魔</span><span class="prov car-badge b-amazon">Prime Video</span></div><p class="car-title">転生したら魔王城の家政婦でした</p><div class="car-meta"><span class="no">全 24 話</span><span class="ttl">放送中</span></div></a>
+    </div>
+    <div class="cat-item cat-w220"><span class="cat-label">Hulu</span>
+      <a class="car-tile is-solo" href="#" style="--h:150"><div class="car-thumb"><div class="art"></div><span class="kana">鋼</span><span class="prov car-badge b-hulu">Hulu</span></div><p class="car-title">鋼鉄の花嫁と機械仕掛けの王国</p><div class="car-meta"><span class="no">全 12 話</span><span class="ttl">放送中</span></div></a>
+    </div>
+    <div class="cat-item cat-w220"><span class="cat-label">Crunchyroll</span>
+      <a class="car-tile is-solo" href="#" style="--h:210"><div class="car-thumb"><div class="art"></div><span class="kana">蒼</span><span class="prov car-badge b-crunchyroll">Crunchyroll</span></div><p class="car-title">蒼海のリヴァイアサン</p><div class="car-meta"><span class="no">全 12 話</span><span class="ttl">完結</span></div></a>
+    </div>
+    <div class="cat-item cat-w220"><span class="cat-label">ABEMA</span>
+      <a class="car-tile is-solo" href="#" style="--h:340"><div class="car-thumb"><div class="art"></div><span class="kana">喫</span><span class="prov car-badge b-abema">ABEMA</span></div><p class="car-title">ぼっち喫茶のラテアート</p><div class="car-meta"><span class="no">全 12 話</span><span class="ttl">放送中</span></div></a>
+    </div>
+    <div class="cat-item cat-w220"><span class="cat-label">Netflix</span>
+      <a class="car-tile is-solo" href="#" style="--h:265"><div class="car-thumb"><div class="art"></div><span class="kana">星</span><span class="prov car-badge b-netflix">Netflix</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="no">全 24 話</span><span class="ttl">放送中</span></div></a>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>スクロール位置 <span class="cat-hint">端を溶かして続きがあると分からせる</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">先頭 <small>右だけ溶かす</small></span>
+      <div class="car-rail">
+        <a class="car-tile" href="#" style="--h:265;--i:0"><div class="car-thumb"><div class="art"></div><span class="kana">星</span><span class="prov car-badge b-netflix">Netflix</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="no">第 11 話</span><span class="time">22:30</span></div></a>
+        <a class="car-tile" href="#" style="--h:30;--i:1"><div class="car-thumb"><div class="art"></div><span class="kana">魔</span><span class="prov car-badge b-amazon">Prime Video</span></div><p class="car-title">転生したら魔王城の家政婦でした</p><div class="car-meta"><span class="no">第 7 話</span><span class="time">21:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:210;--i:2"><div class="car-thumb"><div class="art"></div><span class="kana">蒼</span><span class="prov car-badge b-crunchyroll">Crunchyroll</span></div><p class="car-title">蒼海のリヴァイアサン</p><div class="car-meta"><span class="no">第 12 話</span><span class="time">20:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:340;--i:3"><div class="car-thumb"><div class="art"></div><span class="kana">喫</span><span class="prov car-badge b-abema">ABEMA</span></div><p class="car-title">ぼっち喫茶のラテアート</p><div class="car-meta"><span class="no">第 9 話</span><span class="time">12:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:150;--i:4"><div class="car-thumb"><div class="art"></div><span class="kana">鋼</span><span class="prov car-badge b-hulu">Hulu</span></div><p class="car-title">鋼鉄の花嫁と機械仕掛けの王国</p><div class="car-meta"><span class="no">第 4 話</span><span class="time">0:00</span></div></a>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">途中 <small>左右とも溶かす</small></span>
+      <div class="car-rail is-mid">
+        <a class="car-tile" href="#" style="--h:265;--i:0"><div class="car-thumb"><div class="art"></div><span class="kana">星</span><span class="prov car-badge b-netflix">Netflix</span></div><p class="car-title">星降る夜のアストロノーツ</p><div class="car-meta"><span class="no">第 11 話</span><span class="time">22:30</span></div></a>
+        <a class="car-tile" href="#" style="--h:30;--i:1"><div class="car-thumb"><div class="art"></div><span class="kana">魔</span><span class="prov car-badge b-amazon">Prime Video</span></div><p class="car-title">転生したら魔王城の家政婦でした</p><div class="car-meta"><span class="no">第 7 話</span><span class="time">21:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:210;--i:2"><div class="car-thumb"><div class="art"></div><span class="kana">蒼</span><span class="prov car-badge b-crunchyroll">Crunchyroll</span></div><p class="car-title">蒼海のリヴァイアサン</p><div class="car-meta"><span class="no">第 12 話</span><span class="time">20:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:340;--i:3"><div class="car-thumb"><div class="art"></div><span class="kana">喫</span><span class="prov car-badge b-abema">ABEMA</span></div><p class="car-title">ぼっち喫茶のラテアート</p><div class="car-meta"><span class="no">第 9 話</span><span class="time">12:00</span></div></a>
+        <a class="car-tile" href="#" style="--h:150;--i:4"><div class="car-thumb"><div class="art"></div><span class="kana">鋼</span><span class="prov car-badge b-hulu">Hulu</span></div><p class="car-title">鋼鉄の花嫁と機械仕掛けの王国</p><div class="car-meta"><span class="no">第 4 話</span><span class="time">0:00</span></div></a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">左右の矢印ボタンは置かない。指とホイールで送る前提にして、<code>mask-image</code> の溶けだけで続きを示す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>中身が無いとき</h2>
+  <div class="cat-item cat-full">
+    <div class="car-head"><h3>配信終了予定<span class="sub">30 日以内</span></h3></div>
+    <p class="car-empty"><b>まもなく終了する作品はありません</b>配信終了の予定が取得できた作品だけがここに並びます。</p>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">タイルの枠だけ先に出す</span></h2>
+  <div class="cat-item cat-full">
+    <div class="car-head"><h3>新着エピソード<span class="sub">直近 24 時間</span></h3></div>
+    <div class="car-rail">
+      <div class="car-skel"><span class="car-sk th"></span><span class="car-sk t1"></span><span class="car-sk t2"></span></div>
+      <div class="car-skel"><span class="car-sk th"></span><span class="car-sk t1"></span><span class="car-sk t2"></span></div>
+      <div class="car-skel"><span class="car-sk th"></span><span class="car-sk t1"></span><span class="car-sk t2"></span></div>
+      <div class="car-skel"><span class="car-sk th"></span><span class="car-sk t1"></span><span class="car-sk t2"></span></div>
+      <div class="car-skel"><span class="car-sk th"></span><span class="car-sk t1"></span><span class="car-sk t2"></span></div>
+    </div>
+  </div>
+</section>

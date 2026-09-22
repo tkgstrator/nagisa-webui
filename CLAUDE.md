@@ -62,10 +62,15 @@ bunx biome check src/        # lint + format チェック
 | 用途 | 置き場所 | 変数名 / 取得元 | 消費者 |
 |---|---|---|---|
 | Cloudflare API | `.env` | `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | wrangler, CF API |
-| AWS プロバイダ (ECR push) | `~/.aws/credentials [default]` | IAM ユーザー (例: `Terraform`) | `aws` CLI, docker login |
+| AWS プロバイダ (ECR push) | コンテナのシェル env | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`（**本物の AWS** = IAM ユーザー `Terraform`, account `801945369170`） | `aws` CLI, docker login |
 | Worker → Lambda Function URL 署名 | `.dev.vars` / wrangler secret | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`（**本物の AWS** = lambda_invoker） | Worker の aws4fetch |
 
 Lambda 関数本体の Terraform state と AWS リソースは `qtmleap/infra` 側で管理する（詳細は下記「Lambda デプロイ」節）。
+
+- **`~/.aws` は R2 専用**（ホストから readonly bind mount。`devcontainer.json` の `mounts` 参照）。`[default]` / `[r2]` の両プロファイルとも中身は R2 キーで、**`[default]` に R2 の `endpoint_url` が設定されている**。
+  - このため素の `aws sts` / `aws ecr` は R2 に飛び、`InvalidRequest: Missing x-amz-content-sha256` で失敗する。CLI の表示は `An error occurred (Unknown)` としか出ないので、`aws ... --debug 2>&1 | grep url` でリクエスト先を確認すること。
+  - ECR など**本物の AWS を叩くときは `AWS_CONFIG_FILE=/dev/null` で config を読ませず、`--region` を明示**する（`lambda/fetch/build.ts` の `AWS_ENV` が実装済み）。資格情報はシェル env 側が profile より優先されるので、これだけで `Terraform` ユーザーとして通る。
+  - readonly マウントなのでコンテナ側から `~/.aws/config` は直せない。ホスト側の設定は R2 用に意図的なものなので書き換えないこと。
 
 - **禁止**: R2 のキーを `.env` に `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` という名前で置くこと。理由:
   - `aws` CLI / docker login が R2 キーを AWS 認証として誤用し失敗する（AWS の認証チェーンが `AWS_*` env を最優先するため）。
@@ -75,7 +80,7 @@ Lambda 関数本体の Terraform state と AWS リソースは `qtmleap/infra` �
 
 Lambda 本体の Terraform 管理はこのレポには置かない。**AWS リソースは全て `qtmleap/infra` の `services/aws/lambda/` に集約**する。このレポの責務は「ECR に Docker image を push すること」だけ。
 
-- `bun run deploy:lambda` → `lambda/fetch/build.ts` が buildx で arm64 image を build し ECR (`801945369170.dkr.ecr.ap-northeast-1.amazonaws.com/anime-tracker-fetch`) に `<sha>` と `latest` の 2 タグで push する。
+- `bun run deploy:lambda` → `lambda/fetch/build.ts` が buildx で arm64 image を build し ECR (`801945369170.dkr.ecr.ap-northeast-1.amazonaws.com/anime-tracker/fetch`) に `<sha>` と `latest` の 2 タグで push する。東京・US 両リージョンの ECR に同一 image を push する（Lambda の container image は関数と同一リージョンの ECR にしか置けないため）。
 - push 完了後、Lambda 関数の image_uri を更新するには `qtmleap/infra` 側で:
 
   ```sh

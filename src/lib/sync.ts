@@ -22,8 +22,17 @@ function isUniqueConstraintError(e: unknown): boolean {
   return e instanceof Error && 'code' in e && (e as { code: string }).code === 'P2002'
 }
 
-/** D1 の SQL 変数上限 (999) を超えないよう IN 句をチャンク分割して findMany する */
-const D1_VARIABLE_LIMIT = 500
+/**
+ * IN 句のチャンクサイズ。
+ *
+ * D1 の bound parameter 上限は **1 クエリ 100 個**で、SQLite 既定の 999 とは別物。
+ * 101 個目から `[7500] too many SQL variables` で落ちる
+ * (`scripts/analysis/d1-param-limit-probe.ts` で実測)。
+ *
+ * 100 ちょうどにしないのは、この定数を使う呼び出しが IN 句以外にも変数を持つため。
+ * 最も余裕がないのは `expiredAt` リセットの updateMany で `chunk + 3` になる。
+ */
+const D1_VARIABLE_LIMIT = 90
 
 async function findExistingContentIds(prisma: PrismaClient, contentIds: string[]): Promise<Set<string>> {
   const results: string[] = []
@@ -76,15 +85,18 @@ export class SyncService {
     private readonly lambda: FetchClient
   ) {}
 
-  /** プロバイダのエピソード情報を取得し、不足しているシーズン・エピソードを同期する */
-  async update({ message }: UpdateMessage): Promise<void> {
+  /**
+   * プロバイダのエピソード情報を取得し、不足しているシーズン・エピソードを同期する。
+   * 戻り値は今回新規に入った / URL が変わったエピソード画像。warm するかどうかは呼び出し元 (Queue consumer) の責務。
+   */
+  async update({ message }: UpdateMessage): Promise<string[]> {
     // Lambda 経由で取得（画像の R2 アップロードも Lambda 側で実行される）
     const detail = await this.lambda.fetchTitleInfo({ provider: message.provider, contentId: message.contentId })
-    await this.applyDetail(message.provider, message.contentId, detail)
+    return this.applyDetail(message.provider, message.contentId, detail)
   }
 
-  /** 取得済みの TitleInfo を DB に反映する（Lambda 不要） */
-  async applyDetail(provider: string, contentId: string, detail: TitleInfo): Promise<void> {
+  /** 取得済みの TitleInfo を DB に反映する（Lambda 不要）。戻り値は新規画像 URL。 */
+  async applyDetail(provider: string, contentId: string, detail: TitleInfo): Promise<string[]> {
     const anime = await withD1Retry(() =>
       this.prisma.anime.update({
         where: { provider_contentId: { provider, contentId } },
@@ -104,6 +116,8 @@ export class SyncService {
       episodesCreated: stats.episodesCreated,
       episodesUpdated: stats.episodesUpdated
     })
+
+    return stats.newImageUrls
   }
 
   /** 既存シーズン・エピソードと差分比較し、不足分を追加する */
@@ -112,8 +126,16 @@ export class SyncService {
     provider: string,
     contentId: string,
     seasons: Season[]
-  ): Promise<{ seasonsCreated: number; episodesCreated: number; episodesUpdated: number }> {
+  ): Promise<{
+    seasonsCreated: number
+    episodesCreated: number
+    episodesUpdated: number
+    /** 新規に入った / URL が変わったエピソード画像。warm は呼び出し元 (Queue consumer) が行う */
+    newImageUrls: string[]
+  }> {
     const stats = { seasonsCreated: 0, episodesCreated: 0, episodesUpdated: 0 }
+    /** 新規に入った / URL が変わったエピソード画像。D1 書き込みが全部通った後に warm する */
+    const newImageUrls: string[] = []
     const anime = await this.prisma.anime.findUniqueOrThrow({
       where: { provider_contentId: { provider, contentId } },
       include: {
@@ -159,6 +181,7 @@ export class SyncService {
         try {
           await withD1Retry(() => this.createSeason(animeId, provider, contentId, season))
           stats.seasonsCreated += 1
+          newImageUrls.push(...season.episodes.map((e) => e.imageUrl))
           syncLogger.info({
             action: 'create-season',
             provider,
@@ -177,12 +200,25 @@ export class SyncService {
       const dbSeason = anime.seasons.find((s) => s.seasonNumber === season.seasonNumber)
       if (!dbSeason) continue
 
+      // 既存シーズンへの追加/更新は意図的に1件ずつ行っている
+      // (episode.createMany や raw env.DB.batch() への置き換えは実測のうえ不採用とした)。
+      //   - 新規追加: createMany は @prisma/adapter-d1 内部で自動チャンク (実測 6 行/statement、
+      //     MAX_BIND_VALUES=98 ÷ Episode 15 列) され round trip 数自体は減る。ただし skipDuplicates は
+      //     sqlite/D1 provider が未対応で使えず、チャンクに1件でも重複行が混じると P2002 で createMany 全体が
+      //     中断する。さらに実測では、どのチャンクが失敗するかは投入順と一致しない(重複行を含むチャンクではなく
+      //     別のチャンクが先に失敗した例を確認済み)ため、中断後にどこまでコミット済みかを呼び出し側から
+      //     予測できない。現行の1件ずつ catch-and-skip (P2002 は無視して続行) の方が再実行時の安全性が高い。
+      //   - 更新: UPDATE は行ごとに SET 値が異なり Prisma 経由では束ねられない。束ねるには raw SQL で
+      //     env.DB.batch() を書く必要があり、型安全性を失う割に1 sync あたりの変更行数は通常少なく効果は薄い。
+      // そもそも D1 はトランザクション未対応 (`Cloudflare D1 does not support transactions yet`) で、
+      // 束ねた書き込みを「全部成功/全部失敗」として安全に扱う土台がない。
       for (const episode of season.episodes) {
         const existing = existingEpisodes.get(episode.episodeNumber)
         if (!existing) {
           try {
             await withD1Retry(() => this.createEpisode(dbSeason.id, provider, contentId, dbSeason.seasonId, episode))
             stats.episodesCreated += 1
+            newImageUrls.push(episode.imageUrl)
           } catch (e) {
             if (!isUniqueConstraintError(e)) throw e
           }
@@ -207,13 +243,19 @@ export class SyncService {
             })
           )
           stats.episodesUpdated += 1
+          if (existing.imageUrl !== episode.imageUrl) newImageUrls.push(episode.imageUrl)
         }
       }
     }
-    return stats
+
+    return { ...stats, newImageUrls }
   }
 
-  /** シーズンをエピソード込みで一括作成する */
+  /**
+   * シーズンをエピソード込みで一括作成する。
+   * episodes: { create: [...] } は createMany と同じ仕組みで Prisma が自動的に複数行 INSERT へ
+   * チャンクする (実測: 13件 → 6+6+1件の3 INSERT)。ここは既に round trip 最小化済みのため変更不要。
+   */
   private async createSeason(animeId: string, provider: string, contentId: string, season: Season): Promise<void> {
     await this.prisma.season.create({
       data: {

@@ -3,6 +3,7 @@ import { cache } from 'hono/cache'
 import { archiveMissingAbemaKeysForAnime } from '../lib/abema-archive'
 import { flattenAnime, QUARTER_TO_SEASON } from '../lib/anime-flatten'
 import { createPrismaClient } from '../lib/db'
+import { enqueueImageWarm } from '../lib/image-warm'
 import { createFetchClient } from '../lib/lambda'
 import { localDetailFetchers } from '../lib/local-detail-fetchers'
 import { getAppLogger } from '../lib/logger'
@@ -14,6 +15,7 @@ import {
   BadgedAnimeSchema,
   PaginatedAnimeSchema
 } from '../schemas/anime.dto'
+import type { Message } from '../schemas/message.dto'
 import { ProviderTypeEnum } from '../schemas/message.dto'
 import { NagisaQueueResponseSchema } from '../schemas/nagisa.dto'
 
@@ -30,6 +32,8 @@ type Bindings = {
   LAMBDA_FUNCTION_URL: string
   LAMBDA_FUNCTION_URL_US: string
   KV: KVNamespace
+  IMAGES: R2Bucket
+  WARM_QUEUE: Queue<Message>
 }
 
 type BadgedRow = {
@@ -249,7 +253,7 @@ anime.openapi(
 anime.openapi(
   createRoute({
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
     tags: ['Anime'],
     summary: 'アニメ詳細取得（シーズン・エピソード含む）',
     request: { params: z.object({ id: z.string() }) },
@@ -266,7 +270,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
       include: {
@@ -301,7 +305,7 @@ anime.openapi(
 anime.openapi(
   createRoute({
     method: 'patch',
-    path: '/:id',
+    path: '/{id}',
     tags: ['Anime'],
     summary: 'アニメの録画予約・録画済み状態を更新',
     request: {
@@ -330,7 +334,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const body = c.req.valid('json')
     try {
       const result = await prisma.anime.update({
@@ -352,7 +356,7 @@ anime.openapi(
 anime.openapi(
   createRoute({
     method: 'post',
-    path: '/:id/record',
+    path: '/{id}/record',
     tags: ['Anime'],
     summary: 'バックエンドに録画リクエストを送信',
     request: { params: z.object({ id: z.string() }) },
@@ -377,7 +381,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
       select: { provider: true, contentId: true }
@@ -476,7 +480,7 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const id = c.req.param('id')
+    const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
       select: { provider: true, contentId: true }
@@ -491,12 +495,12 @@ anime.openapi(
     const fetcher = localDetailFetchers[result.data]
 
     try {
-      if (fetcher) {
-        const detail = await fetcher(row.contentId)
-        await service.applyDetail(result.data, row.contentId, detail)
-      } else {
-        await service.update({ type: 'update', message: { provider: result.data, contentId: row.contentId } })
-      }
+      // 新規に入った / URL が変わった画像は queue 経由で warm する。
+      // SyncService は副作用を持たず URL を返すだけなので、送信はこの呼び出し元の責務。
+      const newImageUrls = fetcher
+        ? await service.applyDetail(result.data, row.contentId, await fetcher(row.contentId))
+        : await service.update({ type: 'update', message: { provider: result.data, contentId: row.contentId } })
+      await enqueueImageWarm(c.env.WARM_QUEUE, result.data, newImageUrls)
       if (result.data === 'abema') {
         try {
           const archive = await archiveMissingAbemaKeysForAnime(prisma, id, async (programIds) => {

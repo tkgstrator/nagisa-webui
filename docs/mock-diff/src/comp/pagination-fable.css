@@ -1,0 +1,42 @@
+/* ---------- chips / segmented ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 9px;
+  border-radius: 6px; font-size: 12px; white-space: nowrap;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.chip:hover { background: var(--muted); color: var(--foreground); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.seg { display: inline-flex; padding: 2px; border-radius: 7px; background: var(--muted); gap: 2px; }
+.seg .chip { height: 22px; border-radius: 5px; padding: 0 8px; font-variant-numeric: tabular-nums; }
+.seg .chip:hover { background: var(--background); }
+.seg .chip[aria-pressed="true"] { background: var(--background); color: var(--foreground); box-shadow: 0 1px 2px var(--overlay); }
+
+/* ---------- pagination ---------- */
+.pager { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.pager .range { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pager .range b { color: var(--foreground); font-weight: 600; }
+.pages { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.pnum {
+  min-width: 32px; height: 32px; padding: 0 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 6px; font-size: 13px; font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.pnum:hover { background: var(--muted); color: var(--foreground); }
+.pnum:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.pnum[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.pnum[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+.pnum svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pnum.ellipsis { pointer-events: none; }
+.perpage { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
+@media (max-width: 640px) {
+  .pager { gap: 10px; }
+  .pages { margin-left: 0; width: 100%; justify-content: space-between; }
+  .hide-m { display: none; }
+}
+
+/* 凡例とページャを両端に置く一覧の脚 */
+.foot { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; font-size: 12px; color: var(--muted-foreground); }

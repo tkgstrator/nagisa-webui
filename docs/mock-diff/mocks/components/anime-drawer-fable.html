@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>詳細ドロワー — fable 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- catalog stage: anime-drawer ---------- */
+/* ---------- stage (カタログ内で fixed の代わりに使う舞台) ---------- */
+.stage {
+  position: relative; overflow: hidden;
+  height: 420px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+.stage .behind { position: absolute; inset: 0; padding: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stage .behind i { border-radius: 6px; background: var(--muted); height: 92px; display: block; }
+.stage .scrim { position: absolute; inset: 0; background: var(--overlay); }
+@media (max-width: 640px) {
+  .stage { height: 380px; }
+}
+/* ---------- component: anime-drawer ---------- */
+/* ---------- detail drawer ---------- */.drawer {
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 2;
+  width: min(420px, 92%);
+  background: var(--popover); color: var(--popover-foreground);
+  border-left: 1px solid var(--border);
+  box-shadow: -24px 0 48px -24px var(--overlay);
+  overflow-y: auto;
+  animation: slideIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes slideIn { from { transform: translateX(105%); } to { transform: none; } }
+.drawer.is-standalone { position: static; width: 100%; border-left: 0; box-shadow: none; border: 1px solid var(--border); border-radius: 10px; animation: none; }
+
+.drawer-hero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.drawer-hero .art { position: absolute; inset: 0; background: linear-gradient(135deg, oklch(0.78 0.11 var(--h, 265)) 0%, oklch(0.5 0.15 calc(var(--h, 265) + 45)) 100%); }
+.drawer-hero .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--overlay) 0%, transparent 55%); }
+.drawer-hero .kana { position: absolute; right: 14px; top: 10px; font-size: 40px; font-weight: 800; color: oklch(1 0 0); opacity: .2; letter-spacing: .08em; }
+.drawer-hero .prov {
+  position: absolute; left: 12px; bottom: 12px; z-index: 1;
+  height: 22px; padding: 0 9px; border-radius: 5px;
+  display: inline-flex; align-items: center; font-size: 11px; font-weight: 600;
+  background: var(--brand-amazon); color: var(--brand-amazon-foreground);
+  backdrop-filter: blur(4px);
+}
+.p-hulu .drawer-hero .prov { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll .drawer-hero .prov { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema .drawer-hero .prov { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix .drawer-hero .prov { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.drawer-close {
+  position: absolute; top: 12px; right: 12px; z-index: 1;
+  width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--overlay); color: var(--overlay-foreground);
+  transition: background .15s;
+}
+.drawer-close:hover, .drawer-close.is-hover { background: var(--foreground); }
+.drawer-close:focus-visible, .drawer-close.is-focus { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.drawer-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.drawer-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.drawer-body h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.drawer-status { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.drawer-status .season { color: var(--muted-foreground); }
+
+.drawer-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; font-size: 12.5px; margin: 0; }
+.drawer-facts dt { color: var(--muted-foreground); }
+.drawer-facts dd { margin: 2px 0 0; font-weight: 500; }
+.drawer-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+.drawer-desc.is-clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+
+.drawer-actions { display: flex; gap: 8px; margin-top: 4px; }
+.dbtn {
+  flex: 1; height: 36px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--primary); color: var(--primary-foreground); transition: opacity .15s;
+}
+.dbtn:hover, .dbtn.is-hover { opacity: .88; }
+.dbtn:focus-visible, .dbtn.is-focus { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.dbtn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.dbtn.outline { background: transparent; border: 1px solid var(--border); color: var(--foreground); }
+.dbtn.outline:hover, .dbtn.outline.is-hover { background: var(--muted); opacity: 1; }
+.dbtn.on { background: var(--success); color: var(--success-foreground); }
+.dbtn.busy { background: var(--muted); color: var(--muted-foreground); pointer-events: none; }
+.dbtn.busy svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.dbtn.fail { background: var(--destructive); color: var(--destructive-foreground); }
+
+.drawer-eps { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.drawer-eps h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); font-weight: 600; margin: 0 0 2px; }
+.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 6px; border-left: 3px solid transparent; }
+.epline:hover, .epline.is-hover { background: var(--muted); }
+.epline .n { color: var(--muted-foreground); font-variant-numeric: tabular-nums; width: 42px; flex: none; }
+.epline .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.epline .rec { margin-left: auto; font-size: 11px; color: var(--muted-foreground); flex: none; }
+.epline.is-done { border-left-color: var(--success); }
+.epline.is-done .rec { color: var(--success); }
+.epline.is-rec { border-left-color: var(--info); }
+.epline.is-rec .rec { color: var(--info); }
+.epline.is-fail { border-left-color: var(--destructive); }
+.epline.is-fail .rec { color: var(--destructive); }
+
+@media (max-width: 640px) {
+  .drawer { width: 100%; }
+  .drawer-facts { grid-template-columns: 1fr; }
+  .drawer-actions { flex-wrap: wrap; }}
+/* ---------- page scrim (ページ合成時にドロワー背後へ敷く) ---------- */.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.drawer:target ~ .drawer-scrim { opacity: 1; visibility: visible; }
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>詳細ドロワー <span class="cat-id">anime-drawer</span></h1>
+  <p>一覧のカードを押したときに右から出す。画面遷移せずに概要と録画操作まで終えられることが狙いなので、あらすじは 4 行で切り、続きは詳細画面へ送る。冒頭のヒーローは一覧のカードと同じ 16:9。</p>
+  <div class="cat-meta">
+    <span>幅 <code>min(420px, 92vw)</code></span>
+    <span>右から <code>.28s</code> でスライド</span>
+    <span>背後は <code>--overlay</code> で覆う</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>開いた状態 <span class="cat-hint">背後の一覧は暗幕で沈める</span></h2>
+  <div class="cat-item cat-full is-key" data-story="開いた状態">
+    <div class="stage">
+      <div class="behind" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="scrim" aria-hidden="true"></div>
+      <aside class="drawer p-amazon" role="dialog" aria-label="星降る夜のアストロノーツ">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 265"></div>
+          <span class="kana">星降</span>
+          <span class="prov">Prime Video</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>星降る夜のアストロノーツ</h2>
+          <div class="drawer-status"><span class="status s-releasing">放送中</span><span class="season num">2026 春</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">24 話</dd></div>
+            <div><dt>録画済み</dt><dd class="num">8 話</dd></div>
+            <div><dt>総再生時間</dt><dd class="num">9 時間 36 分</dd></div>
+            <div><dt>最終更新</dt><dd class="num">2026/09/17 04:12</dd></div>
+          </dl>
+          <p class="drawer-desc is-clamp">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。やがて空から降ってきたものが、忘れられた計画の残骸だと分かったとき、少年は地上に降りる決意をする。</p>
+          <div class="drawer-actions">
+            <button class="dbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+          <div class="drawer-eps">
+            <h3>最近のエピソード</h3>
+            <div class="epline is-done"><span class="n">第 8 話</span><span class="t">名前のない星に</span><span class="rec">録画済み</span></div>
+            <div class="epline is-rec"><span class="n">第 7 話</span><span class="t">観測所の夜明け</span><span class="rec">録画中</span></div>
+            <div class="epline"><span class="n">第 6 話</span><span class="t">落ちてきたもの</span><span class="rec">未録画</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>中身のバリエーション <span class="cat-hint">舞台から出して単体で並べる</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w320" data-story="中身のバリエーション / 予約済み + 録画進行中"><span class="cat-label is-key">予約済み + 録画進行中</span>
+      <aside class="drawer is-standalone p-crunchyroll" role="dialog" aria-label="機械仕掛けの遠雷">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 40"></div>
+          <span class="kana">遠雷</span>
+          <span class="prov">Crunchyroll</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>機械仕掛けの遠雷</h2>
+          <div class="drawer-status"><span class="status s-releasing">放送中</span><span class="season num">2026 春</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">12 話</dd></div>
+            <div><dt>録画済み</dt><dd class="num">11 話</dd></div>
+          </dl>
+          <div class="drawer-actions">
+            <button class="dbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="cat-item cat-w320" data-story="機械仕掛けの遠雷 / 完結 + 全話録画済み"><span class="cat-label">完結 + 全話録画済み</span>
+      <aside class="drawer is-standalone p-netflix" role="dialog" aria-label="蒼海のリフレイン">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 210"></div>
+          <span class="kana">蒼海</span>
+          <span class="prov">Netflix</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>蒼海のリフレイン</h2>
+          <div class="drawer-status"><span class="status s-finished">完結</span><span class="season num">2025 秋</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">13 話</dd></div>
+            <div><dt>録画済み</dt><dd class="num">13 話</dd></div>
+          </dl>
+          <div class="drawer-actions">
+            <button class="dbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全話録画済み</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="cat-item cat-w320" data-story="蒼海のリフレイン / 未放送"><span class="cat-label">未放送 <small>(録画予約のみ可能)</small></span>
+      <aside class="drawer is-standalone p-abema" role="dialog" aria-label="ひだまり商店街の観測日誌">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 130"></div>
+          <span class="kana">日誌</span>
+          <span class="prov">ABEMA</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>ひだまり商店街の観測日誌</h2>
+          <div class="drawer-status"><span class="status s-not-yet">未放送</span><span class="season num">2026 夏</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">— 話</dd></div>
+            <div><dt>配信開始</dt><dd class="num">2026/07/04</dd></div>
+          </dl>
+          <p class="drawer-desc is-clamp">閉店の決まった商店街に、なぜか毎日同じ時刻だけ日が差す一角がある。その理由を測りにきた大学生の記録。</p>
+          <div class="drawer-actions">
+            <button class="dbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>配信開始時に録画</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>アクションボタン</h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220" data-story="アクションボタン / 未予約"><span class="cat-label">未予約</span><button class="dbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button></div>
+    <div class="cat-item cat-w220" data-story="アクションボタン / hover"><span class="cat-label">hover</span><button class="dbtn is-hover" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button></div>
+    <div class="cat-item cat-w220" data-story="アクションボタン / 予約済み"><span class="cat-label">予約済み</span><button class="dbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button></div>
+    <div class="cat-item cat-w220" data-story="アクションボタン / 送信中"><span class="cat-label">送信中</span><button class="dbtn busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>送信中…</button></div>
+    <div class="cat-item cat-w220" data-story="アクションボタン / 失敗"><span class="cat-label">失敗</span><button class="dbtn fail" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6M12 17v.01"/></svg>失敗 — 再試行</button></div>
+    <div class="cat-item cat-w220" data-story="アクションボタン / 副次アクション"><span class="cat-label">副次アクション</span><button class="dbtn outline" type="button">詳細を開く</button></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>エピソード行 <span class="cat-hint">直近 3 話だけ出す</span></h2>
+  <div class="cat-item cat-w320" data-story="エピソード行">
+    <div class="cat-frame is-plain">
+      <div class="epline is-done"><span class="n">第 8 話</span><span class="t">名前のない星に</span><span class="rec">録画済み</span></div>
+      <div class="epline is-rec"><span class="n">第 7 話</span><span class="t">観測所の夜明け</span><span class="rec">録画中</span></div>
+      <div class="epline is-fail"><span class="n">第 6 話</span><span class="t">落ちてきたもの</span><span class="rec">失敗</span></div>
+      <div class="epline"><span class="n">第 5 話</span><span class="t">名前をつける係</span><span class="rec">未録画</span></div>
+      <div class="epline is-hover"><span class="n">第 4 話</span><span class="t">観測所の階段はいつも濡れている</span><span class="rec">未録画</span></div>
+    </div>
+  </div>
+  <p class="cat-note">録画状態は左の 3px のアクセントと右端の語で二重に示す。色だけに頼らない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>閉じるボタン</h2>
+  <div class="cat-row">
+    <div class="cat-item" data-story="閉じるボタン / 通常"><span class="cat-label">通常</span><div class="cat-frame"><button class="drawer-close" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item" data-story="閉じるボタン / hover"><span class="cat-label">hover</span><div class="cat-frame"><button class="drawer-close is-hover" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item" data-story="閉じるボタン / フォーカス"><span class="cat-label">フォーカス</span><div class="cat-frame"><button class="drawer-close is-focus" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  </div>
+  <p class="cat-note">暗幕のクリックと <kbd>Esc</kbd> でも閉じる。ボタンはヒーロー画像の上に浮かせるので、背景に <code>--overlay</code> を敷いて画像の明暗に依らず読めるようにする。</p>
+</section>
+</main>
+</body>
+</html>

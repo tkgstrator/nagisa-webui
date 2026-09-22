@@ -1,0 +1,102 @@
+/* ---------- recording row (tile) ---------- */
+.rgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
+.rdemo { max-width: 520px; }
+.sbox { display: flex; align-items: center; }
+
+.rcard {
+  position: relative; display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px 11px 12px;
+  border-left: 3px solid var(--border); border-radius: 0 9px 9px 0;
+  transition: background .18s ease, transform .18s ease, border-color .18s ease;
+}
+.rcard:hover { background: var(--muted); transform: translateX(2px); }
+.rcard:focus-within { background: var(--muted); box-shadow: 0 0 0 2px var(--ring); }
+.rcard.s-busy { border-left-color: var(--info); }
+.rcard.s-ok { border-left-color: var(--success); }
+.rcard.s-warn { border-left-color: var(--warning); }
+.rcard.s-err { border-left-color: var(--destructive); }
+.rcard.is-sel { background: var(--accent); }
+.rcard.is-sel:hover { background: var(--accent); transform: none; }
+
+.cbx { width: 15px; height: 15px; accent-color: var(--primary); flex: none; margin: 0; cursor: pointer; }
+
+.rthumb { width: 96px; aspect-ratio: 16 / 9; border-radius: 8px; flex: none; position: relative; overflow: hidden; transition: transform .25s ease; }
+.rcard:hover .rthumb { transform: scale(1.06); }
+.rthumb .art {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h, 265) / 85%), transparent 55%),
+    linear-gradient(165deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%);
+}
+.rthumb .ini { position: absolute; left: 7px; bottom: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.04em; color: var(--overlay-foreground); opacity: .6; }
+@media (prefers-color-scheme: dark) {
+  .rthumb .art { background:
+    radial-gradient(120% 100% at 25% 0%, oklch(0.6 0.11 var(--h, 265) / 75%), transparent 55%),
+    linear-gradient(165deg, oklch(0.48 0.14 var(--h, 265)) 0%, oklch(0.26 0.1 calc(var(--h, 265) + 40)) 100%); }
+}
+
+.rbody { flex: 1; min-width: 0; }
+.rtitle-row { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.rtitle { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.pbadge { flex: none; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.sbadge { flex: none; font-size: 9.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.st-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.st-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.st-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.st-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.st-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+
+.rnums { margin-top: 5px; display: flex; align-items: center; gap: 12px; }
+.rnum { display: inline-flex; align-items: baseline; gap: 4px; font-size: 10.5px; color: var(--muted-foreground); white-space: nowrap; }
+.rnum b { font-size: 13px; font-weight: 700; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.rnum.tot b { color: var(--muted-foreground); font-weight: 600; }
+.rnum.tot.open b::after { content: "+"; font-size: 9px; vertical-align: super; }
+
+.mini-strip { flex: 1; max-width: 132px; height: 5px; border-radius: 999px; overflow: hidden; display: flex; background: var(--border); }
+.mini-strip span { display: block; height: 100%; }
+.mini-strip .rec { background: var(--success); }
+.mini-strip .busy { background: var(--info); animation: blink 1.4s ease-in-out infinite; }
+.mini-strip .fail { background: var(--destructive); }
+.mini-strip .none { background: transparent; }
+@keyframes blink { 50% { opacity: .35; } }
+
+.rsched { margin-top: 4px; display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--accent-foreground); }
+.rsched svg { width: 12px; height: 12px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.rfoot { margin-top: 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 10.5px; color: var(--muted-foreground); }
+.rfoot .exp { color: var(--destructive); font-weight: 700; }
+.rfoot .warn { color: var(--warning-foreground); font-weight: 700; }
+.rfoot .fetching { color: var(--info); font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+.rfoot .fetching::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--info); animation: blink 1.4s ease-in-out infinite; }
+
+.unsched {
+  flex: none; width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center;
+  color: var(--muted-foreground); border: 1px solid transparent;
+}
+.unsched svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.unsched:hover { background: var(--destructive); color: var(--destructive-foreground); }
+.unsched:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+.rlegend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted-foreground); }
+.rlegend span { display: inline-flex; align-items: center; gap: 6px; }
+.rlegend i { width: 16px; height: 5px; border-radius: 999px; background: var(--border); }
+.rlegend i.rec { background: var(--success); }
+.rlegend i.busy { background: var(--info); }
+.rlegend i.fail { background: var(--destructive); }
+
+@media (max-width: 640px) {
+  .rgrid { grid-template-columns: 1fr; }
+  .rcard { gap: 10px; padding: 11px 8px 11px 10px; }
+  .rthumb { width: 76px; }
+  .rnums { flex-wrap: wrap; gap: 6px 10px; }
+  .mini-strip { max-width: none; flex-basis: 100%; }
+}
+
+/* 話数とミニストリップを 1 行に並べる */
+.rmeta-row { margin-top: 5px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted-foreground); }

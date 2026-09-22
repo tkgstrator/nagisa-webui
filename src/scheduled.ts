@@ -2,12 +2,14 @@ import dayjs from 'dayjs'
 import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
 import { getAppLogger } from './lib/logger'
+import { sendMessage } from './lib/queue-routing'
 import type { Message } from './schemas/message.dto'
 
 const logger = getAppLogger('scheduled')
 
 interface Env {
   DB: D1Database
+  AMAZON_QUEUE: Queue<Message>
   SYNC_QUEUE: Queue<Message>
   DISCORD_WEBHOOK_URL: string
 }
@@ -23,7 +25,7 @@ async function enqueueAbemaArchive(env: Env): Promise<number> {
       select: { id: true }
     })
     for (const anime of animes) {
-      await env.SYNC_QUEUE.send({ type: 'abema_archive', message: { animeId: anime.id } })
+      await sendMessage(env, { type: 'abema_archive', message: { animeId: anime.id } })
     }
     return animes.length
   } finally {
@@ -41,20 +43,20 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
       case '0 */1 * * *':
         for (const provider of providers) {
           for (const category of ['new_episode', 'coming_soon'] as const) {
-            await env.SYNC_QUEUE.send({ type: 'fetch', message: { provider, category } })
+            await sendMessage(env, { type: 'fetch', message: { provider, category } })
             logger.info({ action: 'enqueue', provider, category })
           }
         }
         break
       case '0 0 * * *':
         for (const provider of providers) {
-          await env.SYNC_QUEUE.send({ type: 'fetch', message: { provider, category: 'expiring' } })
+          await sendMessage(env, { type: 'fetch', message: { provider, category: 'expiring' } })
           logger.info({ action: 'enqueue', provider, category: 'expiring' })
         }
         break
       case '0 3 * * *':
         for (const provider of providers) {
-          await env.SYNC_QUEUE.send({ type: 'fetch', message: { provider, category: 'catalog' } })
+          await sendMessage(env, { type: 'fetch', message: { provider, category: 'catalog' } })
           logger.info({ action: 'enqueue', provider, category: 'catalog' })
         }
         break
@@ -69,10 +71,7 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
         const years = Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i)
         // AniList の rate limit を burst で殴らないよう、1 年あたり 30s ずらして enqueue
         for (const [i, year] of years.entries()) {
-          await env.SYNC_QUEUE.send(
-            { type: 'anilist_sync', message: { year, country: 'JP' } },
-            { delaySeconds: i * 30 }
-          )
+          await sendMessage(env, { type: 'anilist_sync', message: { year, country: 'JP' } }, { delaySeconds: i * 30 })
         }
         logger.info({ action: 'enqueue-anilist-sync', fromYear, toYear, count: years.length })
         break

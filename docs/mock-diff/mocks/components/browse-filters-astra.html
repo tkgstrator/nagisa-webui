@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>絞り込みパネル — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: browse-filters ---------- */
+/* ---------- filter panel (sidebar embedded) ---------- */.fpanel {
+  width: 236px; max-width: 100%;
+  background: var(--sidebar);
+  border-radius: 12px;
+  padding: 14px 6px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.fpanel > .ftitle {
+  font-size: 12px; font-weight: 700; padding: 0 10px 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.fpanel > .ftitle .n {
+  margin-left: auto; font-size: 11px; font-variant-numeric: tabular-nums;
+  color: var(--primary-foreground); background: var(--primary);
+  border-radius: 999px; padding: 1px 7px;
+}
+
+.fgroup h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 6px; font-weight: 600; }
+.fgroup .flist { display: flex; flex-direction: column; gap: 1px; }
+
+.fcheck { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px; font-size: 12.5px; color: var(--foreground); cursor: pointer; }
+.fcheck:hover, .fcheck.is-hover { background: var(--muted); }
+.fcheck:focus-within, .fcheck.is-focus { background: var(--muted); box-shadow: 0 0 0 2px var(--ring); }
+.fcheck input { width: 14px; height: 14px; accent-color: var(--primary); flex: none; }
+.fcheck .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.6; flex: none; }
+.fcheck .cnt { margin-left: auto; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.fpills { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 10px; }
+.fpill { height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; color: var(--muted-foreground); transition: background .12s, color .12s, border-color .12s; }
+.fpill:hover, .fpill.is-hover { background: var(--muted); color: var(--foreground); }
+.fpill:focus-visible, .fpill.is-focus { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.fpill:active { transform: scale(0.94); }
+.fpill[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); border-color: transparent; font-weight: 600; }
+
+.reset-btn { margin: 4px 10px 0; height: 30px; border: 1px dashed var(--border); border-radius: 8px; font-size: 12px; color: var(--muted-foreground); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.reset-btn:hover, .reset-btn.is-hover { background: var(--muted); color: var(--foreground); }
+.reset-btn:active { transform: scale(0.96); }
+.reset-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* 検索・並び替え (コンテンツ側ヘッダに置く) */.search { position: relative; width: 240px; max-width: 100%; }
+.search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+.search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.search input:focus-visible, .search input.is-focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.search input::placeholder { color: var(--muted-foreground); }
+
+.sort { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted-foreground); }
+.sort select { height: 34px; padding: 0 26px 0 12px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--foreground); appearance: none; -webkit-appearance: none; font-size: 12.5px; }
+.sort select:focus-visible, .sort select.is-focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.sort .sel { position: relative; }
+.sort .sel svg { position: absolute; right: 10px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+
+@media (max-width: 640px) {
+  .fpanel { width: 100%; }
+  .search { width: 100%; }}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>絞り込みパネル <span class="cat-id">browse-filters</span></h1>
+  <p>左サイドバーに常駐させる案。配信元とバッジは複数選択できるのでチェックボックス、年とクールは択一なので丸いピルに分ける。パネル幅は 236px 固定で、mobile では全幅に開く。検索と並び替えはパネルではなくコンテンツ側のヘッダに置く。</p>
+  <div class="cat-meta">
+    <span>背景は <code>--sidebar</code></span>
+    <span>チェックは <code>accent-color: var(--primary)</code></span>
+    <span>件数は右端に <code>tabular-nums</code></span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">配信元 / 年 / クール / ステータス / バッジ</span></h2>
+  <div class="cat-row">
+    <div class="cat-item is-key" data-story="基本 / パネル全体"><span class="cat-label">パネル全体</span>
+      <div class="fpanel" aria-label="絞り込み">
+        <p class="ftitle">絞り込み</p>
+        <div class="fgroup"><h3>配信元</h3>
+          <div class="flist">
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-amazon-foreground)"></span>Prime Video<span class="cnt">84</span></label>
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-hulu-foreground)"></span>Hulu<span class="cnt">41</span></label>
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-crunchyroll-foreground)"></span>Crunchyroll<span class="cnt">67</span></label>
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-abema-foreground)"></span>ABEMA<span class="cnt">59</span></label>
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-netflix-foreground)"></span>Netflix<span class="cnt">36</span></label>
+          </div>
+        </div>
+        <div class="fgroup"><h3>年</h3>
+          <div class="fpills"><button class="fpill" type="button" aria-pressed="false">すべて</button><button class="fpill" type="button" aria-pressed="true">2026</button><button class="fpill" type="button" aria-pressed="false">2025</button><button class="fpill" type="button" aria-pressed="false">2024</button><button class="fpill" type="button" aria-pressed="false">2023</button></div>
+        </div>
+        <div class="fgroup"><h3>クール</h3>
+          <div class="fpills"><button class="fpill" type="button" aria-pressed="false">冬</button><button class="fpill" type="button" aria-pressed="true">春</button><button class="fpill" type="button" aria-pressed="false">夏</button><button class="fpill" type="button" aria-pressed="false">秋</button></div>
+        </div>
+        <div class="fgroup"><h3>ステータス</h3>
+          <div class="fpills"><button class="fpill" type="button" aria-pressed="true">放送中</button><button class="fpill" type="button" aria-pressed="false">完結</button><button class="fpill" type="button" aria-pressed="false">未放送</button><button class="fpill" type="button" aria-pressed="false">休止</button><button class="fpill" type="button" aria-pressed="false">中止</button></div>
+        </div>
+        <div class="fgroup"><h3>バッジ</h3>
+          <div class="flist">
+            <label class="fcheck"><input type="checkbox">新着エピソード<span class="cnt">12</span></label>
+            <label class="fcheck"><input type="checkbox">新着追加<span class="cnt">31</span></label>
+            <label class="fcheck"><input type="checkbox">配信予定<span class="cnt">8</span></label>
+            <label class="fcheck"><input type="checkbox">配信終了予定<span class="cnt">5</span></label>
+          </div>
+        </div>
+        <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
+      </div>
+    </div>
+    <div class="cat-item" data-story="基本 / 絞り込み適用後"><span class="cat-label">絞り込み適用後 <small>(件数バッジつき)</small></span>
+      <div class="fpanel" aria-label="絞り込み">
+        <p class="ftitle">絞り込み<span class="n">3</span></p>
+        <div class="fgroup"><h3>配信元</h3>
+          <div class="flist">
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-amazon-foreground)"></span>Prime Video<span class="cnt">84</span></label>
+            <label class="fcheck"><input type="checkbox"><span class="dot" style="color:var(--brand-hulu-foreground)"></span>Hulu<span class="cnt">41</span></label>
+            <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-crunchyroll-foreground)"></span>Crunchyroll<span class="cnt">67</span></label>
+            <label class="fcheck"><input type="checkbox"><span class="dot" style="color:var(--brand-abema-foreground)"></span>ABEMA<span class="cnt">59</span></label>
+            <label class="fcheck"><input type="checkbox"><span class="dot" style="color:var(--brand-netflix-foreground)"></span>Netflix<span class="cnt">36</span></label>
+          </div>
+        </div>
+        <div class="fgroup"><h3>ステータス</h3>
+          <div class="fpills"><button class="fpill" type="button" aria-pressed="true">放送中</button><button class="fpill" type="button" aria-pressed="false">完結</button><button class="fpill" type="button" aria-pressed="false">未放送</button><button class="fpill" type="button" aria-pressed="false">休止</button></div>
+        </div>
+        <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>チェック項目単体</h2>
+  <div class="cat-stack cat-w260">
+    <div class="cat-item" data-story="チェック項目単体 / 通常"><span class="cat-label">通常</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox">新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / hover"><span class="cat-label">hover</span><div class="cat-frame is-plain"><label class="fcheck is-hover"><input type="checkbox">新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / チェック済み"><span class="cat-label">チェック済み</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox" checked>新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / キーボードフォーカス"><span class="cat-label">キーボードフォーカス</span><div class="cat-frame is-plain"><label class="fcheck is-focus"><input type="checkbox" checked>新着エピソード<span class="cnt">12</span></label></div></div>
+    <div class="cat-item" data-story="チェック項目単体 / 件数 0"><span class="cat-label">件数 0</span><div class="cat-frame is-plain"><label class="fcheck"><input type="checkbox">配信終了予定<span class="cnt">0</span></label></div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元の項目 <span class="cat-hint">ドットだけがブランド色を持つ</span></h2>
+  <div class="cat-item cat-w260" data-story="配信元の項目">
+    <div class="cat-frame is-plain">
+      <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-amazon-foreground)"></span>Prime Video<span class="cnt">84</span></label>
+      <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-hulu-foreground)"></span>Hulu<span class="cnt">41</span></label>
+      <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-crunchyroll-foreground)"></span>Crunchyroll<span class="cnt">67</span></label>
+      <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-abema-foreground)"></span>ABEMA<span class="cnt">59</span></label>
+      <label class="fcheck"><input type="checkbox" checked><span class="dot" style="color:var(--brand-netflix-foreground)"></span>Netflix<span class="cnt">36</span></label>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>ピル <span class="cat-hint">択一。年 / クール / ステータス</span></h2>
+  <div class="cat-row">
+    <div class="cat-item" data-story="ピル / 通常"><span class="cat-label">通常</span><button class="fpill" type="button" aria-pressed="false">2025</button></div>
+    <div class="cat-item" data-story="ピル / hover"><span class="cat-label">hover</span><button class="fpill is-hover" type="button" aria-pressed="false">2025</button></div>
+    <div class="cat-item" data-story="ピル / 選択中"><span class="cat-label">選択中</span><button class="fpill" type="button" aria-pressed="true">2026</button></div>
+    <div class="cat-item" data-story="ピル / フォーカス"><span class="cat-label">フォーカス</span><button class="fpill is-focus" type="button" aria-pressed="false">2025</button></div>
+    <div class="cat-item" data-story="ピル / クール一式"><span class="cat-label">クール一式</span><div class="fpills" style="padding:0"><button class="fpill" type="button" aria-pressed="false">冬</button><button class="fpill" type="button" aria-pressed="true">春</button><button class="fpill" type="button" aria-pressed="false">夏</button><button class="fpill" type="button" aria-pressed="false">秋</button></div></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>リセット</h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220" data-story="リセット / 通常"><span class="cat-label">通常</span><button class="reset-btn" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
+    <div class="cat-item cat-w220" data-story="リセット / hover"><span class="cat-label">hover</span><button class="reset-btn is-hover" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>検索と並び替え <span class="cat-hint">パネルではなくコンテンツ側のヘッダに置く</span></h2>
+  <div class="cat-row">
+    <div class="cat-item" data-story="検索と並び替え / 検索"><span class="cat-label">検索</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="タイトルで検索" aria-label="タイトルで検索"></div></div>
+    <div class="cat-item" data-story="検索と並び替え / 入力あり + フォーカス"><span class="cat-label">入力あり + フォーカス</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="is-focus" type="search" value="アストロ" aria-label="タイトルで検索"></div></div>
+    <div class="cat-item" data-story="検索と並び替え / 並び替え"><span class="cat-label">並び替え</span><div class="sort"><span>並び替え</span><div class="sel"><select aria-label="並び替え"><option selected>リリース年 新しい順</option><option>リリース年 古い順</option><option>タイトル 昇順</option><option>タイトル 降順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
+  </div>
+  <p class="cat-note">パネルが左を占有するぶん、検索窓は一覧の上に残す。両方を左に寄せると本文の横幅が細くなりすぎる。</p>
+</section>
+</main>
+</body>
+</html>

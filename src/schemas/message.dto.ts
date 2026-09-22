@@ -13,9 +13,10 @@ const UpdateMessageBodySchema = z.object({
   provider: ProviderTypeEnum
 })
 
-const BulkUpdateMessageBodySchema = z.object({
-  contentIds: z.array(z.string().nonempty()).nonempty(),
-  provider: ProviderTypeEnum
+/** 上限 10 は Lambda 側の FetchImageRequestSchema (src/schemas/lambda.dto.ts) と揃える。1 message = Lambda 1 往復。 */
+const ImageWarmMessageBodySchema = z.object({
+  provider: ProviderTypeEnum,
+  urls: z.array(z.url()).min(1).max(10)
 })
 
 export const FetchMessageSchema = z.object({
@@ -30,11 +31,11 @@ export const UpdateMessageSchema = z.object({
 })
 export type UpdateMessage = z.infer<typeof UpdateMessageSchema>
 
-export const BulkUpdateMessageSchema = z.object({
-  type: z.literal('bulk_update'),
-  message: BulkUpdateMessageBodySchema
+export const ImageWarmMessageSchema = z.object({
+  type: z.literal('image_warm'),
+  message: ImageWarmMessageBodySchema
 })
-export type BulkUpdateMessage = z.infer<typeof BulkUpdateMessageSchema>
+export type ImageWarmMessage = z.infer<typeof ImageWarmMessageSchema>
 
 const AbemaArchiveBodySchema = z.object({
   animeId: z.string().nonempty()
@@ -60,7 +61,7 @@ export type AnilistSyncMessage = z.infer<typeof AnilistSyncMessageSchema>
 export const MessageSchema = z.discriminatedUnion('type', [
   FetchMessageSchema,
   UpdateMessageSchema,
-  BulkUpdateMessageSchema,
+  ImageWarmMessageSchema,
   AbemaArchiveMessageSchema,
   AnilistSyncMessageSchema
 ])

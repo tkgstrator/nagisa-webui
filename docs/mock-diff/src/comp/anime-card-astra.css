@@ -1,0 +1,80 @@
+@keyframes pulseDot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .35; } }
+
+/* ---------- anime card: netflix-style overlay + hover preview ---------- */
+.tile {
+  display: block; min-width: 0;
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+.poster {
+  position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
+}
+.tile:hover .poster, .tile:focus-visible .poster {
+  transform: translateY(-6px) scale(1.045);
+  box-shadow: 0 22px 34px -16px oklch(0.15 0.02 250 / 45%);
+}
+.tile:focus-visible .poster { outline: 2px solid var(--ring); outline-offset: 2px; }
+.poster .art {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h) / 85%), transparent 55%),
+              linear-gradient(165deg, oklch(0.6 0.15 var(--h)) 0%, oklch(0.32 0.13 calc(var(--h) + 40)) 100%);
+}
+.poster .kanji {
+  position: absolute; right: -4px; top: -8px;
+  font-size: 40px; font-weight: 800; opacity: 0.16; line-height: 1;
+  color: oklch(0.99 0.01 var(--h));
+}
+.poster::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 28%, var(--overlay) 100%);
+}
+.poster .peek {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .25s ease; background: oklch(0.14 0.02 250 / 35%);
+}
+.tile:hover .poster .peek, .tile:focus-visible .poster .peek { opacity: 1; }
+.poster .peek svg { width: 20px; height: 20px; color: oklch(0.99 0.005 250); filter: drop-shadow(0 2px 5px oklch(0 0 0 / 45%)); }
+
+.poster .tag {
+  position: absolute; top: 8px; left: 8px; z-index: 1;
+  font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.tag-new { background: var(--info); color: var(--info-foreground); }
+.tag-added { background: var(--success); color: var(--success-foreground); }
+.tag-soon { background: var(--warning); color: var(--warning-foreground); }
+.tag-exp { background: var(--destructive); color: var(--destructive-foreground); }
+.tag .pulse { width: 5px; height: 5px; border-radius: 999px; background: currentColor; animation: pulseDot 1.6s ease-in-out infinite; }
+
+.poster .info { position: absolute; left: 9px; right: 9px; bottom: 9px; z-index: 1; color: oklch(0.99 0.01 var(--h)); }
+.poster .ptitle {
+  font-size: 12px; font-weight: 700; line-height: 1.3;
+  text-shadow: 0 1px 3px oklch(0.1 0.02 var(--h) / 60%);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.poster .pmeta { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10px; opacity: 0.9; }
+.poster .pmeta .ep { font-variant-numeric: tabular-nums; }
+
+.meta2 { margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; }
+.status { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.s-releasing { color: var(--status-releasing-foreground); }
+.s-finished { color: var(--status-finished-foreground); }
+.s-not-yet { color: var(--status-not-yet-foreground); }
+.s-cancelled { color: var(--status-cancelled-foreground); }
+.s-hiatus { color: var(--status-hiatus-foreground); }
+.season { color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* 実際の並び (5 カラム) */
+.grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; }
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
+  .poster .kanji { font-size: 32px; }
+}
+
+/* 視聴の進捗。ポスターの下端に細い帯で重ねる。 */
+.poster .pbar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--overlay); z-index: 1; }
+.poster .pbar span { display: block; height: 100%; background: var(--primary); transform-origin: left center; animation: growX .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: .25s; }
+/* 録画中を示すタグ。tag-new などと同じ枠。 */
+.tag-rec { background: var(--warning); color: var(--warning-foreground); }

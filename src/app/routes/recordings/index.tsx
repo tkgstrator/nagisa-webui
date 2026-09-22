@@ -1,57 +1,82 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Search, X } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+import { useAtom } from 'jotai'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { ProviderBadge, StatusBadge } from '@/app/components/anime-badges'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
-import { ProxyImage } from '@/app/components/proxy-image'
+import { PageContainer } from '@/app/components/page-container'
 import { SmartPagination } from '@/app/components/smart-pagination'
-import { Badge } from '@/app/components/ui/badge'
-import { Button } from '@/app/components/ui/button'
-import { Checkbox } from '@/app/components/ui/checkbox'
-import { Input } from '@/app/components/ui/input'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/app/components/ui/dialog'
 import api from '@/app/lib/api'
+import { type RecordingsFilters, recordingsFiltersAtom } from '@/app/lib/atoms'
+import { providerLabel } from '@/app/lib/constants'
 import { queryKeys } from '@/app/lib/query-keys'
 import { animeListQueryOptions } from '@/app/lib/query-options'
-import { QuarterLabel } from '@/schemas/anime.dto'
-
-const PAGE_SIZE = 24
-
-type RecordedFilter = 'all' | 'recorded' | 'pending'
-
-const RECORDED_OPTIONS: { value: RecordedFilter; label: string }[] = [
-  { value: 'all', label: 'すべて' },
-  { value: 'pending', label: '未録画' },
-  { value: 'recorded', label: '録画済み' }
-]
+import { readSettings, useSettings } from '@/app/routes/settings/-lib/settings'
+import { daysUntil } from './-components/format'
+import { RecordingsEmpty } from './-components/recordings-empty'
+import { RecordingsSidebar } from './-components/recordings-sidebar'
+import { RecordingsTable } from './-components/recordings-table'
+import { RECORDED_OPTIONS, RecordingsToolbar } from './-components/recordings-toolbar'
+import { SummaryStats } from './-components/summary-stats'
+import { WeeklySchedule } from './-components/weekly-schedule'
 
 export const Route = createFileRoute('/recordings/')({
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(animeListQueryOptions({ scheduled: true, page: 1, limit: PAGE_SIZE })),
+    queryClient.ensureQueryData(animeListQueryOptions({ scheduled: true, page: 1, limit: readSettings().pageSize })),
   pendingComponent: LoadingSpinner,
   component: RecordingsPage
 })
 
 function RecordingsPage() {
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [recordedFilter, setRecordedFilter] = useState<RecordedFilter>('all')
-  const [expiringOnly, setExpiringOnly] = useState(false)
+  const [filters, setFilters] = useAtom(recordingsFiltersAtom)
+  const { search, recorded: recordedFilter, expiringOnly, provider, sort, view, page } = filters
+
+  /** 絞り込みを変えたら 1 ページ目へ戻す。ページ送りと表示モードの切替はページを保つ。 */
+  const setFilter = useCallback(
+    <K extends keyof RecordingsFilters>(key: K) =>
+      (value: RecordingsFilters[K]) => {
+        setFilters((prev) => ({ ...prev, [key]: value, ...(key === 'page' || key === 'view' ? {} : { page: 1 }) }))
+      },
+    [setFilters]
+  )
+  const setPage = setFilter('page')
+  const setSearch = setFilter('search')
+  const setRecordedFilter = setFilter('recorded')
+  const setExpiringOnly = setFilter('expiringOnly')
+  const setProvider = setFilter('provider')
+  const setSort = setFilter('sort')
+  const setView = setFilter('view')
+
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const queryClient = useQueryClient()
+  const { settings } = useSettings()
+  const pageSize = settings.pageSize
 
   const queryFilters = useMemo(() => {
     const recorded = recordedFilter === 'recorded' ? true : recordedFilter === 'pending' ? false : undefined
+    const [sortKey, order] = sort.split('-') as ['title' | 'year' | 'updatedAt', 'asc' | 'desc']
     return {
       scheduled: true,
       page,
-      limit: PAGE_SIZE,
+      limit: pageSize,
       q: search.trim() || undefined,
       recorded,
+      provider,
+      sort: sortKey,
+      order,
       badge: expiringOnly ? 'EXPIRING' : undefined
     }
-  }, [page, search, recordedFilter, expiringOnly])
+  }, [page, pageSize, search, recordedFilter, expiringOnly, provider, sort])
 
   const { data } = useQuery({
     ...animeListQueryOptions(queryFilters),
@@ -95,6 +120,17 @@ function RecordingsPage() {
     onError: () => toast.error('一括解除に失敗しました')
   })
 
+  const runBulkUnschedule = () => {
+    setConfirmOpen(false)
+    bulkUnscheduleMutation.mutate(Array.from(selected))
+  }
+
+  /** 確認を挟むかは設定次第。挟まない設定ならその場で解除する。 */
+  const requestBulkUnschedule = () => {
+    if (settings.confirmBulkCancel) setConfirmOpen(true)
+    else runBulkUnschedule()
+  }
+
   const toggleSelected = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev)
@@ -121,192 +157,247 @@ function RecordingsPage() {
   const allVisibleSelected = anime.length > 0 && anime.every((item) => selected.has(item.id))
   const selectedCount = selected.size
 
+  /** 並び順と表示モードは残したまま、絞り込みだけを既定へ戻す。 */
   const resetFilters = () => {
-    setSearch('')
-    setRecordedFilter('all')
-    setExpiringOnly(false)
-    setPage(1)
+    setFilters((prev) => ({ ...prev, search: '', recorded: 'all', expiringOnly: false, provider: undefined, page: 1 }))
   }
 
-  const hasActiveFilters = search.trim().length > 0 || recordedFilter !== 'all' || expiringOnly
+  const hasActiveFilters =
+    search.trim().length > 0 || recordedFilter !== 'all' || expiringOnly || provider !== undefined
+
+  /** 表示中のページから算出するサマリ。総数以外はサーバー側で集計できないため。 */
+  const stats = useMemo(() => {
+    const recorded = anime.filter((item) => item.recorded).length
+    /** 「配信終了予定」に数えるのは、設定した日数以内に終わるものだけ。 */
+    const expiringDays = anime
+      .filter((item) => item.expiredAt !== null)
+      .map((item) => daysUntil(item.expiredAt as string))
+      .filter((days) => days <= settings.expiringLeadDays)
+    return {
+      recorded,
+      pending: anime.length - recorded,
+      expiring: expiringDays.length,
+      expiringSoonestDays: expiringDays.length === 0 ? null : Math.min(...expiringDays)
+    }
+  }, [anime, settings.expiringLeadDays])
+
+  /** 空表示に並べる、適用中の条件ラベル。 */
+  const activeTerms = useMemo(() => {
+    const terms: string[] = []
+    if (search.trim().length > 0) terms.push(`検索: ${search.trim()}`)
+    if (provider !== undefined) terms.push(providerLabel[provider] ?? provider)
+    if (recordedFilter !== 'all') {
+      terms.push(RECORDED_OPTIONS.find((opt) => opt.value === recordedFilter)?.label ?? recordedFilter)
+    }
+    if (expiringOnly) terms.push('配信終了予定のみ')
+    return terms
+  }, [search, provider, recordedFilter, expiringOnly])
+
+  const rangeStart = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const rangeEnd = (page - 1) * pageSize + anime.length
 
   return (
-    <div className='space-y-5'>
-      <div className='flex flex-wrap items-baseline justify-between gap-3'>
+    <PageContainer className='gap-10 text-sm max-sm:gap-[30px]'>
+      <RecordingsSidebar
+        total={total}
+        recorded={stats.recorded}
+        pending={stats.pending}
+        onFilterChange={setRecordedFilter}
+      />
+
+      <header className='flex flex-wrap items-end justify-between gap-5'>
         <div>
-          <h1 className='text-xl font-bold tracking-tight'>録画予約一覧</h1>
-          <p className='mt-0.5 text-xs text-muted-foreground'>
-            {total} 件中 {anime.length} 件表示
+          <h1 className='text-[28px] leading-tight font-bold tracking-[-0.02em]'>録画一覧</h1>
+          <p className='mt-1 text-xs text-muted-foreground'>
+            <span className='tabular-nums'>{total}</span> 作品を予約中
           </p>
         </div>
-        <div className='relative min-w-0 flex-1 sm:max-w-sm'>
-          <Search className='pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground' />
-          <Input
+        <label className='relative max-w-[360px] flex-[1_1_260px] max-sm:max-w-none max-sm:flex-[1_1_100%]'>
+          <span className='sr-only'>タイトル検索</span>
+          <svg
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='2'
+            className='pointer-events-none absolute top-1/2 left-2.5 size-[15px] -translate-y-1/2 text-muted-foreground'
+            aria-hidden='true'
+          >
+            <circle cx='11' cy='11' r='7' />
+            <path d='m20 20-3.5-3.5' />
+          </svg>
+          <input
             type='search'
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
-            placeholder='タイトル検索'
-            aria-label='タイトル検索'
-            className='h-9 pl-8'
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder='タイトルで絞り込み'
+            className='h-[34px] w-full rounded-lg border border-input bg-background pr-[30px] pl-8 text-[13px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-ring'
           />
-        </div>
-      </div>
+        </label>
+      </header>
 
-      <div className='flex flex-wrap items-center gap-2'>
-        <div className='inline-flex rounded-md border bg-background p-0.5'>
-          {RECORDED_OPTIONS.map((opt) => {
-            const active = recordedFilter === opt.value
-            return (
-              <button
-                key={opt.value}
-                type='button'
-                onClick={() => {
-                  setRecordedFilter(opt.value)
-                  setPage(1)
-                }}
-                aria-pressed={active}
-                className='inline-flex h-7 items-center rounded px-2.5 text-xs text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-accent aria-pressed:font-medium aria-pressed:text-accent-foreground'
-              >
-                {opt.label}
-              </button>
-            )
-          })}
-        </div>
-        <Button
-          type='button'
-          size='sm'
-          variant={expiringOnly ? 'default' : 'ghost'}
-          onClick={() => {
-            setExpiringOnly((v) => !v)
-            setPage(1)
-          }}
-          aria-pressed={expiringOnly}
-          className='h-7 text-xs'
-        >
-          配信終了予定のみ
-        </Button>
-        {hasActiveFilters && (
-          <Button type='button' size='sm' variant='ghost' onClick={resetFilters} className='h-7 text-muted-foreground'>
-            <X className='size-3.5' />
-            リセット
-          </Button>
-        )}
-      </div>
-
-      {anime.length === 0 ? (
-        <div className='py-16 text-center'>
-          <p className='text-sm text-muted-foreground'>
-            {hasActiveFilters ? '条件に合うタイトルがありません' : '録画予約されたタイトルはありません'}
-          </p>
-          {hasActiveFilters ? (
-            <Button type='button' size='sm' variant='ghost' onClick={resetFilters} className='mt-2'>
-              フィルタをリセット
-            </Button>
-          ) : (
-            <Link to='/' className='mt-2 inline-block text-sm text-primary hover:underline'>
-              アニメ一覧から予約する
-            </Link>
-          )}
-        </div>
-      ) : (
-        <>
-          <div className='flex flex-wrap items-center justify-between gap-3 border-b pb-2'>
-            <label
-              htmlFor='select-all-visible'
-              className='inline-flex items-center gap-2 text-sm text-muted-foreground'
+      <fieldset className='mt-[18px] border-0 p-0' aria-label='表示切替'>
+        <div className='inline-flex rounded-lg border border-border bg-background p-0.5'>
+          {(
+            [
+              { value: 'list', label: '一覧' },
+              { value: 'schedule', label: '週間スケジュール' }
+            ] as const
+          ).map(({ value, label }) => (
+            <button
+              key={value}
+              type='button'
+              aria-pressed={view === value}
+              onClick={() => setView(value)}
+              className={`inline-flex h-7 items-center rounded-md px-2.5 text-xs whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring ${
+                view === value
+                  ? 'bg-accent font-semibold text-accent-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
-              <Checkbox
-                id='select-all-visible'
-                checked={allVisibleSelected}
-                onCheckedChange={toggleAllVisible}
-                aria-label='表示中をすべて選択'
-              />
-              表示中をすべて選択
-            </label>
-            {selectedCount > 0 && (
-              <div className='flex items-center gap-2'>
-                <span className='text-xs text-muted-foreground'>{selectedCount} 件選択中</span>
-                <Button
-                  type='button'
-                  size='sm'
-                  variant='outline'
-                  disabled={bulkUnscheduleMutation.isPending}
-                  onClick={() => bulkUnscheduleMutation.mutate(Array.from(selected))}
-                  className='h-7 text-destructive hover:bg-destructive/10 hover:text-destructive'
-                >
-                  <X className='size-3.5' />
-                  選択分を解除
-                </Button>
-              </div>
-            )}
+              {label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
+      {view === 'schedule' ? (
+        <WeeklySchedule items={anime} />
+      ) : (
+        <div>
+          <div className='mb-[38px]'>
+            <SummaryStats
+              total={total}
+              recorded={stats.recorded}
+              pending={stats.pending}
+              expiring={stats.expiring}
+              expiringSoonestDays={stats.expiringSoonestDays}
+              visible={anime.length}
+            />
           </div>
 
-          <ul className='divide-y divide-border/50'>
-            {anime.map((item) => {
-              const checked = selected.has(item.id)
-              return (
-                <li key={item.id} className='flex items-center gap-3 py-3 transition-colors hover:bg-muted/30 sm:gap-4'>
-                  <Checkbox
-                    checked={checked}
-                    onCheckedChange={() => toggleSelected(item.id)}
-                    aria-label={`${item.title} を選択`}
-                    className='shrink-0'
+          <RecordingsToolbar
+            recordedFilter={recordedFilter}
+            onRecordedFilterChange={setRecordedFilter}
+            provider={provider}
+            onProviderChange={setProvider}
+            expiringOnly={expiringOnly}
+            onExpiringOnlyChange={setExpiringOnly}
+            sort={sort}
+            onSortChange={setSort}
+            hasActiveFilters={hasActiveFilters}
+            onReset={resetFilters}
+          />
+
+          {anime.length === 0 ? (
+            <div className='mt-6'>
+              <RecordingsEmpty filtered={hasActiveFilters} terms={activeTerms} onReset={resetFilters} />
+            </div>
+          ) : (
+            <>
+              <div className='flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border py-2 text-xs text-muted-foreground'>
+                <label className='inline-flex cursor-pointer items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={allVisibleSelected}
+                    onChange={toggleAllVisible}
+                    aria-label='表示中をすべて選択'
+                    className='size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border border-input bg-background transition-colors checked:border-primary checked:bg-primary focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
                   />
-                  <Link
-                    to='/anime/$id'
-                    params={{ id: item.id }}
-                    className='flex min-w-0 flex-1 items-center gap-3 sm:gap-4'
-                  >
-                    {item.imageUrl && (
-                      <ProxyImage
-                        src={item.imageUrl}
-                        alt={item.title}
-                        width={240}
-                        className='aspect-video h-16 shrink-0 rounded object-cover'
-                      />
-                    )}
-                    <div className='min-w-0 flex-1'>
-                      <p className='truncate font-medium'>{item.title}</p>
-                      <div className='mt-1 flex flex-wrap items-center gap-1.5'>
-                        <ProviderBadge provider={item.provider} />
-                        {item.status && item.status !== 'UNKNOWN' && <StatusBadge status={item.status} />}
-                        {item.year > 0 && (
-                          <span className='text-xs text-muted-foreground'>
-                            {item.year}年{item.quarter != null ? ` ${QuarterLabel[item.quarter]}` : ''}
-                          </span>
-                        )}
-                        {item.recorded && (
-                          <Badge variant='secondary' className='bg-success/15 text-success'>
-                            録画済み
-                          </Badge>
-                        )}
-                        {item.badge === 'EXPIRING' && <Badge variant='destructive'>配信終了予定</Badge>}
-                      </div>
-                    </div>
-                  </Link>
-                  <Button
+                  表示中をすべて選択
+                </label>
+                <span className='tabular-nums'>
+                  <b className='font-bold text-foreground'>{selectedCount}</b> 件選択中
+                </span>
+                <div className='ml-auto inline-flex flex-wrap items-center gap-2 max-sm:ml-0 max-sm:w-full'>
+                  <button
                     type='button'
-                    size='sm'
-                    variant='ghost'
-                    onClick={() => onUnschedule(item.id)}
-                    disabled={unscheduleMutation.isPending}
-                    className='shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-                    aria-label={`${item.title} の予約を解除`}
+                    disabled={selectedCount === 0 || bulkUnscheduleMutation.isPending}
+                    onClick={requestBulkUnschedule}
+                    className='inline-flex h-7 items-center gap-1 rounded-md border border-border bg-background px-2.5 text-xs whitespace-nowrap text-destructive transition-colors hover:bg-status-cancelled focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring disabled:cursor-default disabled:opacity-45 disabled:hover:bg-background'
                   >
-                    <X />
-                    <span className='hidden sm:inline'>解除</span>
-                  </Button>
-                </li>
-              )
-            })}
-          </ul>
-        </>
+                    <svg
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2.2'
+                      strokeLinecap='round'
+                      className='size-[13px]'
+                      aria-hidden='true'
+                    >
+                      <path d='M6 6l12 12M18 6 6 18' />
+                    </svg>
+                    選択分を解除
+                  </button>
+                </div>
+              </div>
+
+              <RecordingsTable
+                items={anime}
+                selected={selected}
+                onToggleSelected={toggleSelected}
+                onUnschedule={(item) => onUnschedule(item.id)}
+                unschedulingId={unscheduleMutation.isPending ? (unscheduleMutation.variables ?? null) : null}
+                sort={sort}
+                onSortChange={setSort}
+              />
+
+              <div className='mt-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 text-xs text-muted-foreground'>
+                <ul className='inline-flex flex-wrap gap-x-3.5 gap-y-1' aria-label='行頭の色の凡例'>
+                  <li className='inline-flex items-center gap-1.5'>
+                    <i className='h-2 w-3 rounded-sm bg-success' />
+                    録画済み
+                  </li>
+                  <li className='inline-flex items-center gap-1.5'>
+                    <i className='h-2 w-3 rounded-sm bg-warning' />
+                    配信終了予定
+                  </li>
+                  <li className='inline-flex items-center gap-1.5'>
+                    <i className='h-2 w-3 rounded-sm bg-border' />
+                    未録画
+                  </li>
+                </ul>
+                <div className='flex items-center gap-2'>
+                  <span className='tabular-nums'>
+                    {rangeStart}–{rangeEnd} / {total} 件
+                  </span>
+                  <SmartPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       )}
 
-      <SmartPagination page={page} totalPages={totalPages} onPageChange={setPage} />
-    </div>
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className='sm:max-w-md'>
+          <DialogHeader>
+            <DialogTitle>選択した予約を解除しますか</DialogTitle>
+            <DialogDescription>
+              <span className='tabular-nums'>{selectedCount}</span>{' '}
+              件の予約を解除します。録画済みのファイルは削除されません。
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <button
+                  type='button'
+                  className='inline-flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs transition-colors hover:bg-muted'
+                >
+                  やめる
+                </button>
+              }
+            />
+            <button
+              type='button'
+              onClick={runBulkUnschedule}
+              className='inline-flex h-8 items-center rounded-md bg-destructive px-3 text-xs font-semibold text-white transition-opacity hover:opacity-90'
+            >
+              解除する
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </PageContainer>
   )
 }

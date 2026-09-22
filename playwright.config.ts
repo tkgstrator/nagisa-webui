@@ -12,7 +12,7 @@ export default defineConfig({
       name: 'local',
       use: {
         browserName: 'chromium',
-        baseURL: 'http://localhost:25173'
+        baseURL: 'http://localhost:14755'
       }
     },
     {
@@ -28,7 +28,7 @@ export default defineConfig({
     : {
         webServer: {
           command: 'bun run dev',
-          url: 'http://localhost:25173',
+          url: 'http://localhost:14755',
           reuseExistingServer: true,
           timeout: 60_000
         }

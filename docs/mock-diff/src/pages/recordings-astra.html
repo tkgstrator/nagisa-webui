@@ -1,0 +1,163 @@
+TITLE: Nagisa — 録画一覧 (astra 案)
+USES: app-header recordings-toolbar recording-row recordings-calendar empty-state pagination summary-stats app-footer
+---
+
+<div class="pg-shell">
+  <aside class="side">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メイン">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+
+    <div class="side-widget">
+      <h3>録画サマリ</h3>
+      <div class="side-stat"><span class="k">録画予約中</span><span class="v num">12</span></div>
+      <div class="side-stat ok"><span class="k">録画済み話数</span><span class="v num">63</span></div>
+      <div class="side-stat err"><span class="k">失敗あり</span><span class="v num">2</span></div>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg">
+
+      <div class="pg-head">
+        <div>
+          <h1>録画一覧</h1>
+          <p class="pg-sub num">最終更新 2分前 · 予約中 <b>12</b> 作品</p>
+        </div>
+        <label class="search">
+          <span class="sr">タイトルで検索</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" placeholder="タイトルで検索">
+        </label>
+      </div>
+
+      <div class="view-switch">
+        <div class="seg" role="group" aria-label="表示切替">
+          <button type="button" data-view="list" aria-pressed="true">一覧</button>
+          <button type="button" data-view="schedule" aria-pressed="false">週間スケジュール</button>
+        </div>
+      </div>
+
+      <div id="view-list">
+      <div class="filters">
+        <div class="seg" role="group" aria-label="録画状態">
+          <button type="button" aria-pressed="true">すべて</button>
+          <button type="button" aria-pressed="false">未録画</button>
+          <button type="button" aria-pressed="false">録画済み</button>
+        </div>
+        <button class="toggle-chip" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>
+          配信終了予定のみ
+        </button>
+        <button class="reset-link" type="button">条件をリセット</button>
+      </div>
+
+      <div class="ss-grid">
+        <div class="ss d-ok"><p class="k">放送中で予約</p><p class="v num">9</p></div>
+        <div class="ss d-mute"><p class="k">完結・保管</p><p class="v num">3</p></div>
+        <div class="ss d-warn"><p class="k">まもなく配信終了</p><p class="v num">2</p></div>
+        <div class="ss d-err"><p class="k">失敗あり</p><p class="v num">2</p></div>
+      </div>
+
+      <div class="selbar">
+        <label><input type="checkbox">表示中をすべて選択</label>
+        <span><span class="cnt num">2</span> 件選択中</span>
+        <button class="bulk-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg>選択した予約を解除</button>
+      </div>
+
+      <section class="pg-sec">
+        <div class="pg-sec-head"><h2 class="pg-sec-title">放送中</h2><span class="pg-sec-count num">9件</span></div>
+        <div class="rgrid">
+          <div class="rcard s-ok" style="--h:265;--i:0"><input type="checkbox" checked><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">星降る夜のアストロノーツ</span><span class="pbadge p-amazon">Prime Video</span></div><div class="rmeta-row"><span class="num">7/9話</span><div class="mini-strip"><span class="rec" style="flex:7"></span><span class="none" style="flex:2"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週木曜 24:00</div><div class="rfoot"><span>2分前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-err" style="--h:200;--i:1"><input type="checkbox" checked><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">サイレント・ハーモニクス</span><span class="pbadge p-hulu">Hulu</span></div><div class="rmeta-row"><span class="num">6/8話</span><div class="mini-strip"><span class="rec" style="flex:6"></span><span class="fail" style="flex:1"></span><span class="none" style="flex:1"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週火曜 23:30</div><div class="rfoot"><span class="exp">第7話の録画に失敗</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:40;--i:2"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">蒼き剣と忘れられた王国</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div><div class="rmeta-row"><span class="num">7/7話</span><div class="mini-strip"><span class="rec" style="flex:7"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週日曜 24:00</div><div class="rfoot"><span>18分前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-warn" style="--h:340;--i:3"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">魔法少女は残業しない</span><span class="pbadge p-netflix">Netflix</span></div><div class="rmeta-row"><span class="num">5/8話</span><div class="mini-strip"><span class="rec" style="flex:5"></span><span class="none" style="flex:3"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週月曜 21:00</div><div class="rfoot"><span class="exp">配信終了まで6日</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:150;--i:4"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">ぼくらの空中庭園</span><span class="pbadge p-abema">ABEMA</span></div><div class="rmeta-row"><span class="num">7/7話</span><div class="mini-strip"><span class="rec" style="flex:7"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>水曜配信</div><div class="rfoot"><span>41分前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:60;--i:5"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">猫と魔王とカフェラテ</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div><div class="rmeta-row"><span class="num">3/3話</span><div class="mini-strip"><span class="rec" style="flex:3"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週土曜 18:00</div><div class="rfoot"><span>1時間前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:240;--i:6"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">天空回廊アルカディア</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div><div class="rmeta-row"><span class="num">7/7話</span><div class="mini-strip"><span class="rec" style="flex:7"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週金曜 24:30</div><div class="rfoot"><span>2時間前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:110;--i:7"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">幽霊部員は今日も部活中</span><span class="pbadge p-abema">ABEMA</span></div><div class="rmeta-row"><span class="num">8/8話</span><div class="mini-strip"><span class="rec" style="flex:8"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>日曜配信</div><div class="rfoot"><span>3時間前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-warn" style="--h:15;--i:8"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">花咲く季節に君を待つ</span><span class="pbadge p-hulu">Hulu</span></div><div class="rmeta-row"><span class="num">2/2話</span><div class="mini-strip"><span class="rec" style="flex:2"></span></div></div><div class="rsched"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>毎週火曜 22:00</div><div class="rfoot"><span class="exp">配信終了まで3日</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        </div>
+      </section>
+
+      <section class="pg-sec">
+        <div class="pg-sec-head"><h2 class="pg-sec-title">完結</h2><span class="pg-sec-count num">3件</span></div>
+        <div class="rgrid">
+          <div class="rcard s-ok" style="--h:320;--i:9"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">双子探偵と真夜中の学園</span><span class="pbadge p-netflix">Netflix</span></div><div class="rmeta-row"><span class="num">12/12話</span><div class="mini-strip"><span class="rec" style="flex:12"></span></div></div><div class="rfoot"><span>1日前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:210;--i:10"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">放課後クロノスタシス</span><span class="pbadge p-abema">ABEMA</span></div><div class="rmeta-row"><span class="num">12/12話</span><div class="mini-strip"><span class="rec" style="flex:12"></span></div></div><div class="rfoot"><span>2日前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="rcard s-ok" style="--h:165;--i:11"><input type="checkbox"><div class="rthumb"><div class="art"></div></div><div class="rbody"><div class="rtitle-row"><span class="rtitle">辺境の錬金術師、今日も店番</span><span class="pbadge p-hulu">Hulu</span></div><div class="rmeta-row"><span class="num">13/13話</span><div class="mini-strip"><span class="rec" style="flex:13"></span></div></div><div class="rfoot"><span>5日前に更新</span></div></div><button class="unsched" type="button" aria-label="予約解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        </div>
+      </section>
+
+      <div class="pager">
+        <button type="button" disabled aria-label="前のページ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <span class="cur num"><b>1</b> / 1 ページ · 12件</span>
+        <button type="button" disabled aria-label="次のページ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+      </div>
+
+      <section id="view-schedule" class="week" hidden>
+        <div class="pg-sec-head"><h2 class="pg-sec-title">週間スケジュール</h2><span class="pg-sec-count num">放送中9作品</span></div>
+        <div class="week-grid">
+          <div class="week-col">
+            <div class="week-col-head">月<span class="week-col-cnt num">1件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">魔法少女は残業しない</span><span class="pbadge p-netflix">Netflix</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>21:00</div></div>
+          </div>
+          <div class="week-col">
+            <div class="week-col-head">火<span class="week-col-cnt num">2件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">サイレント・ハーモニクス</span><span class="pbadge p-hulu">Hulu</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>23:30</div></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">花咲く季節に君を待つ</span><span class="pbadge p-hulu">Hulu</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>22:00</div></div>
+          </div>
+          <div class="week-col">
+            <div class="week-col-head">水<span class="week-col-cnt num">1件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">ぼくらの空中庭園</span><span class="pbadge p-abema">ABEMA</span></div></div>
+          </div>
+          <div class="week-col">
+            <div class="week-col-head">木<span class="week-col-cnt num">1件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">星降る夜のアストロノーツ</span><span class="pbadge p-amazon">Prime Video</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>24:00</div></div>
+          </div>
+          <div class="week-col">
+            <div class="week-col-head">金<span class="week-col-cnt num">1件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">天空回廊アルカディア</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>24:30</div></div>
+          </div>
+          <div class="week-col">
+            <div class="week-col-head">土<span class="week-col-cnt num">1件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">猫と魔王とカフェラテ</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>18:00</div></div>
+          </div>
+          <div class="week-col">
+            <div class="week-col-head">日<span class="week-col-cnt num">2件</span></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">蒼き剣と忘れられた王国</span><span class="pbadge p-crunchyroll">Crunchyroll</span></div><div class="week-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>24:00</div></div>
+            <div class="week-item"><div class="week-title-row"><span class="week-title">幽霊部員は今日も部活中</span><span class="pbadge p-abema">ABEMA</span></div></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var listBtn = document.querySelector('.view-switch button[data-view="list"]');
+  var schedBtn = document.querySelector('.view-switch button[data-view="schedule"]');
+  var listView = document.getElementById('view-list');
+  var schedView = document.getElementById('view-schedule');
+  function show(view) {
+    var isList = view === 'list';
+    listView.hidden = !isList;
+    schedView.hidden = isList;
+    listBtn.setAttribute('aria-pressed', String(isList));
+    schedBtn.setAttribute('aria-pressed', String(!isList));
+  }
+  listBtn.addEventListener('click', function () { show('list'); });
+  schedBtn.addEventListener('click', function () { show('schedule'); });
+})();
+</script>

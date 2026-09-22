@@ -272,3 +272,14 @@ lambda/layers/
 # Local D1 backups (large sqlite snapshots)
 .backups/
 
+# 計測・解析の中間生成物 (scripts/analysis/ の出力先)
+.cache/
+
+
+# Local capture artefacts (playwright / mock-diff)
+/*-full.png
+screenshots/
+playwright-mcp.config.json
+
+# WireGuard profiles (contain private keys)
+.devcontainer/wireguard/*.conf

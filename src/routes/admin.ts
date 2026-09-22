@@ -1,6 +1,8 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { createPrismaClient } from '../lib/db'
 import { getAppLogger } from '../lib/logger'
+import { sendMessage } from '../lib/queue-routing'
+import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '../schemas/archive.dto'
 import type { Message } from '../schemas/message.dto'
 import { PaginatedUnidentifiedSchema, UnidentifiedListQuerySchema } from '../schemas/unidentified.dto'
 
@@ -8,21 +10,9 @@ const logger = getAppLogger('routes')
 
 type Bindings = {
   DB: D1Database
+  AMAZON_QUEUE: Queue<Message>
   SYNC_QUEUE: Queue<Message>
 }
-
-const EnqueueResponseSchema = z.object({
-  enqueued: z.number().int().min(0)
-})
-
-const ArchiveStatsResponseSchema = z.object({
-  totalAnime: z.number().int().min(0),
-  animeFullyArchived: z.number().int().min(0),
-  animeWithMissingKey: z.number().int().min(0),
-  totalEpisodes: z.number().int().min(0),
-  archivedEpisodes: z.number().int().min(0),
-  pendingEpisodes: z.number().int().min(0)
-})
 
 const admin = new OpenAPIHono<{ Bindings: Bindings }>()
 
@@ -35,7 +25,7 @@ admin.openapi(
     responses: {
       200: {
         description: 'キュー投入結果',
-        content: { 'application/json': { schema: EnqueueResponseSchema } }
+        content: { 'application/json': { schema: ArchiveEnqueueResponseSchema } }
       }
     }
   }),
@@ -50,7 +40,7 @@ admin.openapi(
         select: { id: true }
       })
       for (const anime of animes) {
-        await c.env.SYNC_QUEUE.send({ type: 'abema_archive', message: { animeId: anime.id } })
+        await sendMessage(c.env, { type: 'abema_archive', message: { animeId: anime.id } })
       }
       logger.info({ action: 'enqueue-abema-archive', count: animes.length })
       return c.json({ enqueued: animes.length }, 200)
@@ -69,7 +59,7 @@ admin.openapi(
     responses: {
       200: {
         description: 'archive 進捗',
-        content: { 'application/json': { schema: ArchiveStatsResponseSchema } }
+        content: { 'application/json': { schema: ArchiveStatsSchema } }
       }
     }
   }),

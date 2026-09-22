@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アニメ一覧 — fable 案 | Nagisa WebUI モック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- page skeleton (fable) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   衝突を避けるため骨格クラスは pg- 名前空間に統一する。 */
+
+.pg {
+  max-width: 1392px;
+  margin: 0 auto;
+  padding: 24px 24px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.pg > * { animation: fadeUp .5s ease both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .05s; }
+.pg > *:nth-child(3) { animation-delay: .1s; }
+.pg > *:nth-child(4) { animation-delay: .15s; }
+.pg > *:nth-child(5) { animation-delay: .2s; }
+.pg > *:nth-child(6) { animation-delay: .25s; }
+.pg > *:nth-child(7) { animation-delay: .3s; }
+.pg-narrow { max-width: 1280px; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 700; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- section ---------- */
+.pg-sec { display: flex; flex-direction: column; gap: 14px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pg-sec-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.pg-sec-count { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 40px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 68px;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.pg-link {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 3px 10px;
+  border-left: 3px solid var(--primary); padding: 12px 14px;
+  transition: background .15s ease;
+}
+.pg-link:hover { background: var(--muted); }
+.pg-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.pg-link svg { width: 16px; height: 16px; color: var(--muted-foreground); transition: transform .15s ease; }
+.pg-link:hover svg { transform: translateX(2px); }
+.pg-lt { font-size: 13.5px; font-weight: 600; }
+.pg-ld { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted-foreground); }
+.pg-link.pg-warn { border-left-color: var(--warning); }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 40px; gap: 30px; }
+  .pg-title { font-size: 20px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+/* ---------- component: app-header ---------- */
+@keyframes pulseDot { 50% { opacity: .25; } }
+
+.hdr {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklch, var(--background) 85%, transparent);
+  backdrop-filter: blur(8px);
+}
+.hdr-in { display: flex; align-items: center; gap: 24px; height: 56px; padding: 0 24px; max-width: 1440px; margin: 0 auto; }
+.brand { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+.brand-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--primary); display: grid; place-items: center; flex: none; }
+.brand-mark svg { width: 12px; height: 12px; fill: currentColor; color: var(--primary-foreground); }
+
+.nav { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+.nav a { color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; position: relative; padding: 4px 0; transition: color .15s; }
+.nav a:hover { color: var(--foreground); }
+.nav a.active { color: var(--foreground); font-weight: 600; }
+.nav a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+.nav-solo { display: inline-flex; padding: 14px 0; }
+.nav-solo a.active::after { bottom: 10px; }
+
+.count-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 16px; min-width: 16px; padding: 0 4px; border-radius: 999px;
+  background: var(--secondary); color: var(--secondary-foreground);
+  font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.count-pill.is-alert { background: color-mix(in oklch, var(--primary) 18%, transparent); color: var(--accent-foreground); }
+
+.search {
+  flex: 1; min-width: 0; max-width: 420px; margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+  height: 34px; padding: 0 12px; border-radius: 8px;
+  border: 1px solid var(--input); background: var(--background);
+  color: var(--muted-foreground); font-size: 13px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search:hover { border-color: var(--ring); }
+.search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
+.search svg { width: 14px; height: 14px; flex-shrink: 0; }
+.search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); color: var(--muted-foreground); }
+.search.has-value { color: var(--foreground); border-color: var(--input); }
+.search .clear { margin-left: auto; width: 16px; height: 16px; border-radius: 999px; background: var(--muted); color: var(--muted-foreground); display: grid; place-items: center; }
+.search .clear svg { width: 9px; height: 9px; }
+.search-solo { max-width: 320px; margin-left: 0; }
+
+.srv { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); font-size: 12px; flex-shrink: 0; }
+.srv i { width: 8px; height: 8px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.srv.is-checking i { background: var(--warning); }
+.srv.is-down i { background: var(--destructive); animation: none; }
+.srv.is-down { color: var(--destructive); }
+
+@media (max-width: 640px) {
+  .hdr-in { height: 52px; gap: 12px; padding: 0 14px; flex-wrap: wrap; }
+  .brand { font-size: 16px; }
+  .nav { gap: 14px; font-size: 13px; order: 3; width: 100%; padding-bottom: 8px; }
+  .nav a.active::after { bottom: -8px; }
+  .hdr-in { height: auto; padding-top: 10px; }
+  .search { margin-left: auto; max-width: none; flex: 1 1 100%; order: 2; }
+  .srv span { display: none; }
+}
+/* ---------- component: anime-card ---------- */
+/* ---------- anime card (tile) ---------- */
+.tile {
+  display: block; text-align: left; min-width: 0; border-radius: 8px;
+  animation: fadeUp .45s ease both;
+  transition: transform .22s cubic-bezier(.2,.8,.2,1);
+}
+.tile:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.tile:hover { transform: translateY(-3px); z-index: 1; }
+
+.poster {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(135deg, oklch(0.78 0.11 var(--h)) 0%, oklch(0.5 0.15 calc(var(--h) + 45)) 100%);
+  color: oklch(0.98 0.01 var(--h));
+  transition: box-shadow .22s;
+}
+.tile:hover .poster { box-shadow: 0 18px 34px -14px var(--overlay); }
+.poster::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 45%, var(--overlay) 100%);
+}
+.poster .art { position: absolute; inset: 0; transition: transform .25s ease; }
+.poster .art svg { position: absolute; right: -6%; top: -14%; width: 62%; height: auto; opacity: .22; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.poster .kana {
+  position: absolute; left: 10px; top: 8px;
+  font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+  opacity: .28; user-select: none;
+}
+.tile:hover .art { transform: scale(1.05); }
+
+.poster .prov {
+  position: absolute; left: 8px; bottom: 8px; z-index: 1;
+  display: inline-flex; align-items: center; height: 20px; padding: 0 7px;
+  border-radius: 5px; font-size: 11px; font-weight: 600;
+  backdrop-filter: blur(6px); background: var(--background);
+}
+.p-amazon .prov, .prov.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu .prov, .prov.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll .prov, .prov.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema .prov, .prov.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix .prov, .prov.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.poster .tag {
+  position: absolute; right: 0; top: 8px; z-index: 1;
+  height: 20px; padding: 0 8px 0 9px;
+  border-radius: 5px 0 0 5px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.tag-new { background: var(--info); color: var(--info-foreground); }
+.tag-added { background: var(--success); color: var(--success-foreground); }
+.tag-soon { background: var(--warning); color: var(--warning-foreground); }
+.tag-exp { background: var(--destructive); color: var(--destructive-foreground); }
+.tag .pulse { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.poster .ep {
+  position: absolute; right: 8px; bottom: 8px; z-index: 1;
+  font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums;
+  color: var(--overlay-foreground); opacity: .9;
+}
+
+.title {
+  margin: 8px 0 0; font-size: 13px; font-weight: 600; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  min-height: calc(13px * 1.35 * 2);
+}
+.tile:hover .title { color: var(--primary); }
+.meta { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11.5px; }
+.status { display: inline-flex; align-items: center; gap: 5px; height: 18px; padding: 0 7px; border-radius: 999px; font-weight: 600; }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.season { color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+
+/* 実際の並び (6 カラム) */
+.grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px 16px; }
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+}
+/* ---------- component: browse-filters ---------- */
+/* ---------- toolbar: filters + sort ---------- */
+.toolbar { padding: 10px 0 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.toolbar-row { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px 20px; flex: 1 1 auto; }
+.fgroup { display: flex; align-items: center; gap: 4px; }
+.fgroup .flabel { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-foreground); margin-right: 4px; white-space: nowrap; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 9px;
+  border-radius: 6px; font-size: 12px; white-space: nowrap;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.chip:hover { background: var(--muted); color: var(--foreground); }
+.chip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.chip[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .7; }
+.chip.p-amazon .dot { background: var(--brand-amazon-foreground); }
+.chip.p-hulu .dot { background: var(--brand-hulu-foreground); }
+.chip.p-crunchyroll .dot { background: var(--brand-crunchyroll-foreground); }
+.chip.p-abema .dot { background: var(--brand-abema-foreground); }
+.chip.p-netflix .dot { background: var(--brand-netflix-foreground); }
+.chip .cnt { font-size: 11px; opacity: .6; font-variant-numeric: tabular-nums; }
+
+.seg { display: inline-flex; padding: 2px; border-radius: 7px; background: var(--muted); gap: 2px; }
+.seg .chip { height: 22px; border-radius: 5px; padding: 0 8px; }
+.seg .chip:hover { background: var(--background); }
+.seg .chip[aria-pressed="true"] { background: var(--background); color: var(--foreground); box-shadow: 0 1px 2px var(--overlay); }
+
+.sort { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
+.sort select {
+  height: 28px; padding: 0 26px 0 10px;
+  border: 1px solid var(--input); border-radius: 6px;
+  background: var(--background); color: var(--foreground);
+  appearance: none; -webkit-appearance: none; font-size: 12px;
+}
+.sort select:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.sort .sel { position: relative; }
+.sort .sel svg { position: absolute; right: 8px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
+
+@media (max-width: 640px) {
+  .filters { gap: 6px 12px; }
+  .fgroup { flex-wrap: wrap; }
+  .seg { flex-wrap: wrap; }
+}
+
+.sort-lbl { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; }
+/* ---------- component: filter-chips ---------- */
+/* ---------- active filter chips ---------- */
+.active { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
+.active .lbl { color: var(--muted-foreground); }
+.active .hits { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.achip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 0 4px 0 9px;
+  border-radius: 6px; font-size: 12px;
+  background: var(--secondary); color: var(--secondary-foreground);
+}
+.achip .k { color: var(--muted-foreground); }
+.achip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.achip.p-amazon .dot { background: var(--brand-amazon-foreground); }
+.achip.p-hulu .dot { background: var(--brand-hulu-foreground); }
+.achip.p-crunchyroll .dot { background: var(--brand-crunchyroll-foreground); }
+.achip.p-abema .dot { background: var(--brand-abema-foreground); }
+.achip.p-netflix .dot { background: var(--brand-netflix-foreground); }
+.achip button { width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; color: var(--muted-foreground); }
+.achip button:hover { background: var(--border); color: var(--foreground); }
+.achip button:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+.achip svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+/* 検索語だけは由来が違うので囲み方を変える */
+.achip.is-query { background: var(--accent); color: var(--accent-foreground); }
+.achip.is-query .k { color: inherit; opacity: .65; }
+
+.reset { color: var(--muted-foreground); font-size: 12px; padding: 4px 8px; border-radius: 6px; margin-left: 4px; }
+.reset:hover { background: var(--muted); color: var(--foreground); }
+.reset:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+
+.empty-line { color: var(--muted-foreground); font-size: 12px; }
+
+@media (max-width: 640px) {
+  .active .hits { margin-left: 0; width: 100%; }
+}
+/* ---------- component: anime-drawer ---------- */
+
+
+/* ---------- detail drawer ---------- */
+.drawer {
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 2;
+  width: min(420px, 92%);
+  background: var(--popover); color: var(--popover-foreground);
+  border-left: 1px solid var(--border);
+  box-shadow: -24px 0 48px -24px var(--overlay);
+  overflow-y: auto;
+  animation: slideIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes slideIn { from { transform: translateX(105%); } to { transform: none; } }
+.drawer.is-standalone { position: static; width: 100%; border-left: 0; box-shadow: none; border: 1px solid var(--border); border-radius: 10px; animation: none; }
+
+.drawer-hero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.drawer-hero .art { position: absolute; inset: 0; background: linear-gradient(135deg, oklch(0.78 0.11 var(--h, 265)) 0%, oklch(0.5 0.15 calc(var(--h, 265) + 45)) 100%); }
+.drawer-hero .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--overlay) 0%, transparent 55%); }
+.drawer-hero .kana { position: absolute; right: 14px; top: 10px; font-size: 40px; font-weight: 800; color: oklch(1 0 0); opacity: .2; letter-spacing: .08em; }
+.drawer-hero .prov {
+  position: absolute; left: 12px; bottom: 12px; z-index: 1;
+  height: 22px; padding: 0 9px; border-radius: 5px;
+  display: inline-flex; align-items: center; font-size: 11px; font-weight: 600;
+  background: var(--brand-amazon); color: var(--brand-amazon-foreground);
+  backdrop-filter: blur(4px);
+}
+.p-hulu .drawer-hero .prov { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll .drawer-hero .prov { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema .drawer-hero .prov { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix .drawer-hero .prov { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.drawer-close {
+  position: absolute; top: 12px; right: 12px; z-index: 1;
+  width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--overlay); color: var(--overlay-foreground);
+  transition: background .15s;
+}
+.drawer-close:hover { background: var(--foreground); }
+.drawer-close:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.drawer-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.drawer-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.drawer-body h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.drawer-status { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.drawer-status .season { color: var(--muted-foreground); }
+
+.drawer-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; font-size: 12.5px; margin: 0; }
+.drawer-facts dt { color: var(--muted-foreground); }
+.drawer-facts dd { margin: 2px 0 0; font-weight: 500; }
+.drawer-desc { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+.drawer-desc.is-clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+
+.drawer-actions { display: flex; gap: 8px; margin-top: 4px; }
+.dbtn {
+  flex: 1; height: 36px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--primary); color: var(--primary-foreground); transition: opacity .15s;
+}
+.dbtn:hover { opacity: .88; }
+.dbtn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.dbtn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.dbtn.outline { background: transparent; border: 1px solid var(--border); color: var(--foreground); }
+.dbtn.outline:hover { background: var(--muted); opacity: 1; }
+.dbtn.on { background: var(--success); color: var(--success-foreground); }
+.dbtn.busy { background: var(--muted); color: var(--muted-foreground); pointer-events: none; }
+.dbtn.busy svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.dbtn.fail { background: var(--destructive); color: var(--destructive-foreground); }
+
+.drawer-eps { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.drawer-eps h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); font-weight: 600; margin: 0 0 2px; }
+.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 6px; border-left: 3px solid transparent; }
+.epline:hover { background: var(--muted); }
+.epline .n { color: var(--muted-foreground); font-variant-numeric: tabular-nums; width: 42px; flex: none; }
+.epline .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.epline .rec { margin-left: auto; font-size: 11px; color: var(--muted-foreground); flex: none; }
+.epline.is-done { border-left-color: var(--success); }
+.epline.is-done .rec { color: var(--success); }
+.epline.is-rec { border-left-color: var(--info); }
+.epline.is-rec .rec { color: var(--info); }
+.epline.is-fail { border-left-color: var(--destructive); }
+.epline.is-fail .rec { color: var(--destructive); }
+
+@media (max-width: 640px) {
+  .drawer { width: 100%; }
+  .drawer-facts { grid-template-columns: 1fr; }
+  .drawer-actions { flex-wrap: wrap; }
+}
+/* ---------- page scrim (ページ合成時にドロワー背後へ敷く) ---------- */
+.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.drawer:target ~ .drawer-scrim { opacity: 1; visibility: visible; }
+/* ---------- component: pagination ---------- */
+/* ---------- chips / segmented ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 9px;
+  border-radius: 6px; font-size: 12px; white-space: nowrap;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.chip:hover { background: var(--muted); color: var(--foreground); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.seg { display: inline-flex; padding: 2px; border-radius: 7px; background: var(--muted); gap: 2px; }
+.seg .chip { height: 22px; border-radius: 5px; padding: 0 8px; font-variant-numeric: tabular-nums; }
+.seg .chip:hover { background: var(--background); }
+.seg .chip[aria-pressed="true"] { background: var(--background); color: var(--foreground); box-shadow: 0 1px 2px var(--overlay); }
+
+/* ---------- pagination ---------- */
+.pager { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.pager .range { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pager .range b { color: var(--foreground); font-weight: 600; }
+.pages { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.pnum {
+  min-width: 32px; height: 32px; padding: 0 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 6px; font-size: 13px; font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  transition: background .12s, color .12s;
+}
+.pnum:hover { background: var(--muted); color: var(--foreground); }
+.pnum:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.pnum[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.pnum[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+.pnum svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pnum.ellipsis { pointer-events: none; }
+.perpage { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
+@media (max-width: 640px) {
+  .pager { gap: 10px; }
+  .pages { margin-left: 0; width: 100%; justify-content: space-between; }
+  .hide-m { display: none; }
+}
+
+/* 凡例とページャを両端に置く一覧の脚 */
+.foot { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; font-size: 12px; color: var(--muted-foreground); }
+/* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
+.ftr {
+  padding: 20px 16px; text-align: center;
+  font-size: 11px; color: var(--muted-foreground);
+  border-top: 1px solid var(--border);
+}
+.ftr a { transition: color .12s; }
+.ftr a:hover { color: var(--foreground); }
+.ftr .build { display: inline-flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums; }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.ftr p { margin-top: 2px; }
+.ftr .sep { opacity: .5; margin: 0 6px; }
+.ftr .links { margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 640px) {
+  .ftr { padding: 16px 12px; }
+  .ftr .build { flex-wrap: wrap; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>Nagisa</a>
+    <nav class="nav">
+      <a href="#">ホーム</a>
+      <a class="active" href="#">一覧</a>
+      <a href="#">録画 <span class="count-pill num">16</span></a>
+    </nav>
+    <div class="search" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span>作品を検索</span><kbd>/</kbd>
+    </div>
+    <div class="srv" title="サーバー稼働中"><i></i><span>稼働中</span></div>
+  </div>
+</header>
+
+<main class="pg">
+
+  <div class="pg-head">
+    <div>
+      <h1 class="pg-title">アニメ一覧</h1>
+      <p class="pg-sub num"><b>287</b> 件中 <b>142</b> 件に絞り込み中</p>
+    </div>
+    <div class="pg-headctl">
+      <div class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" placeholder="タイトルで検索" aria-label="タイトル検索" value="">
+        <kbd>/</kbd>
+      </div>
+    </div>
+  </div>
+
+  <section class="toolbar" aria-label="絞り込みと並び替え">
+    <div class="toolbar-row">
+      <div class="sort">
+        <span class="sort-lbl">並び替え</span>
+        <div class="sel">
+          <select aria-label="並び替え">
+            <option>タイトル 昇順</option>
+            <option>タイトル 降順</option>
+            <option selected>リリース年 新しい順</option>
+            <option>リリース年 古い順</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="fgroup" role="group" aria-label="配信元">
+          <span class="flabel">配信元</span>
+          <button class="chip" aria-pressed="true">すべて</button>
+          <button class="chip p-amazon" aria-pressed="false"><span class="dot"></span>Prime Video <span class="cnt">84</span></button>
+          <button class="chip p-hulu" aria-pressed="false"><span class="dot"></span>Hulu <span class="cnt">41</span></button>
+          <button class="chip p-crunchyroll" aria-pressed="false"><span class="dot"></span>Crunchyroll <span class="cnt">67</span></button>
+          <button class="chip p-abema" aria-pressed="false"><span class="dot"></span>ABEMA <span class="cnt">59</span></button>
+          <button class="chip p-netflix" aria-pressed="false"><span class="dot"></span>Netflix <span class="cnt">36</span></button>
+        </div>
+
+        <div class="fgroup" role="group" aria-label="年">
+          <span class="flabel">年</span>
+          <div class="seg">
+            <button class="chip num" aria-pressed="false">すべて</button>
+            <button class="chip num" aria-pressed="true">2026</button>
+            <button class="chip num" aria-pressed="false">2025</button>
+            <button class="chip num" aria-pressed="false">2024</button>
+            <button class="chip num" aria-pressed="false">2023</button>
+            <button class="chip num" aria-pressed="false">2022</button>
+          </div>
+        </div>
+
+        <div class="fgroup" role="group" aria-label="クール">
+          <span class="flabel">クール</span>
+          <div class="seg">
+            <button class="chip" aria-pressed="false">すべて</button>
+            <button class="chip" aria-pressed="false">冬</button>
+            <button class="chip" aria-pressed="true">春</button>
+            <button class="chip" aria-pressed="false">夏</button>
+            <button class="chip" aria-pressed="false">秋</button>
+          </div>
+        </div>
+
+        <div class="fgroup" role="group" aria-label="ステータス">
+          <span class="flabel">ステータス</span>
+          <button class="chip" aria-pressed="true">すべて</button>
+          <button class="chip" aria-pressed="false">放送中</button>
+          <button class="chip" aria-pressed="false">完結</button>
+          <button class="chip" aria-pressed="false">未放送</button>
+          <button class="chip" aria-pressed="false">休止</button>
+          <button class="chip" aria-pressed="false">中止</button>
+        </div>
+
+        <div class="fgroup" role="group" aria-label="バッジ">
+          <span class="flabel">バッジ</span>
+          <button class="chip" aria-pressed="true">すべて</button>
+          <button class="chip" aria-pressed="false">新着エピソード</button>
+          <button class="chip" aria-pressed="false">新着追加</button>
+          <button class="chip" aria-pressed="false">配信予定</button>
+          <button class="chip" aria-pressed="false">配信終了予定</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="active" aria-label="適用中のフィルタ">
+    <span class="lbl">適用中</span>
+    <span class="achip"><span class="k">年</span><span class="num">2026</span><button aria-label="2026年 を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+    <span class="achip"><span class="k">クール</span>春<button aria-label="春 を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>
+    <button class="reset">すべて解除</button>
+  </div>
+
+  <div class="grid">
+
+    <a class="tile p-amazon" href="#drawer-1" style="--h: 265">
+      <div class="poster">
+        <div class="art"><span class="kana">星降</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 6 6.6.5-5 4.3 1.6 6.4L12 16.8 6.4 20.2 8 13.8 3 9.5l6.6-.5z"/></svg></div>
+        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="prov">Prime Video</span>
+        <span class="ep">第 8 話</span>
+      </div>
+      <p class="title">星降る夜のアストロノーツ</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-crunchyroll" href="#" style="--h: 40">
+      <div class="poster">
+        <div class="art"><span class="kana">蒼剣</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6-9 9-6-6zM5 19l-2 2M9 13l2 2"/></svg></div>
+        <span class="prov">Crunchyroll</span>
+        <span class="ep">第 7 話</span>
+      </div>
+      <p class="title">蒼き剣と忘れられた王国</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-netflix" href="#" style="--h: 340">
+      <div class="poster">
+        <div class="art"><span class="kana">魔女</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div>
+        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="prov">Netflix</span>
+        <span class="ep">第 8 話</span>
+      </div>
+      <p class="title">魔法少女は残業しない</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-abema" href="#" style="--h: 150">
+      <div class="poster">
+        <div class="art"><span class="kana">空庭</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c4-8 12-8 16 0M12 4v6M8 8l4-4 4 4"/></svg></div>
+        <span class="prov">ABEMA</span>
+        <span class="ep">第 7 話</span>
+      </div>
+      <p class="title">ぼくらの空中庭園</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-crunchyroll" href="#" style="--h: 60">
+      <div class="poster">
+        <div class="art"><span class="kana">猫魔</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11zM9 14h.01M15 14h.01"/></svg></div>
+        <span class="tag tag-added">新着追加</span>
+        <span class="prov">Crunchyroll</span>
+        <span class="ep">第 3 話</span>
+      </div>
+      <p class="title">猫と魔王とカフェラテ</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-hulu" href="#" style="--h: 200">
+      <div class="poster">
+        <div class="art"><span class="kana">静音</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></div>
+        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="prov">Hulu</span>
+        <span class="ep">第 8 話</span>
+      </div>
+      <p class="title">サイレント・ハーモニクス</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-crunchyroll" href="#" style="--h: 240">
+      <div class="poster">
+        <div class="art"><span class="kana">天空</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18M6 18V9l6-5 6 5v9M10 18v-5h4v5"/></svg></div>
+        <span class="prov">Crunchyroll</span>
+        <span class="ep">第 7 話</span>
+      </div>
+      <p class="title">天空回廊アルカディア</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-abema" href="#" style="--h: 110">
+      <div class="poster">
+        <div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2zM10 11h.01M14 11h.01"/></svg></div>
+        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="prov">ABEMA</span>
+        <span class="ep">第 8 話</span>
+      </div>
+      <p class="title">幽霊部員は今日も部活中</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-crunchyroll" href="#" style="--h: 90">
+      <div class="poster">
+        <div class="art"><span class="kana">剣聖</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l6-6M14 4l6 6-8 8-6-6zM3 21l3-3"/></svg></div>
+        <span class="prov">Crunchyroll</span>
+        <span class="ep">第 7 話</span>
+      </div>
+      <p class="title">剣聖見習いのスローライフ</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-hulu" href="#" style="--h: 15">
+      <div class="poster">
+        <div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M15 15l3 3M6 18l3-3M15 9l3-3"/></svg></div>
+        <span class="tag tag-added">新着追加</span>
+        <span class="prov">Hulu</span>
+        <span class="ep">第 2 話</span>
+      </div>
+      <p class="title">花咲く季節に君を待つ</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-abema" href="#" style="--h: 290">
+      <div class="poster">
+        <div class="art"><span class="kana">月面</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3a8 8 0 1 0 7 11 6 6 0 0 1-7-11z"/></svg></div>
+        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="prov">ABEMA</span>
+        <span class="ep">第 8 話</span>
+      </div>
+      <p class="title">月面基地ガールズ</p>
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div>
+    </a>
+
+    <a class="tile p-netflix" href="#" style="--h: 320">
+      <div class="poster">
+        <div class="art"><span class="kana">双子</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 20a6 6 0 0 1 12 0M12 20a5 5 0 0 1 9 0"/></svg></div>
+        <span class="prov">Netflix</span>
+        <span class="ep num">全 12 話</span>
+      </div>
+      <p class="title">双子探偵と真夜中の学園</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2026 冬</span></div>
+    </a>
+
+    <a class="tile p-amazon" href="#" style="--h: 180">
+      <div class="poster">
+        <div class="art"><span class="kana">電脳</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8h5v12M9 20v-6h6v6M15 20V4h5v16"/></svg></div>
+        <span class="tag tag-soon">配信予定</span>
+        <span class="prov">Prime Video</span>
+        <span class="ep">7 月 3 日〜</span>
+      </div>
+      <p class="title">電脳都市シンドローム</p>
+      <div class="meta"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div>
+    </a>
+
+    <a class="tile p-abema" href="#" style="--h: 210">
+      <div class="poster">
+        <div class="art"><span class="kana">放課</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg></div>
+        <span class="prov">ABEMA</span>
+        <span class="ep num">全 12 話</span>
+      </div>
+      <p class="title">放課後クロノスタシス</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2026 冬</span></div>
+    </a>
+
+    <a class="tile p-netflix" href="#" style="--h: 250">
+      <div class="poster">
+        <div class="art"><span class="kana">灰色</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c0-6 4-10 8-10s8 4 8 10M8 18h8M12 3v3"/></svg></div>
+        <span class="prov">Netflix</span>
+        <span class="ep">第 5 話で休止</span>
+      </div>
+      <p class="title">灰色の楽園</p>
+      <div class="meta"><span class="status s-hiatus">休止</span><span class="season">2026 冬</span></div>
+    </a>
+
+    <a class="tile p-amazon" href="#" style="--h: 30">
+      <div class="poster">
+        <div class="art"><span class="kana">錆星</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.8 5.6H20l-5 3.6 1.9 5.8L12 13.5 7.1 17l1.9-5.8-5-3.6h6.2z"/></svg></div>
+        <span class="tag tag-soon">配信予定</span>
+        <span class="prov">Prime Video</span>
+        <span class="ep">10 月〜</span>
+      </div>
+      <p class="title">錆びた星の子守唄</p>
+      <div class="meta"><span class="status s-not-yet">未放送</span><span class="season">2026 秋</span></div>
+    </a>
+
+    <a class="tile p-amazon" href="#" style="--h: 130">
+      <div class="poster">
+        <div class="art"><span class="kana">魔導</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3zM5 4v19M9 9h5M9 13h5"/></svg></div>
+        <span class="tag tag-soon">配信予定</span>
+        <span class="prov">Prime Video</span>
+        <span class="ep">7 月 10 日〜</span>
+      </div>
+      <p class="title">最強の魔導書は喋りすぎる</p>
+      <div class="meta"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div>
+    </a>
+
+    <a class="tile p-hulu" href="#" style="--h: 165">
+      <div class="poster">
+        <div class="art"><span class="kana">辺境</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v5l4 9a3 3 0 0 1-3 4H8a3 3 0 0 1-3-4l4-9zM8 15h8"/></svg></div>
+        <span class="prov">Hulu</span>
+        <span class="ep num">全 13 話</span>
+      </div>
+      <p class="title">辺境の錬金術師、今日も店番</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div>
+    </a>
+
+    <a class="tile p-netflix" href="#" style="--h: 355">
+      <div class="poster">
+        <div class="art"><span class="kana">白夜</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></div>
+        <span class="prov">Netflix</span>
+        <span class="ep num">全 12 話</span>
+      </div>
+      <p class="title">白夜のレクイエム</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div>
+    </a>
+
+    <a class="tile p-amazon" href="#" style="--h: 75">
+      <div class="poster">
+        <div class="art"><span class="kana">転生</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 5v14M12 5v14M16 5v14"/></svg></div>
+        <span class="prov">Prime Video</span>
+        <span class="ep num">全 12 話</span>
+      </div>
+      <p class="title">転生したら図書館だった件</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2025 夏</span></div>
+    </a>
+
+    <a class="tile p-hulu" href="#" style="--h: 225">
+      <div class="poster">
+        <div class="art"><span class="kana">終末</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M6 16V7h12v9M9 10h2M13 10h2M7 20l1-4M17 20l-1-4"/></svg></div>
+        <span class="tag tag-exp">配信終了予定</span>
+        <span class="prov">Hulu</span>
+        <span class="ep num">全 12 話</span>
+      </div>
+      <p class="title">終末列車の乗客たち</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2025 春</span></div>
+    </a>
+
+    <a class="tile p-netflix" href="#" style="--h: 0">
+      <div class="poster">
+        <div class="art"><span class="kana">鉄血</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></div>
+        <span class="tag tag-exp">配信終了予定</span>
+        <span class="prov">Netflix</span>
+        <span class="ep num">全 24 話</span>
+      </div>
+      <p class="title">鉄血のヴァルキュリア</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div>
+    </a>
+
+    <a class="tile p-abema" href="#" style="--h: 195">
+      <div class="poster">
+        <div class="art"><span class="kana">深海</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c3-3 6-3 9 0s6 3 9 0M3 17c3-3 6-3 9 0s6 3 9 0M3 7c3-3 6-3 9 0s6 3 9 0"/></svg></div>
+        <span class="prov">ABEMA</span>
+        <span class="ep">第 4 話で中止</span>
+      </div>
+      <p class="title">深海メトロポリス</p>
+      <div class="meta"><span class="status s-cancelled">中止</span><span class="season">2025 冬</span></div>
+    </a>
+
+    <a class="tile p-abema" href="#" style="--h: 50">
+      <div class="poster">
+        <div class="art"><span class="kana">受付</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20V10h18v10M3 10l9-6 9 6M8 20v-5h8v5"/></svg></div>
+        <span class="prov">ABEMA</span>
+        <span class="ep num">全 12 話</span>
+      </div>
+      <p class="title">冒険者ギルドの受付嬢</p>
+      <div class="meta"><span class="status s-finished">完結</span><span class="season">2024 秋</span></div>
+    </a>
+
+  </div>
+
+  <!-- 詳細ドロワー (CSS :target のみで開閉・画面遷移せず概要確認できることのデモ用に1件のみ実装) -->
+  <div id="drawer-1" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-1-title">
+    <div class="drawer-hero" style="--h: 265">
+      <div class="art" style="position:absolute;inset:0;background:linear-gradient(135deg, oklch(0.78 0.11 265) 0%, oklch(0.5 0.15 310) 100%); color: oklch(0.98 0.01 265)">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="position:absolute;right:-6%;top:-14%;width:62%;opacity:.22;fill:none;stroke:currentColor;stroke-width:1.4"><path d="M12 3l2.4 6 6.6.5-5 4.3 1.6 6.4L12 16.8 6.4 20.2 8 13.8 3 9.5l6.6-.5z"/></svg>
+      </div>
+      <a class="drawer-close" href="#" aria-label="閉じる"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    </div>
+    <div class="drawer-body">
+      <div class="meta"><span class="status s-releasing">放送中</span><span class="prov p-amazon">Prime Video</span></div>
+      <h2 id="drawer-1-title">星降る夜のアストロノーツ</h2>
+      <p class="drawer-desc">宇宙飛行士訓練校に入学した主人公が、仲間たちと共に未知の軌道ステーションの謎に挑む青春SF。第2クールでは新たな星域が舞台に。</p>
+      <dl class="drawer-facts">
+        <div><dt>放送情報</dt><dd>2026年 春クール · 毎週土曜 22:30</dd></div>
+        <div><dt>話数 / 尺</dt><dd class="num">全 12 話 · 24 分</dd></div>
+        <div><dt>配信済み</dt><dd class="num">8 / 12 話</dd></div>
+        <div><dt>録画状態</dt><dd class="num">7 / 8 話 録画済み</dd></div>
+      </dl>
+      <div class="drawer-actions">
+        <a class="dbtn" href="#anime">詳細を見る</a>
+        <button class="dbtn outline">録画予約する</button>
+      </div>
+    </div>
+  </div>
+  <a class="drawer-scrim" href="#" aria-hidden="true" tabindex="-1"></a>
+
+  <nav class="pager" aria-label="ページネーション">
+    <div class="range"><b>1–24</b> / 142 件</div>
+    <div class="perpage">
+      表示件数
+      <div class="seg">
+        <button class="chip" aria-pressed="true">24</button>
+        <button class="chip" aria-pressed="false">48</button>
+        <button class="chip" aria-pressed="false">96</button>
+      </div>
+    </div>
+    <div class="pages">
+      <a class="pnum" href="#" aria-disabled="true" aria-label="前のページ"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-m">前へ</span></a>
+      <a class="pnum" href="#" aria-current="page">1</a>
+      <a class="pnum" href="#">2</a>
+      <a class="pnum" href="#">3</a>
+      <a class="pnum hide-m" href="#">4</a>
+      <a class="pnum hide-m" href="#">5</a>
+      <span class="pnum ellipsis">…</span>
+      <a class="pnum" href="#">6</a>
+      <a class="pnum" href="#" aria-label="次のページ"><span class="hide-m">次へ</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div>
+  </nav>
+
+</main>
+
+<footer class="ftr">
+  <a class="build" href="#changelog"><span>v0.3.9</span><span class="sha">319250c</span><span>2026/09/18 13:04:00</span></a>
+  <p class="links"><span>&copy; 2026 Nagisa</span><span class="sep">·</span><a href="#admin">管理</a><span class="sep">·</span><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></p>
+</footer>
+</body>
+</html>

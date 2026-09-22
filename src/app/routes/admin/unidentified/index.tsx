@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { ProviderBadge } from '@/app/components/anime-badges'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
+import { PageContainer } from '@/app/components/page-container'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { SmartPagination } from '@/app/components/smart-pagination'
 import { Button } from '@/app/components/ui/button'
@@ -14,9 +15,8 @@ import { unidentifiedListQueryOptions } from '@/app/lib/query-options'
 import { getProviderTitleUrl } from '@/app/routes/anime/$id/-lib/format'
 import { FilterPopover } from '@/app/routes/browse/-components/filter-popover'
 import { SearchBar } from '@/app/routes/browse/-components/search-bar'
+import { readSettings, useSettings } from '@/app/routes/settings/-lib/settings'
 import { ProviderTypeEnum } from '@/schemas/message.dto'
-
-const PAGE_SIZE = 30
 
 const Order = z.enum(['asc', 'desc'])
 
@@ -43,7 +43,7 @@ export const Route = createFileRoute('/admin/unidentified/')({
     queryClient.ensureQueryData(
       unidentifiedListQueryOptions({
         page: 1,
-        limit: PAGE_SIZE,
+        limit: readSettings().pageSize,
         provider: deps.provider,
         q: deps.q,
         order: deps.order
@@ -57,11 +57,12 @@ function UnidentifiedAdminPage() {
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
   const [page, setPage] = useState(1)
+  const { settings } = useSettings()
 
   const { data } = useQuery({
     ...unidentifiedListQueryOptions({
       page,
-      limit: PAGE_SIZE,
+      limit: settings.pageSize,
       provider: search.provider,
       q: search.q,
       order: search.order
@@ -81,7 +82,7 @@ function UnidentifiedAdminPage() {
   const toggleOrder = () => updateSearch({ order: search.order === 'desc' ? 'asc' : 'desc' })
 
   return (
-    <div className='space-y-6'>
+    <PageContainer className='gap-6'>
       <div>
         <h1 className='text-2xl font-bold tracking-tight'>未識別タイトル一覧</h1>
         <p className='mt-1 text-sm text-muted-foreground'>AniList で識別できなかった {total} 件のタイトル</p>
@@ -116,7 +117,7 @@ function UnidentifiedAdminPage() {
                     <ProxyImage
                       src={item.imageUrl}
                       alt={item.title}
-                      width={480}
+                      slotWidth={400}
                       className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-105'
                     />
                   ) : (
@@ -150,6 +151,6 @@ function UnidentifiedAdminPage() {
       )}
 
       {totalPages > 1 && <SmartPagination page={page} totalPages={totalPages} onPageChange={setPage} />}
-    </div>
+    </PageContainer>
   )
 }

@@ -1,0 +1,160 @@
+TITLE: 詳細ドロワー
+---
+<header class="cat-head">
+  <h1>詳細ドロワー <span class="cat-id">anime-drawer</span></h1>
+  <p>右からの引き出しではなく、配信サービスのプレビューと同じ中央のモーダルにする。一覧のタイルが拡大してそのまま開いたように見せたいので、上半分は 16:9 のビジュアルをそのまま使い、タイトルと配信元は画像の上に重ねる。狭い画面ではボトムシートとして下から出す。</p>
+  <div class="cat-meta">
+    <span>幅 <code>min(560px, 90vw)</code></span>
+    <span>角丸 <code>16px</code></span>
+    <span>mobile は下から <code>sheetIn</code></span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>開いた状態 <span class="cat-hint">背後はぼかして沈める</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="stage">
+      <div class="behind" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="scrim" aria-hidden="true"></div>
+      <div class="modal p-amazon" role="dialog" aria-label="星降る夜のアストロノーツ">
+        <div class="mhero">
+          <div class="art" style="--h: 265"></div>
+          <span class="kana">星降る夜</span>
+          <button class="mclose" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <div class="over">
+            <h2>星降る夜のアストロノーツ</h2>
+            <div class="line"><span class="prov">Prime Video</span><span class="status s-releasing">放送中</span><span class="season">2026 春 · 全 24 話</span></div>
+          </div>
+        </div>
+        <div class="mbody">
+          <div class="mactions">
+            <button class="mbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button>
+            <button class="mbtn ghost" type="button">詳細を開く</button>
+            <button class="mbtn icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button>
+          </div>
+          <div class="mprog">
+            <div class="top"><span>録画済み</span><b class="num">8</b><span>/ 24 話</span><span class="pct num">33%</span></div>
+            <div class="bar"><span class="is-partial" style="width: 33%"></span></div>
+          </div>
+          <p class="mdesc">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。やがて空から降ってきたものが、忘れられた計画の残骸だと分かったとき、少年は地上に降りる決意をする。</p>
+          <dl class="mfacts">
+            <div><dt>総再生時間</dt><dd>9 時間 36 分</dd></div>
+            <div><dt>最終更新</dt><dd>09/17 04:12</dd></div>
+            <div><dt>次の話</dt><dd>09/20 24:00</dd></div>
+          </dl>
+          <div class="mprovs">
+            <h3>ほかの配信元</h3>
+            <div class="row"><span class="prov" style="background: var(--brand-hulu); color: var(--brand-hulu-foreground)">Hulu</span><span class="prov" style="background: var(--brand-abema); color: var(--brand-abema-foreground)">ABEMA</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>中身のバリエーション <span class="cat-hint">舞台から出して単体で並べる</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w320"><span class="cat-label is-key">予約済み + 全話録画済み</span>
+      <div class="modal is-standalone p-netflix" role="dialog" aria-label="蒼海のリフレイン">
+        <div class="mhero">
+          <div class="art" style="--h: 210"></div>
+          <span class="kana">蒼海</span>
+          <button class="mclose" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <div class="over">
+            <h2>蒼海のリフレイン</h2>
+            <div class="line"><span class="prov">Netflix</span><span class="status s-finished">完結</span><span class="season">2025 秋</span></div>
+          </div>
+        </div>
+        <div class="mbody">
+          <div class="mactions">
+            <button class="mbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button>
+            <button class="mbtn ghost" type="button">詳細</button>
+          </div>
+          <div class="mprog">
+            <div class="top"><span>録画済み</span><b class="num">13</b><span>/ 13 話</span><span class="pct num">100%</span></div>
+            <div class="bar"><span style="width: 100%"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w320"><span class="cat-label">未放送 <small>(進捗バーは出さない)</small></span>
+      <div class="modal is-standalone p-abema" role="dialog" aria-label="ひだまり商店街の観測日誌">
+        <div class="mhero">
+          <div class="art" style="--h: 130"></div>
+          <span class="kana">日誌</span>
+          <button class="mclose" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <div class="over">
+            <h2>ひだまり商店街の観測日誌</h2>
+            <div class="line"><span class="prov">ABEMA</span><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div>
+          </div>
+        </div>
+        <div class="mbody">
+          <div class="mactions">
+            <button class="mbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>配信開始時に録画</button>
+            <button class="mbtn ghost" type="button">詳細</button>
+          </div>
+          <p class="mdesc">閉店の決まった商店街に、なぜか毎日同じ時刻だけ日が差す一角がある。その理由を測りにきた大学生の記録。</p>
+          <dl class="mfacts"><div><dt>配信開始</dt><dd>2026/07/04</dd></div></dl>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w320"><span class="cat-label">休止中</span>
+      <div class="modal is-standalone p-crunchyroll" role="dialog" aria-label="機械仕掛けの遠雷">
+        <div class="mhero">
+          <div class="art" style="--h: 40"></div>
+          <span class="kana">遠雷</span>
+          <button class="mclose" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <div class="over">
+            <h2>機械仕掛けの遠雷</h2>
+            <div class="line"><span class="prov">Crunchyroll</span><span class="status s-hiatus">休止</span><span class="season">2026 春</span></div>
+          </div>
+        </div>
+        <div class="mbody">
+          <div class="mactions">
+            <button class="mbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button>
+            <button class="mbtn ghost" type="button">詳細</button>
+          </div>
+          <div class="mprog">
+            <div class="top"><span>録画済み</span><b class="num">6</b><span>/ 12 話</span><span class="pct num">50%</span></div>
+            <div class="bar"><span class="is-partial" style="width: 50%"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>アクション</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">未予約</span><button class="mbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button></div>
+    <div class="cat-item"><span class="cat-label">hover</span><button class="mbtn is-hover" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約</button></div>
+    <div class="cat-item"><span class="cat-label">予約済み</span><button class="mbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button></div>
+    <div class="cat-item"><span class="cat-label">送信中</span><button class="mbtn busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>送信中…</button></div>
+    <div class="cat-item"><span class="cat-label">失敗</span><button class="mbtn fail" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6M12 17v.01"/></svg>失敗 — 再試行</button></div>
+    <div class="cat-item"><span class="cat-label">副次</span><button class="mbtn ghost" type="button">詳細を開く</button></div>
+    <div class="cat-item"><span class="cat-label">再取得</span><button class="mbtn icon" type="button" style="margin-left:0" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
+  </div>
+  <p class="cat-note">再取得だけはアイコンのみにして右端に離す。押す頻度が低く、隣の予約ボタンと取り違えられると困るため。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>録画の進捗</h2>
+  <div class="cat-stack cat-w320">
+    <div class="cat-item"><span class="cat-label">未着手</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">0</b><span>/ 24 話</span><span class="pct num">0%</span></div><div class="bar"><span class="is-partial" style="width: 0%"></span></div></div></div>
+    <div class="cat-item"><span class="cat-label is-key">途中</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">8</b><span>/ 24 話</span><span class="pct num">33%</span></div><div class="bar"><span class="is-partial" style="width: 33%"></span></div></div></div>
+    <div class="cat-item"><span class="cat-label">完了</span><div class="mprog"><div class="top"><span>録画済み</span><b class="num">24</b><span>/ 24 話</span><span class="pct num">100%</span></div><div class="bar"><span style="width: 100%"></span></div></div></div>
+  </div>
+  <p class="cat-note">完了したときだけ色を <code>--success</code> に替える。途中は <code>--info</code>。分母と分子は別の語として置き、<code>8/24</code> のように 1 つに詰めない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>閉じるボタン</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><div class="cat-frame"><button class="mclose" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item"><span class="cat-label">hover <small>(90° 回る)</small></span><div class="cat-frame"><button class="mclose is-hover" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item"><span class="cat-label">フォーカス</span><div class="cat-frame"><button class="mclose is-focus" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  </div>
+  <p class="cat-note">画像の明るさに左右されないよう、下地は固定の暗色 <code>oklch(0.18 0.005 250 / 60%)</code> にしてぼかしを掛ける。ここはライト / ダークで切り替えない。</p>
+</section>

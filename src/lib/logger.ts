@@ -33,6 +33,12 @@ export function setupLogger(): void {
         category: ['app'],
         lowestLevel: 'debug',
         sinks: ['console', 'capture']
+      },
+      // LogTape 自身の診断ログ。info は起動のたびに出るので warning 以上だけ拾う
+      {
+        category: ['logtape', 'meta'],
+        lowestLevel: 'warning',
+        sinks: ['console']
       }
     ]
   })

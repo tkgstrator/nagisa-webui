@@ -1,0 +1,159 @@
+TITLE: 詳細ドロワー
+---
+<header class="cat-head">
+  <h1>詳細ドロワー <span class="cat-id">anime-drawer</span></h1>
+  <p>一覧のカードを押したときに右から出す。画面遷移せずに概要と録画操作まで終えられることが狙いなので、あらすじは 4 行で切り、続きは詳細画面へ送る。冒頭のヒーローは一覧のカードと同じ 16:9。</p>
+  <div class="cat-meta">
+    <span>幅 <code>min(420px, 92vw)</code></span>
+    <span>右から <code>.28s</code> でスライド</span>
+    <span>背後は <code>--overlay</code> で覆う</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>開いた状態 <span class="cat-hint">背後の一覧は暗幕で沈める</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="stage">
+      <div class="behind" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="scrim" aria-hidden="true"></div>
+      <aside class="drawer p-amazon" role="dialog" aria-label="星降る夜のアストロノーツ">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 265"></div>
+          <span class="kana">星降</span>
+          <span class="prov">Prime Video</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>星降る夜のアストロノーツ</h2>
+          <div class="drawer-status"><span class="status s-releasing">放送中</span><span class="season num">2026 春</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">24 話</dd></div>
+            <div><dt>録画済み</dt><dd class="num">8 話</dd></div>
+            <div><dt>総再生時間</dt><dd class="num">9 時間 36 分</dd></div>
+            <div><dt>最終更新</dt><dd class="num">2026/09/17 04:12</dd></div>
+          </dl>
+          <p class="drawer-desc is-clamp">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。やがて空から降ってきたものが、忘れられた計画の残骸だと分かったとき、少年は地上に降りる決意をする。</p>
+          <div class="drawer-actions">
+            <button class="dbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+          <div class="drawer-eps">
+            <h3>最近のエピソード</h3>
+            <div class="epline is-done"><span class="n">第 8 話</span><span class="t">名前のない星に</span><span class="rec">録画済み</span></div>
+            <div class="epline is-rec"><span class="n">第 7 話</span><span class="t">観測所の夜明け</span><span class="rec">録画中</span></div>
+            <div class="epline"><span class="n">第 6 話</span><span class="t">落ちてきたもの</span><span class="rec">未録画</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>中身のバリエーション <span class="cat-hint">舞台から出して単体で並べる</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w320"><span class="cat-label is-key">予約済み + 録画進行中</span>
+      <aside class="drawer is-standalone p-crunchyroll" role="dialog" aria-label="機械仕掛けの遠雷">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 40"></div>
+          <span class="kana">遠雷</span>
+          <span class="prov">Crunchyroll</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>機械仕掛けの遠雷</h2>
+          <div class="drawer-status"><span class="status s-releasing">放送中</span><span class="season num">2026 春</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">12 話</dd></div>
+            <div><dt>録画済み</dt><dd class="num">11 話</dd></div>
+          </dl>
+          <div class="drawer-actions">
+            <button class="dbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="cat-item cat-w320"><span class="cat-label">完結 + 全話録画済み</span>
+      <aside class="drawer is-standalone p-netflix" role="dialog" aria-label="蒼海のリフレイン">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 210"></div>
+          <span class="kana">蒼海</span>
+          <span class="prov">Netflix</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>蒼海のリフレイン</h2>
+          <div class="drawer-status"><span class="status s-finished">完結</span><span class="season num">2025 秋</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">13 話</dd></div>
+            <div><dt>録画済み</dt><dd class="num">13 話</dd></div>
+          </dl>
+          <div class="drawer-actions">
+            <button class="dbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全話録画済み</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="cat-item cat-w320"><span class="cat-label">未放送 <small>(録画予約のみ可能)</small></span>
+      <aside class="drawer is-standalone p-abema" role="dialog" aria-label="ひだまり商店街の観測日誌">
+        <div class="drawer-hero">
+          <div class="art" style="--h: 130"></div>
+          <span class="kana">日誌</span>
+          <span class="prov">ABEMA</span>
+          <button class="drawer-close" type="button" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="drawer-body">
+          <h2>ひだまり商店街の観測日誌</h2>
+          <div class="drawer-status"><span class="status s-not-yet">未放送</span><span class="season num">2026 夏</span></div>
+          <dl class="drawer-facts">
+            <div><dt>話数</dt><dd class="num">— 話</dd></div>
+            <div><dt>配信開始</dt><dd class="num">2026/07/04</dd></div>
+          </dl>
+          <p class="drawer-desc is-clamp">閉店の決まった商店街に、なぜか毎日同じ時刻だけ日が差す一角がある。その理由を測りにきた大学生の記録。</p>
+          <div class="drawer-actions">
+            <button class="dbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>配信開始時に録画</button>
+            <button class="dbtn outline" type="button">詳細を開く</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>アクションボタン</h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220"><span class="cat-label">未予約</span><button class="dbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button></div>
+    <div class="cat-item cat-w220"><span class="cat-label">hover</span><button class="dbtn is-hover" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button></div>
+    <div class="cat-item cat-w220"><span class="cat-label">予約済み</span><button class="dbtn on" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>予約済み</button></div>
+    <div class="cat-item cat-w220"><span class="cat-label">送信中</span><button class="dbtn busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>送信中…</button></div>
+    <div class="cat-item cat-w220"><span class="cat-label">失敗</span><button class="dbtn fail" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6M12 17v.01"/></svg>失敗 — 再試行</button></div>
+    <div class="cat-item cat-w220"><span class="cat-label">副次アクション</span><button class="dbtn outline" type="button">詳細を開く</button></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>エピソード行 <span class="cat-hint">直近 3 話だけ出す</span></h2>
+  <div class="cat-item cat-w320">
+    <div class="cat-frame is-plain">
+      <div class="epline is-done"><span class="n">第 8 話</span><span class="t">名前のない星に</span><span class="rec">録画済み</span></div>
+      <div class="epline is-rec"><span class="n">第 7 話</span><span class="t">観測所の夜明け</span><span class="rec">録画中</span></div>
+      <div class="epline is-fail"><span class="n">第 6 話</span><span class="t">落ちてきたもの</span><span class="rec">失敗</span></div>
+      <div class="epline"><span class="n">第 5 話</span><span class="t">名前をつける係</span><span class="rec">未録画</span></div>
+      <div class="epline is-hover"><span class="n">第 4 話</span><span class="t">観測所の階段はいつも濡れている</span><span class="rec">未録画</span></div>
+    </div>
+  </div>
+  <p class="cat-note">録画状態は左の 3px のアクセントと右端の語で二重に示す。色だけに頼らない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>閉じるボタン</h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">通常</span><div class="cat-frame"><button class="drawer-close" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item"><span class="cat-label">hover</span><div class="cat-frame"><button class="drawer-close is-hover" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+    <div class="cat-item"><span class="cat-label">フォーカス</span><div class="cat-frame"><button class="drawer-close is-focus" type="button" style="position:static" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+  </div>
+  <p class="cat-note">暗幕のクリックと <kbd>Esc</kbd> でも閉じる。ボタンはヒーロー画像の上に浮かせるので、背景に <code>--overlay</code> を敷いて画像の明暗に依らず読めるようにする。</p>
+</section>

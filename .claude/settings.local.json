@@ -12,6 +12,7 @@
       "Bash(git clean -f:*)",
       "Bash(git clean -fd:*)",
       "Bash(git clean -fdx:*)",
+      "Bash(git config --global:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(git reset --hard:*)",
@@ -20,20 +21,43 @@
       "Bash(pnpm:*)",
       "Bash(pnpx:*)",
       "Bash(rm -rf /:*)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(terraform workspace delete:*)",
       "Bash(yarn:*)",
       "Edit(**/*.pem)",
       "Edit(**/.dev.vars)",
       "Edit(**/.dev.vars.*)",
+      "Edit(**/.dev.vars.development)",
+      "Edit(**/.dev.vars.local)",
+      "Edit(**/.dev.vars.production)",
+      "Edit(**/.dev.vars.staging)",
       "Edit(**/.env)",
       "Edit(**/.env.*)",
+      "Edit(**/.env.*.local)",
+      "Edit(**/.env.development)",
+      "Edit(**/.env.local)",
+      "Edit(**/.env.production)",
+      "Edit(**/.env.staging)",
+      "Edit(**/.env.test)",
       "Edit(**/.secrets)",
       "Edit(**/.secrets/**)",
       "Edit(**/private.key)",
       "Read(**/*.pem)",
       "Read(**/.dev.vars)",
       "Read(**/.dev.vars.*)",
+      "Read(**/.dev.vars.development)",
+      "Read(**/.dev.vars.local)",
+      "Read(**/.dev.vars.production)",
+      "Read(**/.dev.vars.staging)",
       "Read(**/.env)",
       "Read(**/.env.*)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.development)",
+      "Read(**/.env.local)",
+      "Read(**/.env.production)",
+      "Read(**/.env.staging)",
+      "Read(**/.env.test)",
       "Read(**/.secrets)",
       "Read(**/.secrets/**)",
       "Read(**/private.key)"
@@ -41,6 +65,11 @@
     "allow": [
       "Agent",
       "Bash",
+      "Bash(git push --force-if-includes:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(terraform apply *.staging.tfplan:*)",
+      "Bash(terraform apply *staging*.tfplan:*)",
+      "Bash(terraform apply tfplan.staging:*)",
       "Cd",
       "Edit",
       "ExitPlanMode",
@@ -73,21 +102,8 @@
       "mcp__prisma__*",
       "mcp__shadcn__*",
       "mcp__tailwindcss__*",
+      "mcp__terraform__*",
       "mcp__zod__*"
-    ]
-  },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh \"/home/vscode/.claude/plugins/cache/qtmleap-plugins/devflow/0.4.1/hooks/boot-check.sh\"",
-            "timeout": 10,
-            "statusMessage": "devflow: git identity check"
-          }
-        ]
-      }
     ]
   }
 }

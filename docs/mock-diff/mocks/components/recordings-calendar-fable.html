@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>週カレンダー — fable 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: recordings-calendar ---------- */
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.day { border-left: 1px solid var(--border); padding: 10px 12px 14px; min-height: 96px; }
+.day-head { display: flex; align-items: baseline; gap: 6px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.day-head .dname { font-size: 12px; font-weight: 700; color: var(--muted-foreground); }
+.day-head .dcount { font-size: 11px; color: var(--muted-foreground); opacity: .7; }
+.day.weekend .day-head .dname { color: var(--accent-foreground); }
+.slot { border-left: 3px solid var(--border); padding: 6px 0 6px 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
+.slot:last-child { margin-bottom: 0; }
+.slot .stime { font-size: 11px; color: var(--muted-foreground); }
+.slot .sname { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
+.slot .snote { font-size: 11px; color: var(--muted-foreground); }
+.slot .sbadges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 1px; }
+.slot.hiatus { border-left-color: var(--status-hiatus); }
+.slot.hiatus .snote { color: var(--status-hiatus-foreground); font-weight: 500; }
+.slot.upcoming { border-left-color: var(--status-not-yet); }
+.slot.upcoming .snote { color: var(--status-not-yet-foreground); font-weight: 500; }
+.day-empty { font-size: 11px; color: var(--muted-foreground); opacity: .65; padding: 6px 0; }
+
+@media (max-width: 640px) {
+  .week-grid { grid-template-columns: 1fr; border-top: 0; border-bottom: 0; }
+  .day { border-left: 3px solid var(--border); border-bottom: 1px solid var(--border); min-height: 0; padding: 10px 4px 14px; }
+  .day.weekend { border-left-color: var(--accent); }}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>週カレンダー <span class="cat-id">recordings-calendar</span></h1>
+  <p>録画一覧ページで「今週の放送予定」を曜日別に並べる 7 列グリッド。1 列が 1 日 (<code>.day</code>)、その中に放送 1 本ぶんの枠 (<code>.slot</code>) を積む。枠の左罫の色が状態を表し、休止・放送予定だけ注記 (<code>.snote</code>) を添える。640px 以下では 7 列を畳んで 1 列の縦並びになる。</p>
+  <div class="cat-meta">
+    <span>列は常に 7 本（月〜日）</span>
+    <span>状態は <code>.slot</code> の左罫色</span>
+    <span>640px 以下で 1 列</span>
+  </div>
+</header>
+
+<section class="cat-sec">
+  <h2>週ぜんたい <span class="cat-hint">通常・休止・予定・空日を含む 1 週間</span></h2>
+  <div class="cat-item cat-full is-key" data-story="週ぜんたい">
+    <div class="week-grid">
+      <div class="day">
+        <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
+        <div class="slot">
+          <span class="stime num">25:30</span>
+          <span class="sname">蒼穹のリベリオン</span>
+          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day-head"><span class="dname">火</span><span class="dcount num">1</span></div>
+        <div class="slot">
+          <span class="stime num">23:00</span>
+          <span class="sname">放課後クロノグラフ</span>
+          <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day-head"><span class="dname">水</span><span class="dcount num">2</span></div>
+        <div class="slot">
+          <span class="stime num">22:00</span>
+          <span class="sname">海辺のカフェテラス</span>
+          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+        </div>
+        <div class="slot hiatus">
+          <span class="stime num">24:30</span>
+          <span class="sname">春待ちレコード</span>
+          <span class="snote">休止中</span>
+          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day-head"><span class="dname">木</span><span class="dcount num">0</span></div>
+        <div class="day-empty">予定なし</div>
+      </div>
+      <div class="day">
+        <div class="day-head"><span class="dname">金</span><span class="dcount num">1</span></div>
+        <div class="slot upcoming">
+          <span class="stime num">24:30</span>
+          <span class="sname">天空回廊アルカディア</span>
+          <span class="snote">初回放送</span>
+          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        </div>
+      </div>
+      <div class="day weekend">
+        <div class="day-head"><span class="dname">土</span><span class="dcount num">1</span></div>
+        <div class="slot">
+          <span class="stime num">18:00</span>
+          <span class="sname">猫と魔王とカフェラテ</span>
+          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        </div>
+      </div>
+      <div class="day weekend">
+        <div class="day-head"><span class="dname">日</span><span class="dcount num">1</span></div>
+        <div class="slot">
+          <span class="stime num">17:00</span>
+          <span class="sname">ひだまりレストラン</span>
+          <span class="sbadges"><span class="badge netflix">Netflix</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">土日は <code>.day.weekend</code> で曜日名の色だけ変える。背景は変えない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>枠の状態 <span class="cat-hint">左罫の色で 3 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w260 is-key" data-story="枠の状態 / 通常">
+      <span class="cat-label">通常</span>
+      <div class="slot">
+        <span class="stime num">22:00</span>
+        <span class="sname">海辺のカフェテラス</span>
+        <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="枠の状態 / 休止">
+      <span class="cat-label">休止</span>
+      <div class="slot hiatus">
+        <span class="stime num">24:30</span>
+        <span class="sname">春待ちレコード</span>
+        <span class="snote">休止中</span>
+        <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+      </div>
+    </div>
+    <div class="cat-item cat-w260" data-story="枠の状態 / 放送予定">
+      <span class="cat-label">放送予定</span>
+      <div class="slot upcoming">
+        <span class="stime num">24:30</span>
+        <span class="sname">天空回廊アルカディア</span>
+        <span class="snote">初回放送</span>
+        <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>1 日の中身 <span class="cat-hint">件数 0 / 1 / 複数</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220" data-story="1 日の中身 / 0 件">
+      <span class="cat-label">0 件</span>
+      <div class="day">
+        <div class="day-head"><span class="dname">木</span><span class="dcount num">0</span></div>
+        <div class="day-empty">予定なし</div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220" data-story="1 日の中身 / 1 件">
+      <span class="cat-label">1 件</span>
+      <div class="day">
+        <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
+        <div class="slot">
+          <span class="stime num">25:30</span>
+          <span class="sname">蒼穹のリベリオン</span>
+          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w220" data-story="1 日の中身 / 3 件（積み重なる）">
+      <span class="cat-label">3 件（積み重なる）</span>
+      <div class="day">
+        <div class="day-head"><span class="dname">水</span><span class="dcount num">3</span></div>
+        <div class="slot">
+          <span class="stime num">22:00</span>
+          <span class="sname">海辺のカフェテラス</span>
+          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+        </div>
+        <div class="slot hiatus">
+          <span class="stime num">24:30</span>
+          <span class="sname">春待ちレコード</span>
+          <span class="snote">休止中</span>
+          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+        </div>
+        <div class="slot">
+          <span class="stime num">26:00</span>
+          <span class="sname">とある小さな町の魔法使いと不思議な仲間たち</span>
+          <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">作品名 (<code>.sname</code>) は折り返す。列幅が狭いので省略はしない。</p>
+</section>
+</main>
+</body>
+</html>

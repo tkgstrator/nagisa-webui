@@ -1,47 +1,114 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+import dayjs from 'dayjs'
 import { ChevronRight } from 'lucide-react'
-import { ProviderBadge } from '@/app/components/anime-badges'
-import { animeListQueryOptions } from '@/app/lib/query-options'
-import type { AnimeSchema } from '@/schemas/anime.dto'
+import { providerColor, providerLabel } from '@/app/lib/constants'
+import { animeDetailQueryOptions, animeListQueryOptions } from '@/app/lib/query-options'
+import { type AnimeInfoSchema, QuarterLabel } from '@/schemas/anime.dto'
 
-type RelatedProvidersProps = {
-  aniListId: number
-  currentAnimeId: string
-}
+const colClass = 'grid grid-cols-[minmax(0,1fr)_52px_52px_14px] gap-2.5 max-sm:grid-cols-[minmax(0,1fr)_46px_14px]'
 
-export function RelatedProviders({ aniListId, currentAnimeId }: RelatedProvidersProps) {
-  const { data, isLoading } = useQuery({
-    ...animeListQueryOptions({ aniListId, limit: 20, sort: 'title', order: 'asc' }),
-    enabled: aniListId > 0
+const pvClass = 'inline-flex h-[18px] shrink-0 items-center rounded px-[7px] text-[11px] font-semibold'
+
+const tagClass = 'inline-flex h-4 items-center rounded px-[5px] text-[10.5px] leading-none'
+
+export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
+  const { data, isPending } = useQuery({
+    ...animeListQueryOptions({ aniListId: anime.aniListId, limit: 20, sort: 'title', order: 'asc' }),
+    enabled: anime.aniListId > 0
   })
 
-  if (aniListId <= 0) return null
+  // 表示中の作品もこの一覧に含まれる。抜き出して先頭に固定すると開いた作品で並びが変わるので、
+  // API の並び (title asc) のまま出して、選択中であることは背景色だけで示す。
+  const items = data?.data ?? []
 
-  const related = (data?.data ?? []).filter((a: AnimeSchema) => a.id !== currentAnimeId)
+  // 一覧のレスポンスには話数が無いので、行ごとに詳細を引いて「録画 / 全話」を埋める。
+  const details = useQueries({
+    queries: items.map((item) => ({ ...animeDetailQueryOptions(item.id), staleTime: 5 * 60 * 1000 }))
+  })
 
-  if (isLoading || related.length === 0) return null
+  if (anime.aniListId <= 0) return null
+
+  const hasOthers = items.some((item) => item.id !== anime.id)
 
   return (
-    <section className='space-y-2'>
-      <h3 className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>同一作品の他プロバイダ</h3>
-      <ul className='divide-y divide-border/60'>
-        {related.map((item) => (
-          <li key={item.id}>
-            <Link
-              to='/anime/$id'
-              params={{ id: item.id }}
-              className='flex items-center justify-between gap-2 py-1.5 transition-colors hover:bg-muted/40'
-            >
-              <div className='flex min-w-0 items-center gap-2'>
-                <ProviderBadge provider={item.provider} className='shrink-0 text-[10px]' />
-                <span className='truncate text-xs'>{item.title}</span>
-              </div>
-              <ChevronRight className='size-3.5 shrink-0 text-muted-foreground' />
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <section aria-labelledby='rel-heading'>
+      <h3
+        id='rel-heading'
+        className='mb-2 flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
+      >
+        他の配信元
+      </h3>
+      {isPending ? (
+        <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>読み込み中</p>
+      ) : (
+        // 左バーはこの箱が 1 本だけ持つ。行にも持たせるとホバーで 2 本に見える。
+        <div className='border-l-[3px] border-l-primary py-0.5'>
+          <div className={`${colClass} px-2.5 py-1.5 pl-[13px] text-[11px] text-muted-foreground`}>
+            <span>配信元</span>
+            <span className='text-right'>録画</span>
+            <span className='text-right max-sm:hidden'>全話</span>
+            <span />
+          </div>
+          <div className='flex flex-col'>
+            {items.map((item, index) => {
+              const current = item.id === anime.id
+              // 表示中の行は手元の詳細をそのまま使う (同じ作品を引き直す必要がない)。
+              const detail = current ? anime : details[index]?.data
+              const episodes = detail?.seasons.flatMap((season) => season.episodes) ?? []
+              const expired = item.expiredAt !== null && dayjs(item.expiredAt).isBefore(dayjs())
+              const expiring = item.expiredAt !== null && !expired
+
+              const rowClass = `${colClass} items-center border-b border-b-border/60 px-2.5 py-2 pl-[13px] ${current ? 'bg-accent/60' : 'transition-colors hover:bg-muted'} ${expired ? 'text-muted-foreground' : ''}`
+
+              const body = (
+                <>
+                  <span className='flex min-w-0 flex-col gap-[3px]'>
+                    <span className={`truncate text-[13px] ${expired ? 'line-through' : ''}`}>{item.title}</span>
+                    <span className='flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground'>
+                      <span className={`${pvClass} ${providerColor[item.provider]}`}>
+                        {providerLabel[item.provider]}
+                      </span>
+                      {item.year > 0 && `${item.year}年 ${QuarterLabel[item.quarter]}`}
+                      {expiring && item.expiredAt !== null && (
+                        <span className={`${tagClass} border border-warning/45 bg-warning/20 text-warning-foreground`}>
+                          {dayjs(item.expiredAt).format('M/D')} 終了
+                        </span>
+                      )}
+                    </span>
+                  </span>
+                  <span className='text-right text-[13px] text-muted-foreground tabular-nums'>
+                    {detail === undefined ? (
+                      '—'
+                    ) : (
+                      <b className='font-semibold text-foreground'>
+                        {episodes.filter((episode) => episode.recorded).length}
+                      </b>
+                    )}
+                  </span>
+                  <span className='text-right text-[13px] text-muted-foreground tabular-nums max-sm:hidden'>
+                    {detail === undefined ? '—' : episodes.length}
+                  </span>
+                  {current ? <span /> : <ChevronRight className='size-3.5 text-muted-foreground' />}
+                </>
+              )
+
+              return current ? (
+                <div key={item.id} aria-current='page' className={rowClass}>
+                  {body}
+                </div>
+              ) : (
+                <Link key={item.id} to='/anime/$id' params={{ id: item.id }} className={rowClass}>
+                  {body}
+                </Link>
+              )
+            })}
+          </div>
+          {!hasOthers && (
+            <p className='px-[13px] py-3.5 text-[12.5px] text-muted-foreground'>他の配信元は見つかりませんでした</p>
+          )}
+        </div>
+      )}
     </section>
   )
 }

@@ -1,25 +1,37 @@
 import { archiveMissingAbemaKeysForAnime } from './lib/abema-archive'
 import { createPrismaClient } from './lib/db'
 import { COLOR_SUCCESS, COLOR_WARN, notify } from './lib/discord'
+import { enqueueImageWarm, warmImages } from './lib/image-warm'
 import { createFetchClient } from './lib/lambda'
 import { getAppLogger } from './lib/logger'
 import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
+import { resolveQueueForProvider } from './lib/queue-routing'
 import { SyncService } from './lib/sync'
 
 import type { Message } from './schemas/message.dto'
 
 const logger = getAppLogger('queue')
 
+/** wrangler.toml の各 queue consumer (amazon/sync) の `max_retries` と揃える */
+const MAX_RETRIES = 3
+/** リトライ回数 (1〜MAX_RETRIES 回目) ごとのバックオフ秒数。throttle された相手を即座に叩き直さないため */
+const RETRY_DELAY_SECONDS = [30, 120, 300]
+/** 1 回の queue.sendBatch() に載せられる message 数の上限 (Cloudflare Queues の制約) */
+const SEND_BATCH_SIZE = 100
+
 interface Env {
   DB: D1Database
   TMDB_API_KEY: string
+  AMAZON_QUEUE: Queue<Message>
   SYNC_QUEUE: Queue<Message>
+  WARM_QUEUE: Queue<Message>
   KV: KVNamespace
   AWS_ACCESS_KEY_ID: string
   AWS_SECRET_ACCESS_KEY: string
   LAMBDA_FUNCTION_URL: string
   LAMBDA_FUNCTION_URL_US: string
   DISCORD_WEBHOOK_URL: string
+  IMAGES: R2Bucket
 }
 
 /** 失敗通知に載せるため、メッセージ対象のアニメ（識別済みなら）を引く */
@@ -73,6 +85,13 @@ function truncateForFieldValue(lines: string[]): string {
   return collected.join('\n')
 }
 
+/**
+ * amazon / sync / warm の 3 queue すべてがこの関数を consumer として呼ぶ (`batch.queue` に
+ * queue 名が入る)。処理内容は `message.body.type` だけで一意に決まり、同じ type が複数の
+ * queue から来ることはない (amazon queue は amazon 向け fetch/update のみ、sync queue は
+ * それ以外の fetch/update と abema_archive/anilist_sync のみ、warm queue は image_warm のみ)
+ * ので、`batch.queue` による分岐は不要。ログにだけ残して可観測性を確保する。
+ */
 export async function queue(batch: MessageBatch<Message>, env: Env): Promise<void> {
   const prisma = createPrismaClient(env.DB)
   const lambda = createFetchClient(env)
@@ -84,111 +103,116 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
   let failed = 0
   const failedLabels: string[] = []
 
-  try {
-    for (const message of batch.messages) {
-      const body = message.body
-      const meta: Record<string, unknown> = { action: 'process-message', type: body.type }
-      if (body.type === 'fetch') {
-        meta.provider = body.message.provider
-        meta.category = body.message.category
-      } else if (body.type === 'update') {
-        meta.provider = body.message.provider
-        meta.contentId = body.message.contentId
-      } else if (body.type === 'bulk_update') {
-        meta.provider = body.message.provider
-        meta.count = body.message.contentIds.length
-      } else if (body.type === 'abema_archive') {
-        meta.animeId = body.message.animeId
-      } else if (body.type === 'anilist_sync') {
-        meta.year = body.message.year
-      }
-      logger.debug(meta as { action: string })
-      try {
-        switch (message.body.type) {
-          case 'fetch': {
-            const { provider, category } = message.body.message
-            const contentIds = await service.fetch(message.body)
-            if (category !== 'expiring' && category !== 'coming_soon') {
-              const BULK_SIZE = 25
-              for (let i = 0; i < contentIds.length; i += BULK_SIZE) {
-                const chunk = contentIds.slice(i, i + BULK_SIZE)
-                await env.SYNC_QUEUE.send({ type: 'bulk_update', message: { provider, contentIds: chunk } })
-              }
-            }
-            logger.info({ action: 'enqueue-updates', provider, category, count: contentIds.length })
-            break
-          }
-          case 'update': {
-            await service.update(message.body)
-            break
-          }
-          case 'bulk_update': {
-            const { provider, contentIds } = message.body.message
-            const CONCURRENT = 5
-            const DELAY_MS = 3000
-            for (let i = 0; i < contentIds.length; i += CONCURRENT) {
-              const chunk = contentIds.slice(i, i + CONCURRENT)
-              await Promise.all(
-                chunk.map((contentId) => service.update({ type: 'update', message: { provider, contentId } }))
+  const processMessage = async (message: (typeof batch.messages)[number]): Promise<void> => {
+    const body = message.body
+    const meta: Record<string, unknown> = { action: 'process-message', type: body.type }
+    if (body.type === 'fetch') {
+      meta.provider = body.message.provider
+      meta.category = body.message.category
+    } else if (body.type === 'update') {
+      meta.provider = body.message.provider
+      meta.contentId = body.message.contentId
+    } else if (body.type === 'abema_archive') {
+      meta.animeId = body.message.animeId
+    } else if (body.type === 'anilist_sync') {
+      meta.year = body.message.year
+    } else if (body.type === 'image_warm') {
+      meta.provider = body.message.provider
+      meta.count = body.message.urls.length
+    }
+    logger.debug(meta as { action: string })
+    try {
+      switch (message.body.type) {
+        case 'fetch': {
+          const { provider, category } = message.body.message
+          const contentIds = await service.fetch(message.body)
+          if (category !== 'expiring' && category !== 'coming_soon') {
+            // fetch した provider と update 先の provider は常に同じなので、queue の解決は 1 回で済む
+            const targetQueue = resolveQueueForProvider(env, provider)
+            for (let i = 0; i < contentIds.length; i += SEND_BATCH_SIZE) {
+              const chunk = contentIds.slice(i, i + SEND_BATCH_SIZE)
+              await targetQueue.sendBatch(
+                chunk.map((contentId) => ({
+                  body: { type: 'update' as const, message: { provider, contentId } }
+                }))
               )
-              if (i + CONCURRENT < contentIds.length) {
-                await new Promise<void>((resolve) => setTimeout(resolve, DELAY_MS))
-              }
             }
-            logger.info({ action: 'bulk-update-done', provider, count: contentIds.length })
-            break
           }
-          case 'anilist_sync': {
-            const { year, country } = message.body.message
-            const result = await syncAnilistMediaYear({ prisma, year, country })
-            logger.info({
-              action: 'anilist-sync-year-done',
-              year,
-              country,
-              fetched: result.fetched,
-              pages: result.pages,
-              elapsedMs: result.elapsedMs
-            })
-            break
-          }
-          case 'abema_archive': {
-            const { animeId } = message.body.message
-            const result = await archiveMissingAbemaKeysForAnime(prisma, animeId, async (programIds) => {
-              const result = await lambda.fetchAbemaArchives({ programIds })
-              return result.results
-            })
-            if (result.total === 0) {
-              logger.info({ action: 'abema-archive-skip', animeId, reason: 'all keys present' })
-              break
-            }
-            logger.info({
-              action: 'abema-archive-done',
-              animeId,
-              total: result.total,
-              ok: result.archived,
-              fail: result.failed
-            })
-            break
-          }
+          logger.info({ action: 'enqueue-updates', provider, category, count: contentIds.length })
+          break
         }
-        message.ack()
-        succeeded++
-      } catch (e) {
-        const errorMessage = e instanceof Error ? e.message : String(e)
-        logger.error({
-          action: 'process-error',
-          type: message.body.type,
-          body: message.body.message,
-          error: errorMessage
-        })
-        if (message.attempts >= 3) {
-          failed++
-          const anime = await findAnimeForMessage(prisma, message.body).catch(() => null)
-          failedLabels.push(anime ? anime.title : `[${message.body.type}]`)
+        case 'update': {
+          const { provider } = message.body.message
+          const newImageUrls = await service.update(message.body)
+          await enqueueImageWarm(env.WARM_QUEUE, provider, newImageUrls)
+          break
         }
-        message.retry()
+        case 'anilist_sync': {
+          const { year, country } = message.body.message
+          const result = await syncAnilistMediaYear({ prisma, year, country })
+          logger.info({
+            action: 'anilist-sync-year-done',
+            year,
+            country,
+            fetched: result.fetched,
+            pages: result.pages,
+            elapsedMs: result.elapsedMs
+          })
+          break
+        }
+        case 'abema_archive': {
+          const { animeId } = message.body.message
+          const result = await archiveMissingAbemaKeysForAnime(prisma, animeId, async (programIds) => {
+            const result = await lambda.fetchAbemaArchives({ programIds })
+            return result.results
+          })
+          if (result.total === 0) {
+            logger.info({ action: 'abema-archive-skip', animeId, reason: 'all keys present' })
+            break
+          }
+          logger.info({
+            action: 'abema-archive-done',
+            animeId,
+            total: result.total,
+            ok: result.archived,
+            fail: result.failed
+          })
+          break
+        }
+        case 'image_warm': {
+          const { provider, urls } = message.body.message
+          await warmImages(env.IMAGES, lambda, provider, urls)
+          break
+        }
+      }
+      message.ack()
+      succeeded++
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e)
+      logger.error({
+        action: 'process-error',
+        type: message.body.type,
+        body: message.body.message,
+        error: errorMessage,
+        attempts: message.attempts
+      })
+      // max_retries = 3 は「初回配信の後に 3 回再試行」なので attempts は 1〜4 まで来る。
+      // attempts が MAX_RETRIES を超えたら今回が最後の配信 = これ以上 retry() を呼ばない
+      // (呼ぶと DLQ に積む前提のリトライ上限管理と衝突し、通知も二重に飛ぶ)。
+      const isFinalAttempt = message.attempts > MAX_RETRIES
+      if (isFinalAttempt) {
+        failed++
+        const anime = await findAnimeForMessage(prisma, message.body).catch(() => null)
+        failedLabels.push(anime ? anime.title : `[${message.body.type}]`)
+      } else {
+        const delaySeconds = RETRY_DELAY_SECONDS[message.attempts - 1] ?? RETRY_DELAY_SECONDS.at(-1)
+        message.retry({ delaySeconds })
       }
     }
+  }
+
+  try {
+    await Promise.allSettled(batch.messages.map(processMessage))
 
     if (succeeded > 0 || failed > 0) {
       const fields: { name: string; value: string; inline?: boolean }[] = []

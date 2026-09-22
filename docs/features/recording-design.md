@@ -581,3 +581,5 @@ gantt
 - **重複指示の防止**: 同じエピソードに対して複数回 record メッセージが送られないよう、`auto_record_check` で `recordStatus = "none"` のみを対象にする
 - **レート制限**: 大量のエピソードを一度に Nagisa に送ると負荷がかかるため、バッチサイズを制限する（キューの `max_batch_size: 5` が自然な制限になる）
 - **ダウンロード進捗率**: 現時点ではステータス（待機/ダウンロード中/完了/失敗）のみ。進捗率（%）が必要になった場合は [download-progress.md](download-progress.md) を参照
+
+関連計画: [notification-recording-integrity-plan.md](notification-recording-integrity-plan.md) を参照（自動録画のミニマル実装案と、新規エピソード検知・Discord通知との連携方針）。

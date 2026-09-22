@@ -1,0 +1,15 @@
+{
+  "include": ["src/*.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "types": ["@types/bun", "@types/node"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

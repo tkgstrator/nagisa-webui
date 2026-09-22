@@ -6,14 +6,59 @@ services:
     volumes:
       - node_modules:/home/vscode/app/node_modules
       - cache:/home/vscode/app/.cache
+      # VS Code server の拡張はコンテナ FS に入るのでリビルドで消える。/vscode 配下に
+      # 残るのは .vsix のダウンロードキャッシュだけで、何を入れるかを決めている
+      # extensions.json はここにあるため、このディレクトリごと永続化する。
+      - vscode_extensions:/home/vscode/.vscode-server/extensions
       - ../:/home/vscode/app:cached
     environment:
       NODE_OPTIONS: "--no-deprecation"
     tty: true
     stdin_open: true
 
+  proxy:
+    image: serjs/go-socks5-proxy:latest
+    network_mode: service:vpn
+    environment:
+      - PROXY_PORT=1080
+      - REQUIRE_AUTH=false
+
+  vpn:
+    image: linuxserver/wireguard:latest
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ./wireguard:/config/wg_confs:ro
+
+  # デザイン候補の選定(Deciding)・実装(Building)・ピクセル差分検証(Checking)を行う
+  # mock-diff-viewer sidecar。詳細は docs/mock-diff.md を参照。
+  #
+  # ports は宣言しない。viewer の UI は vite dev server の /mock-diff に相乗りさせる
+  # (vite.config.ts の server.proxy)。ホストに増えるポートが無いので、mock-diff sidecar を
+  # 持つ repo を何個同時に立てても衝突しない。client がルート相対 URL を出す都合で
+  # /assets と /api/* も個別に横流しが要る点だけ注意。
+  #
+  # app ↔ mock-diff はこの compose ネットワークのサービス名でそのまま届く
+  # (app → http://mock-diff:3000、mock-diff → http://app:14755)。ただし撮影だけは例外で、
+  # actual のホストに `app` は使えない。Chromium は `.app` gTLD を HSTS preload list に
+  # 丸ごと載せていて単一ラベルの `app` もこれに一致するため、http://app:14755/ は https に
+  # 昇格され、TLS を話さない vite は net::ERR_SSL_PROTOCOL_ERROR になる。docs/mock-diff/
+  # mock-diff.yaml の actual はコンテナ名 (nagisa-webui_devcontainer-app-1) を指している。
+  mock-diff:
+    image: ghcr.io/qtmleap/mock-diff-viewer:latest
+    volumes:
+      - ../docs/mock-diff:/workspace
+      - mock_diff_data:/data
+    init: true
+
 volumes:
   node_modules:
     driver: local
   cache:
+    driver: local
+  vscode_extensions:
+    driver: local
+  mock_diff_data:
     driver: local
