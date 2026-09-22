@@ -166,7 +166,9 @@ LAMBDA_FUNCTION_URL_US = "https://ytyebcratcyemkikzh3427i7eu0lasjk.lambda-url.us
 
 [[env.production.kv_namespaces]]
 binding = "KV"
-id = "c02a0dbfa2284c5dae69a95e75110694"
+# 旧 id c02a0dbfa2284c5dae69a95e75110694 はアカウント上に存在せず、production の
+# deploy が 10041 (KV namespace not found) で失敗し続けていた。作り直した id。
+id = "d6d715cd858e4539afa131bf5892e797"
 
 [[env.production.r2_buckets]]
 binding = "IMAGES"
