@@ -10,7 +10,7 @@ type ScheduledUpdatesListProps = {
   subtitle?: string
 }
 
-/** モックの `.su-cols` / `.su-row` と同じグリッド定義。列は サムネ / 作品 / 更新 の 3 列。 */
+/** モックの `.su-row` と同じグリッド定義。列は サムネ / 作品 / 更新 の 3 列。列見出しは持たない。 */
 const rowGrid = 'grid grid-cols-[76px_minmax(0,1fr)_84px] items-center gap-3 max-sm:grid-cols-[56px_minmax(0,1fr)_60px]'
 
 /** 「N 分前」のような相対表記。dayjs の relativeTime プラグインには依存しない。 */
@@ -50,7 +50,7 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
 
   return (
     <section className='border-l-[3px] border-primary'>
-      <div className='flex flex-wrap items-baseline justify-between gap-3 py-1 pr-2.5 pb-2 pl-[13px]'>
+      <div className='flex flex-wrap items-baseline justify-between gap-3 border-b border-border py-1 pr-2.5 pb-2 pl-[13px]'>
         <h3 className='text-[13px] font-bold'>
           録画予約中の更新
           {subtitle !== undefined && (
@@ -68,19 +68,13 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
         </Link>
       </div>
 
-      <div className={`${rowGrid} border-b border-border pr-2.5 pb-1.5 pl-[13px] text-[11px] text-muted-foreground`}>
-        <span />
-        <span>作品</span>
-        <span className='text-right'>更新</span>
-      </div>
-
       <div>
         {anime.map((item) => (
           <Link
             key={item.id}
             to='/anime/$id'
             params={{ id: item.id }}
-            className={`${rowGrid} border-b border-l-[3px] border-b-border/60 border-l-transparent px-2.5 py-2 transition-colors hover:border-l-primary hover:bg-muted`}
+            className={`${rowGrid} border-b border-b-border/60 py-2 pr-2.5 pl-[13px] transition-colors hover:bg-muted`}
           >
             <ProxyImage
               src={item.imageUrl}
@@ -97,11 +91,11 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
                   {providerLabel[item.provider] ?? item.provider}
                 </span>
                 {item.recorded ? (
-                  <span className='inline-flex h-4 flex-none items-center rounded border border-success/45 px-1.5 text-[10.5px] leading-none text-success'>
+                  <span className='inline-flex h-4 flex-none items-center rounded border border-success/45 px-1.5 text-[10.5px] leading-none text-success dark:text-foreground'>
                     録画済み
                   </span>
                 ) : (
-                  <span className='inline-flex h-4 flex-none items-center rounded border border-border px-1.5 text-[10.5px] leading-none'>
+                  <span className='inline-flex h-4 flex-none items-center rounded border border-border px-1.5 text-[10.5px] leading-none dark:text-foreground'>
                     未録画
                   </span>
                 )}

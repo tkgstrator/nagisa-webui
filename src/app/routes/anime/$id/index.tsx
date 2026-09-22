@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
@@ -36,14 +36,8 @@ export const Route = createFileRoute('/anime/$id/')({
 function AnimeDetailPage() {
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
-  const router = useRouter()
   const { data: anime } = useSuspenseQuery(animeDetailQueryOptions(id))
   const { settings } = useSettings()
-
-  const goBack = () => {
-    if (window.history.length > 1) router.history.back()
-    else router.navigate({ to: '/' })
-  }
 
   const invalidateRelated = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.detail(id) })
@@ -82,12 +76,16 @@ function AnimeDetailPage() {
     updateAnimeMutation.mutate({ scheduled: !anime.scheduled })
   }
 
-  /** 録画済みに印を付けるとき、設定次第で未録画エピソードの録画リクエストも同時に送る。 */
-  const toggleRecorded = async () => {
-    if (!anime.recorded && settings.requestRecordingOnMark) {
+  /**
+   * 録画済みに印を付けるとき、設定次第で未録画エピソードの録画リクエストも同時に送る。
+   * 録画を削除する API がないので、録画済みからは戻せない (ボタン側も押せなくしてある)。
+   */
+  const markRecorded = async () => {
+    if (anime.recorded) return
+    if (settings.requestRecordingOnMark) {
       await recordAnimeMutation.mutateAsync()
     }
-    updateAnimeMutation.mutate({ recorded: !anime.recorded })
+    updateAnimeMutation.mutate({ recorded: true })
   }
 
   const totalEpisodes = anime.seasons.reduce((sum, s) => sum + s.episodes.length, 0)
@@ -98,14 +96,13 @@ function AnimeDetailPage() {
       <BroadcastSchedule anime={anime} />
 
       <nav className='flex items-center gap-1.5 text-[12.5px] text-muted-foreground' aria-label='パス'>
-        <button
-          type='button'
-          onClick={goBack}
+        <Link
+          to='/browse'
           className='inline-flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
         >
           <ChevronLeft className='size-3' />
           アニメ一覧
-        </button>
+        </Link>
         <span>/</span>
         <span className='truncate font-semibold text-foreground'>{anime.title}</span>
       </nav>
@@ -117,7 +114,7 @@ function AnimeDetailPage() {
         updating={updating}
         refreshing={refreshAnimeMutation.isPending}
         onToggleScheduled={toggleScheduled}
-        onToggleRecorded={toggleRecorded}
+        onToggleRecorded={markRecorded}
         onRefresh={() => refreshAnimeMutation.mutate()}
       />
 

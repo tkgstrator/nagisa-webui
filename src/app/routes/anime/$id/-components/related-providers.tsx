@@ -18,29 +18,31 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
     enabled: anime.aniListId > 0
   })
 
-  const others = (data?.data ?? []).filter((item) => item.id !== anime.id)
+  // 表示中の作品もこの一覧に含まれる。抜き出して先頭に固定すると開いた作品で並びが変わるので、
+  // API の並び (title asc) のまま出して、選択中であることは背景色だけで示す。
+  const items = data?.data ?? []
 
   // 一覧のレスポンスには話数が無いので、行ごとに詳細を引いて「録画 / 全話」を埋める。
   const details = useQueries({
-    queries: others.map((item) => ({ ...animeDetailQueryOptions(item.id), staleTime: 5 * 60 * 1000 }))
+    queries: items.map((item) => ({ ...animeDetailQueryOptions(item.id), staleTime: 5 * 60 * 1000 }))
   })
 
   if (anime.aniListId <= 0) return null
 
-  const currentEpisodes = anime.seasons.flatMap((season) => season.episodes)
-  const currentRecorded = currentEpisodes.filter((episode) => episode.recorded).length
+  const hasOthers = items.some((item) => item.id !== anime.id)
 
   return (
     <section aria-labelledby='rel-heading'>
       <h3
         id='rel-heading'
-        className='flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
+        className='mb-2 flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
       >
         他の配信元
       </h3>
       {isPending ? (
         <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>読み込み中</p>
       ) : (
+        // 左バーはこの箱が 1 本だけ持つ。行にも持たせるとホバーで 2 本に見える。
         <div className='border-l-[3px] border-l-primary py-0.5'>
           <div className={`${colClass} px-2.5 py-1.5 pl-[13px] text-[11px] text-muted-foreground`}>
             <span>配信元</span>
@@ -49,41 +51,18 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
             <span />
           </div>
           <div className='flex flex-col'>
-            <div
-              className={`${colClass} items-center border-b border-b-border/60 border-l-[3px] border-l-primary bg-accent/60 px-2.5 py-2`}
-            >
-              <span className='flex min-w-0 flex-col gap-[3px]'>
-                <span className='truncate text-[13px]'>{anime.title}</span>
-                <span className='flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground'>
-                  <span className={`${pvClass} ${providerColor[anime.provider]}`}>{providerLabel[anime.provider]}</span>
-                  {anime.year > 0 && `${anime.year}年 ${QuarterLabel[anime.quarter]}`}
-                  <span className={`${tagClass} border-transparent bg-primary font-semibold text-primary-foreground`}>
-                    表示中
-                  </span>
-                </span>
-              </span>
-              <span className='text-right text-[13px] text-muted-foreground tabular-nums'>
-                <b className='font-semibold text-foreground'>{currentRecorded}</b>
-              </span>
-              <span className='text-right text-[13px] text-muted-foreground tabular-nums max-sm:hidden'>
-                {currentEpisodes.length}
-              </span>
-              <span />
-            </div>
-
-            {others.map((item, index) => {
-              const detail = details[index]?.data
+            {items.map((item, index) => {
+              const current = item.id === anime.id
+              // 表示中の行は手元の詳細をそのまま使う (同じ作品を引き直す必要がない)。
+              const detail = current ? anime : details[index]?.data
               const episodes = detail?.seasons.flatMap((season) => season.episodes) ?? []
               const expired = item.expiredAt !== null && dayjs(item.expiredAt).isBefore(dayjs())
               const expiring = item.expiredAt !== null && !expired
 
-              return (
-                <Link
-                  key={item.id}
-                  to='/anime/$id'
-                  params={{ id: item.id }}
-                  className={`${colClass} items-center border-b border-b-border/60 border-l-[3px] border-l-transparent px-2.5 py-2 transition-colors hover:border-l-primary hover:bg-muted ${expired ? 'text-muted-foreground' : ''}`}
-                >
+              const rowClass = `${colClass} items-center border-b border-b-border/60 px-2.5 py-2 pl-[13px] ${current ? 'bg-accent/60' : 'transition-colors hover:bg-muted'} ${expired ? 'text-muted-foreground' : ''}`
+
+              const body = (
+                <>
                   <span className='flex min-w-0 flex-col gap-[3px]'>
                     <span className={`truncate text-[13px] ${expired ? 'line-through' : ''}`}>{item.title}</span>
                     <span className='flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground'>
@@ -110,12 +89,22 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
                   <span className='text-right text-[13px] text-muted-foreground tabular-nums max-sm:hidden'>
                     {detail === undefined ? '—' : episodes.length}
                   </span>
-                  <ChevronRight className='size-3.5 text-muted-foreground' />
+                  {current ? <span /> : <ChevronRight className='size-3.5 text-muted-foreground' />}
+                </>
+              )
+
+              return current ? (
+                <div key={item.id} aria-current='page' className={rowClass}>
+                  {body}
+                </div>
+              ) : (
+                <Link key={item.id} to='/anime/$id' params={{ id: item.id }} className={rowClass}>
+                  {body}
                 </Link>
               )
             })}
           </div>
-          {others.length === 0 && (
+          {!hasOthers && (
             <p className='px-[13px] py-3.5 text-[12.5px] text-muted-foreground'>他の配信元は見つかりませんでした</p>
           )}
         </div>
