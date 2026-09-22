@@ -23,8 +23,17 @@ function isUniqueConstraintError(e: unknown): boolean {
   return e instanceof Error && 'code' in e && (e as { code: string }).code === 'P2002'
 }
 
-/** D1 の SQL 変数上限 (999) を超えないよう IN 句をチャンク分割して findMany する */
-const D1_VARIABLE_LIMIT = 500
+/**
+ * IN 句のチャンクサイズ。
+ *
+ * D1 の bound parameter 上限は **1 クエリ 100 個**で、SQLite 既定の 999 とは別物。
+ * 101 個目から `[7500] too many SQL variables` で落ちる
+ * (`scripts/analysis/d1-param-limit-probe.ts` で実測)。
+ *
+ * 100 ちょうどにしないのは、この定数を使う呼び出しが IN 句以外にも変数を持つため。
+ * 最も余裕がないのは `expiredAt` リセットの updateMany で `chunk + 3` になる。
+ */
+const D1_VARIABLE_LIMIT = 90
 
 async function findExistingContentIds(prisma: PrismaClient, contentIds: string[]): Promise<Set<string>> {
   const results: string[] = []
