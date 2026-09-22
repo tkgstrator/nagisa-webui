@@ -164,6 +164,7 @@ svg { display: block; flex: none; }
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 8px;
 }
 .pg-eyebrow b { color: var(--foreground); font-weight: 600; }
 .pg-title {
@@ -183,16 +184,8 @@ svg { display: block; flex: none; }
 
 /* ---------- section ---------- */
 .pg-sec { margin-top: 36px; }
-.pg-sec-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
 .pg-sec-title { font-size: 16px; font-weight: 700; }
-.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.ep-heading { display: block; margin-bottom: 14px; }
 .pg-sec-more {
   font-size: 12px;
   color: var(--muted-foreground);
@@ -426,7 +419,7 @@ svg { display: block; flex: none; }
   display: grid;
   grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 104px;
   gap: 14px; align-items: center;
-  padding: 8px 12px;
+  padding: 12px;
   border-left: 3px solid var(--border);
   border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
   transition: background .12s;
@@ -569,7 +562,6 @@ svg { display: block; flex: none; }
 
 .tag { display: inline-flex; align-items: center; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; }
 .tag-exp { border-color: color-mix(in oklch, var(--warning) 45%, transparent); color: var(--warning-foreground); background: color-mix(in oklch, var(--warning) 22%, transparent); }
-.tag-cur { border-color: transparent; background: var(--primary); color: var(--primary-foreground); font-weight: 600; }
 
 .rel-empty { padding: 14px 13px; font-size: 12.5px; color: var(--muted-foreground); border-left: 3px solid var(--border); }
 
@@ -697,10 +689,7 @@ svg { display: block; flex: none; }
 
       <div class="pg-cols">
       <section aria-labelledby="ep-heading">
-        <div class="pg-sec-head">
-          <h2 class="pg-sec-title" id="ep-heading">エピソード</h2>
-          <span class="pg-sec-count">86 EIGHTY-SIX · 全 14 話</span>
-        </div>
+        <h2 class="pg-sec-title ep-heading" id="ep-heading">エピソード</h2>
 
         <div class="tabs" role="tablist" aria-label="シーズン">
           <button class="tab" role="tab" aria-selected="true" type="button">86 EIGHTY-SIX <span class="tab-count">14</span></button>
@@ -845,10 +834,10 @@ svg { display: block; flex: none; }
             <div class="rel-head"><span>配信元</span><span class="num">録画</span><span class="num all">全話</span><span></span></div>
             <div class="rel-list">
               <a class="rel cur" href="#">
-                <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-crunchyroll">Crunchyroll</span>2021年 春<span class="tag tag-cur">表示中</span></span></span>
+                <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-crunchyroll">Crunchyroll</span>2021年 春</span></span>
                 <span class="rel-eps"><b>0</b></span>
                 <span class="rel-eps all">14</span>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+                <span></span>
               </a>
             </div>
           </div>

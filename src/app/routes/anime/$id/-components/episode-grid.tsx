@@ -109,7 +109,7 @@ const EpisodeRow = ({
   return (
     <li
       id={`ep-${episode.id}`}
-      className={`grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${rowAccent[status]}`}
+      className={`grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] p-3 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${rowAccent[status]}`}
     >
       <span className='text-right text-sm font-semibold leading-[21px] text-muted-foreground tabular-nums'>
         {episode.episodeNumber}
@@ -221,11 +221,9 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   if (season === undefined) {
     return (
       <section aria-labelledby='ep-heading'>
-        <div className='mb-3.5 flex flex-wrap items-baseline justify-between gap-3'>
-          <h2 id='ep-heading' className='text-base font-bold'>
-            エピソード
-          </h2>
-        </div>
+        <h2 id='ep-heading' className='mb-3.5 text-base font-bold'>
+          エピソード
+        </h2>
         <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>
           エピソード情報はまだありません
         </p>
@@ -242,14 +240,10 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
 
   return (
     <section aria-labelledby='ep-heading'>
-      <div className='mb-3.5 flex flex-wrap items-baseline justify-between gap-3'>
-        <h2 id='ep-heading' className='text-base font-bold'>
-          エピソード
-        </h2>
-        <span className='text-xs leading-[18px] text-muted-foreground tabular-nums'>
-          {season.displayName} · 全 {season.episodes.length} 話
-        </span>
-      </div>
+      {/* シーズン名と話数はすぐ下のタブが出すので、見出しでは繰り返さない。 */}
+      <h2 id='ep-heading' className='mb-3.5 text-base font-bold'>
+        エピソード
+      </h2>
 
       <div
         className='flex gap-0.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--border)]'
