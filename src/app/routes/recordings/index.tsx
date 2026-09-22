@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import { useAtom } from 'jotai'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
@@ -15,6 +16,7 @@ import {
   DialogTitle
 } from '@/app/components/ui/dialog'
 import api from '@/app/lib/api'
+import { type RecordingsFilters, recordingsFiltersAtom } from '@/app/lib/atoms'
 import { providerLabel } from '@/app/lib/constants'
 import { queryKeys } from '@/app/lib/query-keys'
 import { animeListQueryOptions } from '@/app/lib/query-options'
@@ -23,16 +25,9 @@ import { daysUntil } from './-components/format'
 import { RecordingsEmpty } from './-components/recordings-empty'
 import { RecordingsSidebar } from './-components/recordings-sidebar'
 import { RecordingsTable } from './-components/recordings-table'
-import {
-  RECORDED_OPTIONS,
-  type RecordedFilter,
-  RecordingsToolbar,
-  type SortValue
-} from './-components/recordings-toolbar'
+import { RECORDED_OPTIONS, RecordingsToolbar } from './-components/recordings-toolbar'
 import { SummaryStats } from './-components/summary-stats'
 import { WeeklySchedule } from './-components/weekly-schedule'
-
-type ViewMode = 'list' | 'schedule'
 
 export const Route = createFileRoute('/recordings/')({
   loader: ({ context: { queryClient } }) =>
@@ -42,13 +37,25 @@ export const Route = createFileRoute('/recordings/')({
 })
 
 function RecordingsPage() {
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [recordedFilter, setRecordedFilter] = useState<RecordedFilter>('all')
-  const [expiringOnly, setExpiringOnly] = useState(false)
-  const [provider, setProvider] = useState<string | undefined>(undefined)
-  const [sort, setSort] = useState<SortValue>('updatedAt-desc')
-  const [view, setView] = useState<ViewMode>('list')
+  const [filters, setFilters] = useAtom(recordingsFiltersAtom)
+  const { search, recorded: recordedFilter, expiringOnly, provider, sort, view, page } = filters
+
+  /** 絞り込みを変えたら 1 ページ目へ戻す。ページ送りと表示モードの切替はページを保つ。 */
+  const setFilter = useCallback(
+    <K extends keyof RecordingsFilters>(key: K) =>
+      (value: RecordingsFilters[K]) => {
+        setFilters((prev) => ({ ...prev, [key]: value, ...(key === 'page' || key === 'view' ? {} : { page: 1 }) }))
+      },
+    [setFilters]
+  )
+  const setPage = setFilter('page')
+  const setSearch = setFilter('search')
+  const setRecordedFilter = setFilter('recorded')
+  const setExpiringOnly = setFilter('expiringOnly')
+  const setProvider = setFilter('provider')
+  const setSort = setFilter('sort')
+  const setView = setFilter('view')
+
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [confirmOpen, setConfirmOpen] = useState(false)
   const queryClient = useQueryClient()
@@ -150,12 +157,9 @@ function RecordingsPage() {
   const allVisibleSelected = anime.length > 0 && anime.every((item) => selected.has(item.id))
   const selectedCount = selected.size
 
+  /** 並び順と表示モードは残したまま、絞り込みだけを既定へ戻す。 */
   const resetFilters = () => {
-    setSearch('')
-    setRecordedFilter('all')
-    setExpiringOnly(false)
-    setProvider(undefined)
-    setPage(1)
+    setFilters((prev) => ({ ...prev, search: '', recorded: 'all', expiringOnly: false, provider: undefined, page: 1 }))
   }
 
   const hasActiveFilters =
@@ -198,10 +202,7 @@ function RecordingsPage() {
         total={total}
         recorded={stats.recorded}
         pending={stats.pending}
-        onFilterChange={(value) => {
-          setRecordedFilter(value)
-          setPage(1)
-        }}
+        onFilterChange={setRecordedFilter}
       />
 
       <header className='flex flex-wrap items-end justify-between gap-5'>
@@ -227,10 +228,7 @@ function RecordingsPage() {
           <input
             type='search'
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder='タイトルで絞り込み'
             className='h-[34px] w-full rounded-lg border border-input bg-background pr-[30px] pl-8 text-[13px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-ring'
           />
@@ -279,25 +277,13 @@ function RecordingsPage() {
 
           <RecordingsToolbar
             recordedFilter={recordedFilter}
-            onRecordedFilterChange={(value) => {
-              setRecordedFilter(value)
-              setPage(1)
-            }}
+            onRecordedFilterChange={setRecordedFilter}
             provider={provider}
-            onProviderChange={(value) => {
-              setProvider(value)
-              setPage(1)
-            }}
+            onProviderChange={setProvider}
             expiringOnly={expiringOnly}
-            onExpiringOnlyChange={(value) => {
-              setExpiringOnly(value)
-              setPage(1)
-            }}
+            onExpiringOnlyChange={setExpiringOnly}
             sort={sort}
-            onSortChange={(value) => {
-              setSort(value)
-              setPage(1)
-            }}
+            onSortChange={setSort}
             hasActiveFilters={hasActiveFilters}
             onReset={resetFilters}
           />
@@ -352,10 +338,7 @@ function RecordingsPage() {
                 onUnschedule={(item) => onUnschedule(item.id)}
                 unschedulingId={unscheduleMutation.isPending ? (unscheduleMutation.variables ?? null) : null}
                 sort={sort}
-                onSortChange={(value) => {
-                  setSort(value)
-                  setPage(1)
-                }}
+                onSortChange={setSort}
               />
 
               <div className='mt-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 text-xs text-muted-foreground'>

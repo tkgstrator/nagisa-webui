@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
@@ -36,14 +36,8 @@ export const Route = createFileRoute('/anime/$id/')({
 function AnimeDetailPage() {
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
-  const router = useRouter()
   const { data: anime } = useSuspenseQuery(animeDetailQueryOptions(id))
   const { settings } = useSettings()
-
-  const goBack = () => {
-    if (window.history.length > 1) router.history.back()
-    else router.navigate({ to: '/' })
-  }
 
   const invalidateRelated = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.detail(id) })
@@ -102,14 +96,13 @@ function AnimeDetailPage() {
       <BroadcastSchedule anime={anime} />
 
       <nav className='flex items-center gap-1.5 text-[12.5px] text-muted-foreground' aria-label='パス'>
-        <button
-          type='button'
-          onClick={goBack}
+        <Link
+          to='/browse'
           className='inline-flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
         >
           <ChevronLeft className='size-3' />
           アニメ一覧
-        </button>
+        </Link>
         <span>/</span>
         <span className='truncate font-semibold text-foreground'>{anime.title}</span>
       </nav>
