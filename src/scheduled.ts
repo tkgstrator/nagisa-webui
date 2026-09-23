@@ -3,6 +3,7 @@ import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
 import { getAppLogger } from './lib/logger'
 import { sendMessage } from './lib/queue-routing'
+import { finishRun, startRun } from './lib/sync-run'
 import type { Message } from './schemas/message.dto'
 
 const logger = getAppLogger('scheduled')
@@ -14,23 +15,19 @@ interface Env {
   DISCORD_WEBHOOK_URL: string
 }
 
-async function enqueueAbemaArchive(env: Env): Promise<number> {
+async function enqueueAbemaArchive(env: Env, runId: string | null): Promise<number> {
   const prisma = createPrismaClient(env.DB)
-  try {
-    const animes = await prisma.anime.findMany({
-      where: {
-        provider: 'abema',
-        seasons: { some: { episodes: { some: { abemaKey: null } } } }
-      },
-      select: { id: true }
-    })
-    for (const anime of animes) {
-      await sendMessage(env, { type: 'abema_archive', message: { animeId: anime.id } })
-    }
-    return animes.length
-  } finally {
-    await prisma.$disconnect()
+  const animes = await prisma.anime.findMany({
+    where: {
+      provider: 'abema',
+      seasons: { some: { episodes: { some: { abemaKey: null } } } }
+    },
+    select: { id: true }
+  })
+  for (const anime of animes) {
+    await sendMessage(env, { type: 'abema_archive', runId: runId ?? undefined, message: { animeId: anime.id } })
   }
+  return animes.length
 }
 
 export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> {
@@ -38,55 +35,84 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
 
   logger.debug({ action: 'trigger', cron: event.cron, scheduledTime: new Date(event.scheduledTime).toISOString() })
 
+  // cron ハンドラは自前で prisma を持つ。enqueueAbemaArchive も同じクライアントを
+  // 使い回すので、disconnect はこの関数の finally に一本化する。
+  const prisma = createPrismaClient(env.DB)
+  const runId = await startRun(prisma, { kind: 'cron', trigger: event.cron })
+  let enqueued = 0
+
   try {
     switch (event.cron) {
       case '0 */1 * * *':
         for (const provider of providers) {
           for (const category of ['new_episode', 'coming_soon'] as const) {
-            await sendMessage(env, { type: 'fetch', message: { provider, category } })
+            await sendMessage(env, { type: 'fetch', runId: runId ?? undefined, message: { provider, category } })
             logger.info({ action: 'enqueue', provider, category })
+            enqueued++
           }
         }
         break
       case '0 0 * * *':
         for (const provider of providers) {
-          await sendMessage(env, { type: 'fetch', message: { provider, category: 'expiring' } })
+          await sendMessage(env, {
+            type: 'fetch',
+            runId: runId ?? undefined,
+            message: { provider, category: 'expiring' }
+          })
           logger.info({ action: 'enqueue', provider, category: 'expiring' })
+          enqueued++
         }
         break
       case '0 3 * * *':
         for (const provider of providers) {
-          await sendMessage(env, { type: 'fetch', message: { provider, category: 'catalog' } })
+          await sendMessage(env, {
+            type: 'fetch',
+            runId: runId ?? undefined,
+            message: { provider, category: 'catalog' }
+          })
           logger.info({ action: 'enqueue', provider, category: 'catalog' })
+          enqueued++
         }
         break
       case '0 4 * * *': {
-        const count = await enqueueAbemaArchive(env)
-        logger.info({ action: 'enqueue-abema-archive', count })
+        enqueued = await enqueueAbemaArchive(env, runId)
+        logger.info({ action: 'enqueue-abema-archive', count: enqueued })
         break
       }
-      case '0 5 * * 0': {
+      // wrangler.toml の crons に書いた文字列がそのまま event.cron に来る。
+      // "0 5 * * 0" と書くと一致せず default に落ちるので、定義と同じ SUN 表記にする。
+      case '0 5 * * SUN': {
         const fromYear = 2000
         const toYear = dayjs().year() + 1
         const years = Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i)
         // AniList の rate limit を burst で殴らないよう、1 年あたり 30s ずらして enqueue
         for (const [i, year] of years.entries()) {
-          await sendMessage(env, { type: 'anilist_sync', message: { year, country: 'JP' } }, { delaySeconds: i * 30 })
+          await sendMessage(
+            env,
+            { type: 'anilist_sync', runId: runId ?? undefined, message: { year, country: 'JP' } },
+            { delaySeconds: i * 30 }
+          )
         }
+        enqueued = years.length
         logger.info({ action: 'enqueue-anilist-sync', fromYear, toYear, count: years.length })
         break
       }
       default:
         logger.warn({ action: 'unknown-cron', cron: event.cron })
-        break
+        await finishRun(prisma, runId, 'failed', { errorMessage: `unknown cron: ${event.cron}` })
+        return
     }
+    await finishRun(prisma, runId, 'success', { total: enqueued, succeeded: enqueued })
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : String(e)
     logger.error({ action: 'scheduled-error', cron: event.cron, error: errorMessage })
+    await finishRun(prisma, runId, 'failed', { total: enqueued, succeeded: enqueued, failed: 1, errorMessage })
     await notify(env.DISCORD_WEBHOOK_URL, {
       title: 'Scheduled: キュー投入失敗',
       description: errorMessage,
       fields: [{ name: 'Cron', value: event.cron, inline: true }]
     })
+  } finally {
+    await prisma.$disconnect()
   }
 }

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { FileQuestion, KeyRound, Send } from 'lucide-react'
+import { FileQuestion, KeyRound, ScrollText, Send } from 'lucide-react'
 import { PageContainer } from '@/app/components/page-container'
 
 export const Route = createFileRoute('/admin/')({
@@ -7,7 +7,7 @@ export const Route = createFileRoute('/admin/')({
 })
 
 const ADMIN_ITEMS: {
-  to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema'
+  to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema' | '/admin/logs'
   title: string
   description: string
   icon: typeof FileQuestion
@@ -29,6 +29,12 @@ const ADMIN_ITEMS: {
     title: 'ABEMA 鍵アーカイブ',
     description: '復号鍵が未取得の ABEMA 作品を確認し、取得ジョブをキューに投入する',
     icon: KeyRound
+  },
+  {
+    to: '/admin/logs',
+    title: '同期ログ',
+    description: 'cron / Queue バッチの実行履歴と、cron が動いているかを確認する',
+    icon: ScrollText
   }
 ]
 

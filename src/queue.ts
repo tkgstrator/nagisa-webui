@@ -7,6 +7,7 @@ import { getAppLogger } from './lib/logger'
 import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
 import { resolveQueueForProvider } from './lib/queue-routing'
 import { SyncService } from './lib/sync'
+import { finishRun, resolveStatus, startRun } from './lib/sync-run'
 
 import type { Message } from './schemas/message.dto'
 
@@ -99,8 +100,18 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
 
   logger.info({ action: 'batch-start', batchSize: batch.messages.length, queue: batch.queue })
 
+  // 1 バッチには複数の cron 由来のメッセージが混ざりうるので、親は最初に見つかった
+  // 1 件だけを採る。どの run から来たかの内訳は meta に残す。
+  const parentIds = [...new Set(batch.messages.map((m) => m.body.runId).filter((id) => id !== undefined))]
+  const runId = await startRun(prisma, {
+    kind: 'queue',
+    trigger: 'batch',
+    parentId: parentIds[0] ?? null
+  })
+
   let succeeded = 0
   let failed = 0
+  let retried = 0
   const failedLabels: string[] = []
 
   const processMessage = async (message: (typeof batch.messages)[number]): Promise<void> => {
@@ -133,7 +144,7 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
               const chunk = contentIds.slice(i, i + SEND_BATCH_SIZE)
               await targetQueue.sendBatch(
                 chunk.map((contentId) => ({
-                  body: { type: 'update' as const, message: { provider, contentId } }
+                  body: { type: 'update' as const, runId: message.body.runId, message: { provider, contentId } }
                 }))
               )
             }
@@ -207,6 +218,7 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
       } else {
         const delaySeconds = RETRY_DELAY_SECONDS[message.attempts - 1] ?? RETRY_DELAY_SECONDS.at(-1)
         message.retry({ delaySeconds })
+        retried++
       }
     }
   }
@@ -228,6 +240,13 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
     }
   } finally {
     logger.debug({ action: 'batch-done', batchSize: batch.messages.length })
+    await finishRun(prisma, runId, resolveStatus(succeeded, failed), {
+      total: batch.messages.length,
+      succeeded,
+      failed,
+      retried,
+      meta: parentIds.length > 1 ? { parentIds } : undefined
+    })
     await prisma.$disconnect()
   }
 }
