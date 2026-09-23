@@ -8,6 +8,7 @@ import { createFetchClient } from '../lib/lambda'
 import { localDetailFetchers } from '../lib/local-detail-fetchers'
 import { createStore, flushLogs, runWithCapture } from '../lib/log-capture'
 import { getAppLogger } from '../lib/logger'
+import { recordEvent } from '../lib/recording-event'
 import { SyncService } from '../lib/sync'
 import { finishRun, startRun } from '../lib/sync-run'
 import {
@@ -386,7 +387,7 @@ anime.openapi(
     const { id } = c.req.valid('param')
     const row = await prisma.anime.findUnique({
       where: { id },
-      select: { provider: true, contentId: true }
+      select: { provider: true, contentId: true, title: true }
     })
     if (!row) return c.json({ error: 'Not found' }, 404)
 
@@ -423,15 +424,35 @@ anime.openapi(
     }
     logger.info({ action: 'record-request', id, body: requestBody })
 
-    const res = await fetch(`${c.env.BACKEND_URL}/api/queues`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'CF-Access-Client-Id': c.env.CF_ACCESS_CLIENT_ID,
-        'CF-Access-Client-Secret': c.env.CF_ACCESS_CLIENT_SECRET
-      },
-      body: JSON.stringify(requestBody)
-    })
+    /** 履歴 1 行ぶんの共通部分。結末だけ呼び出し側で足す。 */
+    const event = {
+      animeId: id,
+      provider: row.provider,
+      contentId: row.contentId,
+      title: row.title,
+      kind: 'request' as const,
+      source: 'ui' as const,
+      episodeCount: unrecordedEpisodes.length
+    }
+
+    let res: Response
+    try {
+      res = await fetch(`${c.env.BACKEND_URL}/api/queues`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'CF-Access-Client-Id': c.env.CF_ACCESS_CLIENT_ID,
+          'CF-Access-Client-Secret': c.env.CF_ACCESS_CLIENT_SECRET
+        },
+        body: JSON.stringify(requestBody)
+      })
+    } catch (e) {
+      // 接続自体が張れなかったとき。HTTP ステータスが無いので null で残す。
+      const message = e instanceof Error ? e.message : String(e)
+      logger.error({ action: 'record-backend-unreachable', id, provider: row.provider, error: message })
+      await recordEvent(prisma, { ...event, status: 'error', errorMessage: `fetch failed: ${message}` })
+      return c.json({ error: `Backend unreachable: ${message}` }, 502 as const)
+    }
 
     if (!res.ok) {
       const text = await res.text()
@@ -443,6 +464,7 @@ anime.openapi(
         status: res.status,
         body: text
       })
+      await recordEvent(prisma, { ...event, status: 'error', httpStatus: res.status, errorMessage: text })
       return c.json({ error: `Backend error: ${res.status} ${text}` }, 502 as const)
     }
 
@@ -454,6 +476,7 @@ anime.openapi(
       contentId: row.contentId,
       episodeCount: unrecordedEpisodes.length
     })
+    await recordEvent(prisma, { ...event, status: 'ok', httpStatus: res.status })
     return c.json(data as NagisaQueueResponseSchema, 200)
   }
 )

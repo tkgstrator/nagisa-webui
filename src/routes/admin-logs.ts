@@ -7,7 +7,10 @@ import {
   LogEntryListQuerySchema,
   type LogEntrySchema,
   LogStatsSchema,
+  PaginatedRecordingEventSchema,
   PaginatedSyncRunSchema,
+  RecordingEventListQuerySchema,
+  type RecordingEventSchema,
   SyncRunDetailSchema,
   SyncRunListQuerySchema,
   type SyncRunSchema
@@ -83,6 +86,33 @@ function serializeEntry(e: EntryRow): LogEntrySchema {
     ...e,
     level: e.level as LogEntrySchema['level'],
     ts: e.ts.toISOString()
+  }
+}
+
+type RecordingRow = {
+  id: string
+  animeId: string
+  episodeId: string | null
+  provider: string
+  contentId: string
+  title: string
+  kind: string
+  source: string
+  status: string
+  httpStatus: number | null
+  episodeCount: number | null
+  errorMessage: string | null
+  runId: string | null
+  createdAt: Date
+}
+
+function serializeRecording(r: RecordingRow): RecordingEventSchema {
+  return {
+    ...r,
+    kind: r.kind as RecordingEventSchema['kind'],
+    source: r.source as RecordingEventSchema['source'],
+    status: r.status as RecordingEventSchema['status'],
+    createdAt: r.createdAt.toISOString()
   }
 }
 
@@ -227,6 +257,57 @@ adminLogs.openapi(
       const hasNext = rows.length > limit
       const data = (hasNext ? rows.slice(0, limit) : rows).map(serializeEntry)
       return c.json({ data, nextCursor: hasNext ? (data.at(-1)?.id ?? null) : null }, 200)
+    } finally {
+      await prisma.$disconnect()
+    }
+  }
+)
+
+adminLogs.openapi(
+  createRoute({
+    method: 'get',
+    path: '/recordings',
+    tags: ['Admin'],
+    summary: '録画リクエストとその結末の時系列',
+    description:
+      '生ログ (/entries) と違い 180 日残り、animeId で引ける。作品ページの「この作品の録画履歴」もここを見る。',
+    request: { query: RecordingEventListQuerySchema },
+    responses: {
+      200: {
+        description: '録画イベント一覧 (新しい順)',
+        content: { 'application/json': { schema: PaginatedRecordingEventSchema } }
+      }
+    }
+  }),
+  async (c) => {
+    const { page, limit, animeId, kind, status, hours } = c.req.valid('query')
+    const prisma = createPrismaClient(c.env.DB)
+    try {
+      const where = {
+        createdAt: { gte: new Date(Date.now() - hours * 60 * 60 * 1000) },
+        ...(animeId ? { animeId } : {}),
+        ...(kind ? { kind } : {}),
+        ...(status ? { status } : {})
+      }
+      const [total, rows] = await Promise.all([
+        prisma.recordingEvent.count({ where }),
+        prisma.recordingEvent.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit
+        })
+      ])
+      return c.json(
+        {
+          data: rows.map(serializeRecording),
+          total,
+          page,
+          limit,
+          totalPages: Math.max(1, Math.ceil(total / limit))
+        },
+        200
+      )
     } finally {
       await prisma.$disconnect()
     }

@@ -18,6 +18,7 @@ export const queryKeys = {
     syncRuns: (filters: Record<string, unknown>) => ['admin', 'sync-runs', filters] as const,
     syncRun: (id: string) => ['admin', 'sync-run', id] as const,
     logEntries: (filters: Record<string, unknown>) => ['admin', 'log-entries', filters] as const,
+    recordingEvents: (filters: Record<string, unknown>) => ['admin', 'recording-events', filters] as const,
     logStats: ['admin', 'log-stats'] as const
   }
 }

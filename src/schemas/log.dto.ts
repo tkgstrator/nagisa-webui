@@ -91,6 +91,55 @@ export const CursoredLogEntrySchema = z.object({
 })
 export type CursoredLogEntrySchema = z.infer<typeof CursoredLogEntrySchema>
 
+/** 何をしたときの行か (src/lib/recording-event.ts と合わせる) */
+export const RecordingEventKindEnum = z.enum(['request', 'status', 'recorded', 'not-found'])
+export type RecordingEventKindEnum = z.infer<typeof RecordingEventKindEnum>
+
+/** どこから出た行か */
+export const RecordingEventSourceEnum = z.enum(['ui', 'webhook', 'cron'])
+export type RecordingEventSourceEnum = z.infer<typeof RecordingEventSourceEnum>
+
+export const RecordingEventStatusEnum = z.enum(['ok', 'error'])
+export type RecordingEventStatusEnum = z.infer<typeof RecordingEventStatusEnum>
+
+export const RecordingEventSchema = z.object({
+  id: z.string().nonempty(),
+  animeId: z.string().nonempty(),
+  episodeId: z.string().nullable(),
+  provider: z.string().nonempty(),
+  contentId: z.string().nonempty(),
+  title: z.string(),
+  kind: RecordingEventKindEnum,
+  source: RecordingEventSourceEnum,
+  status: RecordingEventStatusEnum,
+  httpStatus: z.number().int().nullable(),
+  episodeCount: z.number().int().nullable(),
+  errorMessage: z.string().nullable(),
+  runId: z.string().nullable(),
+  createdAt: z.coerce.string().nonempty()
+})
+export type RecordingEventSchema = z.infer<typeof RecordingEventSchema>
+
+export const RecordingEventListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
+  animeId: z.string().optional(),
+  kind: RecordingEventKindEnum.optional(),
+  status: RecordingEventStatusEnum.optional(),
+  // 期間は「直近 N 時間」。既定 7 日、最大 180 日 (recording_events の保持期間)。
+  hours: z.coerce.number().int().min(1).max(4320).default(168)
+})
+export type RecordingEventListQuerySchema = z.infer<typeof RecordingEventListQuerySchema>
+
+export const PaginatedRecordingEventSchema = z.object({
+  data: z.array(RecordingEventSchema),
+  total: z.number().int(),
+  page: z.number().int(),
+  limit: z.number().int(),
+  totalPages: z.number().int()
+})
+export type PaginatedRecordingEventSchema = z.infer<typeof PaginatedRecordingEventSchema>
+
 export const SyncRunDetailSchema = z.object({
   run: SyncRunSchema,
   children: z.array(SyncRunSchema),

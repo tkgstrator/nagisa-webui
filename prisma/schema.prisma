@@ -260,3 +260,35 @@ model SyncState {
 
   @@map("sync_state")
 }
+
+/// 録画リクエストとその結末の時系列。log_entries に相乗りさせないのは、
+/// 保持期間が違う (180 日) / animeId で引きたい / 送信と結果通知を
+/// 1 本の時系列にまとめたいため。
+model RecordingEvent {
+  id           String   @id @default(cuid())
+  animeId      String   @map("anime_id")
+  /// 対象が 1 話に特定できるときだけ入る。作品まるごとの送信では null。
+  episodeId    String?  @map("episode_id")
+  provider     String
+  contentId    String   @map("content_id")
+  /// 非正規化。作品が消えても履歴側は何の録画だったか読めるようにする。
+  title        String
+  /// 'request' | 'status' | 'recorded' | 'not-found'
+  kind         String
+  /// 'ui' | 'webhook' | 'cron'
+  source       String
+  /// 'ok' | 'error'
+  status       String
+  /// 上流 (nagisa) の HTTP ステータス。fetch 自体が失敗したときは null。
+  httpStatus   Int?     @map("http_status")
+  /// 送信した話数など。件数の意味は kind ごとに違う。
+  episodeCount Int?     @map("episode_count")
+  errorMessage String?  @map("error_message")
+  /// 出力時点の sync_runs.id。画面からの送信など run の外なら null。
+  runId        String?  @map("run_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([animeId])
+  @@map("recording_events")
+}
