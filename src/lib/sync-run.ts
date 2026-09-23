@@ -40,7 +40,7 @@ function serializeMeta(meta: Record<string, unknown> | undefined): string | null
  */
 export async function startRun(
   prisma: Prisma,
-  params: { kind: RunKind; trigger: string; parentId?: string | null }
+  params: { kind: RunKind; trigger: string; parentId?: string | null; startedAt?: Date }
 ): Promise<string | null> {
   try {
     const run = await prisma.syncRun.create({
@@ -48,7 +48,10 @@ export async function startRun(
         kind: params.kind,
         trigger: params.trigger,
         parentId: params.parentId ?? null,
-        status: 'running'
+        status: 'running',
+        // 「何もしなかった tick は記録しない」cron 用。処理が終わってから
+        // 記録を起こす場合でも durationMs を実時間にするために渡す。
+        ...(params.startedAt ? { startedAt: params.startedAt } : {})
       },
       select: { id: true }
     })
