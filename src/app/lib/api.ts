@@ -2,6 +2,7 @@ import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
 import {
   AnimeInfoSchema,
+  AnimeRecordingStatusSchema,
   AnimeSchema,
   BadgedAnimeSchema,
   PaginatedAnimeSchema,
@@ -73,6 +74,12 @@ const api = new Zodios('/api', [
     path: '/anime/:id/refresh',
     alias: 'refreshAnime',
     response: RefreshAnimeResponseSchema
+  },
+  {
+    method: 'get',
+    path: '/anime/:id/recording-status',
+    alias: 'getAnimeRecordingStatus',
+    response: AnimeRecordingStatusSchema
   },
   {
     method: 'patch',

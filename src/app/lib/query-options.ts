@@ -21,6 +21,14 @@ export const badgedAnimeQueryOptions = () =>
 export const animeDetailQueryOptions = (id: string) =>
   queryOptions({ queryKey: queryKeys.anime.detail(id), queryFn: () => api.getAnime({ params: { id } }) })
 
+/** 上流が落ちていても 200 + error で返るので、再試行は要らない。 */
+export const animeRecordingStatusQueryOptions = (id: string) =>
+  queryOptions({
+    queryKey: queryKeys.anime.recordingStatus(id),
+    queryFn: () => api.getAnimeRecordingStatus({ params: { id } }),
+    retry: false
+  })
+
 export const nagisaStatusQueryOptions = () =>
   queryOptions({ queryKey: queryKeys.nagisa.status, queryFn: () => api.getNagisaStatus(), refetchInterval: 15_000 })
 
