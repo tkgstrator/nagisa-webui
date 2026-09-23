@@ -41,7 +41,9 @@ enabled = true
 head_sampling_rate = 1
 
 [triggers]
-crons = ["0 */1 * * *", "0 0 * * *", "0 3 * * *", "0 4 * * *", "0 5 * * SUN"]
+# "* * * * *" = 録画ジョブの追従 (queue snapshot)、"*/15 * * * *" = 台帳の差分取り込み。
+# ここに書いた文字列がそのまま event.cron に来るので、scheduled.ts の分岐と一字一句合わせること。
+crons = ["* * * * *", "*/15 * * * *", "0 */1 * * *", "0 0 * * *", "0 3 * * *", "0 4 * * *", "0 5 * * SUN"]
 
 # Amazon 専用 queue。スクレイピング先を叩きすぎてスロットル(200で headerDetail 欠落)される
 # のを防ぐため、他 provider と分離した上で並行数を最も絞る (batch 2 × concurrency 1 = 実効 2)。

@@ -1,0 +1,241 @@
+TITLE: 録画イベント一覧
+---
+<header class="cat-head">
+  <h1>録画イベント一覧 <span class="cat-id">recording-events</span></h1>
+  <p>管理画面「同期ログ」の録画タブ。録画の出来事を時系列の 1 本の筋として読ませる。日付で区切り、時刻は左の溝に固定、結果は筋の上の点の色で示す。</p>
+  <div class="cat-meta"><span>astra 案 = 日付で区切る時系列</span><span>時刻は 66px の溝に固定</span><span>点 <code>9px</code> / 筋 <code>1px</code></span><span>話数と HTTP は別々のキー付き値</span><span>失敗の理由は本文の下</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">日付の区切り + 6 件</span></h2>
+  <div class="cat-item cat-full is-key">
+    <ol class="rev-tl">
+      <li class="rev-day"><span>今日</span><small>9月23日 (火)</small></li>
+      <li class="rev-ev is-ok">
+        <span class="rev-time">12:04:31</span>
+        <span class="rev-dot"></span>
+        <div class="rev-card">
+          <div class="rev-line">
+            <span class="rev-name">星降る夜のアストロノーツ</span>
+            <span class="rev-prov rev-p-crunchyroll">Crunchyroll</span>
+            <span class="rev-chip rev-c-recorded">録画完了</span>
+          </div>
+          <div class="rev-meta">
+            <span class="rev-src">webhook</span>
+            <span class="rev-kv"><b>9</b>話</span>
+          </div>
+        </div>
+      </li>
+      <li class="rev-ev is-ok">
+        <span class="rev-time">11:58:02</span>
+        <span class="rev-dot"></span>
+        <div class="rev-card">
+          <div class="rev-line">
+            <span class="rev-name">魔法少女は二度目の朝を迎える</span>
+            <span class="rev-prov rev-p-amazon">Prime Video</span>
+            <span class="rev-chip rev-c-request">予約送信</span>
+          </div>
+          <div class="rev-meta">
+            <span class="rev-src">画面</span>
+            <span class="rev-kv"><b>13</b>話</span>
+            <span class="rev-kv"><b>202</b>HTTP</span>
+          </div>
+        </div>
+      </li>
+      <li class="rev-ev is-err">
+        <span class="rev-time">11:41:17</span>
+        <span class="rev-dot"></span>
+        <div class="rev-card">
+          <div class="rev-line">
+            <span class="rev-name">転生したら図書館の司書だった件</span>
+            <span class="rev-prov rev-p-netflix">Netflix</span>
+            <span class="rev-chip rev-c-request">予約送信</span>
+          </div>
+          <div class="rev-meta">
+            <span class="rev-src">画面</span>
+            <span class="rev-kv rev-bad"><b>503</b>HTTP</span>
+          </div>
+          <p class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</p>
+        </div>
+      </li>
+      <li class="rev-ev is-warn">
+        <span class="rev-time">10:12:44</span>
+        <span class="rev-dot"></span>
+        <div class="rev-card">
+          <div class="rev-line">
+            <span class="rev-name">辺境ギルドの万年二番手</span>
+            <span class="rev-prov rev-p-abema">ABEMA</span>
+            <span class="rev-chip rev-c-notfound">見つからない</span>
+          </div>
+          <div class="rev-meta">
+            <span class="rev-src">cron</span>
+            <span class="rev-kv rev-bad"><b>404</b>HTTP</span>
+          </div>
+        </div>
+      </li>
+      <li class="rev-ev is-ok">
+        <span class="rev-time">09:30:08</span>
+        <span class="rev-dot"></span>
+        <div class="rev-card">
+          <div class="rev-line">
+            <span class="rev-name">サイレント・オーケストラ</span>
+            <span class="rev-prov rev-p-hulu">Hulu</span>
+            <span class="rev-chip rev-c-status">状態照会</span>
+          </div>
+          <div class="rev-meta">
+            <span class="rev-src">cron</span>
+            <span class="rev-kv"><b>7</b>話</span>
+            <span class="rev-kv"><b>200</b>HTTP</span>
+          </div>
+        </div>
+      </li>
+      <li class="rev-day"><span>昨日</span><small>9月22日 (月)</small></li>
+      <li class="rev-ev is-ok">
+        <span class="rev-time">23:05:51</span>
+        <span class="rev-dot"></span>
+        <div class="rev-card">
+          <div class="rev-line">
+            <span class="rev-name">深海都市のパン屋さん</span>
+            <span class="rev-prov rev-p-crunchyroll">Crunchyroll</span>
+            <span class="rev-chip rev-c-recorded">録画完了</span>
+          </div>
+          <div class="rev-meta">
+            <span class="rev-src">webhook</span>
+            <span class="rev-kv"><b>12</b>話</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+  <p class="cat-note">話数と HTTP ステータスは <b>別々のキー付き値</b>として置く。「9 / 202」のように並べると、片方が無い行でどちらが欠けたのか読めない。無い値は出さず、幅も詰める。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>1 件の状態</h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key">
+      <span class="cat-label">成功 <small>点は success</small></span>
+      <ol class="rev-tl">
+        <li class="rev-ev is-ok">
+          <span class="rev-time">12:04:31</span><span class="rev-dot"></span>
+          <div class="rev-card">
+            <div class="rev-line"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span><span class="rev-chip rev-c-recorded">録画完了</span></div>
+            <div class="rev-meta"><span class="rev-src">webhook</span><span class="rev-kv"><b>9</b>話</span></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">hover <small>本文だけ背景 muted、点は動かさない</small></span>
+      <ol class="rev-tl">
+        <li class="rev-ev is-ok is-hover">
+          <span class="rev-time">12:04:31</span><span class="rev-dot"></span>
+          <div class="rev-card">
+            <div class="rev-line"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span><span class="rev-chip rev-c-recorded">録画完了</span></div>
+            <div class="rev-meta"><span class="rev-src">webhook</span><span class="rev-kv"><b>9</b>話</span></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">キーボードフォーカス</span>
+      <ol class="rev-tl">
+        <li class="rev-ev is-ok is-focus">
+          <span class="rev-time">12:04:31</span><span class="rev-dot"></span>
+          <div class="rev-card">
+            <div class="rev-line"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span><span class="rev-chip rev-c-recorded">録画完了</span></div>
+            <div class="rev-meta"><span class="rev-src">webhook</span><span class="rev-kv"><b>9</b>話</span></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">失敗 <small>点は destructive、理由を下に</small></span>
+      <ol class="rev-tl">
+        <li class="rev-ev is-err">
+          <span class="rev-time">11:41:17</span><span class="rev-dot"></span>
+          <div class="rev-card">
+            <div class="rev-line"><span class="rev-name">転生したら図書館の司書だった件</span><span class="rev-prov rev-p-netflix">Netflix</span><span class="rev-chip rev-c-request">予約送信</span></div>
+            <div class="rev-meta"><span class="rev-src">画面</span><span class="rev-kv rev-bad"><b>503</b>HTTP</span></div>
+            <p class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">見つからない <small>点は warning</small></span>
+      <ol class="rev-tl">
+        <li class="rev-ev is-warn">
+          <span class="rev-time">10:12:44</span><span class="rev-dot"></span>
+          <div class="rev-card">
+            <div class="rev-line"><span class="rev-name">辺境ギルドの万年二番手</span><span class="rev-prov rev-p-abema">ABEMA</span><span class="rev-chip rev-c-notfound">見つからない</span></div>
+            <div class="rev-meta"><span class="rev-src">cron</span><span class="rev-kv rev-bad"><b>404</b>HTTP</span></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>種別 <span class="cat-hint">4 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">予約送信 <small>request</small></span><span class="rev-chip rev-c-request">予約送信</span></div>
+    <div class="cat-item"><span class="cat-label">状態照会 <small>status</small></span><span class="rev-chip rev-c-status">状態照会</span></div>
+    <div class="cat-item"><span class="cat-label">録画完了 <small>recorded</small></span><span class="rev-chip rev-c-recorded">録画完了</span></div>
+    <div class="cat-item"><span class="cat-label">見つからない <small>not-found</small></span><span class="rev-chip rev-c-notfound">見つからない</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>経路と値 <span class="cat-hint">経路 3 種 / キー付き値</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">画面 <small>ui</small></span><span class="rev-src">画面</span></div>
+    <div class="cat-item"><span class="cat-label">webhook</span><span class="rev-src">webhook</span></div>
+    <div class="cat-item"><span class="cat-label">cron</span><span class="rev-src">cron</span></div>
+    <div class="cat-item"><span class="cat-label">話数</span><span class="rev-kv"><b>12</b>話</span></div>
+    <div class="cat-item"><span class="cat-label">HTTP 2xx</span><span class="rev-kv"><b>202</b>HTTP</span></div>
+    <div class="cat-item"><span class="cat-label">HTTP 4xx / 5xx</span><span class="rev-kv rev-bad"><b>503</b>HTTP</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元 <span class="cat-hint">5 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">Prime Video</span><span class="rev-prov rev-p-amazon">Prime Video</span></div>
+    <div class="cat-item"><span class="cat-label">Hulu</span><span class="rev-prov rev-p-hulu">Hulu</span></div>
+    <div class="cat-item"><span class="cat-label">Crunchyroll</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item"><span class="cat-label">ABEMA</span><span class="rev-prov rev-p-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">Netflix</span><span class="rev-prov rev-p-netflix">Netflix</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>日付の区切り</h2>
+  <div class="cat-item cat-full">
+    <ol class="rev-tl">
+      <li class="rev-day"><span>今日</span><small>9月23日 (火)</small></li>
+      <li class="rev-day"><span>昨日</span><small>9月22日 (月)</small></li>
+      <li class="rev-day"><span>9月14日 (日)</span></li>
+    </ol>
+  </div>
+  <p class="cat-note">時刻は秒まで出す。送信と webhook の応答は数秒差で並ぶので、分までだと並び順の意味が読めない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>0 件のとき</h2>
+  <div class="cat-item cat-full is-key">
+    <div class="rev-empty">この期間の録画イベントはありません</div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">3 件分のスケルトン</span></h2>
+  <div class="cat-item cat-full">
+    <ol class="rev-tl">
+      <li class="rev-skel"><span class="sk sk-time"></span><span class="rev-dot"></span><div class="rev-card"><span class="sk sk-line"></span><span class="sk sk-meta"></span></div></li>
+      <li class="rev-skel"><span class="sk sk-time"></span><span class="rev-dot"></span><div class="rev-card"><span class="sk sk-line sk-short"></span><span class="sk sk-meta"></span></div></li>
+      <li class="rev-skel"><span class="sk sk-time"></span><span class="rev-dot"></span><div class="rev-card"><span class="sk sk-line"></span><span class="sk sk-meta"></span></div></li>
+    </ol>
+  </div>
+</section>

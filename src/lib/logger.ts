@@ -1,24 +1,5 @@
-import {
-  configureSync,
-  getConsoleSink,
-  getJsonLinesFormatter,
-  getLogger,
-  type LogRecord,
-  type Sink
-} from '@logtape/logtape'
-
-type LogEntry = Record<string, unknown> & { level?: string }
-
-let buffer: LogEntry[] | null = null
-
-/** ログをバッファに蓄積する Sink（デバッグ用レスポンス返却向け） */
-const captureSink: Sink = (record: LogRecord): void => {
-  if (!buffer) return
-  const props = { ...record.properties }
-  const msg = record.message.filter((m) => typeof m === 'string').join('')
-  if (msg) props.message = msg
-  buffer.push({ ...props, level: record.level })
-}
+import { configureSync, getConsoleSink, getJsonLinesFormatter, getLogger } from '@logtape/logtape'
+import { pushEntry } from './log-capture'
 
 /** LogTape を初期化する。Worker のエントリポイントで一度だけ呼ぶ。 */
 export function setupLogger(): void {
@@ -26,7 +7,9 @@ export function setupLogger(): void {
     reset: true,
     sinks: {
       console: getConsoleSink({ formatter: getJsonLinesFormatter() }),
-      capture: captureSink
+      // D1 への保存。実行コンテキストに capture store が無ければ何もしない
+      // (Lambda / 通常の fetch など)。詳細は src/lib/log-capture.ts。
+      capture: pushEntry
     },
     loggers: [
       {
@@ -42,18 +25,6 @@ export function setupLogger(): void {
       }
     ]
   })
-}
-
-/** キャプチャ開始: 以降のログをバッファに蓄積する */
-export function startCapture(): void {
-  buffer = []
-}
-
-/** キャプチャ停止: 蓄積されたログを返しバッファをクリアする */
-export function stopCapture(): LogEntry[] {
-  const entries = buffer ?? []
-  buffer = null
-  return entries
 }
 
 /** アプリケーション用ロガーを取得する */

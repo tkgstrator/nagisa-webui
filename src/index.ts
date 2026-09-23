@@ -5,11 +5,11 @@ import { createPrismaClient } from './lib/db'
 import { setupLogger } from './lib/logger'
 import { queue } from './queue'
 import adminRoutes from './routes/admin'
+import adminLogRoutes from './routes/admin-logs'
 import animeRoutes from './routes/anime'
 import imgRoutes from './routes/img'
 import nagisaRoutes from './routes/nagisa'
 import recordingsRoutes from './routes/recordings'
-import webhooksRoutes from './routes/webhooks'
 import { scheduled } from './scheduled'
 
 type Bindings = {
@@ -35,11 +35,11 @@ const app = new OpenAPIHono<{ Bindings: Bindings }>()
 app.use(logger())
 
 app.route('/api/admin', adminRoutes)
+app.route('/api/admin/logs', adminLogRoutes)
 app.route('/api/anime', animeRoutes)
 app.route('/api/img', imgRoutes)
 app.route('/api/nagisa', nagisaRoutes)
 app.route('/api/recordings', recordingsRoutes)
-app.route('/api/webhooks', webhooksRoutes)
 
 // デバッグ用: Falcor API / AniList のレスポンスを直接確認する
 app.get('/api/debug/falcor/:slug', async (c) => {

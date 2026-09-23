@@ -3,12 +3,21 @@ import { z } from 'zod'
 import { AnimeInfoSchema, AnimeSchema, BadgedAnimeSchema, PaginatedAnimeSchema } from '@/schemas/anime.dto'
 import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
 import {
+  CursoredLogEntrySchema,
+  LogStatsSchema,
+  PaginatedRecordingEventSchema,
+  PaginatedSyncRunSchema,
+  SyncRunDetailSchema
+} from '@/schemas/log.dto'
+import {
   NagisaEnqueueRequestSchema,
   NagisaEnqueueResponseSchema,
+  NagisaLibraryStatsSchema,
   NagisaQueueResponseSchema,
+  NagisaQueueSnapshotSchema,
   NagisaStatusSchema
 } from '@/schemas/nagisa.dto'
-import { BulkUpdateRecordingSchema, UpdateRecordingSchema } from '@/schemas/recording.dto'
+import { BulkUpdateRecordingSchema, RecordingSyncStateSchema, UpdateRecordingSchema } from '@/schemas/recording.dto'
 import { PaginatedUnidentifiedSchema } from '@/schemas/unidentified.dto'
 
 const api = new Zodios('/api', [
@@ -117,6 +126,24 @@ const api = new Zodios('/api', [
   },
   {
     method: 'get',
+    path: '/nagisa/queue/snapshot',
+    alias: 'getNagisaQueueSnapshot',
+    response: NagisaQueueSnapshotSchema
+  },
+  {
+    method: 'get',
+    path: '/nagisa/library/stats',
+    alias: 'getNagisaLibraryStats',
+    response: NagisaLibraryStatsSchema
+  },
+  {
+    method: 'get',
+    path: '/nagisa/sync-state',
+    alias: 'getRecordingSyncState',
+    response: RecordingSyncStateSchema
+  },
+  {
+    method: 'get',
     path: '/admin/unidentified',
     alias: 'getUnidentifiedList',
     parameters: [
@@ -139,6 +166,61 @@ const api = new Zodios('/api', [
     path: '/admin/abema/enqueue-archive',
     alias: 'enqueueArchive',
     response: ArchiveEnqueueResponseSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/runs',
+    alias: 'getSyncRuns',
+    parameters: [
+      { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(100).optional() },
+      { name: 'kind', type: 'Query', schema: z.enum(['cron', 'queue', 'manual']).optional() },
+      { name: 'status', type: 'Query', schema: z.enum(['running', 'success', 'partial', 'failed']).optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(2160).optional() }
+    ],
+    response: PaginatedSyncRunSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/runs/:id',
+    alias: 'getSyncRun',
+    response: SyncRunDetailSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/entries',
+    alias: 'getLogEntries',
+    parameters: [
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(200).optional() },
+      { name: 'cursor', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'level', type: 'Query', schema: z.enum(['debug', 'info', 'warning', 'error', 'fatal']).optional() },
+      { name: 'category', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'action', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'runId', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(336).optional() },
+      { name: 'q', type: 'Query', schema: z.string().nonempty().optional() }
+    ],
+    response: CursoredLogEntrySchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/recordings',
+    alias: 'getRecordingEvents',
+    parameters: [
+      { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(100).optional() },
+      { name: 'animeId', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'kind', type: 'Query', schema: z.enum(['request', 'status', 'recorded', 'not-found']).optional() },
+      { name: 'status', type: 'Query', schema: z.enum(['ok', 'error']).optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(4320).optional() }
+    ],
+    response: PaginatedRecordingEventSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/stats',
+    alias: 'getLogStats',
+    response: LogStatsSchema
   },
   {
     method: 'post',

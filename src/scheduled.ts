@@ -1,8 +1,13 @@
 import dayjs from 'dayjs'
 import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
+import { syncJobs } from './lib/job-sync'
+import { syncLibrary } from './lib/library-sync'
+import { createStore, flushLogs, runWithCapture } from './lib/log-capture'
+import { collectLogGarbage } from './lib/log-gc'
 import { getAppLogger } from './lib/logger'
 import { sendMessage } from './lib/queue-routing'
+import { finishRun, type RunStatus, startRun } from './lib/sync-run'
 import type { Message } from './schemas/message.dto'
 
 const logger = getAppLogger('scheduled')
@@ -12,25 +17,74 @@ interface Env {
   AMAZON_QUEUE: Queue<Message>
   SYNC_QUEUE: Queue<Message>
   DISCORD_WEBHOOK_URL: string
+  BACKEND_URL?: string
+  CF_ACCESS_CLIENT_ID?: string
+  CF_ACCESS_CLIENT_SECRET?: string
 }
 
-async function enqueueAbemaArchive(env: Env): Promise<number> {
-  const prisma = createPrismaClient(env.DB)
-  try {
-    const animes = await prisma.anime.findMany({
-      where: {
-        provider: 'abema',
-        seasons: { some: { episodes: { some: { abemaKey: null } } } }
-      },
-      select: { id: true }
-    })
-    for (const anime of animes) {
-      await sendMessage(env, { type: 'abema_archive', message: { animeId: anime.id } })
-    }
-    return animes.length
-  } finally {
-    await prisma.$disconnect()
+async function enqueueAbemaArchive(env: Env, prisma: ReturnType<typeof createPrismaClient>, runId: string | null) {
+  const animes = await prisma.anime.findMany({
+    where: {
+      provider: 'abema',
+      seasons: { some: { episodes: { some: { abemaKey: null } } } }
+    },
+    select: { id: true }
+  })
+  for (const anime of animes) {
+    await sendMessage(env, { type: 'abema_archive', runId: runId ?? undefined, message: { animeId: anime.id } })
   }
+  return animes.length
+}
+
+/**
+ * ② ジョブ追従 (docs/features/recording-sync.md §6)。毎分走るので、
+ * 追跡中のジョブが無い tick は SyncRun を 1 行も残さない
+ * (/admin/logs が「何もしなかった」だけで埋まるのを避ける)。
+ */
+async function runJobSync(prisma: ReturnType<typeof createPrismaClient>, env: Env): Promise<void> {
+  const startedAt = new Date()
+  const result = await syncJobs(prisma, env)
+  if (result.skipped && result.error === null) return
+
+  const runId = await startRun(prisma, { kind: 'cron', trigger: 'job-sync', startedAt })
+  const touched = result.downloading + result.failed + result.stale
+  await finishRun(prisma, runId, result.error ? 'failed' : 'success', {
+    total: touched,
+    succeeded: touched,
+    failed: result.error ? 1 : 0,
+    errorMessage: result.error ?? undefined,
+    meta: { downloading: result.downloading, failed: result.failed, stale: result.stale }
+  })
+}
+
+/**
+ * ③ reconcile (同 §7)。変更が無い tick は記録しない。
+ * bootstrap が走った回数そのものが異常の指標なので、走った回は必ず残す。
+ */
+async function runLibrarySync(prisma: ReturnType<typeof createPrismaClient>, env: Env): Promise<void> {
+  const startedAt = new Date()
+  const r = await syncLibrary(prisma, env)
+  const quiet = r.pages === 0 && r.bootstrap === null && r.aborted === null && r.error === null
+  if (quiet) return
+
+  const runId = await startRun(prisma, { kind: 'cron', trigger: 'library-sync', startedAt })
+  const touched = r.upserts + r.deletes
+  // aborted (mass_delete / epoch 変更) は「落ちてはいないが適用していない」なので partial。
+  const status = r.error ? 'failed' : r.aborted ? 'partial' : 'success'
+  await finishRun(prisma, runId, status, {
+    total: touched,
+    succeeded: touched,
+    failed: r.error ? 1 : 0,
+    errorMessage: r.error ?? r.aborted ?? undefined,
+    meta: {
+      pages: r.pages,
+      upserts: r.upserts,
+      deletes: r.deletes,
+      unmatched: r.unmatched,
+      bootstrap: r.bootstrap,
+      aborted: r.aborted
+    }
+  })
 }
 
 export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> {
@@ -38,55 +92,120 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
 
   logger.debug({ action: 'trigger', cron: event.cron, scheduledTime: new Date(event.scheduledTime).toISOString() })
 
-  try {
-    switch (event.cron) {
-      case '0 */1 * * *':
-        for (const provider of providers) {
-          for (const category of ['new_episode', 'coming_soon'] as const) {
-            await sendMessage(env, { type: 'fetch', message: { provider, category } })
-            logger.info({ action: 'enqueue', provider, category })
-          }
-        }
-        break
-      case '0 0 * * *':
-        for (const provider of providers) {
-          await sendMessage(env, { type: 'fetch', message: { provider, category: 'expiring' } })
-          logger.info({ action: 'enqueue', provider, category: 'expiring' })
-        }
-        break
-      case '0 3 * * *':
-        for (const provider of providers) {
-          await sendMessage(env, { type: 'fetch', message: { provider, category: 'catalog' } })
-          logger.info({ action: 'enqueue', provider, category: 'catalog' })
-        }
-        break
-      case '0 4 * * *': {
-        const count = await enqueueAbemaArchive(env)
-        logger.info({ action: 'enqueue-abema-archive', count })
-        break
-      }
-      case '0 5 * * 0': {
-        const fromYear = 2000
-        const toYear = dayjs().year() + 1
-        const years = Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i)
-        // AniList の rate limit を burst で殴らないよう、1 年あたり 30s ずらして enqueue
-        for (const [i, year] of years.entries()) {
-          await sendMessage(env, { type: 'anilist_sync', message: { year, country: 'JP' } }, { delaySeconds: i * 30 })
-        }
-        logger.info({ action: 'enqueue-anilist-sync', fromYear, toYear, count: years.length })
-        break
-      }
-      default:
-        logger.warn({ action: 'unknown-cron', cron: event.cron })
-        break
+  // cron ハンドラは自前で prisma を持つ。enqueueAbemaArchive も同じクライアントを
+  // 使い回すので、disconnect はこの関数の finally に一本化する。
+  const prisma = createPrismaClient(env.DB)
+
+  // 録画同期の 2 本は Queue を介さず自前で完結する。何もしなかった tick を
+  // 記録しない都合で startRun をハンドラ側に持つため、switch の前で分岐する。
+  if (event.cron === '* * * * *' || event.cron === '*/15 * * * *') {
+    try {
+      if (event.cron === '* * * * *') await runJobSync(prisma, env)
+      else await runLibrarySync(prisma, env)
+    } finally {
+      await prisma.$disconnect()
     }
-  } catch (e) {
-    const errorMessage = e instanceof Error ? e.message : String(e)
-    logger.error({ action: 'scheduled-error', cron: event.cron, error: errorMessage })
-    await notify(env.DISCORD_WEBHOOK_URL, {
-      title: 'Scheduled: キュー投入失敗',
-      description: errorMessage,
-      fields: [{ name: 'Cron', value: event.cron, inline: true }]
+    return
+  }
+
+  const runId = await startRun(prisma, { kind: 'cron', trigger: event.cron })
+  // startRun のあとに store を作る。以降この run の中で出たログは
+  // AsyncLocalStorage 経由で runId 付きで溜まる (src/lib/log-capture.ts)。
+  const store = createStore(runId)
+
+  let enqueued = 0
+  let status: RunStatus = 'success'
+  let failed = 0
+  let errorMessage: string | undefined
+
+  try {
+    await runWithCapture(store, async () => {
+      try {
+        switch (event.cron) {
+          case '0 */1 * * *':
+            for (const provider of providers) {
+              for (const category of ['new_episode', 'coming_soon'] as const) {
+                await sendMessage(env, { type: 'fetch', runId: runId ?? undefined, message: { provider, category } })
+                logger.info({ action: 'enqueue', provider, category })
+                enqueued++
+              }
+            }
+            break
+          case '0 0 * * *':
+            for (const provider of providers) {
+              await sendMessage(env, {
+                type: 'fetch',
+                runId: runId ?? undefined,
+                message: { provider, category: 'expiring' }
+              })
+              logger.info({ action: 'enqueue', provider, category: 'expiring' })
+              enqueued++
+            }
+            break
+          case '0 3 * * *':
+            for (const provider of providers) {
+              await sendMessage(env, {
+                type: 'fetch',
+                runId: runId ?? undefined,
+                message: { provider, category: 'catalog' }
+              })
+              logger.info({ action: 'enqueue', provider, category: 'catalog' })
+              enqueued++
+            }
+            break
+          case '0 4 * * *': {
+            enqueued = await enqueueAbemaArchive(env, prisma, runId)
+            logger.info({ action: 'enqueue-abema-archive', count: enqueued })
+            // cron は Worker あたり 5 本が上限で空きが無いので、ログの GC はここに相乗りさせる。
+            await collectLogGarbage(prisma)
+            break
+          }
+          // wrangler.toml の crons に書いた文字列がそのまま event.cron に来る。
+          // "0 5 * * 0" と書くと一致せず default に落ちるので、定義と同じ SUN 表記にする。
+          case '0 5 * * SUN': {
+            const fromYear = 2000
+            const toYear = dayjs().year() + 1
+            const years = Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i)
+            // AniList の rate limit を burst で殴らないよう、1 年あたり 30s ずらして enqueue
+            for (const [i, year] of years.entries()) {
+              await sendMessage(
+                env,
+                { type: 'anilist_sync', runId: runId ?? undefined, message: { year, country: 'JP' } },
+                { delaySeconds: i * 30 }
+              )
+            }
+            enqueued = years.length
+            logger.info({ action: 'enqueue-anilist-sync', fromYear, toYear, count: years.length })
+            break
+          }
+          default:
+            logger.warn({ action: 'unknown-cron', cron: event.cron })
+            status = 'failed'
+            errorMessage = `unknown cron: ${event.cron}`
+        }
+      } catch (e) {
+        errorMessage = e instanceof Error ? e.message : String(e)
+        status = 'failed'
+        failed = 1
+        logger.error({ action: 'scheduled-error', cron: event.cron, error: errorMessage })
+        await notify(env.DISCORD_WEBHOOK_URL, {
+          title: 'Scheduled: キュー投入失敗',
+          description: errorMessage,
+          fields: [{ name: 'Cron', value: event.cron, inline: true }]
+        })
+      }
     })
+  } finally {
+    // flushLogs → finishRun → $disconnect の順を守る。src/lib/db.ts が
+    // クライアントを使い回すので、disconnect 後の書き込みは失敗する。
+    const droppedLogs = await flushLogs(prisma, store)
+    await finishRun(prisma, runId, status, {
+      total: enqueued,
+      succeeded: enqueued,
+      failed,
+      droppedLogs,
+      errorMessage
+    })
+    await prisma.$disconnect()
   }
 }

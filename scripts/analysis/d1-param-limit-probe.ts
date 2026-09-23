@@ -2,7 +2,7 @@
  * D1 の bound parameter 上限を実測する。
  *
  * docs (d1/platform/limits) は「Maximum bound parameters per query: 100」と書いているが、
- * `src/lib/sync.ts` の `D1_VARIABLE_LIMIT` は 500 で、コメントは SQLite 既定の 999 を
+ * `src/lib/sync/queries.ts` の `D1_VARIABLE_LIMIT` は 500 で、コメントは SQLite 既定の 999 を
  * 根拠にしている。どちらが実態かはローカル D1 (素の SQLite) では再現しないので、
  * リモートの D1 HTTP API に直接投げて確かめる。
  *

@@ -103,7 +103,12 @@ export const NagisaStatusJobSchema = z.object({
   marketplace: MarketplaceEnum.nullable(),
   progress: NagisaJobProgressSchema.nullable(),
   timestamp: z.number(),
-  processedOn: z.number(),
+  /**
+   * ワーカーが拾った時刻。**待機中 (wait) と遅延中 (delayed) のジョブは null**
+   * — /api/status は全 state を返すので、必須にすると 1 件でも待ち行列に
+   * 積まれた瞬間にステータス全体の parse が落ちる (実応答で確認済み)。
+   */
+  processedOn: z.number().nullable(),
   finishedOn: z.number().nullable(),
   failedReason: z.string().nullable()
 })
@@ -142,3 +147,110 @@ export const NagisaStatusSchema = z.object({
   system: NagisaSystemSchema.nullable()
 })
 export type NagisaStatusSchema = z.infer<typeof NagisaStatusSchema>
+
+// --- Queue snapshot (GET /api/queue/snapshot) ---
+//
+// Nagisa 側 (`nagisa/server/status.py`) は snake_case でそのまま返す。
+// /api/status の camelCase とは別形なので、変換せずに契約どおり受ける。
+
+export const NagisaJobStateEnum = z.enum(['active', 'wait', 'completed', 'failed', 'delayed'])
+export type NagisaJobState = z.infer<typeof NagisaJobStateEnum>
+
+export const NagisaQueueSnapshotJobSchema = z.object({
+  job_id: z.string().nonempty(),
+  state: NagisaJobStateEnum,
+  provider: ProviderEnum,
+  content_id: z.string().nonempty(),
+  title: z.string().nullable(),
+  seasons: z.array(NagisaStatusJobSeasonSchema).nullable(),
+  progress: NagisaJobProgressSchema.nullable(),
+  attempts: z.number().int(),
+  failed_reason: z.string().nullable(),
+  timestamp: z.number(),
+  processed_on: z.number().nullable(),
+  finished_on: z.number().nullable()
+})
+export type NagisaQueueSnapshotJob = z.infer<typeof NagisaQueueSnapshotJobSchema>
+
+export const NagisaQueueSnapshotSchema = z.object({
+  jobs: z.array(NagisaQueueSnapshotJobSchema),
+  /**
+   * state ごとの件数。jobs は terminal state を窓で切って返すので
+   * counts と jobs の件数は一致しない (advisory であって突合には使えない)
+   */
+  counts: z.record(NagisaJobStateEnum, z.number().int()),
+  generated_at: z.number().int()
+})
+export type NagisaQueueSnapshot = z.infer<typeof NagisaQueueSnapshotSchema>
+
+// --- Recording ledger (GET /api/library/*) ---
+//
+// cursor は Nagisa が発行する不透明トークン。**Workers 側で中身を解釈しない**
+// (失効判定は 410 / 409 を返す Nagisa 側の責務で、両側が持つと必ずずれる)。
+
+export const NagisaLibraryItemSchema = z.object({
+  provider: z.string().nonempty(),
+  content_id: z.string().nullable(),
+  episode_id: z.string().nullable(),
+  season_number: z.number().int().nullable(),
+  episode_number: z.number().int().nullable(),
+  /** ライブラリルートからの相対パス */
+  path: z.string().nonempty(),
+  size: z.number().int(),
+  mtime: z.string().nullable()
+})
+export type NagisaLibraryItem = z.infer<typeof NagisaLibraryItemSchema>
+
+export const NagisaLibraryChangeSchema = z.object({
+  seq: z.number().int(),
+  op: z.enum(['upsert', 'delete']),
+  recording_id: z.string().nonempty(),
+  changed_at: z.string().nonempty(),
+  /** op === 'upsert' のときだけ付く。delete は tombstone なので本文を持たない */
+  item: NagisaLibraryItemSchema.optional()
+})
+export type NagisaLibraryChange = z.infer<typeof NagisaLibraryChangeSchema>
+
+export const NagisaLibraryChangesSchema = z.object({
+  epoch: z.string().nonempty(),
+  changes: z.array(NagisaLibraryChangeSchema),
+  next_cursor: z.string().nonempty(),
+  has_more: z.boolean()
+})
+export type NagisaLibraryChanges = z.infer<typeof NagisaLibraryChangesSchema>
+
+export const NagisaLibrarySnapshotSchema = z.object({
+  epoch: z.string().nonempty(),
+  /** 初回ページで固定される台帳の head。以降のページもこの位置を指し続ける */
+  snapshot_seq: z.number().int(),
+  items: z.array(NagisaLibraryItemSchema.extend({ recording_id: z.string().nonempty() })),
+  /** このスナップショットの続き。最終ページでは null */
+  next_cursor: z.string().nonempty().nullable(),
+  /**
+   * 最終ページを適用し終えた後に /changes を再開する位置。
+   * head ではなく snapshot_seq に固定されているので、スナップショットを
+   * 捲っている間に書かれたイベントは読み直しになる (適用は冪等)。
+   */
+  changes_cursor: z.string().nonempty(),
+  has_more: z.boolean()
+})
+export type NagisaLibrarySnapshot = z.infer<typeof NagisaLibrarySnapshotSchema>
+
+export const NagisaLibraryStatsSchema = z.object({
+  epoch: z.string().nonempty(),
+  last_seq: z.number().int(),
+  /** 台帳 head をそのまま changes カーソルにしたもの */
+  cursor: z.string().nonempty(),
+  recordings: z.number().int(),
+  /** provider / episode_id を解決できていない行数 */
+  unresolved: z.number().int(),
+  total_size: z.number().int()
+})
+export type NagisaLibraryStats = z.infer<typeof NagisaLibraryStatsSchema>
+
+/** Nagisa 側のエラー契約 (410 epoch_changed / cursor_expired, 409 cursor_ahead / not_initialized, 503 ...) */
+export const NagisaLibraryErrorSchema = z.object({
+  error: z.string().nonempty(),
+  message: z.string().nonempty()
+})
+export type NagisaLibraryError = z.infer<typeof NagisaLibraryErrorSchema>
