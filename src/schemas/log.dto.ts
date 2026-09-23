@@ -95,8 +95,8 @@ export type CursoredLogEntrySchema = z.infer<typeof CursoredLogEntrySchema>
 export const RecordingEventKindEnum = z.enum(['request', 'status', 'recorded', 'not-found'])
 export type RecordingEventKindEnum = z.infer<typeof RecordingEventKindEnum>
 
-/** どこから出た行か */
-export const RecordingEventSourceEnum = z.enum(['ui', 'webhook', 'cron'])
+/** どこから出た行か。ラベルは実行履歴の runKind (Schedule / Manual) と揃える */
+export const RecordingEventSourceEnum = z.enum(['cron', 'manual'])
 export type RecordingEventSourceEnum = z.infer<typeof RecordingEventSourceEnum>
 
 export const RecordingEventStatusEnum = z.enum(['ok', 'error'])
@@ -139,6 +139,51 @@ export const PaginatedRecordingEventSchema = z.object({
   totalPages: z.number().int()
 })
 export type PaginatedRecordingEventSchema = z.infer<typeof PaginatedRecordingEventSchema>
+
+/** カタログに入った変化の種類 (src/lib/catalog-event.ts と合わせる) */
+export const CatalogEventKindEnum = z.enum(['title-added', 'season-added', 'episodes-added', 'episodes-updated'])
+export type CatalogEventKindEnum = z.infer<typeof CatalogEventKindEnum>
+
+/** 既存エピソードで変わった項目 */
+export const CatalogEventFieldEnum = z.enum(['image', 'description', 'duration', 'releaseDate'])
+export type CatalogEventFieldEnum = z.infer<typeof CatalogEventFieldEnum>
+
+export const CatalogEventSchema = z.object({
+  id: z.string().nonempty(),
+  animeId: z.string().nonempty(),
+  provider: z.string().nonempty(),
+  contentId: z.string().nonempty(),
+  title: z.string(),
+  kind: CatalogEventKindEnum,
+  seasonNumber: z.number().int().nullable(),
+  episodeCount: z.number().int().nullable(),
+  /** 「S1 E5–7, 9」形式 */
+  episodes: z.string().nullable(),
+  fields: z.array(CatalogEventFieldEnum).nullable(),
+  runId: z.string().nullable(),
+  createdAt: z.coerce.string().nonempty()
+})
+export type CatalogEventSchema = z.infer<typeof CatalogEventSchema>
+
+export const CatalogEventListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
+  animeId: z.string().optional(),
+  kind: CatalogEventKindEnum.optional(),
+  provider: z.string().optional(),
+  // 期間は「直近 N 時間」。既定 7 日、最大 90 日 (catalog_events の保持期間)。
+  hours: z.coerce.number().int().min(1).max(2160).default(168)
+})
+export type CatalogEventListQuerySchema = z.infer<typeof CatalogEventListQuerySchema>
+
+export const PaginatedCatalogEventSchema = z.object({
+  data: z.array(CatalogEventSchema),
+  total: z.number().int(),
+  page: z.number().int(),
+  limit: z.number().int(),
+  totalPages: z.number().int()
+})
+export type PaginatedCatalogEventSchema = z.infer<typeof PaginatedCatalogEventSchema>
 
 export const SyncRunDetailSchema = z.object({
   run: SyncRunSchema,

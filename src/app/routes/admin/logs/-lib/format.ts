@@ -62,9 +62,8 @@ export const recordingKindLabel: Record<RecordingEventSchema['kind'], string> = 
 }
 
 export const recordingSourceLabel: Record<RecordingEventSchema['source'], string> = {
-  ui: '画面',
-  webhook: 'webhook',
-  cron: 'cron'
+  cron: 'Schedule',
+  manual: 'Manual'
 }
 
 export const recordingStatusLabel: Record<RecordingEventSchema['status'], string> = {

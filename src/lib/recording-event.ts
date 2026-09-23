@@ -4,7 +4,7 @@
  * 生ログ (`log_entries`) との住み分け:
  *   - 保持期間が違う (録画 180 日 / 生ログ 14 日)
  *   - `animeId` で引きたい (作品ページから「この作品の録画履歴」を出す)
- *   - 送信 (画面/キュー) と結果 (台帳同期) を 1 本の時系列にまとめたい
+ *   - 送信 (画面/自動録画) と結果 (台帳同期) を 1 本の時系列にまとめたい
  *
  * **書き込みに失敗しても絶対に throw しない**。ここは録画本体の副作用であって、
  * 履歴が残せなかったことで録画リクエストそのものを落としてはいけない。
@@ -21,8 +21,12 @@ type Prisma = ReturnType<typeof createPrismaClient>
 /** 何をしたときの行か。UI の絞り込みもこの 4 値で出す。 */
 export type RecordingEventKind = 'request' | 'status' | 'recorded' | 'not-found'
 
-/** どこから出た行か。 */
-export type RecordingEventSource = 'ui' | 'webhook' | 'cron'
+/**
+ * どこから出た行か。
+ *   - cron:   予約済み作品 (`Anime.scheduled`) に新しい回が入ったときの自動録画
+ *   - manual: 人が画面から送った録画
+ */
+export type RecordingEventSource = 'cron' | 'manual'
 
 /** エラーメッセージの上限。上流のレスポンス本文がそのまま来ることがある。 */
 const MAX_ERROR_LENGTH = 1000
