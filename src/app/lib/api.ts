@@ -1,6 +1,13 @@
 import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
-import { AnimeInfoSchema, AnimeSchema, BadgedAnimeSchema, PaginatedAnimeSchema } from '@/schemas/anime.dto'
+import {
+  AnimeInfoSchema,
+  AnimeSchema,
+  BadgedAnimeSchema,
+  PaginatedAnimeSchema,
+  RecordAnimeRequestSchema,
+  RefreshAnimeResponseSchema
+} from '@/schemas/anime.dto'
 import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
 import {
   CursoredLogEntrySchema,
@@ -58,13 +65,14 @@ const api = new Zodios('/api', [
     method: 'post',
     path: '/anime/:id/record',
     alias: 'recordAnime',
+    parameters: [{ name: 'body', type: 'Body', schema: RecordAnimeRequestSchema }],
     response: NagisaQueueResponseSchema
   },
   {
     method: 'post',
     path: '/anime/:id/refresh',
     alias: 'refreshAnime',
-    response: z.object({ contentId: z.string(), provider: z.string() })
+    response: RefreshAnimeResponseSchema
   },
   {
     method: 'patch',

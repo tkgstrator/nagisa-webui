@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { RecordStatusEnum } from './recording.dto'
 
 export const AnimeSchema = z.object({
   id: z.uuid(),
@@ -49,6 +50,9 @@ export const AnimeInfoSchema = AnimeSchema.extend({
           hasDub: z.coerce.boolean(),
           benefitId: z.string().nonempty(),
           recorded: z.coerce.boolean(),
+          /** 録画指示の進み具合。未知の値が来ても画面を落とさない */
+          recordStatus: RecordStatusEnum.catch('none'),
+          recordError: z.string().nullable().catch(null),
           hasLocalKey: z.coerce.boolean()
         })
       )
@@ -97,3 +101,22 @@ export const PaginatedAnimeSchema = z.object({
   totalPages: z.number().int()
 })
 export type PaginatedAnimeSchema = z.infer<typeof PaginatedAnimeSchema>
+
+/**
+ * `POST /anime/:id/record` の body。省略時は未録画の回をすべて送る。
+ * 指定時は録画済みの回でも送る (nagisa 側が既にあるファイルを飛ばす)。
+ */
+export const RecordAnimeRequestSchema = z
+  .object({ episodeIds: z.array(z.string().nonempty()).nonempty().optional() })
+  .optional()
+export type RecordAnimeRequest = z.infer<typeof RecordAnimeRequestSchema>
+
+/** 録画状態の同期結果。nagisa の設定が無い環境でも refresh 自体は通すので、失敗は error に畳む。 */
+export const RefreshAnimeResponseSchema = z.object({
+  contentId: z.string(),
+  provider: z.string(),
+  sync: z.object({
+    jobs: z.object({ downloading: z.number(), failed: z.number(), stale: z.number(), error: z.string().nullable() }),
+    library: z.object({ skipped: z.boolean(), upserts: z.number(), deletes: z.number(), error: z.string().nullable() })
+  })
+})

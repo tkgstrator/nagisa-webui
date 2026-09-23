@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { Check, ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { Checkbox } from '@/app/components/ui/checkbox'
 import api from '@/app/lib/api'
 import { queryKeys } from '@/app/lib/query-keys'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
@@ -35,58 +36,87 @@ const rowAccent: Record<EpisodeStatus, string> = {
 const chipClass =
   'inline-flex h-7 items-center gap-1.5 rounded-full border border-border px-2.5 text-[12.5px] text-muted-foreground transition-colors hover:bg-muted aria-pressed:border-transparent aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground'
 
+/** nagisa に送った後の進み具合。`recordStatus` が none / completed / missing のときは録画済みフラグ側で見せる。 */
+type Progress = 'pending' | 'downloading' | 'failed' | null
+
+const progressOf = (episode: Episode): Progress => {
+  if (episode.recorded) return null
+  const { recordStatus } = episode
+  if (recordStatus === 'pending' || recordStatus === 'downloading') return recordStatus
+  if (recordStatus === 'failed' || recordStatus === 'stale') return 'failed'
+  return null
+}
+
 /**
- * 1話ぶんの録画状態トグル。`PUT /api/recordings` に繋がっている。
- * 押せるのは未録画の回だけで、未配信の回と録画済みの回は操作できない
- * (録画を削除する API がないので、録画済みからは戻せない)。
- * 押せない場合もボタン自体は同じ位置に残し、意味だけ変える。
+ * 1話ぶんの録画ボタン。`POST /api/anime/:id/record` に話を 1 つだけ渡して nagisa に送る。
+ * 録画済みの回も押せる (nagisa 側が既にあるファイルを飛ばすので重複しても害はない)。
+ * 押せないのは未配信の回と送信中だけ。押せない場合もボタン自体は同じ位置に残し、意味だけ変える。
  */
 const RecordState = ({
   status,
-  pending,
-  onToggle
+  progress,
+  error,
+  sending,
+  onRecord
 }: {
   status: EpisodeStatus
-  pending: boolean
-  onToggle: () => void
+  progress: Progress
+  error: string | null
+  sending: boolean
+  onRecord: () => void
 }) => {
-  const style = pending
+  const busy = sending || progress === 'pending' || progress === 'downloading'
+  const style = busy
     ? 'border-info/40 bg-info/10 text-info'
     : status === 'done'
-      ? 'cursor-default border-success/40 bg-success/10 text-success'
+      ? 'border-success/40 bg-success/10 text-success hover:bg-success/15'
       : status === 'future'
         ? 'cursor-default border-dashed border-border text-muted-foreground'
-        : 'border-border bg-background text-foreground hover:bg-secondary'
-  const icon = pending
+        : progress === 'failed'
+          ? 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/15'
+          : 'border-border bg-background text-foreground hover:bg-secondary'
+  const icon = busy
     ? 'animate-spin border-2 border-info/30 border-t-info'
     : status === 'done'
       ? 'bg-success text-success-foreground'
       : status === 'future'
         ? 'border-[1.5px] border-dashed border-muted-foreground'
-        : 'border-[1.5px] border-muted-foreground'
+        : progress === 'failed'
+          ? 'border-[1.5px] border-destructive'
+          : 'border-[1.5px] border-muted-foreground'
+  const label = sending
+    ? '送信中'
+    : progress === 'pending'
+      ? '予約済み'
+      : progress === 'downloading'
+        ? '録画中'
+        : status === 'future'
+          ? '配信予定'
+          : status === 'done'
+            ? '録画済み'
+            : progress === 'failed'
+              ? '再試行'
+              : '録画する'
+  const title =
+    progress === 'failed'
+      ? (error ?? '録画に失敗しました')
+      : status === 'done'
+        ? '押すと録画をもう一度送る (nagisa 側で既存ファイルは飛ばされる)'
+        : undefined
 
   return (
     <button
       type='button'
-      aria-pressed={status === 'done'}
-      aria-label={status === 'done' ? '録画済み' : '録画する'}
-      title={status === 'done' ? '録画済みの取り消しには対応していない' : undefined}
-      disabled={status !== 'todo' || pending}
-      onClick={onToggle}
+      aria-label={label}
+      title={title}
+      disabled={status === 'future' || sending}
+      onClick={onRecord}
       className={`inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${style} max-sm:w-[34px] max-sm:px-0`}
     >
       <span className={`grid size-4 shrink-0 place-items-center rounded-full ${icon}`}>
-        {status === 'done' && !pending && <Check className='size-2.5' />}
+        {status === 'done' && !busy && <Check className='size-2.5' />}
       </span>
-      {pending ? (
-        <span className='max-sm:sr-only'>更新中</span>
-      ) : status === 'future' ? (
-        <span className='max-sm:sr-only'>配信予定</span>
-      ) : status === 'done' ? (
-        <span className='max-sm:sr-only'>録画済み</span>
-      ) : (
-        <span className='max-sm:sr-only'>録画する</span>
-      )}
+      <span className='max-sm:sr-only'>{label}</span>
     </button>
   )
 }
@@ -94,23 +124,34 @@ const RecordState = ({
 const EpisodeRow = ({
   episode,
   provider,
-  pending,
-  onToggle
+  sending,
+  selected,
+  onSelect,
+  onRecord
 }: {
   episode: Episode
   provider: string
-  pending: boolean
-  onToggle: (episode: Episode) => void
+  sending: boolean
+  selected: boolean
+  onSelect: (episode: Episode, selected: boolean) => void
+  onRecord: (episodeIds: string[]) => void
 }) => {
   const status = episodeStatus(episode)
+  const progress = progressOf(episode)
   const watchUrl = getWatchUrl(provider, episode.episodeId)
   const title = episode.title || `第${episode.episodeNumber}話`
 
   return (
     <li
       id={`ep-${episode.id}`}
-      className={`grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] p-3 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${rowAccent[status]}`}
+      className={`grid grid-cols-[16px_3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] p-3 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[16px_2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${progress === 'failed' ? 'border-l-destructive' : rowAccent[status]}`}
     >
+      <Checkbox
+        aria-label={`第${episode.episodeNumber}話を選択`}
+        checked={selected}
+        disabled={status === 'future'}
+        onCheckedChange={(checked) => onSelect(episode, checked)}
+      />
       <span className='text-right text-sm font-semibold leading-[21px] text-muted-foreground tabular-nums'>
         {episode.episodeNumber}
       </span>
@@ -167,7 +208,13 @@ const EpisodeRow = ({
         {episode.duration > 0 ? formatDuration(episode.duration) : '—'}
       </span>
 
-      <RecordState status={status} pending={pending} onToggle={() => onToggle(episode)} />
+      <RecordState
+        status={status}
+        progress={progress}
+        error={episode.recordError}
+        sending={sending}
+        onRecord={() => onRecord([episode.id])}
+      />
     </li>
   )
 }
@@ -177,24 +224,38 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   const [activeSeasonId, setActiveSeasonId] = useState(seasons[0]?.id ?? '')
   const [filter, setFilter] = useState<Filter>('all')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(new Set())
   const queryClient = useQueryClient()
 
   const season = seasons.find((item) => item.id === activeSeasonId) ?? seasons[0]
 
-  /** `episodeId` はバックエンドが `where: { id }` で引くので DB 行の id を渡す。 */
-  const updateRecording = useMutation({
-    mutationFn: ({ episodeId, recorded }: { episodeId: string; recorded: boolean }) =>
-      api.updateRecording({ episodeId, recorded }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.anime.all }),
-    onError: () => toast.error('録画状態の更新に失敗しました')
+  /** 録画は nagisa に送るだけ。実際に録れたかは refresh の同期で録画済みに変わる。 */
+  const record = useMutation({
+    mutationFn: (episodeIds: string[]) => api.recordAnime({ episodeIds }, { params: { id: anime.id } }),
+    onSuccess: (data, episodeIds) => {
+      toast.success(`${episodeIds.length} 話の録画を送信しました`, {
+        description: data.count === episodeIds.length ? undefined : `nagisa が受け付けたのは ${data.count} 件`
+      })
+      setSelectedIds(new Set())
+    },
+    onError: () => toast.error('録画リクエストに失敗しました'),
+    // 失敗したときもサーバー側は録画イベントと失敗状態を書いているので、どちらでも読み直す
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
+      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+    }
   })
 
-  /** 録画済みから戻す手段がない (録画を削除する API がない) ので、録画する方向にしか動かさない。 */
-  const markRecorded = (episode: Episode) => {
-    updateRecording.mutate({ episodeId: episode.id, recorded: true })
-  }
+  const sendingIds: ReadonlySet<string> = new Set(record.isPending ? record.variables : [])
 
-  const pendingEpisodeId = updateRecording.isPending ? (updateRecording.variables?.episodeId ?? null) : null
+  const selectEpisode = (episode: Episode, selected: boolean) => {
+    setSelectedIds((current) => {
+      const next = new Set(current)
+      if (selected) next.add(episode.id)
+      else next.delete(episode.id)
+      return next
+    })
+  }
 
   const stats = useMemo(() => {
     const episodes = season?.episodes ?? []
@@ -217,6 +278,15 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
       .sort((a, b) => a.episodeNumber - b.episodeNumber)
     return order === 'asc' ? episodes : episodes.reverse()
   }, [season, filter, order])
+
+  /** 選択は表示中のシーズンの話だけを数える (タブを切り替えた先に古い選択を持ち越さない)。 */
+  const selectable = visible.filter((episode) => episodeStatus(episode) !== 'future')
+  const selected = (season?.episodes ?? []).filter((episode) => selectedIds.has(episode.id))
+  const allSelected = selectable.length > 0 && selectable.every((episode) => selectedIds.has(episode.id))
+
+  const selectAll = (checked: boolean) => {
+    setSelectedIds(checked ? new Set(selectable.map((episode) => episode.id)) : new Set())
+  }
 
   if (season === undefined) {
     return (
@@ -256,7 +326,10 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             type='button'
             role='tab'
             aria-selected={item.id === season.id}
-            onClick={() => setActiveSeasonId(item.id)}
+            onClick={() => {
+              setActiveSeasonId(item.id)
+              setSelectedIds(new Set())
+            }}
             className='inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm leading-[21px] text-muted-foreground transition-colors aria-selected:border-b-primary aria-selected:font-semibold aria-selected:text-foreground'
           >
             {item.displayName}
@@ -299,7 +372,15 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
         </div>
       </section>
 
-      <fieldset className='mb-3 flex flex-wrap gap-1.5 border-0 p-0' aria-label='絞り込み'>
+      <fieldset className='mb-3 flex flex-wrap items-center gap-1.5 border-0 p-0' aria-label='絞り込み'>
+        <span className='inline-flex h-7 items-center gap-2 pr-1.5 pl-[15px] text-[12.5px] text-muted-foreground max-sm:pl-[11px]'>
+          <Checkbox
+            aria-label='表示中の話をすべて選択'
+            checked={allSelected}
+            disabled={selectable.length === 0}
+            onCheckedChange={selectAll}
+          />
+        </span>
         <button type='button' aria-pressed={filter === 'all'} onClick={() => setFilter('all')} className={chipClass}>
           すべて <span className='opacity-80 tabular-nums'>{season.episodes.length}</span>
         </button>
@@ -310,6 +391,14 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
           無料 <span className='opacity-80 tabular-nums'>{stats.free}</span>
         </button>
         <span className='flex-1' />
+        <button
+          type='button'
+          disabled={selected.length === 0 || record.isPending}
+          onClick={() => record.mutate(selected.map((episode) => episode.id))}
+          className={`${chipClass} border-primary/40 font-semibold text-primary enabled:hover:bg-primary/10 disabled:cursor-default disabled:border-border disabled:font-normal disabled:text-muted-foreground disabled:hover:bg-transparent`}
+        >
+          選択した話を録画 <span className='opacity-80 tabular-nums'>{selected.length}</span>
+        </button>
         <button
           type='button'
           onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
@@ -325,8 +414,10 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             key={episode.id}
             episode={episode}
             provider={anime.provider}
-            pending={pendingEpisodeId === episode.id}
-            onToggle={markRecorded}
+            sending={sendingIds.has(episode.id)}
+            selected={selectedIds.has(episode.id)}
+            onSelect={selectEpisode}
+            onRecord={(episodeIds) => record.mutate(episodeIds)}
           />
         ))}
       </ol>
