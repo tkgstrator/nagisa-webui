@@ -271,6 +271,33 @@ await prisma.episode.updateMany({
 - 202 以外（404 / 5xx）なら D1 は一切触らず、そのままユーザーにエラーを返す
 - `recordJobId` を持つことで②の突合が `episode_id` の表記揺れに依存しなくなる
 
+### 5-1. 実装時に足した判断（`src/lib/record-intent.ts`）
+
+対象は**リクエストではなく nagisa のレスポンス**（正規化後の `data.seasons`）から決める。
+その上で、素朴に書くと壊れる箇所が 3 つあった。
+
+**`completed` は上書きしない。** 既に実体がある話を `pending` に落とすと録画済みが消える。
+nagisa は既存ファイルを飛ばすのでジョブは何も書かずに終わり、台帳に変更イベントが出ない
+＝③が `completed` を書き戻す材料を持たないまま、②が 30 分後に `stale` へ落としてしまう。
+読み出しの条件だけでなく `updateMany` の `where` にも `recordStatus: { not: 'completed' }` を置く
+（読んだ後・書く前に③が `completed` を書く隙があるため）。
+
+**上限は 3 つ、いずれも D1 の queries per invocation (1000) が理由。**
+
+| 定数 | 値 | 何を守るか |
+|---|---|---|
+| `MAX_JOBS_PER_REQUEST` | 200 | クエリ数は**話数ではなくジョブ数**で決まる（読み 1 + 書き 1 / ジョブ） |
+| `MAX_PENDING_PER_REQUEST` | 900 | 1 リクエストで `pending` にする行数 |
+| `MAX_ROWS_PER_JOB` | 2000 | 作品 1 本を全部メモリへ載せる経路の歯止め（isolate 128MB は同時リクエストで共有） |
+
+上限で控えきれなかった行は**録画自体を止めない**。job id を持たないので追跡対象から外れ、
+実体が出来たときに③が `completed` で拾う。
+
+**切り詰めは `unmatched` に混ぜない。** 話数の絞り込みは読み出しの**後**（メモリ上）なので、
+`MAX_ROWS_PER_JOB` で切れると指定話が読み出しの外に落ちて「該当なし」に化ける。
+調べる先を間違えるため `truncated` として別に数え、`record-intent-rows-truncated` で警告する。
+戻り値は `{ marked, unmatched, dropped, preserved, truncated }` の 5 本。
+
 ---
 
 ## 6. ② ジョブ追従（cron `* * * * *`）
@@ -448,9 +475,23 @@ const deleteWrite = (c: DeleteChange) =>
 
 ### 7-2. nagisa 側の消失検出に依存する部分
 
-`delete` イベントを出すのは nagisa の日次走査（`0 3 * * *`、→ R1-6）である。
+`delete` イベントを出すのは nagisa の日次走査（→ R1-6）である。
 つまり「Jellyfin 側で手動削除した」「ボリュームが外れた」は最大 1 日遅れで反映される。
 Workers 側はこれを早める手段を持たない（持つと全件走査に戻ってしまう）。
+
+**実装した時刻は `0 3 * * *` ではなく 04:17（既定、ローカル時刻）。**
+python の bullmq 2.15 に repeatable job が無いので cron 式ではなく
+`nagisa/server/scheduler.py` の自前ループが刻む。`NAGISA_REINDEX_AT` で変更でき、
+`off` / `none` / `disabled` / `false` / `0` / 空文字なら走査そのものを止める
+（読めない値は**無効化ではなく既定にフォールバック**する。`04;17` のような打ち間違いで
+台帳を見張るものが居なくなる方が悪い）。丸い時刻を避けているのは、
+0 時や 3 時ちょうどに他の cron と重なると深夜のディスク I/O が団子になるため。
+
+同じ日に 2 回走らないことは jobId で担保する: `reindex-daily-YYYY-MM-DD` を付けて
+enqueue するので、再起動でループが作り直されても BullMQ 側で弾かれる。
+この走査は**常に grant 無し**で積む（→ R1-6 の削除グラント）。
+無人で回るものに大量削除の権限は渡さない。窓を寝過ごした場合は
+遅れて発火し、id はその日のまま（翌日ぶんとして 2 回走らせない）。
 
 代わりに **nagisa 側が走査失敗を消失と誤認しないこと**が決定的に重要になる。
 マウントが外れた状態で走査すると全録画が tombstone 化し、
