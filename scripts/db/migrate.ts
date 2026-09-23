@@ -59,10 +59,18 @@ async function ensureMigrationsTable(): Promise<void> {
 async function getApplied(): Promise<Set<string>> {
   const rows = (await command('SELECT name FROM d1_migrations ORDER BY id')) as { name: string }[]
   // d1_migrations には wrangler d1 migrations apply 経由で入った "<dir>/migration.sql" と
-  // このスクリプト経由の "<dir>" が混在している。剥がさないと適用済みの migration を
+  // 過去のこのスクリプトが書いた "<dir>" が混在している。剥がさないと適用済みの migration を
   // 未適用と誤判定して二度流してしまう。
   return new Set(rows.map((r) => r.name.replace(/\/migration\.sql$/, '')))
 }
+
+/**
+ * デプロイ workflow の `wrangler d1 migrations apply` と同じ名前で記録する。
+ * wrangler は d1_migrations の name を `<dir>/migration.sql` 固定で突き合わせるので、
+ * 短縮形 `<dir>` で入れると同じ migration を未適用と判断して CREATE TABLE を再実行し、
+ * "table ... already exists" で deploy が落ちる。
+ */
+const migrationName = (dir: string): string => `${dir}/migration.sql`
 
 const migrationsDir = resolve(import.meta.dir, '../../prisma/migrations')
 const dirs = readdirSync(migrationsDir)
@@ -83,7 +91,7 @@ if (pending.length === 0) {
 
 if (mode === 'init') {
   for (const d of pending) {
-    await command(`INSERT INTO d1_migrations (name) VALUES ('${d}')`)
+    await command(`INSERT INTO d1_migrations (name) VALUES ('${migrationName(d)}')`)
     console.log(`✓ marked ${d}`)
   }
   console.log(`Init done. Marked ${pending.length} migration(s) as applied without running SQL.`)
@@ -94,7 +102,7 @@ for (const d of pending) {
   const file = resolve(migrationsDir, d, 'migration.sql')
   console.log(`→ Applying ${d}`)
   await exec(['--file', file])
-  await command(`INSERT INTO d1_migrations (name) VALUES ('${d}')`)
+  await command(`INSERT INTO d1_migrations (name) VALUES ('${migrationName(d)}')`)
   console.log(`✓ ${d}`)
 }
 
