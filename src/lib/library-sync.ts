@@ -303,7 +303,7 @@ function buildUpsertWrites(
   // 勝った行ごとにまとめ直してから書く。1 エピソード 1 文にはしない: ふつうは
   // 1 行が 1 エピソードなので分割は起きず、重複登録の作品だけ束ねられる。
   //
-  // バインド数は **値 5 + 新旧比較 1 + id 90 + lease 2 = 98**。定数 (status / source /
+  // バインド数は **値 5 + 新旧比較 2 + id 90 + lease 2 = 99**。定数 (status / source /
   // recorded) は SQL リテラルで書いて枠を空けてある。IN_CHUNK を上げると 100 を
   // 超えて落ちる。
   const byRow = new Map<LedgerRow, string[]>()
@@ -317,13 +317,18 @@ function buildUpsertWrites(
     const recordedAt = parseMtime(row.item.mtime)
     // 既に入っている録画との比較。mtime を読めなかった行 (`null`) は比較が
     // NULL になるのでどの完了行にも勝てない — ページ内の `beatsCurrent` と
-    // 同じ「読めない mtime は負ける」規則になる。同じ mtime は等号で通すので、
-    // 同じ録画の再走査 (パスや容量の更新) は普通に反映される。
+    // 同じ「読めない mtime は負ける」規則になる。
+    //
+    // 勝ちは **厳密に新しいとき** だけ。等号で通すと、同じ mtime の別録画が
+    // ページ 1 の勝者を上書きできてしまい (ページ内なら `recordingId` で裁ける
+    // タイが、ページ間では裁けない)、負けた方の tombstone で実体のある
+    // エピソードが missing に落ちる。代わりに **同じ録画 (`recording_id` 一致) は
+    // 常に通す**ので、パスや容量だけが変わった再走査は mtime 据え置きでも入る。
     const older =
       skipOlder && recordedAt
-        ? PrismaSql.sql`AND (record_status <> 'completed' OR recorded_at IS NULL OR recorded_at <= ${sqlDate(recordedAt)})`
+        ? PrismaSql.sql`AND (record_status <> 'completed' OR recorded_at IS NULL OR recorded_at < ${sqlDate(recordedAt)} OR recording_id = ${row.recordingId})`
         : skipOlder
-          ? PrismaSql.sql`AND (record_status <> 'completed' OR recorded_at IS NULL)`
+          ? PrismaSql.sql`AND (record_status <> 'completed' OR recorded_at IS NULL OR recording_id = ${row.recordingId})`
           : PrismaSql.empty
     for (const part of chunk(ids, IN_CHUNK)) {
       writes.push(
@@ -412,9 +417,17 @@ const leaseWhere = (owner: string, now: Date) => ({ key: SYNC_KEY, leaseOwner: o
  * 最後のバッチでしか動かないので、途中で落ちた回は次 run が同じページを読み
  * 直す。upsert / tombstone はどちらも同じ値を書き直すだけの冪等な文なので、
  * 前半を二度適用しても結果は変わらない。
+ *
+ * **分割した回の `fenced` の意味は少し弱い**。1 バッチだったころは「tail が 0 件
+ * = このページは 1 行も書いていない」と言えたが、分割後に言えるのは
+ * 「**カーソルを進めていない**」まで。lease を途中で横取りされた run は、
+ * 横取りより前のバッチだけ残して降りる。その前半は *まだ lease を持っていた
+ * 時点の* 書き込みなので不正ではなく、しかも冪等なので新しい所有者が同じ
+ * ページを読み直せば上書きされる。
  */
 async function applyBatched(prisma: Prisma, writes: Write[], tail: Write[]): Promise<unknown[]> {
-  const batches = chunk(writes, MAX_WRITES_PER_BATCH)
+  // tail のぶんを引いて割る。引かないと最後のバッチだけ上限 + tail 件になる。
+  const batches = chunk(writes, Math.max(1, MAX_WRITES_PER_BATCH - tail.length))
   if (batches.length === 0) batches.push([])
   let applied: unknown[] = []
   for (let i = 0; i < batches.length; i++) {
