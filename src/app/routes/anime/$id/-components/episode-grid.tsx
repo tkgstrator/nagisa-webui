@@ -73,7 +73,7 @@ const RecordState = ({
       title={status === 'done' ? '録画済みの取り消しには対応していない' : undefined}
       disabled={status !== 'todo' || pending}
       onClick={onToggle}
-      className={`inline-flex h-8 w-[104px] items-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${style} max-sm:w-[34px] max-sm:justify-center max-sm:px-0`}
+      className={`inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${style} max-sm:w-[34px] max-sm:px-0`}
     >
       <span className={`grid size-4 shrink-0 place-items-center rounded-full ${icon}`}>
         {status === 'done' && !pending && <Check className='size-2.5' />}

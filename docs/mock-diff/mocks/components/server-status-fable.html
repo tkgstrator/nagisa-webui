@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サーバーステータス — fable 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame {
+  /* サンプルは囲まない。セクション見出しの罫線だけで区切る。 */
+  padding: 18px 0 4px;
+}
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- component: server-status ---------- */
+
+/* ---------- server status (fable) ---------- */
+/* ダイアログ1枚に「いま動いているか」「何を待っているか」「取りこぼしていないか」を
+   縦一列で積む。囲みカードは使わず、左罫線と区切り線だけで階層を出す。 */
+.srv-dlg {
+  width: 512px;
+  max-width: 100%;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 22px 20px;
+  box-shadow: 0 12px 32px -18px oklch(0.18 0.005 250 / 45%);
+}
+.srv-dlg + .srv-dlg { margin-top: 18px; }
+
+.srv-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.srv-id { border-left: 3px solid var(--success); padding-left: 12px; }
+.srv-id.is-bad { border-left-color: var(--destructive); }
+.srv-id.is-idle { border-left-color: var(--muted-foreground); }
+.srv-id.is-busy { border-left-color: var(--info); }
+.srv-name { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+.srv-state {
+  margin-top: 5px;
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--success);
+}
+.srv-id.is-bad .srv-state { color: var(--destructive); }
+.srv-id.is-idle .srv-state { color: var(--muted-foreground); }
+.srv-id.is-busy .srv-state { color: var(--info); }
+.srv-state .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; flex: none; }
+.srv-state .dot.is-live { animation: srvPulse 1.6s ease-in-out infinite; }
+@keyframes srvPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.srv-sub { margin-top: 6px; font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.srv-ver {
+  flex: none;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11.5px; font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.srv-ver.is-old { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+
+/* 見出し。カード化せず罫線で区切る */
+.srv-h {
+  margin-top: 20px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.srv-h .srv-h-note { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; }
+
+/* キュー内訳: 数字を横一列。縦罫線だけで仕切る */
+.srv-q { margin-top: 12px; display: flex; }
+.srv-q-cell { flex: 1; min-width: 0; padding: 0 10px; border-left: 1px solid var(--border); }
+.srv-q-cell:first-child { padding-left: 0; border-left: 0; }
+.srv-q-cell .n { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.srv-q-cell .l { margin-top: 2px; font-size: 10.5px; color: var(--muted-foreground); }
+.srv-q-cell.is-busy .n { color: var(--info); }
+.srv-q-cell.is-bad .n { color: var(--destructive); }
+.srv-q-cell.is-zero .n { color: var(--muted-foreground); font-weight: 600; }
+
+/* ジョブ行 */
+.srv-job { padding: 11px 0; border-bottom: 1px solid var(--border); }
+.srv-job:last-child { border-bottom: 0; padding-bottom: 2px; }
+.srv-job-top { display: flex; align-items: center; gap: 9px; }
+.srv-job-title { min-width: 0; flex: 1; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srv-tag {
+  flex: none;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+  padding: 2px 8px; border-radius: 999px;
+}
+.srv-tag.abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.srv-tag.amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.srv-tag.crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.srv-job-meta {
+  margin-top: 5px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.srv-job-meta .r { margin-left: auto; }
+.srv-bar { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+.srv-bar-track { flex: 1; height: 4px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.srv-bar-fill { height: 100%; border-radius: 999px; background: var(--info); transform-origin: left; animation: growX .6s cubic-bezier(.16,1,.3,1) both; }
+.srv-bar-n { flex: none; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.srv-fail {
+  margin-top: 7px;
+  border-left: 2px solid var(--destructive);
+  padding: 2px 0 2px 9px;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11px; line-height: 1.6;
+  color: var(--destructive);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* 指標の表。同期の進捗で使う */
+.srv-kv { margin-top: 10px; }
+.srv-kv-row { display: flex; align-items: center; gap: 14px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.srv-kv-row:last-child { border-bottom: 0; }
+.srv-kv-row .k { flex: none; width: 108px; color: var(--muted-foreground); display: flex; align-items: center; gap: 7px; }
+.srv-kv-row .k svg { width: 13px; height: 13px; opacity: .8; }
+.srv-kv-row .v { margin-left: auto; font-variant-numeric: tabular-nums; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11.5px; }
+.srv-kv-row .v.is-ok { color: var(--success); font-family: inherit; font-size: 12px; font-weight: 600; }
+.srv-kv-row .v.is-bad { color: var(--destructive); font-family: inherit; font-size: 12px; font-weight: 700; }
+.srv-kv-row .v.is-warn { color: var(--status-not-yet-foreground); font-family: inherit; font-size: 12px; font-weight: 700; }
+.srv-kv-row .v.is-mute { color: var(--muted-foreground); }
+/* 進捗は数値の手前に細いメーターを添える。
+   幅は上限であって固定ではない: 固定にすると k と v の合計が行幅を超えても
+   誰も縮まず、ダイアログの外へ溢れる。 */
+.srv-meter { flex: 0 1 92px; min-width: 32px; height: 3px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.srv-meter > span { display: block; height: 100%; border-radius: 999px; background: var(--muted-foreground); }
+.srv-meter > span.is-warn { background: var(--warning); }
+
+/* 詳細ページ (/admin/status) への導線。ダイアログ最下段に固定で置く。
+   Redis・CPU・メモリ・ディスク・台帳・同期ロックはこの先にあり、
+   ダイアログ側には持たせない。 */
+.srv-link {
+  margin-top: 18px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12.5px;
+  color: inherit; text-decoration: none;
+}
+.srv-link:hover svg { color: var(--foreground); transform: translateX(2px); }
+.srv-link svg { transition: color .15s, transform .15s; }
+.srv-link .t { flex: none; font-weight: 600; }
+.srv-link .d { min-width: 0; font-size: 11.5px; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srv-link svg { width: 15px; height: 15px; margin-left: auto; color: var(--muted-foreground); }
+
+/* 空/読み込み/到達不能 */
+.srv-msg { display: flex; align-items: center; gap: 12px; padding: 4px 0 2px; }
+.srv-msg svg { width: 20px; height: 20px; color: var(--muted-foreground); }
+.srv-msg.is-bad svg { color: var(--destructive); }
+.srv-msg .t { font-size: 13px; font-weight: 600; }
+.srv-msg .d { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
+.srv-spin { animation: srvSpin 1s linear infinite; }
+@keyframes srvSpin { to { transform: rotate(360deg); } }
+.srv-skel { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.srv-skel > i { display: block; height: 10px; border-radius: 4px; background: var(--muted); }
+.srv-skel > i:nth-child(2) { width: 72%; }
+.srv-skel > i:nth-child(3) { width: 48%; }
+.srv-quiet { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); }
+
+/* サイドバー最下段の起動導線 */
+.srv-trigger {
+  width: 248px; max-width: 100%;
+  background: var(--sidebar);
+  border-top: 1px solid var(--border);
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12px;
+}
+.srv-trigger .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--success); flex: none; }
+.srv-trigger.is-bad .dot { background: var(--destructive); }
+.srv-trigger.is-busy .dot { background: var(--info); animation: srvPulse 1.6s ease-in-out infinite; }
+.srv-trigger .t { font-weight: 600; }
+.srv-trigger .r { margin-left: auto; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 640px) {
+  .srv-dlg { width: 100%; padding: 18px 16px 16px; }
+  .srv-q-cell { padding: 0 6px; }
+  .srv-q-cell .n { font-size: 17px; }
+  .srv-kv-row .k { width: 92px; }
+  .srv-link .d { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>サーバーステータス <span class="cat-id">server-status</span></h1>
+  <p>サイドバー最下段から開く録画サーバー (nagisa) の状態ダイアログ。「いま動いているか」「何を待っているか」「取りこぼしていないか」の 3 つだけを載せ、Redis・CPU・メモリ・ディスク・台帳といった数値は詳細ページ <code>/admin/status</code> に送る。</p>
+  <div class="cat-meta"><span>fable 案 = 縦一列・罫線区切り・情報密度高め</span><span>囲みカードは使わず左罫線と区切り線で階層を出す</span><span>ダイアログ幅 512px (<code>sm:max-w-lg</code>)</span><span>数値は tabular-nums</span><span>最下段の導線は状態によらず同じ位置</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>オンライン · 待機中 <span class="cat-hint">既定の状態。ジョブが無いときに何も出ないと「壊れている」と誤読されるので、空であることを明示する</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">/api/nagisa/status が 200、queue.active が 0 件</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot"></span>ONLINE</div>
+            <div class="srv-sub">稼働 3d 4h · 最終応答 12 秒前</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">キュー<span class="srv-h-note">直近 24 時間</span></div>
+        <div class="srv-q">
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">待機</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">実行中</div></div>
+          <div class="srv-q-cell"><div class="n num">42</div><div class="l">完了</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">失敗</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">遅延</div></div>
+        </div>
+        <p class="srv-quiet">実行中のジョブはありません。</p>
+
+        <div class="srv-h">録画同期<span class="srv-h-note">Workers 側 cron</span></div>
+        <div class="srv-kv">
+          <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-ok">42 秒前</span></div>
+          <div class="srv-kv-row"><span class="k">ライブラリ同期</span><span class="v is-ok">6 分前</span></div>
+        </div>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">バージョンは右上のピル。古い場合は <code>v1.5.2</code> のように警告色にして、API が生えていないことを示す。数値そのもの (Redis のメモリ・CPU 使用率・空き容量・カーソル位置) はダイアログに置かず <code>/admin/status</code> に送る。異常かどうかは状態の色で分かればよく、何 % かはここで判断する材料にならない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>稼働中 · ダウンロード実行中 <span class="cat-hint">進捗は話数 (current/total)。秒やバイトではない</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">queue.active に 2 件、うち 1 件は進捗不明</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id is-busy">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot is-live"></span>DOWNLOADING</div>
+            <div class="srv-sub">稼働 3d 4h · 2 件を処理中</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">キュー<span class="srv-h-note">直近 24 時間</span></div>
+        <div class="srv-q">
+          <div class="srv-q-cell"><div class="n num">7</div><div class="l">待機</div></div>
+          <div class="srv-q-cell is-busy"><div class="n num">2</div><div class="l">実行中</div></div>
+          <div class="srv-q-cell"><div class="n num">38</div><div class="l">完了</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">失敗</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">遅延</div></div>
+        </div>
+
+        <div class="srv-h">実行中のジョブ<span class="srv-h-note">2 件</span></div>
+        <div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">ダンジョン飯</span>
+              <span class="srv-tag abema">abema</span>
+            </div>
+            <div class="srv-job-meta"><span>S1 · 第 3 話</span><span class="r">09/23 13:41 開始</span></div>
+            <div class="srv-bar">
+              <span class="srv-bar-track"><span class="srv-bar-fill" style="width:25%"></span></span>
+              <span class="srv-bar-n">3 / 12</span>
+            </div>
+          </div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">葬送のフリーレン</span>
+              <span class="srv-tag amazon">amazon</span>
+            </div>
+            <div class="srv-job-meta"><span>S1</span><span class="r">09/23 13:44 開始</span></div>
+            <div class="srv-bar">
+              <span class="srv-bar-track"></span>
+              <span class="srv-bar-n">進捗待ち</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="srv-h">録画同期<span class="srv-h-note">Workers 側 cron</span></div>
+        <div class="srv-kv">
+          <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-ok">11 秒前</span></div>
+          <div class="srv-kv-row"><span class="k">ライブラリ同期</span><span class="v is-ok">2 分前</span></div>
+          <div class="srv-kv-row"><span class="k">反映待ち</span><span class="v is-mute">2 件 (録画中)</span></div>
+        </div>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タイトルが未解決のジョブは <code>content_id</code> をそのまま出す。プロバイダ名は右端のピルに寄せて、長いタイトルを削らない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>失敗あり <span class="cat-hint">失敗件数が 0 でないときだけ理由を出す</span></h2>
+  <div class="cat-item cat-full">
+    <span class="cat-label">queue.failed に 2 件、失敗理由の 1 行目だけ見せる</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id is-bad">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot"></span>2 JOBS FAILED</div>
+            <div class="srv-sub">稼働 3d 4h · 直近の失敗 18 分前</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">キュー<span class="srv-h-note">直近 24 時間</span></div>
+        <div class="srv-q">
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">待機</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">実行中</div></div>
+          <div class="srv-q-cell"><div class="n num">36</div><div class="l">完了</div></div>
+          <div class="srv-q-cell is-bad"><div class="n num">2</div><div class="l">失敗</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">遅延</div></div>
+        </div>
+
+        <div class="srv-h">失敗したジョブ<span class="srv-h-note">2 件</span></div>
+        <div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">B0DXXXXXXX</span>
+              <span class="srv-tag amazon">amazon</span>
+            </div>
+            <div class="srv-job-meta"><span>3 回試行</span><span class="r">09/23 13:26 終了</span></div>
+            <div class="srv-fail">RuntimeError: failed to acquire license (DRM)</div>
+          </div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">よふかしのうた</span>
+              <span class="srv-tag crunchyroll">crunchyroll</span>
+            </div>
+            <div class="srv-job-meta"><span>1 回試行</span><span class="r">09/23 12:58 終了</span></div>
+            <div class="srv-fail">HTTPError: 403 Forbidden (region locked)</div>
+          </div>
+        </div>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">スタックトレース全文はここに出さない。1 行目だけを等幅で出し、詳細はログ画面に送る。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>接続中 / 到達不能 <span class="cat-hint">応答が無いときにダイアログを空にしない</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w320">
+      <span class="cat-label">読み込み中</span>
+      <div class="cat-frame">
+        <div class="srv-dlg">
+          <div class="srv-msg">
+            <svg class="srv-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+            <div><div class="t">接続しています</div><div class="d">録画サーバーの状態を取得中</div></div>
+          </div>
+          <div class="srv-skel"><i></i><i></i><i></i></div>
+          <a class="srv-link" href="/admin/status">
+            <span class="t">詳細とリソース</span>
+            <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w320">
+      <span class="cat-label">到達不能</span>
+      <div class="cat-frame">
+        <div class="srv-dlg">
+          <div class="srv-msg is-bad">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l20 20"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M5 12.86a10 10 0 0 1 3-2.06"/><path d="M16 10.8a10 10 0 0 1 3 2.06"/><path d="M2 8.82a15 15 0 0 1 4.17-2.65"/><path d="M10.66 5A15 15 0 0 1 22 8.82"/><path d="M12 20h.01"/></svg>
+            <div><div class="t">オフライン</div><div class="d">録画サーバーに接続できません</div></div>
+          </div>
+          <div class="srv-kv">
+            <div class="srv-kv-row"><span class="k">最終応答</span><span class="v">09/23 12:04</span></div>
+            <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-bad">1h 38m 停止</span></div>
+          </div>
+          <a class="srv-link" href="/admin/status">
+            <span class="t">詳細とリソース</span>
+            <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">到達不能でも「いつまでは見えていたか」を出す。前回成功時刻が無いと、落ちたのか一度も繋がっていないのか区別できない。導線は応答が無いときも同じ位置に残す。詳細ページは Nagisa が落ちていても WebUI 側の同期状態だけは必ず出せるので、行き先が無駄にならない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>録画同期が遅れている <span class="cat-hint">サーバーは生きているが Workers 側が追いつけていない場合</span></h2>
+  <div class="cat-item cat-full">
+    <span class="cat-label">全件スナップショット取り込み中 / ライブラリ同期の停滞</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id is-idle">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot is-live"></span>SYNCING</div>
+            <div class="srv-sub">稼働 12m · 台帳を取り込み中</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">録画同期<span class="srv-h-note">Workers 側 cron</span></div>
+        <div class="srv-kv">
+          <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-ok">38 秒前</span></div>
+          <div class="srv-kv-row"><span class="k">ライブラリ同期</span><span class="v is-warn">24 分前</span></div>
+          <div class="srv-kv-row"><span class="k">取り込み</span><span class="srv-meter"><span class="is-warn" style="width:62%"></span></span><span class="v">3,840 / 6,204</span></div>
+          <div class="srv-kv-row"><span class="k">開始</span><span class="v">09/23 13:22</span></div>
+        </div>
+        <p class="srv-quiet">サーバー交換後の初回のみ全件を取り込みます。完了するまで一部の録画が「未確認」のままになります。</p>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">bootstrap 中は差分カーソルではなく snapshot の進捗を出す。両者を混ぜると「差分の位置」と「復旧の途中」が区別できない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>起動導線 <span class="cat-hint">サイドバー最下段の行。ここを押すとダイアログが開く</span></h2>
+  <div class="cat-row">
+    <div class="cat-item">
+      <span class="cat-label">オンライン</span>
+      <div class="cat-frame">
+        <div class="srv-trigger"><span class="dot"></span><span class="t">Nagisa</span><span class="r">v1.6.0</span></div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <span class="cat-label">実行中</span>
+      <div class="cat-frame">
+        <div class="srv-trigger is-busy"><span class="dot"></span><span class="t">Nagisa</span><span class="r">2 件 実行中</span></div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <span class="cat-label">オフライン</span>
+      <div class="cat-frame">
+        <div class="srv-trigger is-bad"><span class="dot"></span><span class="t">Nagisa</span><span class="r">オフライン</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">行の位置と幅は状態によらず固定。色と右端の文言だけが変わる。</p>
+</section>
+</main>
+</body>
+</html>
