@@ -182,6 +182,25 @@ interface LedgerRow {
 type Write = PrismaSql.PrismaPromise<unknown>
 
 /**
+ * 同じエピソードを指す台帳行が 2 つあったとき、`candidate` が `held` に勝つか。
+ *
+ * 新しい実体を正とする (= `mtime` の新しい方)。`mtime` が読めない行は負ける:
+ * 消えかけのファイルや壊れたメタデータを、読めた行より優先する理由が無い。
+ * 両方読めないときと同着は `recording_id` の大きい方 — 意味は無いが、
+ * **ページの並びが変わっても同じ勝者になる**ことだけが要る。
+ */
+function beatsCurrent(candidate: LedgerRow, held: LedgerRow): boolean {
+  const a = parseMtime(candidate.item.mtime)?.getTime()
+  const b = parseMtime(held.item.mtime)?.getTime()
+  if (a !== b) {
+    if (a === undefined) return false
+    if (b === undefined) return true
+    return a > b
+  }
+  return candidate.recordingId > held.recordingId
+}
+
+/**
  * 台帳の行に対応する D1 のエピソード id を引く。
  *
  * `episode_id` は indexed なので IN 1 本で引き、provider / content_id の一致は
@@ -235,6 +254,13 @@ function buildUpsertWrites(
   const guard = leaseGuard(owner, now)
   let unmatched = 0
 
+  // **同じエピソードを指す台帳行が 1 ページに 2 つ以上来ることがある** (録り直して
+  // パスが変わった、別シーズン表記で二重に登録されている等)。素直に順へ書くと
+  // 最後に処理した行が勝ち、`recording_id` がページの並び任せになる —
+  // tombstone はこの id で引くので、負けた方の消失が届いても 1 行も当たらない。
+  // 勝者をここで決めておく (→ `beatsCurrent`)。
+  const winners = new Map<string, LedgerRow>()
+
   for (const row of rows) {
     const { provider, content_id, episode_id } = row.item
     if (!content_id || !episode_id) {
@@ -246,12 +272,27 @@ function buildUpsertWrites(
       unmatched++
       continue
     }
-    // 1 つの台帳行に複数のエピソードがぶら下がることがある (同じ作品が別 season に
-    // 重複登録されている等)。件数に上限は無いので、ここでも bound parameter 上限で
-    // 割る。ふつうは 1 件なので分割は起きない。
-    //
-    // バインド数は **値 5 + id 90 + lease 2 = 97**。定数 (status / source / recorded) は
-    // SQL リテラルで書いて枠を空けてある。IN_CHUNK を上げると 100 を超えて落ちる。
+    // 1 つの台帳行に複数のエピソードがぶら下がることもある (同じ作品が別 season に
+    // 重複登録されている等)。こちらは全件に書く。
+    for (const id of ids) {
+      const held = winners.get(id)
+      if (held === undefined || beatsCurrent(row, held)) winners.set(id, row)
+    }
+  }
+
+  // 勝った行ごとにまとめ直してから書く。1 エピソード 1 文にはしない: ふつうは
+  // 1 行が 1 エピソードなので分割は起きず、重複登録の作品だけ束ねられる。
+  //
+  // バインド数は **値 5 + id 90 + lease 2 = 97**。定数 (status / source / recorded) は
+  // SQL リテラルで書いて枠を空けてある。IN_CHUNK を上げると 100 を超えて落ちる。
+  const byRow = new Map<LedgerRow, string[]>()
+  for (const [episodeId, row] of winners) {
+    const list = byRow.get(row)
+    if (list) list.push(episodeId)
+    else byRow.set(row, [episodeId])
+  }
+
+  for (const [row, ids] of byRow) {
     const recordedAt = parseMtime(row.item.mtime)
     for (const part of chunk(ids, IN_CHUNK)) {
       writes.push(
