@@ -810,3 +810,33 @@ mock 側から Workers を呼ぶ必要が無いため、
 
 Workers 側はローカル dev に向ける。dev サーバーは常時1台が立っている前提のため、
 検証時は起動済みのものを使う（新たに立てない）。
+
+---
+
+## 12. 契約テスト（`scripts/contract/`）
+
+サイドカー（§11）を立てるまでもなく、**nagisa の実応答が Workers の Zod DTO を
+そのまま通るか**だけは常に確かめられるようにしてある。
+
+```sh
+# 採取: nagisa の Flask test client を叩いて 9 経路の JSON を落とす
+uv run --project ~/nagisa python scripts/contract/capture-nagisa.py \
+    ~/nagisa scripts/contract/nagisa-1.5.2.json
+# 検証: 採取した JSON を src/schemas/nagisa.dto.ts で parse する
+bun scripts/contract/verify-nagisa-contract.ts
+```
+
+- 台帳は SQLite なので tmp に本物を作り、pipeline と同じ `record_file` で行を入れる。
+  **Redis も実際の録画ファイルも要らない**（キューは bullmq の Job / Queue の
+  属性をなぞった偽物を `_QUEUE` に差し込む）
+- 採取するのは `library/snapshot`（1 ページ目と続き）・`library/stats`・
+  `library/changes`（差分あり／空）・カーソル無しの `409 not_initialized`・
+  `/api/status`（キュー有無の両方）・`/api/queue/snapshot`
+- スキーマ検査に加えて、台帳の各 item が `matchKey`（provider + content_id +
+  episode_id）を作れること、`changes` が空でないことも見る。
+  空の差分だけで通ると「壊れていても緑」になるため
+
+nagisa を上げたら採り直すこと。実際、この検査で
+`/api/status` の待機中ジョブが `processedOn: null` を返すのに
+DTO が必須にしていた不一致（待ち行列にジョブが 1 件でも積まれると
+ステータス表示全体が落ちる）が見つかっている。
