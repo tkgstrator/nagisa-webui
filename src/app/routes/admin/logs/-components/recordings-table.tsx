@@ -25,8 +25,16 @@ export const RecordingStatusBadge = ({ status }: { status: RecordingEventSchema[
   </span>
 )
 
+export const ProviderBadge = ({ provider }: { provider: string }) => (
+  <span
+    className={`inline-flex h-4 items-center rounded px-1 text-[10px] font-semibold whitespace-nowrap ${providerColor[provider] ?? 'bg-muted text-muted-foreground'}`}
+  >
+    {providerLabel[provider] ?? provider}
+  </span>
+)
+
 /**
- * 録画イベントの一覧。1 行 = 出来事 1 件で、いつ / どの作品 / 何をした / どこから / 結果は、
+ * 録画イベントの一覧。1 行 = 出来事 1 件で、いつ / どの作品 / どの配信元 / 何をした / どこから / 結果は、
  * の順に左から読ませる。話数と HTTP ステータスは 1 枠に詰めず別の列に置く
  * (詰めると値が無いときにどちらが欠けているのか読めない)。
  */
@@ -40,6 +48,9 @@ export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] }) 
           </th>
           <th scope='col' className={headClass}>
             作品
+          </th>
+          <th scope='col' className={`${headClass} max-sm:hidden`}>
+            配信元
           </th>
           <th scope='col' className={headClass}>
             種別
@@ -66,25 +77,21 @@ export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] }) 
               <div className='text-[11px] text-muted-foreground'>{formatDay(event.createdAt)}</div>
             </td>
             <td className={cellClass}>
-              <div className='flex flex-wrap items-center gap-1.5'>
-                <Link
-                  to='/anime/$id'
-                  params={{ id: event.animeId }}
-                  className='font-medium transition-colors hover:text-primary'
-                >
-                  {event.title === '' ? event.contentId : event.title}
-                </Link>
-                <span
-                  className={`inline-flex h-4 items-center rounded px-1 text-[10px] font-semibold ${providerColor[event.provider] ?? 'bg-muted text-muted-foreground'}`}
-                >
-                  {providerLabel[event.provider] ?? event.provider}
-                </span>
-              </div>
+              <Link
+                to='/anime/$id'
+                params={{ id: event.animeId }}
+                className='font-medium transition-colors hover:text-primary'
+              >
+                {event.title === '' ? event.contentId : event.title}
+              </Link>
               {event.errorMessage === null ? null : (
                 <div className='mt-0.5 line-clamp-2 max-w-[28rem] text-[11px] text-destructive'>
                   {event.errorMessage}
                 </div>
               )}
+            </td>
+            <td className={`${cellClass} max-sm:hidden`}>
+              <ProviderBadge provider={event.provider} />
             </td>
             <td className={`${cellClass} whitespace-nowrap`}>{recordingKindLabel[event.kind]}</td>
             <td className={`${cellClass} whitespace-nowrap text-muted-foreground max-sm:hidden`}>

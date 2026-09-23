@@ -1024,3 +1024,36 @@ screens:
           astra:
             type: html
             path: mocks/components/recording-events-astra.html
+  - id: catalog-events
+    name: 「同期ログ」カタログ変化一覧
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/catalog-events-fable.html
+          astra:
+            type: html
+            path: mocks/components/catalog-events-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/catalog-events-fable.html
+          astra:
+            type: html
+            path: mocks/components/catalog-events-astra.html
