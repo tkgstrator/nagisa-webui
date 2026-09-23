@@ -283,3 +283,6 @@ playwright-mcp.config.json
 
 # WireGuard profiles (contain private keys)
 .devcontainer/wireguard/*.conf
+
+# gitignore.io の Node テンプレートの `logs` がソースのディレクトリまで巻き込むので戻す
+!src/app/routes/admin/logs/

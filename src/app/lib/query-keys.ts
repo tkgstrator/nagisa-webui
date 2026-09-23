@@ -11,6 +11,9 @@ export const queryKeys = {
   changelog: ['changelog'] as const,
   admin: {
     archiveStats: ['admin', 'archive-stats'] as const,
-    unidentified: (filters: Record<string, unknown>) => ['admin', 'unidentified', filters] as const
+    unidentified: (filters: Record<string, unknown>) => ['admin', 'unidentified', filters] as const,
+    syncRuns: (filters: Record<string, unknown>) => ['admin', 'sync-runs', filters] as const,
+    syncRun: (id: string) => ['admin', 'sync-run', id] as const,
+    logStats: ['admin', 'log-stats'] as const
   }
 }

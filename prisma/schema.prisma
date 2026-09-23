@@ -145,3 +145,39 @@ model AnilistMedia {
   @@index([status])
   @@map("anilist_media")
 }
+
+/// 同期処理 1 回ぶんの実行記録。cron の起動 1 回、Queue のバッチ 1 回、
+/// 手動リフレッシュ 1 回がそれぞれ 1 行になる。管理画面のログページ
+/// (/admin/logs) が唯一の読み手で、Worker の invocation を跨いで
+/// 「昨夜の同期は流れたのか」を確認できるようにするためだけに存在する。
+/// D1 では FK を張らない方針なので parentId は relation にしない。
+model SyncRun {
+  id           String    @id @default(uuid())
+  /// 'cron' | 'queue' | 'manual'
+  kind         String
+  /// cron 式 / 'batch' / 'refresh' / 'gc' など、起動の素性
+  trigger      String
+  /// cron run が投入したメッセージを処理した queue run から親を辿るための id
+  parentId     String?   @map("parent_id")
+  /// 'running' | 'success' | 'partial' | 'failed'
+  status       String    @default("running")
+  startedAt    DateTime  @default(now()) @map("started_at")
+  finishedAt   DateTime? @map("finished_at")
+  durationMs   Int?      @map("duration_ms")
+  total        Int       @default(0)
+  succeeded    Int       @default(0)
+  failed       Int       @default(0)
+  retried      Int       @default(0)
+  animeCreated Int       @default(0) @map("anime_created")
+  animeUpdated Int       @default(0) @map("anime_updated")
+  /// 保持上限を超えて捨てたログ行数 (Phase 2 以降で使う)
+  droppedLogs  Int       @default(0) @map("dropped_logs")
+  errorMessage String?   @map("error_message")
+  /// 付随情報の JSON 文字列 (provider 内訳など)
+  meta         String?
+
+  @@index([startedAt])
+  @@index([kind, startedAt])
+  @@index([parentId])
+  @@map("sync_runs")
+}

@@ -17,9 +17,11 @@ import { Route as RecordingsIndexRouteImport } from './routes/recordings/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as ErrorsStatusCodeIndexRouteImport } from './routes/_errors/$statusCode/index'
 import { Route as AdminAbemaIndexRouteImport } from './routes/admin/abema/index'
+import { Route as AdminLogsIndexRouteImport } from './routes/admin/logs/index'
 import { Route as AdminNagisaIndexRouteImport } from './routes/admin/nagisa/index'
 import { Route as AdminUnidentifiedIndexRouteImport } from './routes/admin/unidentified/index'
 import { Route as AnimeIdIndexRouteImport } from './routes/anime/$id/index'
+import { Route as AdminLogsRunIdIndexRouteImport } from './routes/admin/logs/$runId/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -61,6 +63,11 @@ const AdminAbemaIndexRoute = AdminAbemaIndexRouteImport.update({
   path: '/admin/abema/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLogsIndexRoute = AdminLogsIndexRouteImport.update({
+  id: '/admin/logs/',
+  path: '/admin/logs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminNagisaIndexRoute = AdminNagisaIndexRouteImport.update({
   id: '/admin/nagisa/',
   path: '/admin/nagisa/',
@@ -76,6 +83,11 @@ const AnimeIdIndexRoute = AnimeIdIndexRouteImport.update({
   path: '/anime/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLogsRunIdIndexRoute = AdminLogsRunIdIndexRouteImport.update({
+  id: '/admin/logs/$runId/',
+  path: '/admin/logs/$runId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -86,9 +98,11 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/$statusCode/': typeof ErrorsStatusCodeIndexRoute
   '/admin/abema/': typeof AdminAbemaIndexRoute
+  '/admin/logs/': typeof AdminLogsIndexRoute
   '/admin/nagisa/': typeof AdminNagisaIndexRoute
   '/admin/unidentified/': typeof AdminUnidentifiedIndexRoute
   '/anime/$id/': typeof AnimeIdIndexRoute
+  '/admin/logs/$runId/': typeof AdminLogsRunIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -99,9 +113,11 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/$statusCode': typeof ErrorsStatusCodeIndexRoute
   '/admin/abema': typeof AdminAbemaIndexRoute
+  '/admin/logs': typeof AdminLogsIndexRoute
   '/admin/nagisa': typeof AdminNagisaIndexRoute
   '/admin/unidentified': typeof AdminUnidentifiedIndexRoute
   '/anime/$id': typeof AnimeIdIndexRoute
+  '/admin/logs/$runId': typeof AdminLogsRunIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,9 +129,11 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/_errors/$statusCode/': typeof ErrorsStatusCodeIndexRoute
   '/admin/abema/': typeof AdminAbemaIndexRoute
+  '/admin/logs/': typeof AdminLogsIndexRoute
   '/admin/nagisa/': typeof AdminNagisaIndexRoute
   '/admin/unidentified/': typeof AdminUnidentifiedIndexRoute
   '/anime/$id/': typeof AnimeIdIndexRoute
+  '/admin/logs/$runId/': typeof AdminLogsRunIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,9 +146,11 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/$statusCode/'
     | '/admin/abema/'
+    | '/admin/logs/'
     | '/admin/nagisa/'
     | '/admin/unidentified/'
     | '/anime/$id/'
+    | '/admin/logs/$runId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -141,9 +161,11 @@ export interface FileRouteTypes {
     | '/settings'
     | '/$statusCode'
     | '/admin/abema'
+    | '/admin/logs'
     | '/admin/nagisa'
     | '/admin/unidentified'
     | '/anime/$id'
+    | '/admin/logs/$runId'
   id:
     | '__root__'
     | '/'
@@ -154,9 +176,11 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/_errors/$statusCode/'
     | '/admin/abema/'
+    | '/admin/logs/'
     | '/admin/nagisa/'
     | '/admin/unidentified/'
     | '/anime/$id/'
+    | '/admin/logs/$runId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -168,9 +192,11 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   ErrorsStatusCodeIndexRoute: typeof ErrorsStatusCodeIndexRoute
   AdminAbemaIndexRoute: typeof AdminAbemaIndexRoute
+  AdminLogsIndexRoute: typeof AdminLogsIndexRoute
   AdminNagisaIndexRoute: typeof AdminNagisaIndexRoute
   AdminUnidentifiedIndexRoute: typeof AdminUnidentifiedIndexRoute
   AnimeIdIndexRoute: typeof AnimeIdIndexRoute
+  AdminLogsRunIdIndexRoute: typeof AdminLogsRunIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -231,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAbemaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/logs/': {
+      id: '/admin/logs/'
+      path: '/admin/logs'
+      fullPath: '/admin/logs/'
+      preLoaderRoute: typeof AdminLogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/nagisa/': {
       id: '/admin/nagisa/'
       path: '/admin/nagisa'
@@ -252,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnimeIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/logs/$runId/': {
+      id: '/admin/logs/$runId/'
+      path: '/admin/logs/$runId'
+      fullPath: '/admin/logs/$runId/'
+      preLoaderRoute: typeof AdminLogsRunIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -264,9 +304,11 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   ErrorsStatusCodeIndexRoute: ErrorsStatusCodeIndexRoute,
   AdminAbemaIndexRoute: AdminAbemaIndexRoute,
+  AdminLogsIndexRoute: AdminLogsIndexRoute,
   AdminNagisaIndexRoute: AdminNagisaIndexRoute,
   AdminUnidentifiedIndexRoute: AdminUnidentifiedIndexRoute,
   AnimeIdIndexRoute: AnimeIdIndexRoute,
+  AdminLogsRunIdIndexRoute: AdminLogsRunIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
