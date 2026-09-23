@@ -4,6 +4,7 @@ import { flattenAnime, QUARTER_TO_SEASON } from '../../lib/anime-flatten'
 import { createPrismaClient } from '../../lib/db'
 import { getAppLogger } from '../../lib/logger'
 import { AnimeInfoSchema, AnimeListQuerySchema, AnimeSchema, PaginatedAnimeSchema } from '../../schemas/anime.dto'
+import { RecordStatusEnum } from '../../schemas/recording.dto'
 import { registerBadged } from './badged'
 import type { Bindings } from './bindings'
 import { registerRecord } from './record'
@@ -134,7 +135,12 @@ anime.openapi(
         ...flat,
         seasons: seasons.map((s) => ({
           ...s,
-          episodes: s.episodes.map(({ abemaKey, ...ep }) => ({ ...ep, hasLocalKey: abemaKey !== null }))
+          episodes: s.episodes.map(({ abemaKey, ...ep }) => ({
+            ...ep,
+            // DB 上はただの文字列なので、知らない値は none に畳む
+            recordStatus: RecordStatusEnum.catch('none').parse(ep.recordStatus),
+            hasLocalKey: abemaKey !== null
+          }))
         }))
       },
       200
