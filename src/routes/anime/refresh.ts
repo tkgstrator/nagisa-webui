@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { archiveMissingAbemaKeysForAnime } from '../../lib/abema-archive'
+import { autoRecordScheduled } from '../../lib/auto-record'
 import { createPrismaClient } from '../../lib/db'
 import { enqueueImageWarm } from '../../lib/image-warm'
 import { type JobSyncResult, syncJobs } from '../../lib/job-sync'
@@ -116,6 +117,9 @@ export const registerRefresh = (anime: AnimeApp) => {
           if (jobs.error || library.error) {
             logger.warn({ action: 'refresh-recording-sync-error', id, jobs: jobs.error, library: library.error })
           }
+          // 手動の再取得で見つかった回も、予約済み作品なら自動録画に回す (経路は cron と同じ)。
+          // 台帳同期の後に置くのは、既に録れている回を completed にしてから選ぶため
+          await autoRecordScheduled(prisma, c.env, row.provider, row.contentId)
         })
       } finally {
         // flushLogs → finishRun の順を守る (src/lib/db.ts のクライアント使い回し都合)。

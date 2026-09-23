@@ -275,7 +275,7 @@ model RecordingEvent {
   title        String
   /// 'request' | 'status' | 'recorded' | 'not-found'
   kind         String
-  /// 'ui' | 'webhook' | 'cron'
+  /// 'cron' (予約作品の自動録画) | 'manual' (画面から)
   source       String
   /// 'ok' | 'error'
   status       String
@@ -291,4 +291,31 @@ model RecordingEvent {
   @@index([createdAt])
   @@index([animeId])
   @@map("recording_events")
+}
+
+/// カタログ (作品・シーズン・エピソード) に入った変化の履歴。バッジや配信終了の出入りは載せない。
+model CatalogEvent {
+  id           String   @id @default(cuid())
+  animeId      String   @map("anime_id")
+  provider     String
+  contentId    String   @map("content_id")
+  /// 非正規化。作品が消えても何の変化だったか読めるようにする。
+  title        String
+  /// 'title-added' | 'season-added' | 'episodes-added' | 'episodes-updated'
+  kind         String
+  /// season-added のときだけ入る
+  seasonNumber Int?     @map("season_number")
+  /// 足した / 変わった話数
+  episodeCount Int?     @map("episode_count")
+  /// 「S1 E5–7, 9」形式の話数の並び。episodes-added / episodes-updated のときだけ入る
+  episodes     String?
+  /// 変わった項目の JSON 配列 ('image' | 'description' | 'duration' | 'releaseDate')。episodes-updated のときだけ入る
+  fields       String?
+  /// 出力時点の sync_runs.id。run の外なら null。
+  runId        String?  @map("run_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([animeId])
+  @@map("catalog_events")
 }

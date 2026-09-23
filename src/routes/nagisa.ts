@@ -150,7 +150,7 @@ nagisa.openapi(
     }
   }),
   async (c) => {
-    const result = await enqueueRecording(createPrismaClient(c.env.DB), c.env, c.req.valid('json'))
+    const result = await enqueueRecording(createPrismaClient(c.env.DB), c.env, c.req.valid('json'), 'manual')
     if (!result.ok) return c.json({ error: result.error, status: result.status }, 502 as const)
     return c.json(result.data, 200)
   }
