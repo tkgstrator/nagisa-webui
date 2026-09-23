@@ -24,6 +24,35 @@ export const animeDetailQueryOptions = (id: string) =>
 export const nagisaStatusQueryOptions = () =>
   queryOptions({ queryKey: queryKeys.nagisa.status, queryFn: () => api.getNagisaStatus(), refetchInterval: 15_000 })
 
+/**
+ * 上流 (nagisa) を叩く 2 本は落ちていることが正常系なので、**失敗しても再試行しない**。
+ * 15 秒ごとのポーリングがそのまま次の試行になるし、ここで retry を積むと
+ * 上流が落ちている間だけ画面が「読み込み中」のまま固まる。
+ */
+export const nagisaQueueSnapshotQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.nagisa.queueSnapshot,
+    queryFn: () => api.getNagisaQueueSnapshot(),
+    refetchInterval: 15_000,
+    retry: false
+  })
+
+export const nagisaLibraryStatsQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.nagisa.libraryStats,
+    queryFn: () => api.getNagisaLibraryStats(),
+    refetchInterval: 30_000,
+    retry: false
+  })
+
+/** こちらはローカル D1 だけを見るので、上流が落ちていても必ず返る。 */
+export const recordingSyncStateQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.nagisa.syncState,
+    queryFn: () => api.getRecordingSyncState(),
+    refetchInterval: 30_000
+  })
+
 export const unidentifiedListQueryOptions = (filters: Record<string, unknown>) =>
   queryOptions({
     queryKey: queryKeys.admin.unidentified(filters),

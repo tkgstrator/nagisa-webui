@@ -19,6 +19,7 @@ import { Route as ErrorsStatusCodeIndexRouteImport } from './routes/_errors/$sta
 import { Route as AdminAbemaIndexRouteImport } from './routes/admin/abema/index'
 import { Route as AdminLogsIndexRouteImport } from './routes/admin/logs/index'
 import { Route as AdminNagisaIndexRouteImport } from './routes/admin/nagisa/index'
+import { Route as AdminStatusIndexRouteImport } from './routes/admin/status/index'
 import { Route as AdminUnidentifiedIndexRouteImport } from './routes/admin/unidentified/index'
 import { Route as AnimeIdIndexRouteImport } from './routes/anime/$id/index'
 import { Route as AdminLogsRunIdIndexRouteImport } from './routes/admin/logs/$runId/index'
@@ -73,6 +74,11 @@ const AdminNagisaIndexRoute = AdminNagisaIndexRouteImport.update({
   path: '/admin/nagisa/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminStatusIndexRoute = AdminStatusIndexRouteImport.update({
+  id: '/admin/status/',
+  path: '/admin/status/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUnidentifiedIndexRoute = AdminUnidentifiedIndexRouteImport.update({
   id: '/admin/unidentified/',
   path: '/admin/unidentified/',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/admin/abema/': typeof AdminAbemaIndexRoute
   '/admin/logs/': typeof AdminLogsIndexRoute
   '/admin/nagisa/': typeof AdminNagisaIndexRoute
+  '/admin/status/': typeof AdminStatusIndexRoute
   '/admin/unidentified/': typeof AdminUnidentifiedIndexRoute
   '/anime/$id/': typeof AnimeIdIndexRoute
   '/admin/logs/$runId/': typeof AdminLogsRunIdIndexRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/admin/abema': typeof AdminAbemaIndexRoute
   '/admin/logs': typeof AdminLogsIndexRoute
   '/admin/nagisa': typeof AdminNagisaIndexRoute
+  '/admin/status': typeof AdminStatusIndexRoute
   '/admin/unidentified': typeof AdminUnidentifiedIndexRoute
   '/anime/$id': typeof AnimeIdIndexRoute
   '/admin/logs/$runId': typeof AdminLogsRunIdIndexRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/admin/abema/': typeof AdminAbemaIndexRoute
   '/admin/logs/': typeof AdminLogsIndexRoute
   '/admin/nagisa/': typeof AdminNagisaIndexRoute
+  '/admin/status/': typeof AdminStatusIndexRoute
   '/admin/unidentified/': typeof AdminUnidentifiedIndexRoute
   '/anime/$id/': typeof AnimeIdIndexRoute
   '/admin/logs/$runId/': typeof AdminLogsRunIdIndexRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/admin/abema/'
     | '/admin/logs/'
     | '/admin/nagisa/'
+    | '/admin/status/'
     | '/admin/unidentified/'
     | '/anime/$id/'
     | '/admin/logs/$runId/'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/admin/abema'
     | '/admin/logs'
     | '/admin/nagisa'
+    | '/admin/status'
     | '/admin/unidentified'
     | '/anime/$id'
     | '/admin/logs/$runId'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/admin/abema/'
     | '/admin/logs/'
     | '/admin/nagisa/'
+    | '/admin/status/'
     | '/admin/unidentified/'
     | '/anime/$id/'
     | '/admin/logs/$runId/'
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   AdminAbemaIndexRoute: typeof AdminAbemaIndexRoute
   AdminLogsIndexRoute: typeof AdminLogsIndexRoute
   AdminNagisaIndexRoute: typeof AdminNagisaIndexRoute
+  AdminStatusIndexRoute: typeof AdminStatusIndexRoute
   AdminUnidentifiedIndexRoute: typeof AdminUnidentifiedIndexRoute
   AnimeIdIndexRoute: typeof AnimeIdIndexRoute
   AdminLogsRunIdIndexRoute: typeof AdminLogsRunIdIndexRoute
@@ -271,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNagisaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/status/': {
+      id: '/admin/status/'
+      path: '/admin/status'
+      fullPath: '/admin/status/'
+      preLoaderRoute: typeof AdminStatusIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/unidentified/': {
       id: '/admin/unidentified/'
       path: '/admin/unidentified'
@@ -306,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAbemaIndexRoute: AdminAbemaIndexRoute,
   AdminLogsIndexRoute: AdminLogsIndexRoute,
   AdminNagisaIndexRoute: AdminNagisaIndexRoute,
+  AdminStatusIndexRoute: AdminStatusIndexRoute,
   AdminUnidentifiedIndexRoute: AdminUnidentifiedIndexRoute,
   AnimeIdIndexRoute: AnimeIdIndexRoute,
   AdminLogsRunIdIndexRoute: AdminLogsRunIdIndexRoute,

@@ -33,6 +33,30 @@ const IN_CHUNK = 90
  */
 const MAX_PENDING_PER_REQUEST = 900
 
+/**
+ * 1 リクエストで面倒を見るジョブ数の上限。
+ *
+ * **クエリ数はエピソード数ではなくジョブ数で決まる**。1 話だけのジョブを 600 本
+ * 積まれると、行数は 600 でも読み 600 文 + 書き 600 文 = 1200 文になり、
+ * エピソード側の上限 (900 行) は一度も効かないまま D1 の
+ * **queries per invocation (1000)** を超える。読み 1 文 + 書き 1 文/ジョブが
+ * 最悪なので、ここを 200 に抑えておけば 400 文で収まる。
+ */
+const MAX_JOBS_PER_REQUEST = 200
+
+/**
+ * 1 ジョブぶんの読み出し行数の上限。
+ *
+ * 作品 1 本のエピソードを全部メモリに載せる経路なので、際限なく読むと
+ * isolate の 128MB (同時リクエストで共有) を削る。実在の作品でこれを超えることは
+ * 無い想定だが、上限として置いておく。
+ *
+ * **話数の絞り込みはこの後** (メモリ上) なので、ここで切れると指定話が
+ * 読み出しの外に落ちて「該当なし」に化けうる。切れたことは黙って捨てず
+ * `truncated` として返す。
+ */
+const MAX_ROWS_PER_JOB = 2000
+
 function chunk<T>(xs: T[], size: number): T[][] {
   const out: T[][] = []
   for (let i = 0; i < xs.length; i += size) out.push(xs.slice(i, i + size))
@@ -46,6 +70,10 @@ export interface RecordIntentResult {
   unmatched: number
   /** 上限で控えきれなかったエピソード数 */
   dropped: number
+  /** 既に `completed` だったので触らなかったエピソード数 */
+  preserved: number
+  /** 読み出し上限に達し、対象を全部見られなかったジョブ数 */
+  truncated: number
 }
 
 /**
@@ -56,24 +84,58 @@ export interface RecordIntentResult {
  * 見る**のは、nagisa が正規化した後の指示内容がこちらだから。
  */
 export async function markPending(prisma: Prisma, jobs: Job[]): Promise<RecordIntentResult> {
-  const result: RecordIntentResult = { marked: 0, unmatched: 0, dropped: 0 }
-  const now = new Date()
+  const result: RecordIntentResult = { marked: 0, unmatched: 0, dropped: 0, preserved: 0, truncated: 0 }
 
   try {
-    // job id ごとに対象エピソードを束ねる。同じエピソードが複数のジョブに現れる
-    // ことは無い前提だが、来たら後のジョブで上書きされる (最後の指示が正)。
-    const byJob: { jobId: string; ids: string[] }[] = []
-    let budget = MAX_PENDING_PER_REQUEST
+    // エピソード → 最後に指示したジョブ。**id で潰してから数える**こと:
+    // 同じエピソードを含むジョブが 2 本来たとき、行数で数えると同じ行を
+    // 二重に予算から引いてしまい、後続の (重なっていない) ジョブが丸ごと
+    // 控えられなくなる。値を後勝ちにするのは「最後の指示が正」だから。
+    const owner = new Map<string, string>()
+    let skippedJobs = 0
 
-    for (const job of jobs) {
+    for (const [index, job] of jobs.entries()) {
+      if (index >= MAX_JOBS_PER_REQUEST) {
+        skippedJobs = jobs.length - index
+        break
+      }
+
       const { provider, content_id, seasons } = job.data
+
+      // シーズン番号だけは D1 側で絞る。作品 1 本ぶんを読んでから捨てるより
+      // 安いし、パラメータもシーズン数ぶんしか食わない。話数の絞り込みまで
+      // 持っていくと (season_number, episode_number) の組が bound parameter
+      // (100) を食い潰すので、そちらはメモリ上に残す。
+      const seasonNumbers = seasons ? [...new Set(seasons.map((s) => s.season_number))] : null
+      const seasonFilter =
+        seasonNumbers !== null && seasonNumbers.length <= IN_CHUNK ? { seasonNumber: { in: seasonNumbers } } : {}
+
+      // 上限 + 1 件読んで「切れたか」を判定する。切れたことを知らずに畳むと、
+      // 読み出しの外に落ちた指定話が unmatched (該当なし) に化けて、
+      // 録画は走っているのに WebUI からは何も見えない行が残る。
       const rows = await prisma.episode.findMany({
-        where: { season: { anime: { provider, contentId: content_id } } },
-        select: { id: true, episodeNumber: true, season: { select: { seasonNumber: true } } }
+        where: {
+          season: { ...seasonFilter, anime: { provider, contentId: content_id } }
+        },
+        select: { id: true, episodeNumber: true, recordStatus: true, season: { select: { seasonNumber: true } } },
+        orderBy: [{ season: { seasonNumber: 'asc' } }, { episodeNumber: 'asc' }],
+        take: MAX_ROWS_PER_JOB + 1
       })
 
-      // シーズン指定の絞り込みはメモリ上で行う。D1 側に条件を組むと
-      // (season_number, episode_number) の組が bound parameter を食い潰す。
+      let rowsTruncated = false
+      if (rows.length > MAX_ROWS_PER_JOB) {
+        rows.length = MAX_ROWS_PER_JOB
+        rowsTruncated = true
+        result.truncated++
+        logger.warn({
+          action: 'record-intent-rows-truncated',
+          provider,
+          contentId: content_id,
+          jobId: job.job_id,
+          limit: MAX_ROWS_PER_JOB
+        })
+      }
+
       const wanted = seasons
         ? rows.filter((r) =>
             seasons.some(
@@ -85,25 +147,57 @@ export async function markPending(prisma: Prisma, jobs: Job[]): Promise<RecordIn
         : rows
 
       if (wanted.length === 0) {
-        result.unmatched++
-        logger.warn({ action: 'record-intent-unmatched', provider, contentId: content_id, jobId: job.job_id })
+        // 切り詰めた後の該当なしは「存在しない」ではなく「読み出しの外に落ちた」
+        // かもしれない。unmatched に混ぜると調べる先を間違えるので、
+        // その回は truncated (上で計上済み) の扱いのままにする。
+        if (!rowsTruncated) {
+          result.unmatched++
+          logger.warn({ action: 'record-intent-unmatched', provider, contentId: content_id, jobId: job.job_id })
+        }
         continue
       }
 
-      const ids = wanted.slice(0, Math.max(budget, 0)).map((r) => r.id)
-      result.dropped += wanted.length - ids.length
-      budget -= ids.length
-      if (ids.length > 0) byJob.push({ jobId: job.job_id, ids })
+      for (const row of wanted) {
+        // 既に実体がある行は触らない。**ここで pending に落とすと録画済みが消える**:
+        // nagisa は既存ファイルを飛ばすので台帳に変更イベントが出ず、ジョブは
+        // 何もせず終わる。差分同期には `completed` を書き戻す材料が無いまま、
+        // 30 分後に job-sync が stale へ落としてしまう。
+        if (row.recordStatus === 'completed') {
+          result.preserved++
+          continue
+        }
+        if (!owner.has(row.id) && owner.size >= MAX_PENDING_PER_REQUEST) {
+          result.dropped++
+          continue
+        }
+        owner.set(row.id, job.job_id)
+      }
     }
 
+    if (skippedJobs > 0) {
+      logger.warn({ action: 'record-intent-jobs-truncated', skipped: skippedJobs, limit: MAX_JOBS_PER_REQUEST })
+    }
     if (result.dropped > 0) {
       logger.warn({ action: 'record-intent-truncated', dropped: result.dropped, limit: MAX_PENDING_PER_REQUEST })
     }
 
-    for (const { jobId, ids } of byJob) {
+    const byJob = new Map<string, string[]>()
+    for (const [episodeId, jobId] of owner) {
+      const ids = byJob.get(jobId)
+      if (ids) ids.push(episodeId)
+      else byJob.set(jobId, [episodeId])
+    }
+
+    // 猶予の起点なので、読みに何秒かかったかに関わらず**書く直前**の時刻にする。
+    // 読み始めの時刻を使うと、重い読みの後に書いた行が生まれた瞬間から
+    // 30 分の無音条件に近づいてしまう。
+    const now = new Date()
+    for (const [jobId, ids] of byJob) {
       for (const part of chunk(ids, IN_CHUNK)) {
         const hit = await prisma.episode.updateMany({
-          where: { id: { in: part } },
+          // 読んだ後・書く前に library-sync が `completed` を書く隙があるので、
+          // 除外は読みだけでなく **更新条件にも** 置く。
+          where: { id: { in: part }, recordStatus: { not: 'completed' } },
           data: {
             recordStatus: 'pending',
             recordSource: 'queue',
@@ -113,6 +207,7 @@ export async function markPending(prisma: Prisma, jobs: Job[]): Promise<RecordIn
           }
         })
         result.marked += hit.count
+        result.preserved += part.length - hit.count
       }
     }
 

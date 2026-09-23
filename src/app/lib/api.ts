@@ -6,10 +6,12 @@ import { LogStatsSchema, PaginatedSyncRunSchema, SyncRunDetailSchema } from '@/s
 import {
   NagisaEnqueueRequestSchema,
   NagisaEnqueueResponseSchema,
+  NagisaLibraryStatsSchema,
   NagisaQueueResponseSchema,
+  NagisaQueueSnapshotSchema,
   NagisaStatusSchema
 } from '@/schemas/nagisa.dto'
-import { BulkUpdateRecordingSchema, UpdateRecordingSchema } from '@/schemas/recording.dto'
+import { BulkUpdateRecordingSchema, RecordingSyncStateSchema, UpdateRecordingSchema } from '@/schemas/recording.dto'
 import { PaginatedUnidentifiedSchema } from '@/schemas/unidentified.dto'
 
 const api = new Zodios('/api', [
@@ -115,6 +117,24 @@ const api = new Zodios('/api', [
     path: '/nagisa/status',
     alias: 'getNagisaStatus',
     response: NagisaStatusSchema
+  },
+  {
+    method: 'get',
+    path: '/nagisa/queue/snapshot',
+    alias: 'getNagisaQueueSnapshot',
+    response: NagisaQueueSnapshotSchema
+  },
+  {
+    method: 'get',
+    path: '/nagisa/library/stats',
+    alias: 'getNagisaLibraryStats',
+    response: NagisaLibraryStatsSchema
+  },
+  {
+    method: 'get',
+    path: '/nagisa/sync-state',
+    alias: 'getRecordingSyncState',
+    response: RecordingSyncStateSchema
   },
   {
     method: 'get',

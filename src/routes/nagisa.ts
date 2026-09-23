@@ -10,6 +10,7 @@ import {
   NagisaQueueSnapshotSchema,
   NagisaStatusSchema
 } from '../schemas/nagisa.dto'
+import { RecordingSyncStateSchema, type RecordStatus, RecordStatusEnum } from '../schemas/recording.dto'
 
 const logger = getAppLogger('routes')
 
@@ -182,7 +183,7 @@ nagisa.openapi(
       const parsed = NagisaEnqueueResponseSchema.safeParse(data)
       if (parsed.success) {
         const intent = await markPending(createPrismaClient(c.env.DB), parsed.data.jobs)
-        if (intent.unmatched > 0 || intent.dropped > 0) {
+        if (intent.unmatched > 0 || intent.dropped > 0 || intent.truncated > 0) {
           logger.warn({ action: 'nagisa-enqueue-intent-partial', ...intent })
         }
       } else {
@@ -196,6 +197,60 @@ nagisa.openapi(
       logger.error({ action: 'nagisa-enqueue-fetch-error', error: e instanceof Error ? e.message : String(e) })
       return c.json({ error: 'Failed to connect to Nagisa' }, 502 as const)
     }
+  }
+)
+
+nagisa.openapi(
+  createRoute({
+    method: 'get',
+    path: '/sync-state',
+    tags: ['Nagisa'],
+    summary: 'ローカル側の同期状態 (カーソル / ロック / 状態の内訳) を取得',
+    description:
+      '上流には一切触らない。「WebUI が持っている録画状態がどこまで追いついているか」を返す経路なので、' +
+      'nagisa が落ちていても 200 を返す (むしろ落ちているときこそ lastSucceededAt が要る)。',
+    responses: {
+      200: {
+        description: '同期状態',
+        content: { 'application/json': { schema: RecordingSyncStateSchema } }
+      }
+    }
+  }),
+  async (c) => {
+    const prisma = createPrismaClient(c.env.DB)
+
+    // 状態の内訳は groupBy 1 文。**0 件の状態も必ず埋める**こと: 欠けたまま返すと
+    // 「その状態が 0 件」と「集計が取れていない」が WebUI から区別できない。
+    const [state, grouped, tracked] = await Promise.all([
+      prisma.syncState.findUnique({ where: { key: 'library' } }),
+      prisma.episode.groupBy({ by: ['recordStatus'], _count: { _all: true } }),
+      prisma.episode.count({
+        where: { recordStatus: { in: ['pending', 'downloading'] }, recordJobId: { not: null } }
+      })
+    ])
+
+    const counts = Object.fromEntries(RecordStatusEnum.options.map((s) => [s, 0])) as Record<RecordStatus, number>
+    for (const row of grouped) {
+      // record_status は文字列カラムなので、enum に無い値が入っていても落とさない
+      // (手で書き換えた行などは黙って捨てる — 集計の欠けより静かな方がまし)。
+      const parsed = RecordStatusEnum.safeParse(row.recordStatus)
+      if (parsed.success) counts[parsed.data] = row._count._all
+    }
+
+    const iso = (d: Date | null | undefined) => (d ? d.toISOString() : null)
+    return c.json(
+      {
+        cursor: state?.libraryCursor ?? null,
+        snapshotCursor: state?.snapshotCursor ?? null,
+        snapshotStartedAt: iso(state?.snapshotStartedAt),
+        lastSucceededAt: iso(state?.lastSucceededAt),
+        leaseUntil: iso(state?.leaseUntil),
+        leaseOwner: state?.leaseOwner ?? null,
+        counts,
+        tracked
+      },
+      200
+    )
   }
 )
 
