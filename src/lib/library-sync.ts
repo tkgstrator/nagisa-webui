@@ -342,6 +342,27 @@ function buildUpsertWrites(
       )
     }
   }
+
+  // **在籍の印だけは負けた行にも押す**。上の `older` で弾かれた行は 1 列も
+  // 書き換わらないので `record_synced_at` が bootstrap 開始より古いままになり、
+  // 掃き出し (`buildSweep`) が「今回の台帳に居なかった」とみなして `missing` に
+  // 落としてしまう — 台帳に(古い録画として)確かに居るのに、である。
+  // ここで触れた事実だけを別文で刻んでおけば、掃き出しの対象から外れる。
+  //
+  // ページ全体の id をまとめて 90 件ずつ (バインドは時刻 1 + id 90 + lease 2 = 93)。
+  // 勝った行にも重ねて当たるが、同じ `now` を書くだけなので結果は変わらない。
+  // 対象は掃き出しと同じ completed だけ。走行中 (pending / downloading) の行まで
+  // 触ると、job-sync の猶予とページ送りの起点 (`recordSyncedAt`) を横から動かす。
+  // 変更ログ経路には掃き出しが無い (かつ全行が必ず書かれる) ので付けない。
+  if (skipOlder) {
+    for (const part of chunk([...winners.keys()], IN_CHUNK)) {
+      writes.push(
+        prisma.$executeRaw`
+          UPDATE episodes SET record_synced_at = ${sqlDate(now)}
+          WHERE id IN (${PrismaSql.join(part)}) AND record_status = 'completed' ${guard}`
+      )
+    }
+  }
   return { writes, unmatched }
 }
 
