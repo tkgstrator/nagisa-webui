@@ -58,7 +58,10 @@ async function ensureMigrationsTable(): Promise<void> {
 
 async function getApplied(): Promise<Set<string>> {
   const rows = (await command('SELECT name FROM d1_migrations ORDER BY id')) as { name: string }[]
-  return new Set(rows.map((r) => r.name))
+  // d1_migrations には wrangler d1 migrations apply 経由で入った "<dir>/migration.sql" と
+  // このスクリプト経由の "<dir>" が混在している。剥がさないと適用済みの migration を
+  // 未適用と誤判定して二度流してしまう。
+  return new Set(rows.map((r) => r.name.replace(/\/migration\.sql$/, '')))
 }
 
 const migrationsDir = resolve(import.meta.dir, '../../prisma/migrations')
