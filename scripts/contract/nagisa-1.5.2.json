@@ -1,0 +1,326 @@
+{
+  "library_snapshot": {
+    "status": 200,
+    "body": {
+      "changes_cursor": "eyJlIjoiZTAxMzFkN2YtMDA2Yi00NzI2LWIzNzQtMzhhMWIyODVmMDc3IiwicyI6M30",
+      "epoch": "e0131d7f-006b-4726-b374-38a1b285f077",
+      "has_more": true,
+      "items": [
+        {
+          "content_id": "420-78",
+          "episode_id": "ep-2",
+          "episode_number": 2,
+          "mtime": "2026-09-23T09:06:22Z",
+          "path": "Show/Season 01/S01E02.mkv",
+          "provider": "abema",
+          "recording_id": "578f3e8c2ab20693",
+          "season_number": 1,
+          "size": 4096
+        },
+        {
+          "content_id": "420-78",
+          "episode_id": "ep-1",
+          "episode_number": 1,
+          "mtime": "2026-09-23T09:06:22Z",
+          "path": "Show/Season 01/S01E01.mkv",
+          "provider": "abema",
+          "recording_id": "86d5111b3a5cd975",
+          "season_number": 1,
+          "size": 4096
+        }
+      ],
+      "next_cursor": "eyJhIjoiODZkNTExMWIzYTVjZDk3NSIsImUiOiJlMDEzMWQ3Zi0wMDZiLTQ3MjYtYjM3NC0zOGExYjI4NWYwNzciLCJzIjozfQ",
+      "snapshot_seq": 3
+    }
+  },
+  "library_snapshot_page2": {
+    "status": 200,
+    "body": {
+      "changes_cursor": "eyJlIjoiZTAxMzFkN2YtMDA2Yi00NzI2LWIzNzQtMzhhMWIyODVmMDc3IiwicyI6M30",
+      "epoch": "e0131d7f-006b-4726-b374-38a1b285f077",
+      "has_more": false,
+      "items": [
+        {
+          "content_id": "B0ABC",
+          "episode_id": "B0EP1",
+          "episode_number": 1,
+          "mtime": "2026-09-23T09:06:22Z",
+          "path": "Other/Season 01/S01E01.mkv",
+          "provider": "amazon",
+          "recording_id": "ca13bc69f5daa428",
+          "season_number": 1,
+          "size": 4096
+        }
+      ],
+      "next_cursor": null,
+      "snapshot_seq": 3
+    }
+  },
+  "library_stats": {
+    "status": 200,
+    "body": {
+      "cursor": "eyJlIjoiZTAxMzFkN2YtMDA2Yi00NzI2LWIzNzQtMzhhMWIyODVmMDc3IiwicyI6M30",
+      "epoch": "e0131d7f-006b-4726-b374-38a1b285f077",
+      "last_seq": 3,
+      "recordings": 3,
+      "total_size": 12288,
+      "unresolved": 0
+    }
+  },
+  "library_changes": {
+    "status": 200,
+    "body": {
+      "changes": [
+        {
+          "changed_at": "2026-09-23T09:06:22Z",
+          "item": {
+            "content_id": "420-78",
+            "episode_id": "ep-3",
+            "episode_number": 3,
+            "mtime": "2026-09-23T09:06:22Z",
+            "path": "Show/Season 01/S01E03.mkv",
+            "provider": "abema",
+            "season_number": 1,
+            "size": 8192
+          },
+          "op": "upsert",
+          "recording_id": "6f3303ac7fc061bf",
+          "seq": 4
+        }
+      ],
+      "epoch": "e0131d7f-006b-4726-b374-38a1b285f077",
+      "has_more": false,
+      "next_cursor": "eyJlIjoiZTAxMzFkN2YtMDA2Yi00NzI2LWIzNzQtMzhhMWIyODVmMDc3IiwicyI6NH0"
+    }
+  },
+  "library_changes_empty": {
+    "status": 200,
+    "body": {
+      "changes": [],
+      "epoch": "e0131d7f-006b-4726-b374-38a1b285f077",
+      "has_more": false,
+      "next_cursor": "eyJlIjoiZTAxMzFkN2YtMDA2Yi00NzI2LWIzNzQtMzhhMWIyODVmMDc3IiwicyI6NH0"
+    }
+  },
+  "library_changes_no_cursor": {
+    "status": 409,
+    "body": {
+      "error": "not_initialized",
+      "message": "cursor is required; bootstrap from /api/library/snapshot"
+    }
+  },
+  "status": {
+    "status": 200,
+    "body": {
+      "queue": null,
+      "redis": null,
+      "system": {
+        "cpu_percent": 0.0,
+        "disk_free_gb": 787.8,
+        "memory_percent": 52.7
+      },
+      "uptime": 0,
+      "version": "1.5.2"
+    }
+  },
+  "queue_snapshot": {
+    "status": 200,
+    "body": {
+      "counts": {
+        "active": 1,
+        "completed": 1,
+        "delayed": 0,
+        "failed": 1,
+        "wait": 1
+      },
+      "generated_at": 1790154383034,
+      "jobs": [
+        {
+          "attempts": 1,
+          "content_id": "420-78",
+          "failed_reason": null,
+          "finished_on": null,
+          "job_id": "job-active-1",
+          "processed_on": 1758614460000,
+          "progress": {
+            "current": 3,
+            "total": 12
+          },
+          "provider": "abema",
+          "seasons": [
+            {
+              "episodes": [
+                1,
+                2
+              ],
+              "season_number": 1
+            }
+          ],
+          "state": "active",
+          "timestamp": 1758614400000,
+          "title": "テスト番組"
+        },
+        {
+          "attempts": 0,
+          "content_id": "B0ABC",
+          "failed_reason": null,
+          "finished_on": null,
+          "job_id": "job-wait-1",
+          "processed_on": null,
+          "progress": null,
+          "provider": "amazon",
+          "seasons": null,
+          "state": "wait",
+          "timestamp": 1758614400000,
+          "title": null
+        },
+        {
+          "attempts": 1,
+          "content_id": "420-78",
+          "failed_reason": null,
+          "finished_on": 1758610900000,
+          "job_id": "job-done-1",
+          "processed_on": 1758610000000,
+          "progress": null,
+          "provider": "abema",
+          "seasons": [
+            {
+              "episodes": [
+                1,
+                2
+              ],
+              "season_number": 1
+            }
+          ],
+          "state": "completed",
+          "timestamp": 1758614400000,
+          "title": "テスト番組"
+        },
+        {
+          "attempts": 3,
+          "content_id": "B0XYZ",
+          "failed_reason": "Traceback (most recent call last):\n  RuntimeError: drm",
+          "finished_on": 1758611000000,
+          "job_id": "job-failed-1",
+          "processed_on": null,
+          "progress": null,
+          "provider": "amazon",
+          "seasons": null,
+          "state": "failed",
+          "timestamp": 1758614400000,
+          "title": null
+        }
+      ]
+    }
+  },
+  "status_with_queue": {
+    "status": 200,
+    "body": {
+      "queue": {
+        "active": {
+          "count": 1,
+          "jobs": [
+            {
+              "content_id": "420-78",
+              "failedReason": null,
+              "finishedOn": null,
+              "job_id": "job-active-1",
+              "marketplace": null,
+              "processedOn": 1758614460000,
+              "progress": {
+                "current": 3,
+                "total": 12
+              },
+              "provider": "abema",
+              "seasons": [
+                {
+                  "episodes": [
+                    1,
+                    2
+                  ],
+                  "season_number": 1
+                }
+              ],
+              "timestamp": 1758614400000,
+              "title": "テスト番組"
+            }
+          ]
+        },
+        "completed": {
+          "count": 1,
+          "jobs": [
+            {
+              "content_id": "420-78",
+              "failedReason": null,
+              "finishedOn": 1758610900000,
+              "job_id": "job-done-1",
+              "marketplace": null,
+              "processedOn": 1758610000000,
+              "progress": null,
+              "provider": "abema",
+              "seasons": [
+                {
+                  "episodes": [
+                    1,
+                    2
+                  ],
+                  "season_number": 1
+                }
+              ],
+              "timestamp": 1758614400000,
+              "title": "テスト番組"
+            }
+          ]
+        },
+        "delayed": {
+          "count": 0,
+          "jobs": []
+        },
+        "failed": {
+          "count": 1,
+          "jobs": [
+            {
+              "content_id": "B0XYZ",
+              "failedReason": "Traceback (most recent call last):\n  RuntimeError: drm",
+              "finishedOn": 1758611000000,
+              "job_id": "job-failed-1",
+              "marketplace": null,
+              "processedOn": null,
+              "progress": null,
+              "provider": "amazon",
+              "seasons": null,
+              "timestamp": 1758614400000,
+              "title": null
+            }
+          ]
+        },
+        "wait": {
+          "count": 1,
+          "jobs": [
+            {
+              "content_id": "B0ABC",
+              "failedReason": null,
+              "finishedOn": null,
+              "job_id": "job-wait-1",
+              "marketplace": null,
+              "processedOn": null,
+              "progress": null,
+              "provider": "amazon",
+              "seasons": null,
+              "timestamp": 1758614400000,
+              "title": null
+            }
+          ]
+        }
+      },
+      "redis": null,
+      "system": {
+        "cpu_percent": 1.0,
+        "disk_free_gb": 787.8,
+        "memory_percent": 52.7
+      },
+      "uptime": 0,
+      "version": "1.5.2"
+    }
+  }
+}
