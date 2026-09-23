@@ -5,6 +5,7 @@ import { createPrismaClient } from './lib/db'
 import { setupLogger } from './lib/logger'
 import { queue } from './queue'
 import adminRoutes from './routes/admin'
+import adminLogRoutes from './routes/admin-logs'
 import animeRoutes from './routes/anime'
 import imgRoutes from './routes/img'
 import nagisaRoutes from './routes/nagisa'
@@ -33,6 +34,7 @@ const app = new OpenAPIHono<{ Bindings: Bindings }>()
 app.use(logger())
 
 app.route('/api/admin', adminRoutes)
+app.route('/api/admin/logs', adminLogRoutes)
 app.route('/api/anime', animeRoutes)
 app.route('/api/img', imgRoutes)
 app.route('/api/nagisa', nagisaRoutes)

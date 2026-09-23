@@ -5,6 +5,7 @@ import { createFetchClient } from './lib/lambda'
 import { getAppLogger } from './lib/logger'
 import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
 import { SyncService } from './lib/sync'
+import { finishRun, resolveStatus, startRun } from './lib/sync-run'
 
 import type { Message } from './schemas/message.dto'
 
@@ -81,8 +82,18 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
 
   logger.info({ action: 'batch-start', batchSize: batch.messages.length, queue: batch.queue })
 
+  // 1 バッチには複数の cron 由来のメッセージが混ざりうるので、親は最初に見つかった
+  // 1 件だけを採る。どの run から来たかの内訳は meta に残す。
+  const parentIds = [...new Set(batch.messages.map((m) => m.body.runId).filter((id) => id !== undefined))]
+  const runId = await startRun(prisma, {
+    kind: 'queue',
+    trigger: 'batch',
+    parentId: parentIds[0] ?? null
+  })
+
   let succeeded = 0
   let failed = 0
+  let retried = 0
   const failedLabels: string[] = []
 
   try {
@@ -113,7 +124,11 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
               const BULK_SIZE = 25
               for (let i = 0; i < contentIds.length; i += BULK_SIZE) {
                 const chunk = contentIds.slice(i, i + BULK_SIZE)
-                await env.SYNC_QUEUE.send({ type: 'bulk_update', message: { provider, contentIds: chunk } })
+                await env.SYNC_QUEUE.send({
+                  type: 'bulk_update',
+                  runId: message.body.runId,
+                  message: { provider, contentIds: chunk }
+                })
               }
             }
             logger.info({ action: 'enqueue-updates', provider, category, count: contentIds.length })
@@ -188,6 +203,7 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
           failedLabels.push(anime ? anime.title : `[${message.body.type}]`)
         }
         message.retry()
+        retried++
       }
     }
 
@@ -205,6 +221,13 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
     }
   } finally {
     logger.debug({ action: 'batch-done', batchSize: batch.messages.length })
+    await finishRun(prisma, runId, resolveStatus(succeeded, failed), {
+      total: batch.messages.length,
+      succeeded,
+      failed,
+      retried,
+      meta: parentIds.length > 1 ? { parentIds } : undefined
+    })
     await prisma.$disconnect()
   }
 }
