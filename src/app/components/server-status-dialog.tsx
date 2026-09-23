@@ -48,7 +48,8 @@ const JobItem = ({ job }: { job: NagisaStatusJob }) => {
       <div className='mt-1 flex items-center gap-1.5 pl-3.5'>
         {seasonText && <span className='text-[10px] text-muted-foreground'>{seasonText}</span>}
         <span className='ml-auto text-[10px] text-muted-foreground'>
-          {dayjs(job.processedOn).format('MM/DD HH:mm')}
+          {/* 待機中は開始時刻が無いので投入時刻を出す (null だと Invalid Date になる) */}
+          {dayjs(job.processedOn ?? job.timestamp).format('MM/DD HH:mm')}
         </span>
       </div>
       {job.progress && (

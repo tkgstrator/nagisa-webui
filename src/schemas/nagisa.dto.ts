@@ -103,7 +103,12 @@ export const NagisaStatusJobSchema = z.object({
   marketplace: MarketplaceEnum.nullable(),
   progress: NagisaJobProgressSchema.nullable(),
   timestamp: z.number(),
-  processedOn: z.number(),
+  /**
+   * ワーカーが拾った時刻。**待機中 (wait) と遅延中 (delayed) のジョブは null**
+   * — /api/status は全 state を返すので、必須にすると 1 件でも待ち行列に
+   * 積まれた瞬間にステータス全体の parse が落ちる (実応答で確認済み)。
+   */
+  processedOn: z.number().nullable(),
   finishedOn: z.number().nullable(),
   failedReason: z.string().nullable()
 })
