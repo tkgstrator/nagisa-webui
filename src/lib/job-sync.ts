@@ -120,6 +120,13 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
       return result
     }
 
+    // **観測時刻はリクエストを出す前に取る**。応答を読み終えた時刻にすると、
+    // 取得が長引いた回に「古い不在」を今の不在として扱ってしまう:
+    // 12:00 時点のキューに居なかったジョブが、12:01 に別 tick の heartbeat を
+    // 受け取っていても、12:32 に読み終えた側の cutoff (12:02) がそれを追い越して
+    // stale に落とす。開始時刻なら cutoff は必ず観測時点より手前に来るので、
+    // 取得が遅れた回は「落としそこねる」側に倒れる (次 tick が拾う)。
+    const now = new Date()
     const res = await fetchNagisaRaw(env as NagisaEnv, '/api/queue/snapshot')
     if (!res.ok) {
       // 取得できなかった回は何も書かない (全件 stale 化を防ぐ)。
@@ -128,10 +135,11 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
       return result
     }
     const snapshot = NagisaQueueSnapshotSchema.parse(await res.json())
-    const now = new Date()
 
-    const activeIds: string[] = []
-    const liveIds: string[] = []
+    // **同じ job id が複数回来ても 1 件として数える**。キュー側が重複を返すと
+    // チャンク数が追跡件数から見積もった上限を超え、D1 のクエリ数の保証が崩れる。
+    const activeSet = new Set<string>()
+    const liveSet = new Set<string>()
     const failures = new Map<string, string | null>()
     for (const job of snapshot.jobs) {
       // こちらが追跡していないジョブは 1 文も使わずに捨てる (交差)。
@@ -139,26 +147,35 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
       // failed も「キューに居る」ことに変わりはないので heartbeat には含める。
       // 外すと、この tick で failed に落とし切れなかったぶん (下の件数上限) が
       // 無音扱いになり、30 分後に failed ではなく stale へ流れてしまう。
-      liveIds.push(job.job_id)
+      liveSet.add(job.job_id)
       if (job.state === 'failed') failures.set(job.job_id, job.failed_reason)
-      else if (job.state === 'active') activeIds.push(job.job_id)
+      else if (job.state === 'active') activeSet.add(job.job_id)
     }
+    const liveIds = [...liveSet]
+    const activeIds = [...activeSet]
 
     // 生存確認 (heartbeat)。キューに居ることを確かめられた行の recordSyncedAt を
     // 毎 tick 進める。これが無いと recordSyncedAt は pending → downloading の
     // 1 回しか動かず、何時間も走ったジョブが消えた瞬間に「30 分無音」の条件を
     // 満たしてしまう (猶予がまったく効かない)。
+    //
+    // **既に入っている値より新しいときだけ書く**。cron が重なった回 (前の tick が
+    // 1 分を超えた・手動同期と衝突した) に古い観測時刻で上書きすると、生存確認の
+    // 履歴が巻き戻り、実際には無音になっていない行が 30 分後の条件を満たしてしまう。
+    const monotonic = { OR: [{ recordSyncedAt: null }, { recordSyncedAt: { lt: now } }] }
     for (const part of chunk(liveIds, IN_CHUNK)) {
       await prisma.episode.updateMany({
-        where: { recordStatus: { in: [...IN_FLIGHT] }, recordJobId: { in: part } },
+        where: { recordStatus: { in: [...IN_FLIGHT] }, recordJobId: { in: part }, ...monotonic },
         data: { recordSyncedAt: now }
       })
     }
 
     // pending → downloading。active に現れた時点で実際に走っている。
+    // ここも同じ理由で時刻の巻き戻しを避ける (状態だけ進めて時刻を戻すと、
+    // downloading になった直後の行が猶予を食われる)。
     for (const part of chunk(activeIds, IN_CHUNK)) {
       const moved = await prisma.episode.updateMany({
-        where: { recordStatus: 'pending', recordJobId: { in: part } },
+        where: { recordStatus: 'pending', recordJobId: { in: part }, ...monotonic },
         data: { recordStatus: 'downloading', recordSource: 'snapshot', recordSyncedAt: now }
       })
       result.downloading += moved.count
@@ -202,7 +219,6 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
     // `recordSyncedAt` が null の行は猶予を測れないので対象外 (`lt` は NULL を
     // 拾わない)。録画指示を出す経路では pending と同時に recordSyncedAt を必ず入れること
     // — それでも null で来た行はこの直前で起点だけ入れ、次の tick 以降に回す。
-    const liveSet = new Set(liveIds)
     const staleIds = [...tracked].filter((id) => !liveSet.has(id))
     const cutoff = new Date(now.getTime() - STALE_AFTER_MS)
 
