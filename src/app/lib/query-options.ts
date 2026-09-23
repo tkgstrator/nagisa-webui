@@ -30,6 +30,23 @@ export const unidentifiedListQueryOptions = (filters: Record<string, unknown>) =
     queryFn: () => api.getUnidentifiedList({ queries: filters })
   })
 
+export const syncRunsQueryOptions = (filters: Record<string, unknown>) =>
+  queryOptions({
+    queryKey: queryKeys.admin.syncRuns(filters),
+    queryFn: () => api.getSyncRuns({ queries: filters }),
+    refetchInterval: 30_000
+  })
+
+export const syncRunQueryOptions = (id: string) =>
+  queryOptions({
+    queryKey: queryKeys.admin.syncRun(id),
+    queryFn: () => api.getSyncRun({ params: { id } }),
+    refetchInterval: 30_000
+  })
+
+export const logStatsQueryOptions = () =>
+  queryOptions({ queryKey: queryKeys.admin.logStats, queryFn: () => api.getLogStats(), refetchInterval: 30_000 })
+
 export const archiveStatsQueryOptions = () =>
   queryOptions({ queryKey: queryKeys.admin.archiveStats, queryFn: () => api.getArchiveStats() })
 

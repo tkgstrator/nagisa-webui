@@ -2,6 +2,7 @@ import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
 import { AnimeInfoSchema, AnimeSchema, BadgedAnimeSchema, PaginatedAnimeSchema } from '@/schemas/anime.dto'
 import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
+import { LogStatsSchema, PaginatedSyncRunSchema, SyncRunDetailSchema } from '@/schemas/log.dto'
 import {
   NagisaEnqueueRequestSchema,
   NagisaEnqueueResponseSchema,
@@ -139,6 +140,31 @@ const api = new Zodios('/api', [
     path: '/admin/abema/enqueue-archive',
     alias: 'enqueueArchive',
     response: ArchiveEnqueueResponseSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/runs',
+    alias: 'getSyncRuns',
+    parameters: [
+      { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(100).optional() },
+      { name: 'kind', type: 'Query', schema: z.enum(['cron', 'queue', 'manual']).optional() },
+      { name: 'status', type: 'Query', schema: z.enum(['running', 'success', 'partial', 'failed']).optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(2160).optional() }
+    ],
+    response: PaginatedSyncRunSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/runs/:id',
+    alias: 'getSyncRun',
+    response: SyncRunDetailSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/stats',
+    alias: 'getLogStats',
+    response: LogStatsSchema
   },
   {
     method: 'post',
