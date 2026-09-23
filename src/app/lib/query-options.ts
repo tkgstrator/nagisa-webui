@@ -99,6 +99,13 @@ export const recordingEventsQueryOptions = (filters: Record<string, unknown>) =>
     refetchInterval: 30_000
   })
 
+export const catalogEventsQueryOptions = (filters: Record<string, unknown>) =>
+  queryOptions({
+    queryKey: queryKeys.admin.catalogEvents(filters),
+    queryFn: () => api.getCatalogEvents({ queries: filters }),
+    refetchInterval: 30_000
+  })
+
 export const logStatsQueryOptions = () =>
   queryOptions({ queryKey: queryKeys.admin.logStats, queryFn: () => api.getLogStats(), refetchInterval: 30_000 })
 

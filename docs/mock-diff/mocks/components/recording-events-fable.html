@@ -168,7 +168,7 @@ svg { display: block; flex: none; }
 
 .rev-cols, .rev-row, .rev-skel {
   display: grid;
-  grid-template-columns: 74px minmax(0, 1fr) 76px 60px 44px 46px 48px;
+  grid-template-columns: 74px minmax(0, 1fr) 92px 76px 64px 44px 46px 48px;
   gap: 10px;
   align-items: center;
 }
@@ -215,7 +215,9 @@ svg { display: block; flex: none; }
   word-break: break-all;
 }
 
+.rev-pcell { min-width: 0; }
 .rev-prov {
+  display: inline-block;
   flex: none;
   font-size: 9.5px;
   font-weight: 700;
@@ -274,14 +276,15 @@ svg { display: block; flex: none; }
 .rev-skel .sk { height: 11px; border-radius: 4px; background: var(--muted); }
 .rev-skel .sk-ts { width: 100%; }
 .rev-skel .sk-t { width: 62%; }
+.rev-skel .sk-p { width: 70%; }
 .rev-skel .sk-k { width: 100%; }
 .rev-skel .sk-s { width: 78%; }
 .rev-skel .sk-n { width: 100%; }
 .rev-skel .sk-r { width: 100%; }
 
 @media (max-width: 640px) {
-  /* 経路と HTTP を落として、日時 / 作品 / 種別 / 結果 の 4 列にする。 */.rev-cols, .rev-row, .rev-skel { grid-template-columns: 62px minmax(0, 1fr) 68px 44px; gap: 8px; }
-  .rev-cols > :nth-child(4), .rev-cols > :nth-child(6), .rev-row > :nth-child(4), .rev-row > :nth-child(6), .rev-skel > :nth-child(4), .rev-skel > :nth-child(6) { display: none; }
+  /* 配信元・経路・HTTP を落として、日時 / 作品 / 種別 / 話数 / 結果 の 5 列にする。 */.rev-cols, .rev-row, .rev-skel { grid-template-columns: 62px minmax(0, 1fr) 68px 28px 44px; gap: 8px; }
+  .rev-cols > :nth-child(3), .rev-cols > :nth-child(5), .rev-cols > :nth-child(7), .rev-row > :nth-child(3), .rev-row > :nth-child(5), .rev-row > :nth-child(7), .rev-skel > :nth-child(3), .rev-skel > :nth-child(5), .rev-skel > :nth-child(7) { display: none; }
   .rev-ts { font-size: 11px; }}
 </style>
 </head>
@@ -289,8 +292,8 @@ svg { display: block; flex: none; }
 <main class="cat">
 <header class="cat-head">
   <h1>録画イベント一覧 <span class="cat-id">recording-events</span></h1>
-  <p>管理画面「同期ログ」の録画タブ。1 行 = 録画に関する出来事 1 件。いつ / どの作品 / 何をした / どこから / 結果はどうだったか、を左から順に読ませる。</p>
-  <div class="cat-meta"><span>fable 案 = 1 行 1 件の密な表</span><span>作成日時の降順</span><span>行頭 3px のアクセントで結果</span><span>話数 / HTTP は独立した列</span><span>失敗の理由は 2 行目に置く</span></div>
+  <p>管理画面「同期ログ」の録画タブ。1 行 = 録画に関する出来事 1 件。いつ / どの作品 / どの配信元 / 何をした / どこから / 結果はどうだったか、を左から順に読ませる。</p>
+  <div class="cat-meta"><span>fable 案 = 1 行 1 件の密な表</span><span>作成日時の降順</span><span>行頭 3px のアクセントで結果</span><span>配信元 / 話数 / HTTP は独立した列</span><span>失敗の理由は 2 行目に置く</span></div>
 </header>
 
 <section class="cat-sec">
@@ -298,22 +301,24 @@ svg { display: block; flex: none; }
   <div class="cat-item cat-full is-key" data-story="基本">
     <div class="rev-box">
       <div class="rev-cols">
-        <span>日時</span><span>作品</span><span>種別</span><span>経路</span><span class="rev-r">話数</span><span class="rev-r">HTTP</span><span class="rev-r">結果</span>
+        <span>日時</span><span>作品</span><span>配信元</span><span>種別</span><span>経路</span><span class="rev-r">話数</span><span class="rev-r">HTTP</span><span class="rev-r">結果</span>
       </div>
       <div class="rev-row is-ok">
         <span class="rev-ts">12:04:31<small>今日</small></span>
-        <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+        <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
         <span class="rev-kind">録画完了</span>
-        <span class="rev-src">webhook</span>
+        <span class="rev-src">Schedule</span>
         <span class="rev-n">9</span>
         <span class="rev-n rev-dim">—</span>
         <span class="rev-res rev-ok">成功</span>
       </div>
       <div class="rev-row is-ok">
         <span class="rev-ts">11:58:02<small>今日</small></span>
-        <span class="rev-title"><span class="rev-name">魔法少女は二度目の朝を迎える</span><span class="rev-prov rev-p-amazon">Prime Video</span></span>
+        <span class="rev-title"><span class="rev-name">魔法少女は二度目の朝を迎える</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-amazon">Prime Video</span></span>
         <span class="rev-kind">予約送信</span>
-        <span class="rev-src">画面</span>
+        <span class="rev-src">Manual</span>
         <span class="rev-n">13</span>
         <span class="rev-n">202</span>
         <span class="rev-res rev-ok">成功</span>
@@ -321,38 +326,42 @@ svg { display: block; flex: none; }
       <div class="rev-row is-err">
         <span class="rev-ts">11:41:17<small>今日</small></span>
         <span class="rev-title">
-          <span class="rev-name">転生したら図書館の司書だった件</span><span class="rev-prov rev-p-netflix">Netflix</span>
+          <span class="rev-name">転生したら図書館の司書だった件</span>
           <span class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</span>
         </span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-netflix">Netflix</span></span>
         <span class="rev-kind">予約送信</span>
-        <span class="rev-src">画面</span>
+        <span class="rev-src">Manual</span>
         <span class="rev-n rev-dim">—</span>
         <span class="rev-n">503</span>
         <span class="rev-res rev-ng">失敗</span>
       </div>
       <div class="rev-row is-warn">
         <span class="rev-ts">10:12:44<small>今日</small></span>
-        <span class="rev-title"><span class="rev-name">辺境ギルドの万年二番手</span><span class="rev-prov rev-p-abema">ABEMA</span></span>
+        <span class="rev-title"><span class="rev-name">辺境ギルドの万年二番手</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-abema">ABEMA</span></span>
         <span class="rev-kind">見つからない</span>
-        <span class="rev-src">cron</span>
+        <span class="rev-src">Schedule</span>
         <span class="rev-n rev-dim">—</span>
         <span class="rev-n">404</span>
         <span class="rev-res rev-ng">失敗</span>
       </div>
       <div class="rev-row is-ok">
         <span class="rev-ts">09:30:08<small>今日</small></span>
-        <span class="rev-title"><span class="rev-name">サイレント・オーケストラ</span><span class="rev-prov rev-p-hulu">Hulu</span></span>
+        <span class="rev-title"><span class="rev-name">サイレント・オーケストラ</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-hulu">Hulu</span></span>
         <span class="rev-kind">状態照会</span>
-        <span class="rev-src">cron</span>
+        <span class="rev-src">Schedule</span>
         <span class="rev-n">7</span>
         <span class="rev-n">200</span>
         <span class="rev-res rev-ok">成功</span>
       </div>
       <div class="rev-row is-ok">
         <span class="rev-ts">23:05:51<small>昨日</small></span>
-        <span class="rev-title"><span class="rev-name">深海都市のパン屋さん</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+        <span class="rev-title"><span class="rev-name">深海都市のパン屋さん</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
         <span class="rev-kind">録画完了</span>
-        <span class="rev-src">webhook</span>
+        <span class="rev-src">Schedule</span>
         <span class="rev-n">12</span>
         <span class="rev-n rev-dim">—</span>
         <span class="rev-res rev-ok">成功</span>
@@ -370,8 +379,9 @@ svg { display: block; flex: none; }
       <div class="rev-box">
         <div class="rev-row is-ok">
           <span class="rev-ts">12:04:31<small>今日</small></span>
-          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
-          <span class="rev-kind">録画完了</span><span class="rev-src">webhook</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
+          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+          <span class="rev-kind">録画完了</span><span class="rev-src">Schedule</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
           <span class="rev-res rev-ok">成功</span>
         </div>
       </div>
@@ -381,8 +391,9 @@ svg { display: block; flex: none; }
       <div class="rev-box">
         <div class="rev-row is-ok is-hover">
           <span class="rev-ts">12:04:31<small>今日</small></span>
-          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
-          <span class="rev-kind">録画完了</span><span class="rev-src">webhook</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
+          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+          <span class="rev-kind">録画完了</span><span class="rev-src">Schedule</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
           <span class="rev-res rev-ok">成功</span>
         </div>
       </div>
@@ -392,8 +403,9 @@ svg { display: block; flex: none; }
       <div class="rev-box">
         <div class="rev-row is-ok is-focus">
           <span class="rev-ts">12:04:31<small>今日</small></span>
-          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
-          <span class="rev-kind">録画完了</span><span class="rev-src">webhook</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
+          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+          <span class="rev-kind">録画完了</span><span class="rev-src">Schedule</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
           <span class="rev-res rev-ok">成功</span>
         </div>
       </div>
@@ -404,10 +416,11 @@ svg { display: block; flex: none; }
         <div class="rev-row is-err">
           <span class="rev-ts">11:41:17<small>今日</small></span>
           <span class="rev-title">
-            <span class="rev-name">転生したら図書館の司書だった件</span><span class="rev-prov rev-p-netflix">Netflix</span>
+            <span class="rev-name">転生したら図書館の司書だった件</span>
             <span class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</span>
           </span>
-          <span class="rev-kind">予約送信</span><span class="rev-src">画面</span><span class="rev-n rev-dim">—</span><span class="rev-n">503</span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-netflix">Netflix</span></span>
+          <span class="rev-kind">予約送信</span><span class="rev-src">Manual</span><span class="rev-n rev-dim">—</span><span class="rev-n">503</span>
           <span class="rev-res rev-ng">失敗</span>
         </div>
       </div>
@@ -417,8 +430,9 @@ svg { display: block; flex: none; }
       <div class="rev-box">
         <div class="rev-row is-warn">
           <span class="rev-ts">10:12:44<small>今日</small></span>
-          <span class="rev-title"><span class="rev-name">辺境ギルドの万年二番手</span><span class="rev-prov rev-p-abema">ABEMA</span></span>
-          <span class="rev-kind">見つからない</span><span class="rev-src">cron</span><span class="rev-n rev-dim">—</span><span class="rev-n">404</span>
+          <span class="rev-title"><span class="rev-name">辺境ギルドの万年二番手</span></span>
+        <span class="rev-pcell"><span class="rev-prov rev-p-abema">ABEMA</span></span>
+          <span class="rev-kind">見つからない</span><span class="rev-src">Schedule</span><span class="rev-n rev-dim">—</span><span class="rev-n">404</span>
           <span class="rev-res rev-ng">失敗</span>
         </div>
       </div>
@@ -437,12 +451,12 @@ svg { display: block; flex: none; }
 </section>
 
 <section class="cat-sec">
-  <h2>経路 <span class="cat-hint">3 種</span></h2>
+  <h2>経路 <span class="cat-hint">2 種</span></h2>
   <div class="cat-row">
-    <div class="cat-item" data-story="経路 / 画面"><span class="cat-label">画面 <small>ui</small></span><span class="rev-src">画面</span></div>
-    <div class="cat-item" data-story="経路 / webhook"><span class="cat-label">webhook</span><span class="rev-src">webhook</span></div>
-    <div class="cat-item" data-story="経路 / cron"><span class="cat-label">cron</span><span class="rev-src">cron</span></div>
+    <div class="cat-item" data-story="経路 / Schedule"><span class="cat-label">Schedule <small>cron</small></span><span class="rev-src">Schedule</span></div>
+    <div class="cat-item" data-story="経路 / Manual"><span class="cat-label">Manual <small>manual</small></span><span class="rev-src">Manual</span></div>
   </div>
+  <p class="cat-note">ラベルは実行履歴の種別 (<code>runKindLabel</code>) と揃える。録画ジョブの追従・自動録画はどちらも Schedule、作品ページから押した録画だけが Manual。</p>
 </section>
 
 <section class="cat-sec">
@@ -463,7 +477,7 @@ svg { display: block; flex: none; }
     <div class="cat-item cat-w220" data-story="日時の表記 / 昨日"><span class="cat-label">昨日</span><span class="rev-ts">23:05:51<small>昨日</small></span></div>
     <div class="cat-item cat-w220" data-story="日時の表記 / それ以前"><span class="cat-label">それ以前</span><span class="rev-ts">04:18:09<small>9/14</small></span></div>
   </div>
-  <p class="cat-note">秒まで出す。録画イベントは「送信した直後に webhook が返ってきたか」を突き合わせるためのもので、分単位では並び順の意味が読めない。</p>
+  <p class="cat-note">秒まで出す。録画イベントは「予約送信のあと次の追従で録画完了が付いたか」を突き合わせるためのもので、分単位では並び順の意味が読めない。</p>
 </section>
 
 <section class="cat-sec">
@@ -477,9 +491,9 @@ svg { display: block; flex: none; }
   <h2>読み込み中 <span class="cat-hint">3 行分のスケルトン</span></h2>
   <div class="cat-item cat-full" data-story="読み込み中">
     <div class="rev-box">
-      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
-      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
-      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
+      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-p"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
+      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-p"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
+      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-p"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
     </div>
   </div>
 </section>

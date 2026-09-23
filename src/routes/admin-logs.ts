@@ -2,11 +2,15 @@ import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { z } from 'zod'
 import { createPrismaClient } from '../lib/db'
 import {
+  CatalogEventFieldEnum,
+  CatalogEventListQuerySchema,
+  type CatalogEventSchema,
   CursoredLogEntrySchema,
   LEVELS_AT_OR_ABOVE,
   LogEntryListQuerySchema,
   type LogEntrySchema,
   LogStatsSchema,
+  PaginatedCatalogEventSchema,
   PaginatedRecordingEventSchema,
   PaginatedSyncRunSchema,
   RecordingEventListQuerySchema,
@@ -112,6 +116,41 @@ function serializeRecording(r: RecordingRow): RecordingEventSchema {
     kind: r.kind as RecordingEventSchema['kind'],
     source: r.source as RecordingEventSchema['source'],
     status: r.status as RecordingEventSchema['status'],
+    createdAt: r.createdAt.toISOString()
+  }
+}
+
+type CatalogRow = {
+  id: string
+  animeId: string
+  provider: string
+  contentId: string
+  title: string
+  kind: string
+  seasonNumber: number | null
+  episodeCount: number | null
+  episodes: string | null
+  fields: string | null
+  runId: string | null
+  createdAt: Date
+}
+
+/** fields は JSON 配列の文字列で持っている。壊れていたら null に倒して一覧は落とさない */
+function parseFields(raw: string | null): CatalogEventSchema['fields'] {
+  if (raw === null) return null
+  try {
+    const parsed = z.array(CatalogEventFieldEnum).safeParse(JSON.parse(raw))
+    return parsed.success ? parsed.data : null
+  } catch {
+    return null
+  }
+}
+
+function serializeCatalog(r: CatalogRow): CatalogEventSchema {
+  return {
+    ...r,
+    kind: r.kind as CatalogEventSchema['kind'],
+    fields: parseFields(r.fields),
     createdAt: r.createdAt.toISOString()
   }
 }
@@ -301,6 +340,56 @@ adminLogs.openapi(
       return c.json(
         {
           data: rows.map(serializeRecording),
+          total,
+          page,
+          limit,
+          totalPages: Math.max(1, Math.ceil(total / limit))
+        },
+        200
+      )
+    } finally {
+      await prisma.$disconnect()
+    }
+  }
+)
+
+adminLogs.openapi(
+  createRoute({
+    method: 'get',
+    path: '/catalog',
+    tags: ['Admin'],
+    summary: 'カタログに入った変化 (新規タイトル / シーズン / エピソード追加・更新) の時系列',
+    description: 'バッジや配信終了の出入りは載せない。エピソードの追加・更新は 1 回の同期につき作品単位で 1 行。',
+    request: { query: CatalogEventListQuerySchema },
+    responses: {
+      200: {
+        description: 'カタログ変化の一覧 (新しい順)',
+        content: { 'application/json': { schema: PaginatedCatalogEventSchema } }
+      }
+    }
+  }),
+  async (c) => {
+    const { page, limit, animeId, kind, provider, hours } = c.req.valid('query')
+    const prisma = createPrismaClient(c.env.DB)
+    try {
+      const where = {
+        createdAt: { gte: new Date(Date.now() - hours * 60 * 60 * 1000) },
+        ...(animeId ? { animeId } : {}),
+        ...(kind ? { kind } : {}),
+        ...(provider ? { provider } : {})
+      }
+      const [total, rows] = await Promise.all([
+        prisma.catalogEvent.count({ where }),
+        prisma.catalogEvent.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit
+        })
+      ])
+      return c.json(
+        {
+          data: rows.map(serializeCatalog),
           total,
           page,
           limit,
