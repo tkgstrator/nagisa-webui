@@ -3,6 +3,7 @@ import { createPrismaClient } from './lib/db'
 import { COLOR_SUCCESS, COLOR_WARN, notify } from './lib/discord'
 import { enqueueImageWarm, warmImages } from './lib/image-warm'
 import { createFetchClient } from './lib/lambda'
+import { createStore, flushLogs, runWithCapture } from './lib/log-capture'
 import { getAppLogger } from './lib/logger'
 import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
 import { resolveQueueForProvider } from './lib/queue-routing'
@@ -108,6 +109,9 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
     trigger: 'batch',
     parentId: parentIds[0] ?? null
   })
+  // startRun のあとに store を作る。以降この run の中で出たログは
+  // AsyncLocalStorage 経由で runId 付きで溜まる (src/lib/log-capture.ts)。
+  const store = createStore(runId)
 
   let succeeded = 0
   let failed = 0
@@ -224,27 +228,33 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
   }
 
   try {
-    await Promise.allSettled(batch.messages.map(processMessage))
+    await runWithCapture(store, async () => {
+      await Promise.allSettled(batch.messages.map(processMessage))
 
-    if (succeeded > 0 || failed > 0) {
-      const fields: { name: string; value: string; inline?: boolean }[] = []
-      if (failedLabels.length > 0) {
-        fields.push({ name: '失敗一覧', value: truncateForFieldValue(failedLabels) })
+      if (succeeded > 0 || failed > 0) {
+        const fields: { name: string; value: string; inline?: boolean }[] = []
+        if (failedLabels.length > 0) {
+          fields.push({ name: '失敗一覧', value: truncateForFieldValue(failedLabels) })
+        }
+        await notify(env.DISCORD_WEBHOOK_URL, {
+          title: 'Queue: バッチ完了',
+          description: failed > 0 ? `成功 ${succeeded} 件 / 失敗 ${failed} 件` : `${succeeded} 件 正常に完了しました`,
+          color: failed > 0 ? COLOR_WARN : COLOR_SUCCESS,
+          fields
+        })
       }
-      await notify(env.DISCORD_WEBHOOK_URL, {
-        title: 'Queue: バッチ完了',
-        description: failed > 0 ? `成功 ${succeeded} 件 / 失敗 ${failed} 件` : `${succeeded} 件 正常に完了しました`,
-        color: failed > 0 ? COLOR_WARN : COLOR_SUCCESS,
-        fields
-      })
-    }
+    })
   } finally {
     logger.debug({ action: 'batch-done', batchSize: batch.messages.length })
+    // flushLogs → finishRun → $disconnect の順を守る。src/lib/db.ts が
+    // クライアントを使い回すので、disconnect 後の書き込みは失敗する。
+    const droppedLogs = await flushLogs(prisma, store)
     await finishRun(prisma, runId, resolveStatus(succeeded, failed), {
       total: batch.messages.length,
       succeeded,
       failed,
       retried,
+      droppedLogs,
       meta: parentIds.length > 1 ? { parentIds } : undefined
     })
     await prisma.$disconnect()

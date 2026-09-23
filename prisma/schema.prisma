@@ -181,3 +181,31 @@ model SyncRun {
   @@index([parentId])
   @@map("sync_runs")
 }
+
+/// LogTape の構造化ログ 1 行。Worker の invocation が終わると console sink の出力は
+/// 消えてしまうので、管理画面 (/admin/logs) から後追いできるよう D1 に落とす。
+/// SyncRun と違って書き込み量が桁違い (info 以上で 1 日 2〜3 万行) なので、
+/// 保持は 14 日・GC は `0 4 * * *` の cron に相乗りさせる。
+/// id が autoincrement なのは GC が `DELETE WHERE id <= ?` の 1 クエリで済み、
+/// カーソルページング (`id < cursor`) も安定するため。
+model LogEntry {
+  id       Int      @id @default(autoincrement())
+  /// 出力時点の sync_runs.id。fetch ハンドラ由来など run の外で出たログは null。
+  runId    String?  @map("run_id")
+  ts       DateTime @default(now())
+  /// 'debug' | 'info' | 'warning' | 'error' | 'fatal'
+  level    String
+  /// LogTape のカテゴリ (`app` を除いた 2 段目。'queue' / 'sync' など)
+  category String
+  /// 構造化ログの `action` プロパティ。UI の絞り込みはこれを見る。
+  action   String?
+  /// 一覧に出す 1 行要約 (message か、無ければ主要な props を並べたもの)
+  summary  String?
+  /// 残りの props の JSON 文字列 (4KB 超は切り詰め)
+  props    String?
+
+  @@index([ts])
+  @@index([runId])
+  @@index([level, ts])
+  @@map("log_entries")
+}

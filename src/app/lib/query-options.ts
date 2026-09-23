@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 import api from './api'
 import { queryKeys } from './query-keys'
 
@@ -41,6 +41,17 @@ export const syncRunQueryOptions = (id: string) =>
   queryOptions({
     queryKey: queryKeys.admin.syncRun(id),
     queryFn: () => api.getSyncRun({ params: { id } }),
+    refetchInterval: 30_000
+  })
+
+// 生ログは書き込みの最中に行がずれるので、ページ番号ではなく id の降順カーソルで継ぎ足す。
+export const logEntriesQueryOptions = (filters: Record<string, unknown>) =>
+  infiniteQueryOptions({
+    queryKey: queryKeys.admin.logEntries(filters),
+    queryFn: ({ pageParam }) =>
+      api.getLogEntries({ queries: { ...filters, ...(pageParam === undefined ? {} : { cursor: pageParam }) } }),
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (last) => last.nextCursor ?? undefined,
     refetchInterval: 30_000
   })
 

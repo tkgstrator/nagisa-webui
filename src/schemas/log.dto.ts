@@ -43,9 +43,59 @@ export const PaginatedSyncRunSchema = z.object({
 })
 export type PaginatedSyncRunSchema = z.infer<typeof PaginatedSyncRunSchema>
 
+/** LogTape の重大度。D1 に入るのは info 以上だけ (src/lib/log-capture.ts) */
+export const LogLevelEnum = z.enum(['debug', 'info', 'warning', 'error', 'fatal'])
+export type LogLevelEnum = z.infer<typeof LogLevelEnum>
+
+/** 指定した level 「以上」の一覧。フィルタは in 句で引く */
+export const LEVELS_AT_OR_ABOVE: Record<LogLevelEnum, LogLevelEnum[]> = {
+  debug: ['debug', 'info', 'warning', 'error', 'fatal'],
+  info: ['info', 'warning', 'error', 'fatal'],
+  warning: ['warning', 'error', 'fatal'],
+  error: ['error', 'fatal'],
+  fatal: ['fatal']
+}
+
+export const LogEntrySchema = z.object({
+  id: z.number().int(),
+  runId: z.string().nullable(),
+  ts: z.coerce.string().nonempty(),
+  level: LogLevelEnum,
+  category: z.string().nonempty(),
+  action: z.string().nullable(),
+  summary: z.string().nullable(),
+  props: z.string().nullable()
+})
+export type LogEntrySchema = z.infer<typeof LogEntrySchema>
+
+export const LogEntryListQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+  // ページ番号だと書き込みの最中に行がずれるので、id の降順カーソルで送る (id < cursor)。
+  cursor: z.coerce.number().int().min(1).optional(),
+  // 指定した重大度「以上」を返す。'error' が UI の「エラーだけ」プリセット。
+  level: LogLevelEnum.default('info'),
+  category: z.string().optional(),
+  action: z.string().optional(),
+  runId: z.string().optional(),
+  // 期間は「直近 N 時間」。既定 24h、最大 14 日 (log_entries の保持期間)。
+  hours: z.coerce.number().int().min(1).max(336).default(24),
+  /** summary の部分一致 */
+  q: z.string().optional()
+})
+export type LogEntryListQuerySchema = z.infer<typeof LogEntryListQuerySchema>
+
+export const CursoredLogEntrySchema = z.object({
+  data: z.array(LogEntrySchema),
+  /** 次ページに渡す cursor。これ以上無ければ null */
+  nextCursor: z.number().int().nullable()
+})
+export type CursoredLogEntrySchema = z.infer<typeof CursoredLogEntrySchema>
+
 export const SyncRunDetailSchema = z.object({
   run: SyncRunSchema,
-  children: z.array(SyncRunSchema)
+  children: z.array(SyncRunSchema),
+  /** この run の中で出たログ (新しい順・上限あり) */
+  entries: z.array(LogEntrySchema)
 })
 export type SyncRunDetailSchema = z.infer<typeof SyncRunDetailSchema>
 

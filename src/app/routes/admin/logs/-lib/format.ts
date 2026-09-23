@@ -1,4 +1,4 @@
-import type { SyncRunSchema } from '@/schemas/log.dto'
+import type { LogLevelEnum, SyncRunSchema } from '@/schemas/log.dto'
 
 export const runStatusLabel: Record<SyncRunSchema['status'], string> = {
   running: '実行中',
@@ -26,6 +26,31 @@ export const runKindLabel: Record<SyncRunSchema['kind'], string> = {
   cron: 'cron',
   queue: 'Queue',
   manual: '手動'
+}
+
+export const logLevelLabel: Record<LogLevelEnum, string> = {
+  debug: 'DEBUG',
+  info: 'INFO',
+  warning: 'WARN',
+  error: 'ERROR',
+  fatal: 'FATAL'
+}
+
+/** 行頭のアクセント。info / debug は平常運転なので色を付けない。 */
+export const logLevelAccent: Record<LogLevelEnum, string> = {
+  debug: 'border-l-transparent',
+  info: 'border-l-transparent',
+  warning: 'border-l-warning',
+  error: 'border-l-destructive',
+  fatal: 'border-l-destructive'
+}
+
+export const logLevelBadge: Record<LogLevelEnum, string> = {
+  debug: 'bg-muted text-muted-foreground',
+  info: 'bg-muted text-muted-foreground',
+  warning: 'bg-warning/20 text-warning-foreground',
+  error: 'bg-destructive/10 text-destructive',
+  fatal: 'bg-destructive text-destructive-foreground'
 }
 
 /**
