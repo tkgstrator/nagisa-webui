@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { FileQuestion, KeyRound, ScrollText, Send } from 'lucide-react'
+import { Activity, FileQuestion, KeyRound, ScrollText, Send } from 'lucide-react'
 import { PageContainer } from '@/app/components/page-container'
 
 export const Route = createFileRoute('/admin/')({
@@ -7,7 +7,7 @@ export const Route = createFileRoute('/admin/')({
 })
 
 const ADMIN_ITEMS: {
-  to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema' | '/admin/logs'
+  to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema' | '/admin/logs' | '/admin/status'
   title: string
   description: string
   icon: typeof FileQuestion
@@ -35,6 +35,12 @@ const ADMIN_ITEMS: {
     title: '同期ログ',
     description: 'cron / Queue バッチの実行履歴と、cron が動いているかを確認する',
     icon: ScrollText
+  },
+  {
+    to: '/admin/status',
+    title: 'サーバーステータス',
+    description: 'Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状態を確認する',
+    icon: Activity
   }
 ]
 
