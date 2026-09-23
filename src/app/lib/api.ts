@@ -11,8 +11,10 @@ import {
 } from '@/schemas/anime.dto'
 import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
 import {
+  CatalogEventKindEnum,
   CursoredLogEntrySchema,
   LogStatsSchema,
+  PaginatedCatalogEventSchema,
   PaginatedRecordingEventSchema,
   PaginatedSyncRunSchema,
   SyncRunDetailSchema
@@ -230,6 +232,20 @@ const api = new Zodios('/api', [
       { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(4320).optional() }
     ],
     response: PaginatedRecordingEventSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/catalog',
+    alias: 'getCatalogEvents',
+    parameters: [
+      { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(100).optional() },
+      { name: 'animeId', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'kind', type: 'Query', schema: CatalogEventKindEnum.optional() },
+      { name: 'provider', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(2160).optional() }
+    ],
+    response: PaginatedCatalogEventSchema
   },
   {
     method: 'get',
