@@ -4,7 +4,7 @@ import type { createPrismaClient } from './db'
 import { getAppLogger } from './logger'
 import { fetchNagisaRaw, missingNagisaConfig, type NagisaEnv } from './nagisa-client'
 import { markPending } from './record-intent'
-import { type RecordingEventInput, recordEvents } from './recording-event'
+import { type RecordingEventInput, type RecordingEventSource, recordEvents } from './recording-event'
 
 const logger = getAppLogger('record-enqueue')
 
@@ -29,6 +29,7 @@ const LOOKUP_MAX = 90
 async function recordEnqueue(
   prisma: Prisma,
   body: NagisaEnqueueRequest,
+  source: RecordingEventSource,
   outcome: Pick<RecordingEventInput, 'kind' | 'status' | 'httpStatus' | 'errorMessage'>
 ): Promise<void> {
   try {
@@ -49,7 +50,7 @@ async function recordEnqueue(
         provider: body.provider,
         contentId: item.content_id,
         title: anime.title,
-        source: 'ui',
+        source,
         episodeCount: episodes > 0 ? episodes : null,
         ...outcome
       })
@@ -96,12 +97,14 @@ async function withAnilistIds(prisma: Prisma, body: NagisaEnqueueRequest): Promi
 
 /**
  * nagisa の `/api/queues` へ録画を投入し、履歴と D1 の控えまで済ませる。
- * 管理画面の単体投入と作品詳細の録画ボタンが同じ経路を通る。throw しない。
+ * 管理画面の単体投入・作品詳細の録画ボタン (manual) と、予約作品の自動録画 (cron) が
+ * 同じ経路を通る。throw しない。
  */
 export async function enqueueRecording(
   prisma: Prisma,
   env: Partial<NagisaEnv>,
-  body: NagisaEnqueueRequest
+  body: NagisaEnqueueRequest,
+  source: RecordingEventSource
 ): Promise<EnqueueResult> {
   const missing = missingNagisaConfig(env)
   if (missing.length > 0) {
@@ -119,7 +122,7 @@ export async function enqueueRecording(
       const text = await res.text()
       logger.error({ action: 'nagisa-enqueue-error', status: res.status, body: text })
       // 404 は「上流に作品が無い」= 送り先の問題なので、通信失敗とは別の種別で残す。
-      await recordEnqueue(prisma, body, {
+      await recordEnqueue(prisma, body, source, {
         kind: res.status === 404 ? 'not-found' : 'request',
         status: 'error',
         httpStatus: res.status,
@@ -140,7 +143,7 @@ export async function enqueueRecording(
     //
     // 控えに失敗しても投入は巻き戻せないので、結果は握って成功を返す
     // (markPending は throw しない)。実体が出来れば台帳同期が completed で拾う。
-    await recordEnqueue(prisma, body, { kind: 'request', status: 'ok', httpStatus: res.status })
+    await recordEnqueue(prisma, body, source, { kind: 'request', status: 'ok', httpStatus: res.status })
 
     const parsed = NagisaEnqueueResponseSchema.safeParse(data)
     if (parsed.success) {
@@ -159,7 +162,7 @@ export async function enqueueRecording(
     const message = e instanceof Error ? e.message : String(e)
     logger.error({ action: 'nagisa-enqueue-fetch-error', error: message })
     // 上流に届いていないので httpStatus は無い。null のまま残す。
-    await recordEnqueue(prisma, body, {
+    await recordEnqueue(prisma, body, source, {
       kind: 'request',
       status: 'error',
       errorMessage: `fetch failed: ${message}`

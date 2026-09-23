@@ -1,4 +1,5 @@
 import { archiveMissingAbemaKeysForAnime } from './lib/abema-archive'
+import { autoRecordScheduled } from './lib/auto-record'
 import { createPrismaClient } from './lib/db'
 import { COLOR_SUCCESS, COLOR_WARN, notify } from './lib/discord'
 import { enqueueImageWarm, warmImages } from './lib/image-warm'
@@ -34,6 +35,9 @@ interface Env {
   LAMBDA_FUNCTION_URL_US: string
   DISCORD_WEBHOOK_URL: string
   IMAGES: R2Bucket
+  BACKEND_URL: string
+  CF_ACCESS_CLIENT_ID: string
+  CF_ACCESS_CLIENT_SECRET: string
 }
 
 /** 失敗通知に載せるため、メッセージ対象のアニメ（識別済みなら）を引く */
@@ -160,6 +164,8 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
           const { provider } = message.body.message
           const newImageUrls = await service.update(message.body)
           await enqueueImageWarm(env.WARM_QUEUE, provider, newImageUrls)
+          // 予約済み作品なら配信済みの未録画回を nagisa に送る。throw しないので再試行は起きない
+          await autoRecordScheduled(prisma, env, provider, message.body.message.contentId)
           break
         }
         case 'anilist_sync': {
