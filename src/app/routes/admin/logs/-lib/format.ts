@@ -58,6 +58,9 @@ export const logLevelBadge: Record<LogLevelEnum, string> = {
  * 同じ内容だが、/runs は式しか返さないのでこちらにも持つ。
  */
 const cronLabels: Record<string, string> = {
+  // 録画同期の 2 本は cron 式ではなく仕事の名前で記録される (→ `scheduled.ts`)。
+  'job-sync': '録画ジョブ追従',
+  'library-sync': '録画台帳の差分',
   '0 */1 * * *': '新着 / 配信予定',
   '0 0 * * *': '配信終了間近',
   '0 3 * * *': 'カタログ全件',

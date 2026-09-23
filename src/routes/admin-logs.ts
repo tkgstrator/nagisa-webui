@@ -21,8 +21,15 @@ type Bindings = {
  * wrangler.toml の [triggers] crons と 1:1 で対応させること。
  * ここに書いた式で sync_runs を引くので、wrangler.toml 側だけ変えると
  * 「一度も実行されていない cron」として UI に出る (それが狙い)。
+ *
+ * `trigger` は sync_runs 側に入っている名前で、既定では cron 式そのもの。
+ * 録画同期の 2 本だけは仕事の名前で記録している (→ `scheduled.ts`):
+ * 何もしなかった tick を記録しない都合で startRun がハンドラ側にあり、
+ * そこでは式ではなく仕事が分かっているため。
  */
 const CRON_DEFINITIONS = [
+  { cron: '* * * * *', trigger: 'job-sync', label: '毎分: 録画ジョブの追従' },
+  { cron: '*/15 * * * *', trigger: 'library-sync', label: '15 分ごと: 録画台帳の差分取り込み' },
   { cron: '0 */1 * * *', label: '毎時: 新着 / 配信予定の取得' },
   { cron: '0 0 * * *', label: '毎日 0 時: 配信終了間近の取得' },
   { cron: '0 3 * * *', label: '毎日 3 時: カタログ全件の取得' },
@@ -247,7 +254,7 @@ adminLogs.openapi(
         Promise.all(
           CRON_DEFINITIONS.map((d) =>
             prisma.syncRun.findFirst({
-              where: { kind: 'cron', trigger: d.cron },
+              where: { kind: 'cron', trigger: 'trigger' in d ? d.trigger : d.cron },
               orderBy: { startedAt: 'desc' }
             })
           )
