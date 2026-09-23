@@ -1,0 +1,166 @@
+/* ---------- recording events (timeline) ---------- */
+.rev-tl {
+  --rail: 82px; /* 時刻 66px + gap 8px + 点の列 16px の中央 */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 日付の区切り。時系列を 1 本の筋として読ませるので、日付だけは筋の外に出す。 */
+.rev-day {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 16px 0 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.rev-day:first-child { padding-top: 0; }
+.rev-day small { font-size: 11px; font-weight: 500; color: var(--muted-foreground); }
+.rev-day::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.rev-ev,
+.rev-skel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 66px 16px minmax(0, 1fr);
+  gap: 0 8px;
+  align-items: start;
+  padding: 4px 0;
+}
+/* 筋。点の列の中央に 1px。 */
+.rev-ev::before,
+.rev-skel::before {
+  content: '';
+  position: absolute;
+  left: var(--rail, 82px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.rev-time {
+  padding-top: 3px;
+  text-align: right;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 結果は点の色で示す。背景色で抜くので、行の背景が変わっても点は沈まない。 */
+.rev-dot {
+  justify-self: center;
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--muted-foreground);
+  box-shadow: 0 0 0 3px var(--background);
+}
+.rev-ev.is-ok .rev-dot { background: var(--success); }
+.rev-ev.is-warn .rev-dot { background: var(--warning); }
+.rev-ev.is-err .rev-dot { background: var(--destructive); }
+.rev-skel .rev-dot { background: var(--muted); }
+
+.rev-card {
+  min-width: 0;
+  padding: 3px 10px 5px;
+  border-radius: 9px;
+  transition: background .12s ease;
+}
+/* hover は本文だけ。点を動かすと時系列の位置がずれて見える。 */
+.rev-ev:hover .rev-card { background: var(--muted); }
+.rev-ev:focus-visible .rev-card { outline: 2px solid var(--ring); outline-offset: 1px; }
+
+.rev-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+.rev-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.rev-prov {
+  flex: none;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.rev-p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.rev-p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.rev-p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.rev-p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.rev-p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.rev-chip {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.rev-c-request { background: color-mix(in oklch, var(--info) 16%, transparent); color: var(--info); }
+.rev-c-status { background: var(--muted); color: var(--muted-foreground); }
+.rev-c-recorded { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); }
+.rev-c-notfound { background: color-mix(in oklch, var(--warning) 22%, transparent); color: var(--warning-foreground); }
+
+.rev-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-top: 3px; }
+.rev-src {
+  font-size: 10.5px;
+  color: var(--muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--muted);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+/* 値はキー付きで置く。無い値は出さないので、位置ではなく単位で読ませる。 */
+.rev-kv { font-size: 11px; color: var(--muted-foreground); white-space: nowrap; }
+.rev-kv b {
+  margin-right: 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+.rev-bad b { color: var(--destructive); }
+
+.rev-err {
+  margin: 5px 0 0;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: var(--destructive);
+  background: color-mix(in oklch, var(--destructive) 8%, transparent);
+  word-break: break-all;
+}
+
+.rev-empty {
+  padding: 46px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.rev-skel .sk { display: block; height: 11px; border-radius: 4px; background: var(--muted); }
+.rev-skel .sk-time { width: 100%; margin-top: 3px; }
+.rev-skel .sk-line { width: 58%; margin: 3px 0 0; }
+.rev-skel .sk-short { width: 38%; }
+.rev-skel .sk-meta { width: 26%; height: 9px; margin-top: 7px; }
+
+@media (max-width: 640px) {
+  .rev-tl { --rail: 67px; }
+  .rev-ev,
+  .rev-skel { grid-template-columns: 52px 14px minmax(0, 1fr); }
+  .rev-time { font-size: 11px; }
+  .rev-name { font-size: 13px; }
+}

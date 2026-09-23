@@ -1,0 +1,133 @@
+/* ---------- recording events (dense table) ---------- */
+.rev-box { border-left: 3px solid var(--primary); padding-left: 0; }
+
+.rev-cols,
+.rev-row,
+.rev-skel {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr) 76px 60px 44px 46px 48px;
+  gap: 10px;
+  align-items: center;
+}
+
+.rev-cols {
+  padding: 0 10px 6px 13px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+.rev-r { text-align: right; }
+
+.rev-row {
+  padding: 7px 10px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  transition: background .12s ease, border-color .12s ease;
+}
+.rev-row:hover { background: var(--muted); border-left-color: var(--primary); }
+.rev-row:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.rev-row.is-err { border-left-color: var(--destructive); }
+.rev-row.is-warn { border-left-color: var(--warning); }
+
+/* 日時: 時刻 + 日付の 2 段。桁を揃える。 */
+.rev-ts {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+.rev-ts small { display: block; font-size: 10.5px; color: var(--muted-foreground); }
+
+.rev-title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 7px; min-width: 0; }
+.rev-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+/* 失敗の理由は 2 行目。作品名と同じ行に押し込むと両方読めなくなる。 */
+.rev-err {
+  flex-basis: 100%;
+  font-size: 11px;
+  color: var(--destructive);
+  word-break: break-all;
+}
+
+.rev-prov {
+  flex: none;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.rev-p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.rev-p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.rev-p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.rev-p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.rev-p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.rev-kind {
+  display: inline-block;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rev-src {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+}
+
+.rev-n {
+  text-align: right;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.rev-dim { color: var(--muted-foreground); }
+
+.rev-res {
+  justify-self: end;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.rev-ok { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); }
+.rev-ng { background: color-mix(in oklch, var(--destructive) 14%, transparent); color: var(--destructive); }
+
+.rev-empty {
+  padding: 46px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  border-left: 3px solid var(--border);
+}
+
+.rev-skel { padding: 9px 10px 9px 13px; }
+.rev-skel .sk { height: 11px; border-radius: 4px; background: var(--muted); }
+.rev-skel .sk-ts { width: 100%; }
+.rev-skel .sk-t { width: 62%; }
+.rev-skel .sk-k { width: 100%; }
+.rev-skel .sk-s { width: 78%; }
+.rev-skel .sk-n { width: 100%; }
+.rev-skel .sk-r { width: 100%; }
+
+@media (max-width: 640px) {
+  /* 経路と HTTP を落として、日時 / 作品 / 種別 / 結果 の 4 列にする。 */
+  .rev-cols,
+  .rev-row,
+  .rev-skel { grid-template-columns: 62px minmax(0, 1fr) 68px 44px; gap: 8px; }
+  .rev-cols > :nth-child(4),
+  .rev-cols > :nth-child(6),
+  .rev-row > :nth-child(4),
+  .rev-row > :nth-child(6),
+  .rev-skel > :nth-child(4),
+  .rev-skel > :nth-child(6) { display: none; }
+  .rev-ts { font-size: 11px; }
+}
