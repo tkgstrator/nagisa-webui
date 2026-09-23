@@ -24,9 +24,9 @@ export const runStatusBadge: Record<SyncRunSchema['status'], string> = {
 }
 
 export const runKindLabel: Record<SyncRunSchema['kind'], string> = {
-  cron: 'cron',
+  cron: 'Schedule',
   queue: 'Queue',
-  manual: '手動'
+  manual: 'Manual'
 }
 
 export const logLevelLabel: Record<LogLevelEnum, string> = {

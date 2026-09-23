@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
@@ -27,8 +27,22 @@ function getApiErrorMessage(error: unknown, fallback: string): string {
   return fallback
 }
 
+function isNotFoundResponse(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false
+  const response = (error as { response?: { status?: unknown } }).response
+  return typeof response === 'object' && response !== null && (response as { status?: unknown }).status === 404
+}
+
 export const Route = createFileRoute('/anime/$id/')({
-  loader: ({ params, context: { queryClient } }) => queryClient.ensureQueryData(animeDetailQueryOptions(params.id)),
+  loader: async ({ params, context: { queryClient } }) => {
+    try {
+      return await queryClient.ensureQueryData(animeDetailQueryOptions(params.id))
+    } catch (error) {
+      // 存在しない ID は ErrorBoundary ではなく 404 画面へ回す
+      if (isNotFoundResponse(error)) throw notFound({ data: { animeId: params.id } })
+      throw error
+    }
+  },
   pendingComponent: LoadingSpinner,
   component: AnimeDetailPage
 })
