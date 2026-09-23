@@ -3,7 +3,9 @@ import { createPrismaClient } from '../lib/db'
 import { getAppLogger } from '../lib/logger'
 import { fetchNagisaRaw, missingNagisaConfig, NagisaConfigError, type NagisaEnv } from '../lib/nagisa-client'
 import { markPending } from '../lib/record-intent'
+import { type RecordingEventInput, recordEvents } from '../lib/recording-event'
 import {
+  type NagisaEnqueueRequest,
   NagisaEnqueueRequestSchema,
   NagisaEnqueueResponseSchema,
   NagisaLibraryStatsSchema,
@@ -46,6 +48,55 @@ async function proxyGet(
     }
     logger.error({ action: `${action}-fetch-error`, error: e instanceof Error ? e.message : String(e) })
     return { ok: false, error: 'Failed to connect to Nagisa' }
+  }
+}
+
+/** 履歴の引き当てで一度に投げる content_id の上限。D1 の bind 変数 (100) に収める。 */
+const LOOKUP_MAX = 90
+
+/**
+ * 投入リクエスト 1 回ぶんを `recording_events` に残す。
+ *
+ * 投入の body は `content_id` しか持たないので、履歴に要る animeId と title は
+ * ここで D1 から引き当てる。引けなかった content_id は**行を作らない** —
+ * animeId の無い行は作品ページから辿れず、読み手が居ないため。
+ *
+ * 録画リクエスト本体の副作用なので、**ここで throw しない**。
+ */
+async function recordEnqueue(
+  prisma: ReturnType<typeof createPrismaClient>,
+  body: NagisaEnqueueRequest,
+  outcome: Pick<RecordingEventInput, 'kind' | 'status' | 'httpStatus' | 'errorMessage'>
+): Promise<void> {
+  try {
+    const items = body.items.slice(0, LOOKUP_MAX)
+    const rows = await prisma.anime.findMany({
+      where: { provider: body.provider, contentId: { in: items.map((i) => i.content_id) } },
+      select: { id: true, contentId: true, title: true }
+    })
+    const byContentId = new Map(rows.map((r) => [r.contentId, r]))
+    const events: RecordingEventInput[] = []
+    for (const item of items) {
+      const anime = byContentId.get(item.content_id)
+      if (!anime) continue
+      // 話数指定が無い (= 作品まるごと) ときは件数を書かない。0 と区別が付かなくなる。
+      const episodes = item.seasons?.flatMap((s) => s.episodes ?? []).length ?? 0
+      events.push({
+        animeId: anime.id,
+        provider: body.provider,
+        contentId: item.content_id,
+        title: anime.title,
+        source: 'ui',
+        episodeCount: episodes > 0 ? episodes : null,
+        ...outcome
+      })
+    }
+    await recordEvents(prisma, events)
+  } catch (e) {
+    logger.warn({
+      action: 'nagisa-enqueue-event-failed',
+      error: e instanceof Error ? e.message : String(e)
+    })
   }
 }
 
@@ -156,6 +207,7 @@ nagisa.openapi(
       logger.error({ action: 'nagisa-enqueue-config-missing', missing })
       return c.json({ error: `Nagisa config missing: ${missing.join(', ')}` }, 502 as const)
     }
+    const prisma = createPrismaClient(c.env.DB)
     try {
       const res = await fetchNagisaRaw(c.env, '/api/queues', {
         method: 'POST',
@@ -165,6 +217,13 @@ nagisa.openapi(
       if (!res.ok) {
         const text = await res.text()
         logger.error({ action: 'nagisa-enqueue-error', status: res.status, body: text })
+        // 404 は「上流に作品が無い」= 送り先の問題なので、通信失敗とは別の種別で残す。
+        await recordEnqueue(prisma, body, {
+          kind: res.status === 404 ? 'not-found' : 'request',
+          status: 'error',
+          httpStatus: res.status,
+          errorMessage: text || `Nagisa returned ${res.status}`
+        })
         return c.json({ error: text || `Nagisa returned ${res.status}`, status: res.status }, 502 as const)
       }
       const data = await res.json()
@@ -180,9 +239,11 @@ nagisa.openapi(
       //
       // 控えに失敗しても投入は巻き戻せないので、結果は握って 200 を返す
       // (markPending は throw しない)。実体が出来れば台帳同期が completed で拾う。
+      await recordEnqueue(prisma, body, { kind: 'request', status: 'ok', httpStatus: res.status })
+
       const parsed = NagisaEnqueueResponseSchema.safeParse(data)
       if (parsed.success) {
-        const intent = await markPending(createPrismaClient(c.env.DB), parsed.data.jobs)
+        const intent = await markPending(prisma, parsed.data.jobs)
         if (intent.unmatched > 0 || intent.dropped > 0 || intent.truncated > 0) {
           logger.warn({ action: 'nagisa-enqueue-intent-partial', ...intent })
         }
@@ -194,7 +255,14 @@ nagisa.openapi(
 
       return c.json(data as z.infer<typeof NagisaEnqueueResponseSchema>, 200)
     } catch (e) {
-      logger.error({ action: 'nagisa-enqueue-fetch-error', error: e instanceof Error ? e.message : String(e) })
+      const message = e instanceof Error ? e.message : String(e)
+      logger.error({ action: 'nagisa-enqueue-fetch-error', error: message })
+      // 上流に届いていないので httpStatus は無い。null のまま残す。
+      await recordEnqueue(prisma, body, {
+        kind: 'request',
+        status: 'error',
+        errorMessage: `fetch failed: ${message}`
+      })
       return c.json({ error: 'Failed to connect to Nagisa' }, 502 as const)
     }
   }

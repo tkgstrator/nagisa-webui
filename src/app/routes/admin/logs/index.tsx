@@ -1,4 +1,4 @@
-import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, type QueryClient, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Search as SearchIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -10,24 +10,40 @@ import { StatTile } from '@/app/components/stat-tile'
 import { Button } from '@/app/components/ui/button'
 import { Input } from '@/app/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs'
-import { logEntriesQueryOptions, logStatsQueryOptions, syncRunsQueryOptions } from '@/app/lib/query-options'
+import {
+  logEntriesQueryOptions,
+  logStatsQueryOptions,
+  recordingEventsQueryOptions,
+  syncRunsQueryOptions
+} from '@/app/lib/query-options'
 import { FilterPopover } from '@/app/routes/browse/-components/filter-popover'
 import { readSettings, useSettings } from '@/app/routes/settings/-lib/settings'
-import { LogLevelEnum, RunKindEnum, RunStatusEnum } from '@/schemas/log.dto'
+import {
+  LogLevelEnum,
+  RecordingEventKindEnum,
+  RecordingEventStatusEnum,
+  RunKindEnum,
+  RunStatusEnum
+} from '@/schemas/log.dto'
 import { CronTable } from './-components/cron-table'
 import { EntriesTable } from './-components/entries-table'
+import { RecordingsTable } from './-components/recordings-table'
 import { RunsTable } from './-components/runs-table'
-import { logLevelLabel, runKindLabel, runStatusLabel } from './-lib/format'
+import { logLevelLabel, recordingKindLabel, recordingStatusLabel, runKindLabel, runStatusLabel } from './-lib/format'
 
-const TabEnum = z.enum(['runs', 'entries'])
+const TabEnum = z.enum(['runs', 'entries', 'recordings'])
 
 const SearchSchema = z.object({
   tab: TabEnum.default('runs'),
   kind: RunKindEnum.optional(),
   status: RunStatusEnum.optional(),
-  // 実行履歴は最大 90 日 (sync_runs の保持期間)、生ログは最大 14 日 (log_entries の保持期間)。
-  hours: z.coerce.number().int().min(1).max(2160).default(24),
+  // 期間は 3 タブで共有する。保持期間が一番長い録画 (180 日) に合わせて上限を取り、
+  // 実行履歴と生ログには投げる直前に各テーブルの保持期間で頭打ちを掛ける。
+  hours: z.coerce.number().int().min(1).max(4320).default(24),
   level: LogLevelEnum.default('info'),
+  // 録画の絞り込みは実行履歴の kind / status と意味が違うので別のキーで持つ。
+  recKind: RecordingEventKindEnum.optional(),
+  recStatus: RecordingEventStatusEnum.optional(),
   q: z.string().nonempty().optional()
 })
 
@@ -56,6 +72,20 @@ const LEVEL_OPTIONS: { value: Search['level']; label: string }[] = [
   { value: 'fatal', label: `${logLevelLabel.fatal} のみ` }
 ]
 
+const REC_KIND_OPTIONS: { value: Search['recKind']; label: string }[] = [
+  { value: undefined, label: 'すべて' },
+  { value: 'request', label: recordingKindLabel.request },
+  { value: 'status', label: recordingKindLabel.status },
+  { value: 'recorded', label: recordingKindLabel.recorded },
+  { value: 'not-found', label: recordingKindLabel['not-found'] }
+]
+
+const REC_STATUS_OPTIONS: { value: Search['recStatus']; label: string }[] = [
+  { value: undefined, label: 'すべて' },
+  { value: 'error', label: recordingStatusLabel.error },
+  { value: 'ok', label: recordingStatusLabel.ok }
+]
+
 const RUN_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 24, label: '直近 24 時間' },
   { value: 72, label: '直近 3 日' },
@@ -71,34 +101,53 @@ const ENTRY_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 336, label: '直近 14 日' }
 ]
 
+const RECORDING_HOURS_OPTIONS: { value: number; label: string }[] = [
+  { value: 24, label: '直近 24 時間' },
+  { value: 168, label: '直近 7 日' },
+  { value: 720, label: '直近 30 日' },
+  { value: 2160, label: '直近 90 日' },
+  { value: 4320, label: '直近 180 日' }
+]
+
 /** log_entries は 14 日しか持たないので、実行履歴側の広い期間をそのまま投げない。 */
 const ENTRY_MAX_HOURS = 336
+
+/** sync_runs の保持期間は 90 日。録画タブから戻ってきた 180 日をそのまま投げない。 */
+const RUN_MAX_HOURS = 2160
+
+/** 開いているタブのぶんだけ先に取る。3 本とも取ると表示しない 2 本まで待つことになる。 */
+const ensureTabData = (queryClient: QueryClient, deps: Search) => {
+  const limit = readSettings().pageSize
+  if (deps.tab === 'entries')
+    return queryClient.ensureInfiniteQueryData(
+      logEntriesQueryOptions({ limit, level: deps.level, hours: Math.min(deps.hours, ENTRY_MAX_HOURS), q: deps.q })
+    )
+  if (deps.tab === 'recordings')
+    return queryClient.ensureQueryData(
+      recordingEventsQueryOptions({
+        page: 1,
+        limit,
+        kind: deps.recKind,
+        status: deps.recStatus,
+        hours: deps.hours
+      })
+    )
+  return queryClient.ensureQueryData(
+    syncRunsQueryOptions({
+      page: 1,
+      limit,
+      kind: deps.kind,
+      status: deps.status,
+      hours: Math.min(deps.hours, RUN_MAX_HOURS)
+    })
+  )
+}
 
 export const Route = createFileRoute('/admin/logs/')({
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ context: { queryClient }, deps }) =>
-    Promise.all([
-      queryClient.ensureQueryData(logStatsQueryOptions()),
-      deps.tab === 'entries'
-        ? queryClient.ensureInfiniteQueryData(
-            logEntriesQueryOptions({
-              limit: readSettings().pageSize,
-              level: deps.level,
-              hours: Math.min(deps.hours, ENTRY_MAX_HOURS),
-              q: deps.q
-            })
-          )
-        : queryClient.ensureQueryData(
-            syncRunsQueryOptions({
-              page: 1,
-              limit: readSettings().pageSize,
-              kind: deps.kind,
-              status: deps.status,
-              hours: deps.hours
-            })
-          )
-    ]),
+    Promise.all([queryClient.ensureQueryData(logStatsQueryOptions()), ensureTabData(queryClient, deps)]),
   pendingComponent: LoadingSpinner,
   component: LogsAdminPage
 })
@@ -150,6 +199,7 @@ function LogsAdminPage() {
   const [page, setPage] = useState(1)
   const { settings } = useSettings()
 
+  const runHours = Math.min(search.hours, RUN_MAX_HOURS)
   const { data: stats } = useQuery(logStatsQueryOptions())
   const { data } = useQuery({
     ...syncRunsQueryOptions({
@@ -157,6 +207,17 @@ function LogsAdminPage() {
       limit: settings.pageSize,
       kind: search.kind,
       status: search.status,
+      hours: runHours
+    }),
+    placeholderData: keepPreviousData
+  })
+
+  const { data: recordingData } = useQuery({
+    ...recordingEventsQueryOptions({
+      page,
+      limit: settings.pageSize,
+      kind: search.recKind,
+      status: search.recStatus,
       hours: search.hours
     }),
     placeholderData: keepPreviousData
@@ -182,19 +243,29 @@ function LogsAdminPage() {
   const total = data?.total ?? 0
   const totalPages = data?.totalPages ?? 0
   const entries = entryPages?.pages.flatMap((p) => p.data) ?? []
+  const recordings = recordingData?.data ?? []
+  const recordingTotal = recordingData?.total ?? 0
+  const recordingTotalPages = recordingData?.totalPages ?? 0
 
   const updateSearch = (patch: Partial<Search>) => {
     setPage(1)
     navigate({ search: (prev) => ({ ...prev, ...patch }) })
   }
 
-  const hoursOptions = search.tab === 'entries' ? ENTRY_HOURS_OPTIONS : RUN_HOURS_OPTIONS
+  const hoursOptions =
+    search.tab === 'entries'
+      ? ENTRY_HOURS_OPTIONS
+      : search.tab === 'recordings'
+        ? RECORDING_HOURS_OPTIONS
+        : RUN_HOURS_OPTIONS
 
   return (
     <PageContainer className='gap-6'>
       <header>
         <h1 className='text-2xl font-bold tracking-tight'>同期ログ</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>cron / Queue バッチ / 手動実行の履歴と、Worker の生ログ</p>
+        <p className='mt-1 text-sm text-muted-foreground'>
+          cron / Queue バッチ / 手動実行の履歴と、Worker の生ログ、録画リクエストの結果
+        </p>
       </header>
 
       {stats === undefined ? (
@@ -235,6 +306,9 @@ function LogsAdminPage() {
             <TabsTrigger value='entries' className={tabTriggerClass}>
               生ログ
             </TabsTrigger>
+            <TabsTrigger value='recordings' className={tabTriggerClass}>
+              録画
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -251,7 +325,7 @@ function LogsAdminPage() {
               <h2 className='mr-auto text-sm font-semibold'>実行履歴 ({total.toLocaleString('ja-JP')} 件)</h2>
               <FilterPopover
                 label='期間'
-                value={search.hours}
+                value={runHours}
                 options={hoursOptions}
                 onSelect={(v) => updateSearch({ hours: v })}
               />
@@ -313,6 +387,42 @@ function LogsAdminPage() {
               {isFetchingNextPage ? '読み込み中…' : hasNextPage ? 'さらに読み込む' : 'これ以上ありません'}
             </Button>
           </div>
+        </TabsContent>
+
+        <TabsContent value='recordings' className='flex min-w-0 flex-col gap-3 pt-4'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <h2 className='mr-auto text-sm font-semibold'>
+              録画イベント ({recordingTotal.toLocaleString('ja-JP')} 件)
+            </h2>
+            <FilterPopover
+              label='期間'
+              value={search.hours}
+              options={hoursOptions}
+              onSelect={(v) => updateSearch({ hours: v })}
+            />
+            <FilterPopover
+              label='種別'
+              value={search.recKind}
+              options={REC_KIND_OPTIONS}
+              onSelect={(v) => updateSearch({ recKind: v })}
+            />
+            <FilterPopover
+              label='結果'
+              value={search.recStatus}
+              options={REC_STATUS_OPTIONS}
+              onSelect={(v) => updateSearch({ recStatus: v })}
+            />
+          </div>
+
+          {recordings.length === 0 ? (
+            <div className='py-20 text-center text-sm text-muted-foreground'>この期間の録画イベントはありません</div>
+          ) : (
+            <RecordingsTable events={recordings} />
+          )}
+
+          {recordingTotalPages > 1 && (
+            <SmartPagination page={page} totalPages={recordingTotalPages} onPageChange={setPage} />
+          )}
         </TabsContent>
       </Tabs>
     </PageContainer>

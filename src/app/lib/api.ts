@@ -2,7 +2,13 @@ import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
 import { AnimeInfoSchema, AnimeSchema, BadgedAnimeSchema, PaginatedAnimeSchema } from '@/schemas/anime.dto'
 import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
-import { CursoredLogEntrySchema, LogStatsSchema, PaginatedSyncRunSchema, SyncRunDetailSchema } from '@/schemas/log.dto'
+import {
+  CursoredLogEntrySchema,
+  LogStatsSchema,
+  PaginatedRecordingEventSchema,
+  PaginatedSyncRunSchema,
+  SyncRunDetailSchema
+} from '@/schemas/log.dto'
 import {
   NagisaEnqueueRequestSchema,
   NagisaEnqueueResponseSchema,
@@ -195,6 +201,20 @@ const api = new Zodios('/api', [
       { name: 'q', type: 'Query', schema: z.string().nonempty().optional() }
     ],
     response: CursoredLogEntrySchema
+  },
+  {
+    method: 'get',
+    path: '/admin/logs/recordings',
+    alias: 'getRecordingEvents',
+    parameters: [
+      { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(100).optional() },
+      { name: 'animeId', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'kind', type: 'Query', schema: z.enum(['request', 'status', 'recorded', 'not-found']).optional() },
+      { name: 'status', type: 'Query', schema: z.enum(['ok', 'error']).optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(4320).optional() }
+    ],
+    response: PaginatedRecordingEventSchema
   },
   {
     method: 'get',

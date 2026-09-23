@@ -1,4 +1,5 @@
-import type { LogLevelEnum, SyncRunSchema } from '@/schemas/log.dto'
+import dayjs from 'dayjs'
+import type { LogLevelEnum, RecordingEventSchema, SyncRunSchema } from '@/schemas/log.dto'
 
 export const runStatusLabel: Record<SyncRunSchema['status'], string> = {
   running: '実行中',
@@ -51,6 +52,54 @@ export const logLevelBadge: Record<LogLevelEnum, string> = {
   warning: 'bg-warning/20 text-warning-foreground',
   error: 'bg-destructive/10 text-destructive',
   fatal: 'bg-destructive text-destructive-foreground'
+}
+
+export const recordingKindLabel: Record<RecordingEventSchema['kind'], string> = {
+  request: '予約送信',
+  status: '状態照会',
+  recorded: '録画完了',
+  'not-found': '見つからない'
+}
+
+export const recordingSourceLabel: Record<RecordingEventSchema['source'], string> = {
+  ui: '画面',
+  webhook: 'webhook',
+  cron: 'cron'
+}
+
+export const recordingStatusLabel: Record<RecordingEventSchema['status'], string> = {
+  ok: '成功',
+  error: '失敗'
+}
+
+/**
+ * 行頭のアクセント。うまくいった行には色を付けない (色が付いている = 見るべき行)。
+ * 「見つからない」は上流に無いだけでこちらの障害ではないので warning 止まり。
+ */
+export const recordingAccent = (event: RecordingEventSchema): string => {
+  if (event.status === 'ok') return 'border-l-transparent'
+  return event.kind === 'not-found' ? 'border-l-warning' : 'border-l-destructive'
+}
+
+export const recordingStatusBadge: Record<RecordingEventSchema['status'], string> = {
+  ok: 'bg-success/15 text-success dark:text-foreground',
+  error: 'bg-destructive/10 text-destructive'
+}
+
+/** 「12:04:31」。録画は秒の並びが意味を持つので秒まで出す。 */
+export const formatClock = (value: string): string => {
+  const target = dayjs(value)
+  return target.isValid() ? target.format('HH:mm:ss') : '—'
+}
+
+/** 「今日」「昨日」「9/14」。時刻の下に置く日付。 */
+export const formatDay = (value: string): string => {
+  const target = dayjs(value)
+  if (!target.isValid()) return '—'
+  const days = dayjs().startOf('day').diff(target.startOf('day'), 'day')
+  if (days === 0) return '今日'
+  if (days === 1) return '昨日'
+  return target.format('M/D')
 }
 
 /**
