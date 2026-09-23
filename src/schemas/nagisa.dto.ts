@@ -65,7 +65,13 @@ const NagisaEnqueueItemSchema = z.object({
   content_id: z.string().nonempty(),
   seasons: z.array(NagisaEnqueueSeasonSchema).optional(),
   /** true にすると Nagisa 側で既存の出力ファイルをスキップせず再ダウンロードする (Nagisa 1.4.x〜) */
-  force: z.boolean().optional()
+  force: z.boolean().optional(),
+  /**
+   * この content_id がどの AniList 作品か (Nagisa 1.7.x〜)。Nagisa は受け取った対応を
+   * 台帳に控え、`GET /api/library/anilist/{id}` で引けるようにする。0 以下は 400 になるので送らない。
+   * それより前の Nagisa は未知のキーとして無視する。
+   */
+  anilist_id: z.number().int().positive().optional()
 })
 
 export const NagisaEnqueueRequestSchema = z.object({
@@ -254,3 +260,50 @@ export const NagisaLibraryErrorSchema = z.object({
   message: z.string().nonempty()
 })
 export type NagisaLibraryError = z.infer<typeof NagisaLibraryErrorSchema>
+
+// --- AniList 作品ごとの録画状況 (Nagisa 1.7.x〜) ---
+//
+// Nagisa は (provider, content_id) → anilist_id の対応を台帳に持つ。対応は投入時の
+// `anilist_id` か `PUT /api/library/titles` でしか入らず、Nagisa 側で推測はしない。
+
+export const NagisaTitleMappingSchema = z.object({
+  provider: ProviderEnum,
+  content_id: z.string().nonempty(),
+  anilist_id: z.number().int().positive()
+})
+export type NagisaTitleMapping = z.infer<typeof NagisaTitleMappingSchema>
+
+export const NagisaTitlesRequestSchema = z.object({
+  titles: z.array(NagisaTitleMappingSchema)
+})
+export type NagisaTitlesRequest = z.infer<typeof NagisaTitlesRequestSchema>
+
+export const NagisaAnilistRecordingSchema = z.object({
+  recording_id: z.string().nonempty(),
+  episode_id: z.string().nullable(),
+  season_number: z.number().int().nullable(),
+  episode_number: z.number().int().nullable(),
+  /** ライブラリルートからの相対パス */
+  path: z.string().nonempty(),
+  size: z.number().int(),
+  mtime: z.string().nullable()
+})
+export type NagisaAnilistRecording = z.infer<typeof NagisaAnilistRecordingSchema>
+
+export const NagisaAnilistTitleSchema = z.object({
+  provider: z.string().nonempty(),
+  content_id: z.string().nonempty(),
+  updated_at: z.string().nonempty(),
+  /** 台帳の行。対応はあるが何も録れていない作品は空配列 */
+  recordings: z.array(NagisaAnilistRecordingSchema),
+  /** 待機中・実行中のジョブ。キューが読めなかったときは null (空配列とは別物) */
+  jobs: z.array(NagisaQueueSnapshotJobSchema).nullable()
+})
+export type NagisaAnilistTitle = z.infer<typeof NagisaAnilistTitleSchema>
+
+export const NagisaAnilistLookupSchema = z.object({
+  anilist_id: z.number().int(),
+  queue_available: z.boolean(),
+  titles: z.array(NagisaAnilistTitleSchema)
+})
+export type NagisaAnilistLookup = z.infer<typeof NagisaAnilistLookupSchema>

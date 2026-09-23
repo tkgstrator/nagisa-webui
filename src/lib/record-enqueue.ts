@@ -64,6 +64,37 @@ async function recordEnqueue(
 }
 
 /**
+ * 各 item に D1 の `aniListId` を載せる。nagisa (1.7.x〜) はこれで
+ * `(provider, content_id) → anilist_id` の対応を控え、作品ページの録画状況が引けるようになる。
+ *
+ * 呼び出し側が既に付けていればそれを優先する。引けない・0 以下のものは付けない
+ * (nagisa は 0 以下を 400 で拒否し、投入ごと落ちる)。引き当てに失敗しても投入は止めない —
+ * 対応は後から `PUT /api/library/titles` で送り直せる。
+ */
+async function withAnilistIds(prisma: Prisma, body: NagisaEnqueueRequest): Promise<NagisaEnqueueRequest> {
+  const missing = body.items.filter((i) => i.anilist_id === undefined).map((i) => i.content_id)
+  if (missing.length === 0) return body
+  try {
+    const rows = await prisma.anime.findMany({
+      where: { provider: body.provider, contentId: { in: missing.slice(0, LOOKUP_MAX) } },
+      select: { contentId: true, aniListId: true }
+    })
+    const byContentId = new Map(rows.map((r) => [r.contentId, r.aniListId]))
+    return {
+      ...body,
+      items: body.items.map((item) => {
+        if (item.anilist_id !== undefined) return item
+        const aniListId = byContentId.get(item.content_id)
+        return aniListId !== undefined && aniListId > 0 ? { ...item, anilist_id: aniListId } : item
+      })
+    }
+  } catch (e) {
+    logger.warn({ action: 'nagisa-enqueue-anilist-lookup-failed', error: e instanceof Error ? e.message : String(e) })
+    return body
+  }
+}
+
+/**
  * nagisa の `/api/queues` へ録画を投入し、履歴と D1 の控えまで済ませる。
  * 管理画面の単体投入と作品詳細の録画ボタンが同じ経路を通る。throw しない。
  */
@@ -77,6 +108,7 @@ export async function enqueueRecording(
     logger.error({ action: 'nagisa-enqueue-config-missing', missing })
     return { ok: false, error: `Nagisa config missing: ${missing.join(', ')}` }
   }
+  body = await withAnilistIds(prisma, body)
   try {
     const res = await fetchNagisaRaw(env, '/api/queues', {
       method: 'POST',
