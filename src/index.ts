@@ -10,7 +10,6 @@ import animeRoutes from './routes/anime'
 import imgRoutes from './routes/img'
 import nagisaRoutes from './routes/nagisa'
 import recordingsRoutes from './routes/recordings'
-import webhooksRoutes from './routes/webhooks'
 import { scheduled } from './scheduled'
 
 type Bindings = {
@@ -39,7 +38,6 @@ app.route('/api/anime', animeRoutes)
 app.route('/api/img', imgRoutes)
 app.route('/api/nagisa', nagisaRoutes)
 app.route('/api/recordings', recordingsRoutes)
-app.route('/api/webhooks', webhooksRoutes)
 
 // デバッグ用: Falcor API / AniList のレスポンスを直接確認する
 app.get('/api/debug/falcor/:slug', async (c) => {

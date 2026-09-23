@@ -67,12 +67,36 @@ model Episode {
   hasSubtitles   Boolean  @default(false) @map("has_subtitles")
   hasDub         Boolean  @default(false) @map("has_dub")
   benefitId      String   @map("benefit_id")
+  /// recordStatus == 'completed' の写像。フロント移行が終わるまで維持する
   recorded       Boolean  @default(false)
   createdAt      DateTime @default(now()) @map("created_at")
+
+  /// none | pending | downloading | completed | failed | stale | missing
+  /// completed を書けるのは台帳の upsert イベント (reconcile) だけ。
+  /// 「ジョブが終わった」は「ファイルがある」ではない
+  recordStatus   String    @default("none") @map("record_status")
+  /// queue | snapshot | reconcile | manual — 最後にこの行を書いた経路
+  recordSource   String?   @map("record_source")
+  /// BullMQ の job id。録画指示時に控え、queue snapshot と突き合わせる
+  recordJobId    String?   @map("record_job_id")
+  /// nagisa 台帳の recording_id。tombstone (delete イベント) の適用に要る
+  recordingId    String?   @map("recording_id")
+  recordError    String?   @map("record_error")
+  /// nagisa のライブラリルートからの相対パス
+  recordPath     String?   @map("record_path")
+  /// バイトだと 2GB で Int が溢れるので MB
+  recordSizeMb   Int?      @map("record_size_mb")
+  recordedAt     DateTime? @map("recorded_at")
+  recordSyncedAt DateTime? @map("record_synced_at")
+
   season         Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   abemaKey       AbemaKeyArchive?
 
   @@unique([seasonId, episodeNumber])
+  @@index([episodeId])
+  @@index([recordStatus])
+  @@index([recordJobId])
+  @@index([recordingId])
   @@map("episodes")
 }
 
@@ -180,4 +204,31 @@ model SyncRun {
   @@index([kind, startedAt])
   @@index([parentId])
   @@map("sync_runs")
+}
+
+/// 外部システムから差分を引くときのカーソル置き場。
+/// 現状は key = 'library' の 1 行だけ (nagisa の録画台帳) だが、
+/// 後で 'queue' などを足せるよう汎用の形にしてある。
+model SyncState {
+  /// 'library'
+  key             String    @id
+  /// nagisa が返す不透明トークン。**Workers 側で中身を解釈しない**。
+  /// 失効判定は nagisa が 410 / 409 で返す契約であり、両側が持つと必ずずれる
+  libraryCursor   String?   @map("library_cursor")
+  /// bootstrap (全件スナップショット) の途中経過。libraryCursor とは別物で、
+  /// 混ぜると「復旧の途中」と「差分の位置」が区別できなくなる。
+  /// 非 null = bootstrap 継続中を意味し、完走時に null に戻す
+  snapshotCursor  String?   @map("snapshot_cursor")
+  /// bootstrap を開始した時刻。完走時の掃き出し (台帳に居なかった completed を
+  /// missing に落とす) の基準に使う。ページを跨いで持ち回るので列に置く
+  snapshotStartedAt DateTime? @map("snapshot_started_at")
+  /// 最後に 1 ページでも適用できた時刻。同期が止まったことの検出に使う
+  lastSucceededAt DateTime? @map("last_succeeded_at")
+  /// cron の重複起動よけ。この時刻までは他の run が触らない
+  leaseUntil      DateTime? @map("lease_until")
+  /// lease を持っている run の id。カーソル更新の where に入れて fencing する
+  leaseOwner      String?   @map("lease_owner")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@map("sync_state")
 }
