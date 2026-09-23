@@ -75,19 +75,25 @@ const HEARTBEAT_MS = 60 * 60_000
  */
 const MAX_WRITES_PER_RUN = 600
 /**
- * 1 ページ (= 1 バッチ) に積む UPDATE 文の上限。
+ * 1 トランザクションに積む UPDATE 文の上限。
  *
  * :data:`MAX_WRITES_PER_RUN` は **ページを適用し終えてから** 見る数字なので、
- * 1 ページが単独で膨らむ場合には効かない。台帳の 1 行が数千のエピソードに
- * 解決されれば 1 ページで 1000 文を超え、D1 の queries per invocation に
- * 当たって run ごと落ちる (しかもカーソルが進まないので毎回同じページで落ちる)。
- *
- * 通常のページは `SNAPSHOT_LIMIT` / `CHANGES_LIMIT` ぶんの文数で収まる。これを
- * 大きく超えるのはデータ側の異常なので、**1 行も書かずに降りて記録を残す**。
- * 次 run も同じところで止まるが、同じ止まるなら落ちるより ``aborted`` が
- * `SyncRun` に残るほうが直せる。
+ * 1 ページが単独で膨らむ場合には効かない。台帳の 1 行が数十のエピソードに
+ * 解決されると (重複登録の多い作品) 1 ページの文数はページサイズを軽く超える。
+ * バッチが大きすぎると D1 の queries per invocation (1000) に当たって run ごと
+ * 落ちるので、この幅で割って順に流す。
  */
-const MAX_WRITES_PER_PAGE = 300
+const MAX_WRITES_PER_BATCH = 300
+/**
+ * 1 ページを適用するのに許す UPDATE 文の上限。これを超えたら降りる。
+ *
+ * 分割して流せば普通に太いページは通せるが、それでも上限は要る: 台帳の 1 行が
+ * 数千のエピソードに解決される (episode_id の取り違え等) と、分割しても 1 run の
+ * クエリ数が D1 の上限を超えて落ち、カーソルが進まないので毎回同じページで
+ * 落ち続ける。データ側の異常なので **1 行も書かずに降りて記録を残す**。
+ * 同じ止まるなら落ちるより `aborted` が `SyncRun` に残るほうが直せる。
+ */
+const MAX_WRITES_PER_PAGE = 900
 
 export interface LibrarySyncResult {
   /** lease を取れずに何もしなかった */
@@ -248,7 +254,21 @@ function buildUpsertWrites(
   rows: LedgerRow[],
   resolved: Map<MatchKey, string[]>,
   now: Date,
-  owner: string
+  owner: string,
+  /**
+   * 既に入っている録画より古い行では上書きしない (snapshot 経路だけ true)。
+   *
+   * 下の `beatsCurrent` が決めるのは **1 ページの中の**勝者でしかない。
+   * snapshot はページ間に順序が無いので、ページ 1 で書いた新しい録画 A を
+   * ページ 2 の古い録画 B が上書きしうる。あとから B の tombstone が届くと、
+   * A が実在するのにエピソードが `missing` に落ちる。SQL 側でも mtime を
+   * 比べて、同じ規則 (新しい方が勝つ) を全ページに広げる。
+   *
+   * 変更ログ経路では **付けない**。あちらは seq の順序が正しさの根拠で、
+   * 「B を消して A を置いた」が `delete B` → `upsert A` の順で届く。mtime で
+   * 弾くと upsert だけ落ちて delete が通り、missing に化ける。
+   */
+  skipOlder: boolean
 ): { writes: Write[]; unmatched: number } {
   const writes: Write[] = []
   const guard = leaseGuard(owner, now)
@@ -283,8 +303,9 @@ function buildUpsertWrites(
   // 勝った行ごとにまとめ直してから書く。1 エピソード 1 文にはしない: ふつうは
   // 1 行が 1 エピソードなので分割は起きず、重複登録の作品だけ束ねられる。
   //
-  // バインド数は **値 5 + id 90 + lease 2 = 97**。定数 (status / source / recorded) は
-  // SQL リテラルで書いて枠を空けてある。IN_CHUNK を上げると 100 を超えて落ちる。
+  // バインド数は **値 5 + 新旧比較 1 + id 90 + lease 2 = 98**。定数 (status / source /
+  // recorded) は SQL リテラルで書いて枠を空けてある。IN_CHUNK を上げると 100 を
+  // 超えて落ちる。
   const byRow = new Map<LedgerRow, string[]>()
   for (const [episodeId, row] of winners) {
     const list = byRow.get(row)
@@ -294,6 +315,16 @@ function buildUpsertWrites(
 
   for (const [row, ids] of byRow) {
     const recordedAt = parseMtime(row.item.mtime)
+    // 既に入っている録画との比較。mtime を読めなかった行 (`null`) は比較が
+    // NULL になるのでどの完了行にも勝てない — ページ内の `beatsCurrent` と
+    // 同じ「読めない mtime は負ける」規則になる。同じ mtime は等号で通すので、
+    // 同じ録画の再走査 (パスや容量の更新) は普通に反映される。
+    const older =
+      skipOlder && recordedAt
+        ? PrismaSql.sql`AND (record_status <> 'completed' OR recorded_at IS NULL OR recorded_at <= ${sqlDate(recordedAt)})`
+        : skipOlder
+          ? PrismaSql.sql`AND (record_status <> 'completed' OR recorded_at IS NULL)`
+          : PrismaSql.empty
     for (const part of chunk(ids, IN_CHUNK)) {
       writes.push(
         prisma.$executeRaw`
@@ -307,7 +338,7 @@ function buildUpsertWrites(
             record_size_mb = ${toMb(row.item.size)},
             recorded_at = ${recordedAt ? sqlDate(recordedAt) : null},
             record_synced_at = ${sqlDate(now)}
-          WHERE id IN (${PrismaSql.join(part)}) ${guard}`
+          WHERE id IN (${PrismaSql.join(part)}) ${older} ${guard}`
       )
     }
   }
@@ -350,6 +381,28 @@ async function holdsLease(prisma: Prisma, owner: string): Promise<boolean> {
  * 判定がずれる。`leaseUntil` が null の行もこの条件で弾ける。
  */
 const leaseWhere = (owner: string, now: Date) => ({ key: SYNC_KEY, leaseOwner: owner, leaseUntil: { gt: now } })
+
+/**
+ * 1 ページぶんの書き込みを流す。文が多い回だけ複数のトランザクションに割り、
+ * **カーソル更新 (`tail`) は必ず最後のバッチに置く**。返すのは最後のバッチの
+ * 結果で、`fenced` はそれを見る。
+ *
+ * 分割するとページ単位の原子性は失われるが、取りこぼしは作らない: カーソルは
+ * 最後のバッチでしか動かないので、途中で落ちた回は次 run が同じページを読み
+ * 直す。upsert / tombstone はどちらも同じ値を書き直すだけの冪等な文なので、
+ * 前半を二度適用しても結果は変わらない。
+ */
+async function applyBatched(prisma: Prisma, writes: Write[], tail: Write[]): Promise<unknown[]> {
+  const batches = chunk(writes, MAX_WRITES_PER_BATCH)
+  if (batches.length === 0) batches.push([])
+  let applied: unknown[] = []
+  for (let i = 0; i < batches.length; i++) {
+    const batch = i === batches.length - 1 ? [...batches[i], ...tail] : batches[i]
+    if (batch.length === 0) continue
+    applied = await prisma.$transaction(batch)
+  }
+  return applied
+}
 
 /**
  * 適用バッチの結果から「lease を失ったまま実行されたか」を見る。
@@ -497,7 +550,7 @@ async function bootstrapLibrary(
     const now = stamp(sweepFrom)
     const rows: LedgerRow[] = body.items.map((i) => ({ recordingId: i.recording_id, item: i }))
     const resolved = await resolveEpisodes(prisma, rows)
-    const { writes, unmatched } = buildUpsertWrites(prisma, rows, resolved, now, owner)
+    const { writes, unmatched } = buildUpsertWrites(prisma, rows, resolved, now, owner, true)
     cursor = body.next_cursor
     const done = !cursor
 
@@ -520,8 +573,7 @@ async function bootstrapLibrary(
 
     // 途中のページ。適用とカーソルを同じバッチに入れる (間で落ちると取りこぼす)。
     if (!done) {
-      const applied = await prisma.$transaction([
-        ...writes,
+      const applied = await applyBatched(prisma, writes, [
         prisma.syncState.updateMany({ where: leaseWhere(owner, now), data: { snapshotCursor: cursor } })
       ])
       if (fenced(applied, result, 'snapshot')) return
@@ -544,7 +596,7 @@ async function bootstrapLibrary(
     // 「台帳に居なかった」に見え、比率ガードが誤爆する) が、D1 には同一バッチの
     // 途中結果を読む手段が無い。カーソルを確定するのは後のバッチなので、
     // ここで落ちても次 run が同じページを読み直すだけで済む (適用は冪等)。
-    if (writes.length > 0) await prisma.$transaction(writes)
+    if (writes.length > 0) await applyBatched(prisma, writes, [])
     result.unmatched += unmatched
     result.upserts += writes.length
     result.pages++
@@ -568,8 +620,7 @@ async function bootstrapLibrary(
       return
     }
 
-    const applied = await prisma.$transaction([
-      ...sweepWrites,
+    const applied = await applyBatched(prisma, sweepWrites, [
       // 完走した回だけ libraryCursor を置く。それまでは snapshotCursor だけ動かす。
       prisma.syncState.updateMany({
         where: leaseWhere(owner, now),
@@ -636,7 +687,7 @@ async function applyChangesPage(
   }
 
   const resolved = await resolveEpisodes(prisma, upsertRows)
-  const { writes, unmatched } = buildUpsertWrites(prisma, upsertRows, resolved, now, owner)
+  const { writes, unmatched } = buildUpsertWrites(prisma, upsertRows, resolved, now, owner, false)
   const deleteWrites = deleteIds.map((id) => buildDeleteWrite(prisma, id, now, owner))
 
   // 1 ページの文数の上限 (bootstrap と同じ理由)。変更ログ 100 件でも、1 件が
@@ -659,17 +710,22 @@ async function applyChangesPage(
     return false
   }
 
-  const applied = await prisma.$transaction([
-    ...writes,
-    ...deleteWrites,
-    // fencing: lease を失った run はここで 0 件更新になり、カーソルを進められない。
-    // 同じ条件を上の各文にも `leaseGuard` として載せてあるので、エピソード側も
-    // 同時に 0 行になる。「書かないなら進めない」が 1 バッチの中で揃う。
-    prisma.syncState.updateMany({
-      where: leaseWhere(owner, now),
-      data: { libraryCursor: body.next_cursor, lastSucceededAt: now }
-    })
-  ])
+  // upsert を先に、tombstone を後に流す。同じページに `delete B` と `upsert A` が
+  // 同居したときは A が残るのが正しい (B を消して A を録り直した)。バッチに割れても
+  // この並びは崩れない。
+  const applied = await applyBatched(
+    prisma,
+    [...writes, ...deleteWrites],
+    [
+      // fencing: lease を失った run はここで 0 件更新になり、カーソルを進められない。
+      // 同じ条件を上の各文にも `leaseGuard` として載せてあるので、エピソード側も
+      // 同時に 0 行になる。「書かないなら進めない」が 1 バッチの中で揃う。
+      prisma.syncState.updateMany({
+        where: leaseWhere(owner, now),
+        data: { libraryCursor: body.next_cursor, lastSucceededAt: now }
+      })
+    ]
+  )
   if (fenced(applied, result, 'changes')) return false
 
   result.upserts += writes.length

@@ -85,9 +85,17 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
     // job id を控えていない行 (指示が nagisa に届く前に落ちた等) は交差のしようが
     // 無いので最初から外す。distinct は SQLite ではメモリ上の後処理なので使わず、
     // 重複は Set で潰す。
+    //
+    // **並び順を固定するのは飢餓を避けるため**。無指定だと毎 tick ほぼ同じ先頭
+    // 900 行が返り、901 件目以降は永久に検査されない (キューから消えても
+    // stale にならず、pending のまま残り続ける)。`recordSyncedAt` の昇順なら
+    // 見ていない行ほど先に来るので、上限で打ち切った回でも順に巡る。
+    // SQLite は ASC で NULL を先頭に置くので、起点の無い行 (下の `undated`) も
+    // 取りこぼさない。
     const rows = await prisma.episode.findMany({
       where: { recordStatus: { in: [...IN_FLIGHT] }, recordJobId: { not: null } },
       select: { recordJobId: true, recordSyncedAt: true },
+      orderBy: { recordSyncedAt: 'asc' },
       take: MAX_TRACKED
     })
     const tracked = new Set<string>()
