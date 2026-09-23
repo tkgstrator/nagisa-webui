@@ -1,12 +1,13 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
-import { ChevronRight } from 'lucide-react'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import { animeDetailQueryOptions, animeListQueryOptions } from '@/app/lib/query-options'
 import { type AnimeInfoSchema, QuarterLabel } from '@/schemas/anime.dto'
 
-const colClass = 'grid grid-cols-[minmax(0,1fr)_52px_52px_14px] gap-2.5 max-sm:grid-cols-[minmax(0,1fr)_46px_14px]'
+// 「録画」「全話」を別々の列にすると 280px のサイドバーでは配信元の欄が潰れて
+// バッジや年が折り返すので、"0/12" の 1 列にまとめて左へ幅を返す。
+const colClass = 'grid grid-cols-[minmax(0,1fr)_auto] gap-2.5'
 
 const pvClass = 'inline-flex h-[18px] shrink-0 items-center rounded px-[7px] text-[11px] font-semibold'
 
@@ -47,8 +48,6 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
           <div className={`${colClass} px-2.5 py-1.5 pl-[13px] text-[11px] text-muted-foreground`}>
             <span>配信元</span>
             <span className='text-right'>録画</span>
-            <span className='text-right max-sm:hidden'>全話</span>
-            <span />
           </div>
           <div className='flex flex-col'>
             {items.map((item, index) => {
@@ -69,27 +68,30 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
                       <span className={`${pvClass} ${providerColor[item.provider]}`}>
                         {providerLabel[item.provider]}
                       </span>
-                      {item.year > 0 && `${item.year}年 ${QuarterLabel[item.quarter]}`}
+                      {item.year > 0 && (
+                        <span className='whitespace-nowrap'>{`${item.year}年 ${QuarterLabel[item.quarter]}`}</span>
+                      )}
                       {expiring && item.expiredAt !== null && (
-                        <span className={`${tagClass} border border-warning/45 bg-warning/20 text-warning-foreground`}>
+                        <span
+                          className={`${tagClass} shrink-0 whitespace-nowrap border border-warning/45 bg-warning/20 text-warning-foreground`}
+                        >
                           {dayjs(item.expiredAt).format('M/D')} 終了
                         </span>
                       )}
                     </span>
                   </span>
-                  <span className='text-right text-[13px] text-muted-foreground tabular-nums'>
+                  <span className='whitespace-nowrap text-right text-[13px] text-muted-foreground tabular-nums'>
                     {detail === undefined ? (
                       '—'
                     ) : (
-                      <b className='font-semibold text-foreground'>
-                        {episodes.filter((episode) => episode.recorded).length}
-                      </b>
+                      <>
+                        <b className='font-semibold text-foreground'>
+                          {episodes.filter((episode) => episode.recorded).length}
+                        </b>
+                        {`/${episodes.length}`}
+                      </>
                     )}
                   </span>
-                  <span className='text-right text-[13px] text-muted-foreground tabular-nums max-sm:hidden'>
-                    {detail === undefined ? '—' : episodes.length}
-                  </span>
-                  {current ? <span /> : <ChevronRight className='size-3.5 text-muted-foreground' />}
                 </>
               )
 

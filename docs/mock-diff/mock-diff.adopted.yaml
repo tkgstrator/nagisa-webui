@@ -23,3 +23,5 @@ adopted:
   scheduled-updates: fable
   home-tabs: fable
   settings: astra
+  not-found: fable
+  error-state: fable

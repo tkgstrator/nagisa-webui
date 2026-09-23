@@ -1,0 +1,198 @@
+TITLE: 録画イベント一覧
+---
+<header class="cat-head">
+  <h1>録画イベント一覧 <span class="cat-id">recording-events</span></h1>
+  <p>管理画面「同期ログ」の録画タブ。1 行 = 録画に関する出来事 1 件。いつ / どの作品 / 何をした / どこから / 結果はどうだったか、を左から順に読ませる。</p>
+  <div class="cat-meta"><span>fable 案 = 1 行 1 件の密な表</span><span>作成日時の降順</span><span>行頭 3px のアクセントで結果</span><span>話数 / HTTP は独立した列</span><span>失敗の理由は 2 行目に置く</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>基本 <span class="cat-hint">見出し + 6 件</span></h2>
+  <div class="cat-item cat-full is-key">
+    <div class="rev-box">
+      <div class="rev-cols">
+        <span>日時</span><span>作品</span><span>種別</span><span>経路</span><span class="rev-r">話数</span><span class="rev-r">HTTP</span><span class="rev-r">結果</span>
+      </div>
+      <div class="rev-row is-ok">
+        <span class="rev-ts">12:04:31<small>今日</small></span>
+        <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+        <span class="rev-kind">録画完了</span>
+        <span class="rev-src">Queue</span>
+        <span class="rev-n">9</span>
+        <span class="rev-n rev-dim">—</span>
+        <span class="rev-res rev-ok">成功</span>
+      </div>
+      <div class="rev-row is-ok">
+        <span class="rev-ts">11:58:02<small>今日</small></span>
+        <span class="rev-title"><span class="rev-name">魔法少女は二度目の朝を迎える</span><span class="rev-prov rev-p-amazon">Prime Video</span></span>
+        <span class="rev-kind">予約送信</span>
+        <span class="rev-src">Manual</span>
+        <span class="rev-n">13</span>
+        <span class="rev-n">202</span>
+        <span class="rev-res rev-ok">成功</span>
+      </div>
+      <div class="rev-row is-err">
+        <span class="rev-ts">11:41:17<small>今日</small></span>
+        <span class="rev-title">
+          <span class="rev-name">転生したら図書館の司書だった件</span><span class="rev-prov rev-p-netflix">Netflix</span>
+          <span class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</span>
+        </span>
+        <span class="rev-kind">予約送信</span>
+        <span class="rev-src">Manual</span>
+        <span class="rev-n rev-dim">—</span>
+        <span class="rev-n">503</span>
+        <span class="rev-res rev-ng">失敗</span>
+      </div>
+      <div class="rev-row is-warn">
+        <span class="rev-ts">10:12:44<small>今日</small></span>
+        <span class="rev-title"><span class="rev-name">辺境ギルドの万年二番手</span><span class="rev-prov rev-p-abema">ABEMA</span></span>
+        <span class="rev-kind">見つからない</span>
+        <span class="rev-src">Schedule</span>
+        <span class="rev-n rev-dim">—</span>
+        <span class="rev-n">404</span>
+        <span class="rev-res rev-ng">失敗</span>
+      </div>
+      <div class="rev-row is-ok">
+        <span class="rev-ts">09:30:08<small>今日</small></span>
+        <span class="rev-title"><span class="rev-name">サイレント・オーケストラ</span><span class="rev-prov rev-p-hulu">Hulu</span></span>
+        <span class="rev-kind">状態照会</span>
+        <span class="rev-src">Schedule</span>
+        <span class="rev-n">7</span>
+        <span class="rev-n">200</span>
+        <span class="rev-res rev-ok">成功</span>
+      </div>
+      <div class="rev-row is-ok">
+        <span class="rev-ts">23:05:51<small>昨日</small></span>
+        <span class="rev-title"><span class="rev-name">深海都市のパン屋さん</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+        <span class="rev-kind">録画完了</span>
+        <span class="rev-src">Queue</span>
+        <span class="rev-n">12</span>
+        <span class="rev-n rev-dim">—</span>
+        <span class="rev-res rev-ok">成功</span>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">話数と HTTP ステータスは <b>別の列</b>に置く。「9 話 / 202」のように 1 枠へ詰めると、値が無いときに何が欠けているのか読めなくなる。値が無い列は <code>—</code> で埋めて列を保つ。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>1 行の状態</h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key">
+      <span class="cat-label">成功 <small>行頭のアクセントは付けない</small></span>
+      <div class="rev-box">
+        <div class="rev-row is-ok">
+          <span class="rev-ts">12:04:31<small>今日</small></span>
+          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+          <span class="rev-kind">録画完了</span><span class="rev-src">Queue</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
+          <span class="rev-res rev-ok">成功</span>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">hover <small>左に primary の罫・背景 muted</small></span>
+      <div class="rev-box">
+        <div class="rev-row is-ok is-hover">
+          <span class="rev-ts">12:04:31<small>今日</small></span>
+          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+          <span class="rev-kind">録画完了</span><span class="rev-src">Queue</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
+          <span class="rev-res rev-ok">成功</span>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">キーボードフォーカス</span>
+      <div class="rev-box">
+        <div class="rev-row is-ok is-focus">
+          <span class="rev-ts">12:04:31<small>今日</small></span>
+          <span class="rev-title"><span class="rev-name">星降る夜のアストロノーツ</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+          <span class="rev-kind">録画完了</span><span class="rev-src">Queue</span><span class="rev-n">9</span><span class="rev-n rev-dim">—</span>
+          <span class="rev-res rev-ok">成功</span>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">失敗 <small>destructive の罫 + 理由を 2 行目に</small></span>
+      <div class="rev-box">
+        <div class="rev-row is-err">
+          <span class="rev-ts">11:41:17<small>今日</small></span>
+          <span class="rev-title">
+            <span class="rev-name">転生したら図書館の司書だった件</span><span class="rev-prov rev-p-netflix">Netflix</span>
+            <span class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</span>
+          </span>
+          <span class="rev-kind">予約送信</span><span class="rev-src">Manual</span><span class="rev-n rev-dim">—</span><span class="rev-n">503</span>
+          <span class="rev-res rev-ng">失敗</span>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full">
+      <span class="cat-label">見つからない <small>warning の罫。落ちてはいないが録れていない</small></span>
+      <div class="rev-box">
+        <div class="rev-row is-warn">
+          <span class="rev-ts">10:12:44<small>今日</small></span>
+          <span class="rev-title"><span class="rev-name">辺境ギルドの万年二番手</span><span class="rev-prov rev-p-abema">ABEMA</span></span>
+          <span class="rev-kind">見つからない</span><span class="rev-src">Schedule</span><span class="rev-n rev-dim">—</span><span class="rev-n">404</span>
+          <span class="rev-res rev-ng">失敗</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>種別 <span class="cat-hint">4 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">予約送信 <small>request</small></span><span class="rev-kind">予約送信</span></div>
+    <div class="cat-item"><span class="cat-label">状態照会 <small>status</small></span><span class="rev-kind">状態照会</span></div>
+    <div class="cat-item"><span class="cat-label">録画完了 <small>recorded</small></span><span class="rev-kind">録画完了</span></div>
+    <div class="cat-item"><span class="cat-label">見つからない <small>not-found</small></span><span class="rev-kind">見つからない</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>経路 <span class="cat-hint">3 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">画面 <small>manual</small></span><span class="rev-src">Manual</span></div>
+    <div class="cat-item"><span class="cat-label">キュー・台帳同期 <small>queue</small></span><span class="rev-src">Queue</span></div>
+    <div class="cat-item"><span class="cat-label">定期実行 <small>cron</small></span><span class="rev-src">Schedule</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>配信元 <span class="cat-hint">5 種</span></h2>
+  <div class="cat-row">
+    <div class="cat-item"><span class="cat-label">Prime Video</span><span class="rev-prov rev-p-amazon">Prime Video</span></div>
+    <div class="cat-item"><span class="cat-label">Hulu</span><span class="rev-prov rev-p-hulu">Hulu</span></div>
+    <div class="cat-item"><span class="cat-label">Crunchyroll</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item"><span class="cat-label">ABEMA</span><span class="rev-prov rev-p-abema">ABEMA</span></div>
+    <div class="cat-item"><span class="cat-label">Netflix</span><span class="rev-prov rev-p-netflix">Netflix</span></div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>日時の表記 <span class="cat-hint">時刻 + 日付を 2 段で</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w220"><span class="cat-label">今日</span><span class="rev-ts">12:04:31<small>今日</small></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">昨日</span><span class="rev-ts">23:05:51<small>昨日</small></span></div>
+    <div class="cat-item cat-w220"><span class="cat-label">それ以前</span><span class="rev-ts">04:18:09<small>9/14</small></span></div>
+  </div>
+  <p class="cat-note">秒まで出す。録画イベントは「送った録画指示がキュー・台帳の同期で反映されたか」を突き合わせるためのもので、分単位では並び順の意味が読めない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>0 件のとき</h2>
+  <div class="cat-item cat-full is-key">
+    <div class="rev-empty">この期間の録画イベントはありません</div>
+  </div>
+</section>
+
+<section class="cat-sec">
+  <h2>読み込み中 <span class="cat-hint">3 行分のスケルトン</span></h2>
+  <div class="cat-item cat-full">
+    <div class="rev-box">
+      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
+      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
+      <div class="rev-skel"><span class="sk sk-ts"></span><span class="sk sk-t"></span><span class="sk sk-k"></span><span class="sk sk-s"></span><span class="sk sk-n"></span><span class="sk sk-n"></span><span class="sk sk-r"></span></div>
+    </div>
+  </div>
+</section>
