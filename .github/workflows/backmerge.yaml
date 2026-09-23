@@ -1,14 +1,41 @@
 name: Back-merge
 
-# リリース (master 宛て PR) がマージされたら develop を master へ fast-forward する。
+# リリース (master 宛て PR) の内容を develop へ fast-forward で追従させる。
 # 実体は共有の再利用ワークフロー: https://github.com/qtmleap/actions
 #
-# workflow_dispatch は手動リカバリ用。fast-forward できない場合は警告を出して
+# ## なぜ pull_request: closed ではなく workflow_run なのか
+#
+# 以前は「master 宛て PR がマージされたら」で起動していたが、develop に必須ステータス
+# チェックが掛かっていると **必ず競合して失敗する**。PR クローズと同時に起動するため、
+# その瞬間 master の CI はまだ走り始めたばかりで、
+#
+#   remote: error: GH006: Protected branch update failed for refs/heads/develop.
+#   remote: - 6 of 6 required status checks are in progress.
+#
+# で push が弾かれる。develop へ push される SHA は master の HEAD であり、
+# そのチェックが緑になるのは CI 完了後なので、起動が早すぎるだけの問題だった。
+#
+# そこで **master の CI が成功し終わった時点** を起動契機にする。この時点なら
+# master HEAD のチェックは 6/6 緑なので、develop 側の必須チェックを満たした状態で
+# push できる。develop の保護 (必須チェック / enforce_admins / force push 禁止) は
+# 一切緩めずに済む。
+#
+# なお `required_pull_request_reviews` は別途外してある。個人リポジトリでは
+# github-actions[bot] を bypass に入れられず (classic も ruleset も同じ)、
+# 「PR 経由必須」が掛かっている限り何をしても push できないため。
+#
+# ## 共有ワークフロー側の挙動
+#
+# `pull_request` 以外のトリガから呼ばれた場合は素通しするので、`workflow_run` でも
+# `workflow_dispatch` でもそのまま動く。fast-forward できない場合は警告を出して
 # 何もしないため、いつ叩いても安全。
+#
+# workflow_dispatch は手動リカバリ用に残してある。
 on:
-  pull_request:
+  workflow_run:
+    workflows: ["Continuous Integration"]
     branches: [master]
-    types: [closed]
+    types: [completed]
   workflow_dispatch:
 
 # 再利用ワークフローは呼び出し元より広い権限を持てないため、ここで宣言する。
@@ -17,5 +44,8 @@ permissions:
 
 jobs:
   backmerge:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    # CI が失敗・キャンセルされた master を develop に流さない。
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     uses: qtmleap/actions/.github/workflows/backmerge.yaml@v1
