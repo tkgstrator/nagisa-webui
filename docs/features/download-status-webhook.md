@@ -1,5 +1,19 @@
 # Webhook Specification
 
+> **廃止 (2026-09-23)**: この仕様は**廃止**されました。本番の nagisa コンテナには
+> `TRACKER_URL` / `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET` がいずれも設定されておらず
+> (`compose.yaml` に `environment:` ブロック自体が無い)、この webhook は実装以来 1 件も
+> 送信されていません。
+>
+> 録画状態の同期は **Workers → nagisa の pull 一方向**に統一します。
+> Workers → nagisa は既に Cloudflare Access の Service Auth で繋がっているため、
+> 逆方向の認証経路を維持する理由がありません。
+>
+> - Workers 側の設計: [`recording-sync.md`](./recording-sync.md)
+> - nagisa 側の要求仕様: [`nagisa-library-api.md`](./nagisa-library-api.md)
+>
+> 以下は撤去対象コードの参照用に残してあります。
+
 Nagisa sends per-episode status webhooks to [Nagisa WebUI](https://github.com/qtmleap/anime-tracker) as episodes progress through the download pipeline. This document is the authoritative reference for the webhook contract between Nagisa (sender) and Nagisa WebUI (receiver).
 
 ## Overview

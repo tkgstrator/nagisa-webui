@@ -7,6 +7,26 @@
 
 変更は Phase A → B → C の順に依存関係があります。各 Phase の Workers 側の実装と並行して進めることができます。
 
+> **注記 (2026-09-23)**: Phase A〜C は nagisa 側で実装済み (`nagisa/server/webhook.py`, `tasks/common.py`)。
+> ただし当初の指示にあった環境変数名 `WORKERS_URL` は実装では **`TRACKER_URL`** になっているため、
+> このドキュメント中の記述を訂正済みです。
+>
+> **Phase B (Webhook) は廃止しました。** 本番 nagisa コンテナの `printenv` に
+> `TRACKER_URL` / `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET` がいずれも無く
+> (`compose.yaml` に `environment:` ブロック自体が無い)、`send_webhook` は
+> `if not webhook_enabled(): return` で**ログも出さず**終了するため、この webhook は
+> 実装以来 1 件も送信されていません。環境変数を足して復活させるのではなく、
+> Workers → nagisa は既に Cloudflare Access の Service Auth で繋がっているので、
+> **逆向きの経路を作らず pull 一方向に統一**します。以下 Phase B の節は撤去対象の参照用です。
+>
+> **Phase A (非同期化) と Phase C (エピソード単位指定) は引き続き有効**です。
+> 特に Phase A の 202 レスポンスに含まれる `job_id` は、新方式で Workers 側が
+> `Episode.recordJobId` として保存し、キュースナップショットとの突合に使う中心的な値になります。
+>
+> 新しい設計:
+> - Workers 側: [`recording-sync.md`](./recording-sync.md)
+> - nagisa 側の要求仕様: [`nagisa-library-api.md`](./nagisa-library-api.md)
+
 ---
 
 ## 背景と全体像
@@ -122,7 +142,10 @@ HTTP 500 Internal Server Error
 
 ---
 
-## Phase B: Webhook によるステータス通知
+## Phase B: Webhook によるステータス通知 (廃止)
+
+> **廃止 (2026-09-23)**: 以下は実装済みだが本番では一度も動いていない。撤去対象。
+> 代替は `nagisa-library-api.md` の R5 (`GET /api/queue/snapshot`) と R1〜R3 (ライブラリ API)。
 
 ### 概要
 
@@ -193,7 +216,7 @@ BullMQ のイベントリスナーを使って以下の 3 つのタイミング�
 import requests
 import os
 
-WORKERS_URL = os.environ["WORKERS_URL"]  # e.g. "https://anime-tracker.tkgstrator.work"
+TRACKER_URL = os.environ["TRACKER_URL"]  # e.g. "https://anime-tracker.tkgstrator.work"
 CF_ACCESS_CLIENT_ID = os.environ["CF_ACCESS_CLIENT_ID"]
 CF_ACCESS_CLIENT_SECRET = os.environ["CF_ACCESS_CLIENT_SECRET"]
 
@@ -210,7 +233,7 @@ def send_webhook(job_data: dict, status: str, error: str | None = None):
 
     try:
         resp = requests.post(
-            f"{WORKERS_URL}/api/webhooks/record-status",
+            f"{TRACKER_URL}/api/webhooks/record-status",
             json=payload,
             headers={
                 "Content-Type": "application/json",
@@ -306,11 +329,14 @@ job = await queue.add("download", {
 
 ## 環境変数まとめ
 
-Phase B で以下の環境変数を追加する:
+> **廃止 (2026-09-23)**: Phase B の廃止に伴い、以下の 3 変数は**追加しない**。
+> nagisa は Workers の URL も資格情報も知らなくてよい。
+
+~~Phase B で以下の環境変数を追加する:~~
 
 | 変数名 | 説明 | 例 |
 |--------|------|-----|
-| `WORKERS_URL` | Workers のベース URL（Webhook 送信先） | `https://anime-tracker.tkgstrator.work` |
+| `TRACKER_URL` | Workers のベース URL（Webhook 送信先） | `https://anime-tracker.tkgstrator.work` |
 | `CF_ACCESS_CLIENT_ID` | CF-Access サービストークンの Client ID | Cloudflare ダッシュボードで発行 |
 | `CF_ACCESS_CLIENT_SECRET` | CF-Access サービストークンの Client Secret | Cloudflare ダッシュボードで発行 |
 
@@ -324,12 +350,11 @@ Phase B で以下の環境変数を追加する:
 - [ ] ダウンロード処理が BullMQ のワーカーでバックグラウンド実行されることを確認する
 - [ ] 作品が見つからない場合に 404 を返すことを確認する
 
-### Phase B: Webhook
-- [ ] 環境変数 `WORKERS_URL`、`CF_ACCESS_CLIENT_ID`、`CF_ACCESS_CLIENT_SECRET` を追加する
-- [ ] `send_webhook()` ヘルパー関数を実装する
-- [ ] BullMQ のイベントリスナー `on_active` / `on_completed` / `on_failed` を登録する
-- [ ] 各イベントで正しい `status` の Webhook が送信されることを確認する
-- [ ] Webhook 送信失敗がダウンロード処理をブロックしないことを確認する
+### Phase B: Webhook (廃止 — 撤去作業に読み替え)
+- [x] ~~環境変数 `TRACKER_URL`、`CF_ACCESS_CLIENT_ID`、`CF_ACCESS_CLIENT_SECRET` を追加する~~ → **追加しない**
+- [ ] `nagisa/server/webhook.py` を削除する (エラーコード定数は `errors.py` へ移す)
+- [ ] `tasks/common.py` の `notify_start` / `notify_complete` 呼び出しを削除する
+- [ ] Workers 側の `POST /api/webhooks/record-status` を削除する
 
 ### Phase C: エピソード単位
 - [ ] `POST /api/queues` のリクエストボディで `episode_ids`（オプショナル配列）を受け取れるようにする
