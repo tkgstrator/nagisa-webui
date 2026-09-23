@@ -24,3 +24,5 @@ adopted:
   home-tabs: fable
   settings: astra
   recording-events: fable
+  not-found: fable
+  error-state: fable

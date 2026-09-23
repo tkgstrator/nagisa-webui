@@ -644,7 +644,7 @@ pull 方式では nagisa への fetch 失敗が必ず Workers 側の例外とし
 `bootstrap` の発動理由（`410` / `409` / 初回）、`aborted: mass_delete`、
 nagisa への HTTP ステータス、lease を取れずスキップした回数。
 
-### 7-8. 実装時に足した判断（`src/lib/library-sync.ts`）
+### 7-8. 実装時に足した判断（`src/lib/library-sync/`）
 
 - **同じエピソードを指す台帳行が複数あるときの勝者は mtime で決める**（同着は
   `recording_id` の辞書順）。録り直してパスが変わった、別シーズン表記で二重に

@@ -253,6 +253,46 @@ screens:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/settings
 
+  - id: not-found
+    name: 作品が見つからない
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/not-found-fable.html
+          astra:
+            type: html
+            path: mocks/not-found-astra.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/not-found-fable.html
+          astra:
+            type: html
+            path: mocks/not-found-astra.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb
+
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。
   - id: app-header
@@ -882,6 +922,75 @@ screens:
           astra:
             type: html
             path: mocks/components/home-tabs-astra.html
+
+  - id: error-state
+    name: エラー表示
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/error-state-fable.html
+          astra:
+            type: html
+            path: mocks/components/error-state-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/error-state-fable.html
+          astra:
+            type: html
+            path: mocks/components/error-state-astra.html
+
+  - id: server-status
+    name: サーバーステータス
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/server-status-fable.html
+          astra:
+            type: html
+            path: mocks/components/server-status-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/server-status-fable.html
+          astra:
+            type: html
+            path: mocks/components/server-status-astra.html
+
   - id: recording-events
     name: 「同期ログ」録画イベント一覧
     category: コンポーネント
