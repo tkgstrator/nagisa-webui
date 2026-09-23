@@ -1,5 +1,6 @@
 /* ---------- recording events (dense table) ---------- */
-.rev-box { border-left: 3px solid var(--primary); padding-left: 0; }
+/* 左のアクセントバーは行 (.rev-row) だけが持つ。箱側 (.rev-box) には出さない。
+   両方に border-left を持たせると hover / is-err / is-warn で二重線になるため。 */
 
 .rev-cols,
 .rev-row,
