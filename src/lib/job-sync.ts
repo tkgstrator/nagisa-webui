@@ -44,7 +44,8 @@ const MAX_FAILED_PER_RUN = 100
  *
  * クエリ数の見積りはこの数で決まる: heartbeat が `ceil(N/90)`、
  * pending→downloading と stale がそれぞれ同じく `ceil(N/90)`、failed が最大 100。
- * N=900 なら 10 + 10 + 10 + 100 ≒ 130 文で、D1 の 1000 に十分収まる。
+ * N=900 なら 10 + 10 + 10 + 100 ≒ 130 文で、D1 の 1000 に十分収まる
+ * (起点の無い行への埋め戻しが最悪 +10。通常は 0 文)。
  *
  * **キューの件数ではなくローカルの件数で測る**ことが肝心。nagisa 側に失敗が
  * 数万件積まれていても、こちらが追跡している行が 1 件ならクエリも 1 件で済む。
@@ -86,11 +87,20 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
     // 重複は Set で潰す。
     const rows = await prisma.episode.findMany({
       where: { recordStatus: { in: [...IN_FLIGHT] }, recordJobId: { not: null } },
-      select: { recordJobId: true },
+      select: { recordJobId: true, recordSyncedAt: true },
       take: MAX_TRACKED
     })
     const tracked = new Set<string>()
-    for (const r of rows) if (r.recordJobId) tracked.add(r.recordJobId)
+    // 猶予の起点を持たない行。下の stale 判定は `lt` なので NULL を拾わず、
+    // 放っておくと **永久に落ちない** 行になる (キューにも居ないので heartbeat も
+    // 当たらない)。record-intent は job id と同時に必ず入れるので、ここに来るのは
+    // 手で書き換えた行や、この機能より前から残っている行。
+    const undated = new Set<string>()
+    for (const r of rows) {
+      if (!r.recordJobId) continue
+      tracked.add(r.recordJobId)
+      if (r.recordSyncedAt === null) undated.add(r.recordJobId)
+    }
     // 上限で打ち切ったかどうか。残りは次 tick が拾う (stale 判定は読めた行だけを
     // 対象にするので、打ち切った回でも判定そのものは有効)。
     if (rows.length >= MAX_TRACKED) logger.warn({ action: 'job-sync-tracked-truncated', limit: MAX_TRACKED })
@@ -182,10 +192,25 @@ export async function syncJobs(prisma: Prisma, env: Partial<NagisaEnv>): Promise
     // 肯定形なら読めた行だけが対象なので、打ち切った回でもそのまま落とせる。
     //
     // `recordSyncedAt` が null の行は猶予を測れないので対象外 (`lt` は NULL を
-    // 拾わない)。録画指示を出す経路では pending と同時に recordSyncedAt を必ず入れること。
+    // 拾わない)。録画指示を出す経路では pending と同時に recordSyncedAt を必ず入れること
+    // — それでも null で来た行はこの直前で起点だけ入れ、次の tick 以降に回す。
     const liveSet = new Set(liveIds)
     const staleIds = [...tracked].filter((id) => !liveSet.has(id))
     const cutoff = new Date(now.getTime() - STALE_AFTER_MS)
+
+    // 起点の無い行には **まず起点を入れる**。この tick では落ちず、キューに戻って
+    // こなければ 30 分後の tick で落ちる。いきなり stale にしないのは、起点が無い
+    // ことと無音が続いていることは別だから (キューに入る前の一瞬かもしれない)。
+    const undatedIds = staleIds.filter((id) => undated.has(id))
+    if (undatedIds.length > 0) {
+      logger.warn({ action: 'job-sync-undated-tracked', jobs: undatedIds.length })
+      for (const part of chunk(undatedIds, IN_CHUNK)) {
+        await prisma.episode.updateMany({
+          where: { recordStatus: { in: [...IN_FLIGHT] }, recordJobId: { in: part }, recordSyncedAt: null },
+          data: { recordSyncedAt: now }
+        })
+      }
+    }
     for (const part of chunk(staleIds, IN_CHUNK)) {
       const gone = await prisma.episode.updateMany({
         where: {
