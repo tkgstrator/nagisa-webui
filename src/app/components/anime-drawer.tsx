@@ -87,14 +87,24 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
       }
       toast.success('録画を開始しました')
     },
-    onError: () => toast.error('録画リクエストに失敗しました')
+    onError: () => toast.error('録画リクエストに失敗しました'),
+    // 失敗しても各話の録画状態は書き換わっているので読み直す
+    onSettled: invalidateRelated
   })
 
   const refreshAnimeMutation = useMutation({
     mutationFn: () => api.refreshAnime(undefined, { params: { id: animeId } }),
-    onSuccess: () => {
-      toast.success('タイトル情報を更新しました')
+    onSuccess: (data) => {
+      // 配信元の更新は済んでいる。nagisa との同期だけが落ちた場合は、そうと分かるように出す
+      if (data.sync.jobs.error !== null || data.sync.library.error !== null) {
+        toast.warning('タイトル情報は更新しましたが、録画状態の同期に失敗しました', {
+          description: data.sync.jobs.error ?? data.sync.library.error ?? undefined
+        })
+      } else {
+        toast.success('タイトル情報と録画状態を更新しました')
+      }
       invalidateRelated()
+      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
     },
     onError: (error) => toast.error(getApiErrorMessage(error, '情報の更新に失敗しました'))
   })
