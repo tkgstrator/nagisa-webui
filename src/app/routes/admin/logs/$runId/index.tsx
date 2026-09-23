@@ -7,6 +7,7 @@ import { StatTile } from '@/app/components/stat-tile'
 import { syncRunQueryOptions } from '@/app/lib/query-options'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
 import type { SyncRunSchema } from '@/schemas/log.dto'
+import { EntriesTable } from '../-components/entries-table'
 import { RunStatusBadge, RunsTable } from '../-components/runs-table'
 import { formatDuration, runKindLabel, runStatusAccent, triggerLabel } from '../-lib/format'
 
@@ -128,6 +129,15 @@ function SyncRunDetailPage() {
           <p className='text-sm text-muted-foreground'>この実行から投入されたバッチはまだありません</p>
         ) : (
           <RunsTable runs={data.children} />
+        )}
+      </section>
+
+      <section aria-label='この実行のログ' className='flex flex-col gap-2'>
+        <h2 className='text-sm font-semibold'>ログ ({data.entries.length.toLocaleString('ja-JP')} 件)</h2>
+        {data.entries.length === 0 ? (
+          <p className='text-sm text-muted-foreground'>この実行のログは残っていません</p>
+        ) : (
+          <EntriesTable entries={data.entries} />
         )}
       </section>
     </PageContainer>
