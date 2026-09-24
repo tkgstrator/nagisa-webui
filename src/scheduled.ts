@@ -3,10 +3,10 @@ import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
 import { syncJobs } from './lib/job-sync'
 import { syncLibrary } from './lib/library-sync'
-import { createStore, flushLogs, runWithCapture } from './lib/log-capture'
 import { collectLogGarbage } from './lib/log-gc'
 import { getAppLogger } from './lib/logger'
 import { sendMessage } from './lib/queue-routing'
+import { runWithContext } from './lib/run-context'
 import { finishRun, type RunStatus, startRun } from './lib/sync-run'
 import type { Message } from './schemas/message.dto'
 
@@ -109,9 +109,6 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
   }
 
   const runId = await startRun(prisma, { kind: 'cron', trigger: event.cron })
-  // startRun のあとに store を作る。以降この run の中で出たログは
-  // AsyncLocalStorage 経由で runId 付きで溜まる (src/lib/log-capture.ts)。
-  const store = createStore(runId)
 
   let enqueued = 0
   let status: RunStatus = 'success'
@@ -119,7 +116,8 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
   let errorMessage: string | undefined
 
   try {
-    await runWithCapture(store, async () => {
+    // この中で出たログには properties.runId が付く (src/lib/run-context.ts)
+    await runWithContext(runId, async () => {
       try {
         switch (event.cron) {
           case '0 */1 * * *':
@@ -196,14 +194,10 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
       }
     })
   } finally {
-    // flushLogs → finishRun → $disconnect の順を守る。src/lib/db.ts が
-    // クライアントを使い回すので、disconnect 後の書き込みは失敗する。
-    const droppedLogs = await flushLogs(prisma, store)
     await finishRun(prisma, runId, status, {
       total: enqueued,
       succeeded: enqueued,
       failed,
-      droppedLogs,
       errorMessage
     })
     await prisma.$disconnect()

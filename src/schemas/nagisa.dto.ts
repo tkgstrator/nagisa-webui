@@ -95,9 +95,10 @@ const NagisaJobProgressSchema = z.object({
   total: z.number().int()
 })
 
+// episodes が null のジョブはシーズン全体が対象 (話を絞らずに積んだもの)。
 const NagisaStatusJobSeasonSchema = z.object({
   season_number: z.number().int(),
-  episodes: z.array(z.number().int())
+  episodes: z.array(z.number().int()).nullable()
 })
 
 export const NagisaStatusJobSchema = z.object({

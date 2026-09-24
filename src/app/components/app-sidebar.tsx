@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useIntlayer } from 'react-intlayer'
 import { GlobalSearchHotkey } from '@/app/components/global-search-bar'
 import { ServerStatusDialog } from '@/app/components/server-status-dialog'
 import { nagisaStatusAtom } from '@/app/lib/atoms'
@@ -71,23 +72,37 @@ const RecordingsCount = () => {
   )
 }
 
-/** サイドバー最下段の疎通表示。行そのものが詳細ダイアログのトリガーを兼ねる。 */
+/**
+ * サイドバー最下段の疎通表示。行そのものが詳細ダイアログのトリガーを兼ねる。
+ * 行の位置と幅は状態によらず固定で、ドットの色と右端の文言だけが変わる。
+ */
 const ServerStatusLine = () => {
   const { data: status, isPending, isError } = useAtomValue(nagisaStatusAtom)
-  const isDown = isError || !status
+  const content = useIntlayer('app-sidebar')
+  const isDown = !isPending && (isError || !status)
+  const failed = status?.queue?.failed.count ?? 0
+  const active = status?.queue?.active.count ?? 0
 
-  const dotClass = isPending ? 'animate-pulse bg-warning' : isDown ? 'bg-destructive' : 'animate-pulse bg-success'
-  const label = isPending ? '接続を確認中' : isDown ? 'サーバー停止中' : 'サーバー稼働中'
+  const [dotClass, right] = isPending
+    ? ['animate-pulse bg-muted-foreground', content.status.connecting.value]
+    : isDown
+      ? ['bg-destructive', content.status.offline.value]
+      : failed > 0
+        ? ['bg-destructive', content.status.failed({ count: failed }).value]
+        : active > 0
+          ? ['animate-pulse bg-info', content.status.active({ count: active }).value]
+          : ['bg-success', `v${status?.version}`]
 
   return (
     <ServerStatusDialog
       trigger={
         <button
           type='button'
-          className={`mt-auto flex items-center gap-1.5 rounded-md px-2.5 text-left text-[11px] transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none max-sm:hidden ${isDown ? 'text-destructive' : 'text-muted-foreground'}`}
+          className='-mx-3.5 -mb-4 mt-auto flex items-center gap-[9px] border-t border-border bg-sidebar px-3 py-2.5 text-left text-xs transition-colors hover:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none max-sm:hidden'
         >
           <span aria-hidden='true' className={`size-[7px] shrink-0 rounded-full ${dotClass}`} />
-          {label}
+          <span className='font-semibold'>Nagisa</span>
+          <span className='ml-auto text-[11px] text-muted-foreground tabular-nums'>{right}</span>
         </button>
       }
     />
@@ -96,6 +111,7 @@ const ServerStatusLine = () => {
 
 export const AppSidebar = () => {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const content = useIntlayer('app-sidebar')
   /** 作品詳細はアニメ一覧配下として扱う。パンくずの「アニメ一覧 / 作品名」と揃える。 */
   const browseActive = pathname.startsWith('/anime/')
 
@@ -125,10 +141,10 @@ export const AppSidebar = () => {
         </Link>
       </div>
 
-      <nav className='flex flex-col gap-0.5 max-sm:ml-auto max-sm:flex-row' aria-label='メイン'>
+      <nav className='flex flex-col gap-0.5 max-sm:ml-auto max-sm:flex-row' aria-label={content.navAriaLabel.value}>
         <Link to='/' className={navLinkClass} activeOptions={{ exact: true }}>
           <HomeIcon />
-          <span className='max-sm:sr-only'>ホーム</span>
+          <span className='max-sm:sr-only'>{content.nav.home}</span>
         </Link>
         <Link
           to='/browse'
@@ -136,16 +152,16 @@ export const AppSidebar = () => {
           aria-current={browseActive ? 'page' : undefined}
         >
           <BrowseIcon />
-          <span className='max-sm:sr-only'>アニメ一覧</span>
+          <span className='max-sm:sr-only'>{content.nav.browse}</span>
         </Link>
         <Link to='/recordings' className={navLinkClass}>
           <RecordingsIcon />
-          <span className='max-sm:sr-only'>録画一覧</span>
+          <span className='max-sm:sr-only'>{content.nav.recordings}</span>
           <RecordingsCount />
         </Link>
         <Link to='/settings' className={navLinkClass}>
           <SettingsIcon />
-          <span className='max-sm:sr-only'>設定</span>
+          <span className='max-sm:sr-only'>{content.nav.settings}</span>
         </Link>
       </nav>
 

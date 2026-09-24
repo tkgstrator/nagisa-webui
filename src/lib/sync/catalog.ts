@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import type { ExpiringResponse, TitleListResponse } from '@/schemas/lambda.dto.ts'
 import type { PrismaClient } from '../../generated/prisma/client.ts'
+import { recordCatalogEvents } from '../catalog-event'
 import { getAppLogger } from '../logger'
 import { cleanTitle } from '../metadata/anilist'
 import { identifyTitlesViaD1 } from '../metadata/local-anilist'
@@ -118,7 +119,7 @@ export async function fetchTitleList(
       const t = batch[j]
       if (meta?.aniListId != null) {
         const nextEpisodeDate = parseFutureDate(t.nextEpisodeDate)
-        await prisma.anime.create({
+        const created = await prisma.anime.create({
           data: {
             id: animeUuid(providerName, t.contentId),
             provider: providerName,
@@ -142,6 +143,15 @@ export async function fetchTitleList(
           aniListId: meta.aniListId,
           nextEpisodeDate: nextEpisodeDate ? dayjs(nextEpisodeDate).toISOString() : null
         })
+        await recordCatalogEvents(prisma, [
+          {
+            animeId: created.id,
+            provider: providerName,
+            contentId: t.contentId,
+            title: meta.title,
+            kind: 'title-added'
+          }
+        ])
         identifiedContentIds.push(t.contentId)
       } else {
         await prisma.unidentifiedAnime.upsert({

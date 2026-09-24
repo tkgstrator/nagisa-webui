@@ -150,7 +150,7 @@ nagisa.openapi(
     }
   }),
   async (c) => {
-    const result = await enqueueRecording(createPrismaClient(c.env.DB), c.env, c.req.valid('json'))
+    const result = await enqueueRecording(createPrismaClient(c.env.DB), c.env, c.req.valid('json'), 'manual')
     if (!result.ok) return c.json({ error: result.error, status: result.status }, 502 as const)
     return c.json(result.data, 200)
   }
@@ -177,11 +177,16 @@ nagisa.openapi(
 
     // 状態の内訳は groupBy 1 文。**0 件の状態も必ず埋める**こと: 欠けたまま返すと
     // 「その状態が 0 件」と「集計が取れていない」が WebUI から区別できない。
-    const [state, grouped, tracked] = await Promise.all([
+    const [state, grouped, tracked, lastJobSync] = await Promise.all([
       prisma.syncState.findUnique({ where: { key: 'library' } }),
       prisma.episode.groupBy({ by: ['recordStatus'], _count: { _all: true } }),
       prisma.episode.count({
         where: { recordStatus: { in: ['pending', 'downloading'] }, recordJobId: { not: null } }
+      }),
+      prisma.syncRun.findFirst({
+        where: { kind: 'cron', trigger: 'job-sync', status: 'success' },
+        orderBy: { startedAt: 'desc' },
+        select: { startedAt: true }
       })
     ])
 
@@ -200,6 +205,7 @@ nagisa.openapi(
         snapshotCursor: state?.snapshotCursor ?? null,
         snapshotStartedAt: iso(state?.snapshotStartedAt),
         lastSucceededAt: iso(state?.lastSucceededAt),
+        lastJobSyncAt: iso(lastJobSync?.startedAt),
         leaseUntil: iso(state?.leaseUntil),
         leaseOwner: state?.leaseOwner ?? null,
         counts,
