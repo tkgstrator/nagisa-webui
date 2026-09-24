@@ -212,7 +212,6 @@ screens:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/
 
-  # 実装にはまだ /settings ルートが無いため、この画面だけ actual を持たない。
   - id: settings
     name: 設定
     category: ページ
@@ -292,6 +291,143 @@ screens:
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb
+
+  # 同期ログ (/admin/logs) はタブごとに中身が別物なので、タブ単位で画面として比較する。
+  - id: logs
+    name: 同期ログ (実行履歴)
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-runs-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-runs-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs
+
+  - id: logs-entries
+    name: 同期ログ (生ログ)
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-entries-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs?tab=entries
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-entries-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs?tab=entries
+
+  - id: logs-recordings
+    name: 同期ログ (録画)
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-recordings-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs?tab=recordings
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-recordings-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs?tab=recordings
+
+  - id: logs-catalog
+    name: 同期ログ (カタログ)
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-catalog-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs?tab=catalog
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          final:
+            type: html
+            path: mocks/logs-catalog-final.html
+        actual:
+          type: url
+          url: http://nagisa-webui_devcontainer-app-1:14755/admin/logs?tab=catalog
 
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。
@@ -1024,3 +1160,36 @@ screens:
           astra:
             type: html
             path: mocks/components/recording-events-astra.html
+  - id: catalog-events
+    name: 「同期ログ」カタログ変化一覧
+    category: コンポーネント
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 1
+        orientations: [landscape]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/catalog-events-fable.html
+          astra:
+            type: html
+            path: mocks/components/catalog-events-astra.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          fable:
+            type: html
+            path: mocks/components/catalog-events-fable.html
+          astra:
+            type: html
+            path: mocks/components/catalog-events-astra.html

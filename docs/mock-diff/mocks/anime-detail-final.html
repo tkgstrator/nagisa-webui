@@ -392,8 +392,15 @@ svg { display: block; flex: none; }
 .btn-busy svg { animation: spin 1s linear infinite; }
 .btn-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
 .btn-icon { width: 34px; padding: 0; }
-/* 録画済みは取り消せない (録画を削除する API を持たない)。押せないことを見た目で示す。 */
-.btn[disabled] { pointer-events: none; }
+/* 録画予約トグル。予約中は塗り、hover で「予約を解除」に語を差し替える (min-width で幅を固定して動かさない)。
+   未予約のときは aria-pressed="false" で枠だけのボタンになり、ラベルは「録画予約」。 */
+.btn-sched { min-width: 128px; }
+.btn-sched[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+.btn-sched[aria-pressed="true"]:hover { background: color-mix(in oklch, var(--destructive) 10%, var(--background)); color: var(--destructive); border-color: color-mix(in oklch, var(--destructive) 40%, transparent); }
+.btn-sched .lbl-hover { display: none; }
+.btn-sched[aria-pressed="true"]:hover .lbl { display: none; }
+.btn-sched[aria-pressed="true"]:hover .lbl-hover { display: inline; }
+.btn-rec-now svg { color: var(--destructive); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 録画の進捗を 1 本の帯で示していた .progress-row / .strip は、episode-list (fable) の
@@ -417,7 +424,7 @@ svg { display: block; flex: none; }
 .ep-list { display: flex; flex-direction: column; }
 .ep {
   display: grid;
-  grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 104px;
+  grid-template-columns: 96px minmax(0, 1fr) 92px;
   gap: 14px; align-items: center;
   padding: 12px;
   border-left: 3px solid var(--border);
@@ -430,7 +437,10 @@ svg { display: block; flex: none; }
 .ep[data-s="fail"] { border-left-color: var(--destructive); }
 .ep[data-s="future"] { border-left-color: transparent; color: var(--muted-foreground); }
 .ep[data-s="future"] .thumb { opacity: .55; }
-.ep-no { font-size: 14px; font-weight: 600; color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; }
+/* 話数はタイトル行の先頭に置く。別列にするとサムネの中央に揃い、2 行あるタイトル/メタの間に浮いてずれるため。
+   日付・尺の列も同じ理由でメタ行に畳んだ (尺はサムネの角に既に出ている)。
+   話数の幅を px で固定し (ch は 14px と 12px で幅が変わる)、メタ行を同じだけ字下げして 2 行の左端を揃える。 */
+.ep-no { display: inline-block; width: 22px; margin-right: 8px; font-weight: 600; color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; }
 
 .thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: linear-gradient(135deg, oklch(0.62 0.12 var(--h, 265)), oklch(0.38 0.12 calc(var(--h, 265) + 40))); color: oklch(0.98 0.01 var(--h, 265)); transition: transform .2s; }
 .ep:hover .thumb { transform: scale(1.06); }
@@ -440,34 +450,25 @@ svg { display: block; flex: none; }
 
 .ep-main { min-width: 0; }
 .ep-title { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ep-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted-foreground); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.ep-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 12px; color: var(--muted-foreground); margin-top: 2px; padding-left: 30px; font-variant-numeric: tabular-nums; }
 .flag { display: inline-flex; align-items: center; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; }
-.ep-date, .ep-dur { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; }
 .ep-msg { font-size: 12px; color: var(--destructive); margin-top: 2px; }
 .ep-msg-info { color: var(--info); }
 
-/* 録画状態のトグル。幅を固定して語が動かないようにする (最長の語 + アイコンぶんだけ取る) */
-.rec { display: inline-flex; align-items: center; gap: 7px; width: 104px; height: 32px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 600; background: var(--background); transition: background .12s, border-color .12s; white-space: nowrap; }
-.rec:hover { background: var(--secondary); }
-.rec:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
-.rec .ico { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; flex: none; }
-.rec .ico svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
-.rec[data-s="todo"] { color: var(--foreground); }
-.rec[data-s="todo"] .ico { border: 1.5px solid var(--muted-foreground); }
-.rec[data-s="done"] { color: var(--success); border-color: color-mix(in oklch, var(--success) 40%, transparent); background: color-mix(in oklch, var(--success) 10%, transparent); }
-.rec[data-s="done"] .ico { background: var(--success); color: var(--success-foreground); }
-/* 録画済みは取り消す手段がない (録画を削除する API を持たない) ので、押せる見た目にしない。 */
-.rec[data-s="done"] { cursor: default; }
-.rec[data-s="rec"] { color: var(--info); border-color: color-mix(in oklch, var(--info) 40%, transparent); background: color-mix(in oklch, var(--info) 10%, transparent); }
-.rec[data-s="rec"] .ico { border: 2px solid color-mix(in oklch, var(--info) 30%, transparent); border-top-color: var(--info); animation: spin .9s linear infinite; }
-.rec[data-s="rec"] .pct { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 500; }
-.rec[data-s="fail"] { color: var(--destructive); border-color: color-mix(in oklch, var(--destructive) 40%, transparent); background: color-mix(in oklch, var(--destructive) 8%, transparent); }
-.rec[data-s="fail"] .ico { background: var(--destructive); color: var(--destructive-foreground); }
-.rec[data-s="future"] { color: var(--muted-foreground); border-style: dashed; cursor: default; background: transparent; }
-.rec[data-s="future"] .ico { border: 1.5px dashed var(--muted-foreground); }
-.rec .lbl-hover { display: none; }
-.rec[data-s="fail"]:hover .lbl { display: none; }
-.rec[data-s="fail"]:hover .lbl-hover { display: inline; }
+/* 録画状態の表示。1 話だけ録ることはまず無いので操作は持たせない (手動の録画はヒーローの「今すぐ録画」)。
+   ボタンに見えないよう枠を付けず、録画済み / 録画中 だけ色を付けてそれ以外は控えめな文字にする。 */
+.state { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: var(--muted-foreground); }
+.state .ico { width: 14px; height: 14px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.state .ico svg { width: 9px; height: 9px; fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.state[data-s="todo"] { font-weight: 400; }
+.state[data-s="todo"] .ico { border: 1.5px solid color-mix(in oklch, var(--muted-foreground) 45%, transparent); }
+.state[data-s="done"] { color: var(--success); }
+.state[data-s="done"] .ico { background: var(--success); color: var(--success-foreground); }
+.state[data-s="rec"] { color: var(--info); }
+.state[data-s="rec"] .ico { border: 2px solid color-mix(in oklch, var(--info) 30%, transparent); border-top-color: var(--info); animation: spin .9s linear infinite; }
+.state[data-s="fail"] { color: var(--destructive); }
+.state[data-s="fail"] .ico { background: var(--destructive); }
+.state[data-s="future"] .ico { border: 1.5px dashed var(--muted-foreground); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 話数の帯 */
@@ -494,10 +495,11 @@ svg { display: block; flex: none; }
 .tab[aria-selected="true"] { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
 
 @media (max-width: 640px) {
-  .ep { grid-template-columns: 2.5ch 68px minmax(0, 1fr) auto; gap: 10px; padding: 8px; }
-  .ep-date, .ep-dur { display: none; }
-  .rec { width: 34px; padding: 0; justify-content: center; }
-  .rec .lbl, .rec .lbl-hover, .rec .pct { display: none; }
+  .ep { grid-template-columns: 68px minmax(0, 1fr) 14px; gap: 10px; padding: 8px; }
+  .ep-no { width: 18px; margin-right: 6px; }
+  .ep-meta { padding-left: 24px; }
+  /* 狭い画面では印だけ残し、語は読み上げ用に残す */
+  .state .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 }
 
 /* ---------- タブの件数と注記 ---------- */
@@ -521,8 +523,6 @@ svg { display: block; flex: none; }
 /* ---------- 一覧の脚 ---------- */
 .ep-foot { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 0; font-size: 12px; color: var(--muted-foreground); }
 .ep-foot .link { color: var(--primary); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
-/* 狭い画面でだけ出すメタ情報 */
-.ep-meta .m-mobile { display: none; }
 /* ---------- component: related-providers ---------- */
 /* ---------- other providers (list) ---------- */
 .rel-box { border-left: 3px solid var(--primary); padding: 2px 0 2px 0; }
@@ -596,6 +596,50 @@ svg { display: block; flex: none; }
   .ftr { padding: 0 16px; gap: 10px; }
   .ftr .r { gap: 12px; }
 }
+/* ---------- この作品のログ ---------- */
+/* 同期ログ画面 (recording-events / catalog-events) の行をこの作品に絞って載せる。
+   作品は自明なので「作品」列を落とし、配信元は同じ作品を複数の配信元で持つことがあるので残す。
+   直近の数件だけ出し、続きは同期ログ画面へ animeId 付きで渡す。 */
+.pg-main { display: flex; flex-direction: column; min-width: 0; }
+.log-sec { margin-top: 36px; display: flex; flex-direction: column; gap: 22px; }
+.log-block > .log-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.log-head h3 { font-size: 13px; font-weight: 700; }
+.log-head .n { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.log-head .spacer { flex: 1; }
+.log-cols, .log-row { display: grid; gap: 10px; align-items: center; }
+.log-rec { grid-template-columns: 74px 92px 76px 64px 44px 46px 48px minmax(0, 1fr); }
+.log-cat { grid-template-columns: 74px 92px 96px minmax(0, 1fr) 44px; }
+.log-cols { padding: 0 10px 6px 13px; font-size: 11px; color: var(--muted-foreground); border-bottom: 1px solid var(--border); }
+.log-cols .num, .log-row .num { text-align: right; }
+.log-row { padding: 7px 10px; border-left: 3px solid transparent; border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent); font-size: 12.5px; transition: background .12s; }
+.log-row:hover { background: var(--muted); border-left-color: var(--primary); }
+.log-row.is-err { border-left-color: var(--destructive); }
+.log-row.is-warn { border-left-color: var(--warning); }
+.log-row.is-title { border-left-color: var(--success); }
+.log-row.is-season { border-left-color: var(--info); }
+.log-ts { display: flex; flex-direction: column; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.log-ts small { font-size: 10.5px; color: var(--muted-foreground); }
+.log-kind { font-weight: 600; white-space: nowrap; }
+.log-src { color: var(--muted-foreground); }
+.log-row .num { font-variant-numeric: tabular-nums; }
+.log-dim { color: var(--muted-foreground); }
+.log-res { justify-self: start; height: 20px; padding: 0 7px; border-radius: 999px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; }
+.log-ok { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); }
+.log-ng { background: color-mix(in oklch, var(--destructive) 14%, transparent); color: var(--destructive); }
+.log-err { font-size: 11px; color: var(--destructive); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.log-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; min-width: 0; }
+.log-eps { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+.log-field { height: 18px; padding: 0 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; display: inline-flex; align-items: center; color: var(--muted-foreground); }
+@media (max-width: 640px) {
+  /* 日時 / 種別 / 話数 / 結果 だけ残す。エラー文は 2 行目に回す */
+  .log-rec { grid-template-columns: 62px minmax(0, 1fr) 28px 44px; }
+  .log-rec > :nth-child(2), .log-rec > :nth-child(4), .log-rec > :nth-child(6) { display: none; }
+  .log-rec .log-err { grid-column: 1 / -1; white-space: normal; }
+  .log-rec .log-err:empty { display: none; }
+  .log-cols.log-rec > :last-child { display: none; }
+  .log-cat { grid-template-columns: 62px minmax(0, 1fr) 28px; }
+  .log-cat > :nth-child(2), .log-cat > :nth-child(4) { display: none; }
+}
 /* ---------- 決定稿での調整 ---------- */
 /* 脇に置く作品情報。fable の .sched と同じ見た目だが、こちらは録画設定ではないので別名にする。 */
 .info { border-left: 3px solid var(--border); padding: 4px 12px; }
@@ -615,7 +659,7 @@ svg { display: block; flex: none; }
    keyframes 定義自体は実装側でそのまま使うので残してある。 */
 .side-status i,                    /* pulseDot: opacity/scale, 基底 = opacity 1 / scale 1 */
 .strip a[data-s="rec"],            /* stripe: background-position のみ (幅は flex:1 が持つ) */
-.rec[data-s="rec"] .ico,           /* spin: rotate のみ。基底 = rotate(0) */
+.state[data-s="rec"] .ico,         /* spin: rotate のみ。基底 = rotate(0) */
 .btn-busy svg {                    /* spin: rotate のみ */
   animation: none;
 }
@@ -670,12 +714,14 @@ svg { display: block; flex: none; }
             </div>
             <p class="id-syn">Unmanned combat drones, aka Juggernauts, are anything but unmanned. They’re piloted by the Eighty-Six—humans forced to be tools of war. Now given command of the Spearhead Squadron, Lena is seeing the humanity behind those who defend the republic.</p>
             <div class="id-actions">
-              <button class="btn" type="button" aria-pressed="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                録画を予約
+              <!-- 録画予約はトグル。予約中に押すと解除する。位置は保ったまま、hover でだけ「予約を解除」と意味を出す。 -->
+              <button class="btn btn-sched" type="button" aria-pressed="true" title="押すと録画予約を解除">
+                <svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>
+                <span class="lbl">録画予約中</span><span class="lbl-hover">予約を解除</span>
               </button>
-              <button class="btn" type="button" aria-pressed="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+              <!-- 未録画の話をまとめて nagisa に送る手動の録画開始。状態によらず常に押せる (既存ファイルは nagisa 側で飛ばされる)。 -->
+              <button class="btn btn-rec-now" type="button">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9"/></svg>
                 今すぐ録画
               </button>
               <button class="btn btn-refresh" type="button" title="AniList / プロバイダから再同期">
@@ -688,33 +734,34 @@ svg { display: block; flex: none; }
       </div>
 
       <div class="pg-cols">
+      <div class="pg-main">
       <section aria-labelledby="ep-heading">
         <h2 class="pg-sec-title ep-heading" id="ep-heading">エピソード</h2>
 
         <div class="tabs" role="tablist" aria-label="シーズン">
           <button class="tab" role="tab" aria-selected="true" type="button">86 EIGHTY-SIX <span class="tab-count">14</span></button>
           <span class="spacer"></span>
-          <span class="tab-note">自動録画は無効</span>
+          <span class="tab-note">新着エピソードを自動録画</span>
         </div>
 
         <!-- recording progress strip: 1 cell = 1 episode, click jumps to the row -->
         <div class="progress" aria-label="録画状況">
           <div class="strip" role="list">
-            <a href="#ep-1" data-s="todo" title="第1話 未録画"></a><a href="#ep-2" data-s="todo" title="第2話 未録画"></a><a href="#ep-3" data-s="todo" title="第3話 未録画"></a><a href="#ep-4" data-s="todo" title="第4話 未録画"></a><a href="#ep-5" data-s="todo" title="第5話 未録画"></a><a href="#ep-6" data-s="todo" title="第6話 未録画"></a><a href="#ep-7" data-s="todo" title="第7話 未録画"></a><a href="#ep-8" data-s="todo" title="第8話 未録画"></a><a href="#ep-9" data-s="todo" title="第9話 未録画"></a><a href="#ep-10" data-s="todo" title="第10話 未録画"></a><a href="#ep-11" data-s="todo" title="第11話 未録画"></a><a href="#ep-12" data-s="todo" title="第12話 未録画"></a><a href="#ep-22" data-s="todo" title="第22話 未録画"></a><a href="#ep-23" data-s="todo" title="第23話 未録画"></a>
+            <a href="#ep-1" data-s="done" title="第1話 録画済み"></a><a href="#ep-2" data-s="done" title="第2話 録画済み"></a><a href="#ep-3" data-s="done" title="第3話 録画済み"></a><a href="#ep-4" data-s="rec" title="第4話 録画中"></a><a href="#ep-5" data-s="todo" title="第5話 未録画"></a><a href="#ep-6" data-s="todo" title="第6話 未録画"></a><a href="#ep-7" data-s="todo" title="第7話 未録画"></a><a href="#ep-8" data-s="todo" title="第8話 未録画"></a><a href="#ep-9" data-s="todo" title="第9話 未録画"></a><a href="#ep-10" data-s="todo" title="第10話 未録画"></a><a href="#ep-11" data-s="todo" title="第11話 未録画"></a><a href="#ep-12" data-s="todo" title="第12話 未録画"></a><a href="#ep-22" data-s="todo" title="第22話 未録画"></a><a href="#ep-23" data-s="todo" title="第23話 未録画"></a>
           </div>
           <div class="strip-labels"><span>第1話</span><span>第7話</span><span>第23話</span></div>
           <div class="stats">
-            <div class="stat" style="--dot: var(--success)"><span class="k">録画済み</span><span class="v">0</span></div>
-            <div class="stat" style="--dot: var(--info)"><span class="k">録画中</span><span class="v">0</span></div>
+            <div class="stat" style="--dot: var(--success)"><span class="k">録画済み</span><span class="v">3</span></div>
+            <div class="stat" style="--dot: var(--info)"><span class="k">録画中</span><span class="v">1</span></div>
             <div class="stat" style="--dot: var(--destructive)"><span class="k">失敗</span><span class="v">0</span></div>
-            <div class="stat" style="--dot: color-mix(in oklch, var(--muted-foreground) 45%, transparent)"><span class="k">未録画</span><span class="v">14</span></div>
+            <div class="stat" style="--dot: color-mix(in oklch, var(--muted-foreground) 45%, transparent)"><span class="k">未録画</span><span class="v">10</span></div>
             <div class="stat" style="--dot: var(--border)"><span class="k">配信予定</span><span class="v">0</span></div>
           </div>
         </div>
 
         <div class="chips" role="group" aria-label="絞り込み">
           <button class="chip" type="button" aria-pressed="true">すべて <span class="n">14</span></button>
-          <button class="chip" type="button" aria-pressed="false">未録画 <span class="n">14</span></button>
+          <button class="chip" type="button" aria-pressed="false">未録画 <span class="n">10</span></button>
           <button class="chip" type="button" aria-pressed="false">失敗 <span class="n">0</span></button>
           <button class="chip" type="button" aria-pressed="false">無料 <span class="n">0</span></button>
           <span class="spacer"></span>
@@ -722,110 +769,149 @@ svg { display: block; flex: none; }
         </div>
 
         <ol class="ep-list">
-          <li class="ep" id="ep-1" data-s="todo" style="--h: 274">
-            <span class="ep-no">1</span>
+          <li class="ep" id="ep-1" data-s="done" style="--h: 274">
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 40 Q24 20 48 34 T96 26 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Undertaker</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">1</span><a href="#">Undertaker</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="done"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span><span class="lbl">録画済み</span></span>
           </li>
-          <li class="ep" id="ep-2" data-s="todo" style="--h: 333">
-            <span class="ep-no">2</span>
+          <li class="ep" id="ep-2" data-s="done" style="--h: 333">
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 44 Q30 14 60 36 T96 22 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Spearhead</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">2</span><a href="#">Spearhead</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="done"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span><span class="lbl">録画済み</span></span>
           </li>
-          <li class="ep" id="ep-3" data-s="todo" style="--h: 94">
-            <span class="ep-no">3</span>
+          <li class="ep" id="ep-3" data-s="done" style="--h: 94">
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 36 Q20 30 48 40 T96 30 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">I Don't Want to Die</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">3</span><a href="#">I Don't Want to Die</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="done"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span><span class="lbl">録画済み</span></span>
           </li>
-          <li class="ep" id="ep-4" data-s="todo" style="--h: 358">
-            <span class="ep-no">4</span>
+          <li class="ep" id="ep-4" data-s="rec" style="--h: 358">
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 30 Q40 50 70 28 T96 36 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Real Name</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">4</span><a href="#">Real Name</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="rec"><span class="ico"></span><span class="lbl">録画中</span></span>
           </li>
           <li class="ep" id="ep-5" data-s="todo" style="--h: 192">
-            <span class="ep-no">5</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 46 Q26 26 52 42 T96 32 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">I'm With You</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">5</span><a href="#">I'm With You</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-6" data-s="todo" style="--h: 157">
-            <span class="ep-no">6</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 38 Q24 44 48 30 T96 40 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Through to the End</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">6</span><a href="#">Through to the End</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-7" data-s="todo" style="--h: 4">
-            <span class="ep-no">7</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 42 Q32 18 64 38 T96 28 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Will You Remember Me?</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">7</span><a href="#">Will You Remember Me?</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-8" data-s="todo" style="--h: 126">
-            <span class="ep-no">8</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 34 Q28 48 56 32 T96 38 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Let's Go</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">8</span><a href="#">Let's Go</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-9" data-s="todo" style="--h: 307">
-            <span class="ep-no">9</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 40 Q20 28 48 36 T96 24 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Goodbye</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">9</span><a href="#">Goodbye</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-10" data-s="todo" style="--h: 152">
-            <span class="ep-no">10</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 44 Q36 22 60 40 T96 30 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Thank You</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">10</span><a href="#">Thank You</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-11" data-s="todo" style="--h: 10">
-            <span class="ep-no">11</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 32 Q24 46 48 34 T96 42 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Here We Go</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">11</span><a href="#">Here We Go</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-12" data-s="todo" style="--h: 262">
-            <span class="ep-no">12</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 46 Q28 20 56 38 T96 26 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">The Poppies Bloom Red on the Battlefield</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">12</span><a href="#">The Poppies Bloom Red on the Battlefield</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-22" data-s="todo" style="--h: 121">
-            <span class="ep-no">22</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 38 Q22 26 48 42 T96 34 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Shin</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">22</span><a href="#">Shin</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
           <li class="ep" id="ep-23" data-s="todo" style="--h: 274">
-            <span class="ep-no">23</span>
             <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 42 Q30 30 60 44 T96 28 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
-            <div class="ep-main"><p class="ep-title"><a href="#">Handler One</a></p><div class="ep-meta"><span class="m-mobile">08/13</span><span class="m-mobile">23:40</span><span class="flag">字幕</span></div></div>
-            <span class="ep-date">2026/08/13</span><span class="ep-dur">23:40</span>
-            <button class="rec" data-s="todo" type="button" aria-pressed="false"><span class="ico"></span><span class="lbl">録画する</span></button>
+            <div class="ep-main">
+              <p class="ep-title"><span class="ep-no">23</span><a href="#">Handler One</a></p>
+              <div class="ep-meta"><span class="ep-date">2026/08/13</span><span class="flag">字幕</span></div>
+            </div>
+            <span class="state" data-s="todo"><span class="ico"></span><span class="lbl">未録画</span></span>
           </li>
         </ol>
         <div class="ep-foot">
-          <span>録画済み 0 話</span>
+          <span>録画済み 3 話 · 1時間11分</span>
           <a class="link" href="#">録画一覧で開く <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </section>
+
+      <!-- この作品のログ。同期ログ画面の録画ログ / カタログ変化を animeId で絞った直近分。操作は持たない。 -->
+      <section class="log-sec" aria-labelledby="log-heading">
+        <h2 class="pg-sec-title" id="log-heading">ログ</h2>
+
+        <div class="log-block">
+          <div class="log-head"><h3>録画</h3><span class="n">直近 7 日 · 6 件</span><span class="spacer"></span><a class="pg-sec-more" href="#admin-logs-recordings">同期ログで開く <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a></div>
+          <div class="log-cols log-rec"><span>日時</span><span>配信元</span><span>種別</span><span>経路</span><span class="num">話数</span><span class="num">HTTP</span><span>結果</span><span></span></div>
+          <div class="log-row log-rec"><span class="log-ts">12:04<small>今日</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">状態照会</span><span class="log-src">Schedule</span><span class="num">1</span><span class="num">200</span><span class="log-res log-ok">成功</span><span class="log-err"></span></div>
+          <div class="log-row log-rec"><span class="log-ts">11:32<small>今日</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">録画完了</span><span class="log-src">Schedule</span><span class="num">1</span><span class="num log-dim">—</span><span class="log-res log-ok">成功</span><span class="log-err"></span></div>
+          <div class="log-row log-rec"><span class="log-ts">10:15<small>今日</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">予約送信</span><span class="log-src">Manual</span><span class="num">11</span><span class="num">202</span><span class="log-res log-ok">成功</span><span class="log-err"></span></div>
+          <div class="log-row log-rec is-warn"><span class="log-ts">03:00<small>昨日</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">見つからない</span><span class="log-src">Schedule</span><span class="num">2</span><span class="num">404</span><span class="log-res log-ng">失敗</span><span class="log-err">S1 E22–23 が配信元に無い</span></div>
+          <div class="log-row log-rec is-err"><span class="log-ts">03:00<small>9/22</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">予約送信</span><span class="log-src">Schedule</span><span class="num">3</span><span class="num">502</span><span class="log-res log-ng">失敗</span><span class="log-err">nagisa に接続できない (Bad Gateway)</span></div>
+          <div class="log-row log-rec"><span class="log-ts">03:00<small>9/21</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">予約送信</span><span class="log-src">Schedule</span><span class="num">3</span><span class="num">202</span><span class="log-res log-ok">成功</span><span class="log-err"></span></div>
+        </div>
+
+        <div class="log-block">
+          <div class="log-head"><h3>カタログ変化</h3><span class="n">直近 7 日 · 3 件</span><span class="spacer"></span><a class="pg-sec-more" href="#admin-logs-catalog">同期ログで開く <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a></div>
+          <div class="log-cols log-cat"><span>日時</span><span>配信元</span><span>種別</span><span>内容</span><span class="num">話数</span></div>
+          <div class="log-row log-cat is-season"><span class="log-ts">04:12<small>今日</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">エピソード追加</span><span class="log-detail"><span class="log-eps">S1 E22–23</span></span><span class="num">2</span></div>
+          <div class="log-row log-cat"><span class="log-ts">04:12<small>9/22</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">エピソード更新</span><span class="log-detail"><span class="log-eps">S1 E4</span><span class="log-field">画像</span><span class="log-field">あらすじ</span></span><span class="num">1</span></div>
+          <div class="log-row log-cat is-title"><span class="log-ts">04:10<small>9/20</small></span><span><span class="pv pv-crunchyroll">Crunchyroll</span></span><span class="log-kind">新規タイトル</span><span class="log-detail"><span class="log-eps">S1 E1–12</span></span><span class="num">12</span></div>
+        </div>
+      </section>
+      </div>
 
       <aside class="pg-aside">
         <section aria-labelledby="rel-heading">
@@ -835,7 +921,7 @@ svg { display: block; flex: none; }
             <div class="rel-list">
               <a class="rel cur" href="#">
                 <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-crunchyroll">Crunchyroll</span>2021年 春</span></span>
-                <span class="rel-eps"><b>0</b></span>
+                <span class="rel-eps"><b>3</b></span>
                 <span class="rel-eps all">14</span>
                 <span></span>
               </a>

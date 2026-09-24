@@ -3,6 +3,10 @@ adopted:
   anime-detail: final
   recordings: final
   home: final
+  logs: final
+  logs-entries: final
+  logs-recordings: final
+  logs-catalog: final
   app-header: astra
   app-footer: astra
   pagination: fable
@@ -26,3 +30,5 @@ adopted:
   recording-events: fable
   not-found: fable
   error-state: fable
+  server-status: fable
+  catalog-events: fable

@@ -194,8 +194,6 @@ model SyncRun {
   retried      Int       @default(0)
   animeCreated Int       @default(0) @map("anime_created")
   animeUpdated Int       @default(0) @map("anime_updated")
-  /// 保持上限を超えて捨てたログ行数 (Phase 2 以降で使う)
-  droppedLogs  Int       @default(0) @map("dropped_logs")
   errorMessage String?   @map("error_message")
   /// 付随情報の JSON 文字列 (provider 内訳など)
   meta         String?
@@ -204,34 +202,6 @@ model SyncRun {
   @@index([kind, startedAt])
   @@index([parentId])
   @@map("sync_runs")
-}
-
-/// LogTape の構造化ログ 1 行。Worker の invocation が終わると console sink の出力は
-/// 消えてしまうので、管理画面 (/admin/logs) から後追いできるよう D1 に落とす。
-/// SyncRun と違って書き込み量が桁違い (info 以上で 1 日 2〜3 万行) なので、
-/// 保持は 14 日・GC は `0 4 * * *` の cron に相乗りさせる。
-/// id が autoincrement なのは GC が `DELETE WHERE id <= ?` の 1 クエリで済み、
-/// カーソルページング (`id < cursor`) も安定するため。
-model LogEntry {
-  id       Int      @id @default(autoincrement())
-  /// 出力時点の sync_runs.id。fetch ハンドラ由来など run の外で出たログは null。
-  runId    String?  @map("run_id")
-  ts       DateTime @default(now())
-  /// 'debug' | 'info' | 'warning' | 'error' | 'fatal'
-  level    String
-  /// LogTape のカテゴリ (`app` を除いた 2 段目。'queue' / 'sync' など)
-  category String
-  /// 構造化ログの `action` プロパティ。UI の絞り込みはこれを見る。
-  action   String?
-  /// 一覧に出す 1 行要約 (message か、無ければ主要な props を並べたもの)
-  summary  String?
-  /// 残りの props の JSON 文字列 (4KB 超は切り詰め)
-  props    String?
-
-  @@index([ts])
-  @@index([runId])
-  @@index([level, ts])
-  @@map("log_entries")
 }
 
 /// 外部システムから差分を引くときのカーソル置き場。
@@ -261,7 +231,7 @@ model SyncState {
   @@map("sync_state")
 }
 
-/// 録画リクエストとその結末の時系列。log_entries に相乗りさせないのは、
+/// 録画リクエストとその結末の時系列。生ログ (Workers Logs) に相乗りさせないのは、
 /// 保持期間が違う (180 日) / animeId で引きたい / 送信と結果通知を
 /// 1 本の時系列にまとめたいため。
 model RecordingEvent {
@@ -275,7 +245,7 @@ model RecordingEvent {
   title        String
   /// 'request' | 'status' | 'recorded' | 'not-found'
   kind         String
-  /// 'ui' | 'webhook' | 'cron'
+  /// 'cron' (予約作品の自動録画) | 'manual' (画面から)
   source       String
   /// 'ok' | 'error'
   status       String
@@ -291,4 +261,31 @@ model RecordingEvent {
   @@index([createdAt])
   @@index([animeId])
   @@map("recording_events")
+}
+
+/// カタログ (作品・シーズン・エピソード) に入った変化の履歴。バッジや配信終了の出入りは載せない。
+model CatalogEvent {
+  id           String   @id @default(cuid())
+  animeId      String   @map("anime_id")
+  provider     String
+  contentId    String   @map("content_id")
+  /// 非正規化。作品が消えても何の変化だったか読めるようにする。
+  title        String
+  /// 'title-added' | 'season-added' | 'episodes-added' | 'episodes-updated'
+  kind         String
+  /// season-added のときだけ入る
+  seasonNumber Int?     @map("season_number")
+  /// 足した / 変わった話数
+  episodeCount Int?     @map("episode_count")
+  /// 「S1 E5–7, 9」形式の話数の並び。episodes-added / episodes-updated のときだけ入る
+  episodes     String?
+  /// 変わった項目の JSON 配列 ('image' | 'description' | 'duration' | 'releaseDate')。episodes-updated のときだけ入る
+  fields       String?
+  /// 出力時点の sync_runs.id。run の外なら null。
+  runId        String?  @map("run_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([animeId])
+  @@map("catalog_events")
 }

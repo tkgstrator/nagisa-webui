@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import type { LogLevelEnum, RecordingEventSchema, SyncRunSchema } from '@/schemas/log.dto'
+import type { CatalogEventSchema, LogLevelEnum, RecordingEventSchema, SyncRunSchema } from '@/schemas/log.dto'
 
 export const runStatusLabel: Record<SyncRunSchema['status'], string> = {
   running: '実行中',
@@ -62,9 +62,8 @@ export const recordingKindLabel: Record<RecordingEventSchema['kind'], string> = 
 }
 
 export const recordingSourceLabel: Record<RecordingEventSchema['source'], string> = {
-  ui: '画面',
-  webhook: 'webhook',
-  cron: 'cron'
+  cron: 'Schedule',
+  manual: 'Manual'
 }
 
 export const recordingStatusLabel: Record<RecordingEventSchema['status'], string> = {
@@ -84,6 +83,28 @@ export const recordingAccent = (event: RecordingEventSchema): string => {
 export const recordingStatusBadge: Record<RecordingEventSchema['status'], string> = {
   ok: 'bg-success/15 text-success dark:text-foreground',
   error: 'bg-destructive/10 text-destructive'
+}
+
+export const catalogKindLabel: Record<CatalogEventSchema['kind'], string> = {
+  'title-added': '新規タイトル',
+  'season-added': 'シーズン追加',
+  'episodes-added': 'エピソード追加',
+  'episodes-updated': 'エピソード更新'
+}
+
+export const catalogFieldLabel: Record<NonNullable<CatalogEventSchema['fields']>[number], string> = {
+  image: '画像',
+  description: 'あらすじ',
+  duration: '尺',
+  releaseDate: '配信日'
+}
+
+/** 行頭のアクセント。作品単位で増えたもの (タイトル / シーズン) だけ色を付け、話単位の出入りは素のまま。 */
+export const catalogAccent: Record<CatalogEventSchema['kind'], string> = {
+  'title-added': 'border-l-success',
+  'season-added': 'border-l-info',
+  'episodes-added': 'border-l-transparent',
+  'episodes-updated': 'border-l-transparent'
 }
 
 /** 「12:04:31」。録画は秒の並びが意味を持つので秒まで出す。 */

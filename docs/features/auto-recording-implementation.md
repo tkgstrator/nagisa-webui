@@ -164,3 +164,29 @@ outcome.scheduled === true
 - 章4（重複登録対策）と設定画面からの挙動選択
 - `wrangler.toml:39` の `"0 5 * * SUN"` と `src/scheduled.ts:69` の `case '0 5 * * 0'` の不一致
   （週次 AniList 同期が `unknown-cron` に落ちている疑い。本書とは独立の既存バグ）
+
+---
+
+## 7. 同期ログ（`/admin/logs`）に残すもの
+
+録画とカタログの変化は別テーブルに分けて残す。どちらも生ログ (Workers Logs, 7 日) より長く持ち、作品 ID で引ける。
+
+### 録画イベント（`recording_events`, 180 日・「録画」タブ）
+
+- 経路は **Schedule（cron による自動録画）と Manual（作品ページからの手動）の 2 つだけ**。Webhook は廃止済み、Queue は経路ではない（Schedule の実行手段）
+- 配信元はタイトルに混ぜず独立した列で出す
+
+### カタログ変化（`catalog_events`, 90 日・「カタログ」タブ）
+
+新規タイトルは一覧取得（`src/lib/sync/catalog.ts`）、シーズン・エピソードは `SyncService.applyDetail()`（`src/lib/sync/index.ts`）が差分を取った結果から、`recordCatalogEvents()`（`src/lib/catalog-event.ts`）で書く。
+
+| 種別 (`kind`) | 行の単位 | 載る情報 |
+|---|---|---|
+| `title-added` 新規タイトル | 作品ごと | — |
+| `season-added` シーズン追加 | シーズンごと | `seasonNumber`・話数 |
+| `episodes-added` エピソード追加 | 1 回の同期につき作品単位 1 行 | 「S1 E5–7, 9」形式の話数・件数 |
+| `episodes-updated` エピソード更新 | 1 回の同期につき作品単位 1 行 | 話数・件数・変わった項目（画像 / あらすじ / 尺 / 配信日） |
+
+- **バッジや配信終了間近（expiring）の出入りは載せない**。毎時の同期で頻繁に揺れ、変化ログとしてはノイズにしかならない
+- 新規シーズンに含まれる話は `season-added` 側で数え、`episodes-added` には重ねない
+- API は `GET /api/admin/logs/catalog`（`page` / `limit` / `animeId` / `kind` / `provider` / `hours`）

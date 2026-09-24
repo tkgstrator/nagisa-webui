@@ -10,7 +10,9 @@ import { StatTile } from '@/app/components/stat-tile'
 import { Button } from '@/app/components/ui/button'
 import { Input } from '@/app/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs'
+import { providerLabel } from '@/app/lib/constants'
 import {
+  catalogEventsQueryOptions,
   logEntriesQueryOptions,
   logStatsQueryOptions,
   recordingEventsQueryOptions,
@@ -19,31 +21,42 @@ import {
 import { FilterPopover } from '@/app/routes/browse/-components/filter-popover'
 import { readSettings, useSettings } from '@/app/routes/settings/-lib/settings'
 import {
+  CatalogEventKindEnum,
   LogLevelEnum,
   RecordingEventKindEnum,
   RecordingEventStatusEnum,
   RunKindEnum,
   RunStatusEnum
 } from '@/schemas/log.dto'
+import { CatalogTable } from './-components/catalog-table'
 import { CronTable } from './-components/cron-table'
 import { EntriesTable } from './-components/entries-table'
 import { RecordingsTable } from './-components/recordings-table'
 import { RunsTable } from './-components/runs-table'
-import { logLevelLabel, recordingKindLabel, recordingStatusLabel, runKindLabel, runStatusLabel } from './-lib/format'
+import {
+  catalogKindLabel,
+  logLevelLabel,
+  recordingKindLabel,
+  recordingStatusLabel,
+  runKindLabel,
+  runStatusLabel
+} from './-lib/format'
 
-const TabEnum = z.enum(['runs', 'entries', 'recordings'])
+const TabEnum = z.enum(['runs', 'entries', 'recordings', 'catalog'])
 
 const SearchSchema = z.object({
   tab: TabEnum.default('runs'),
   kind: RunKindEnum.optional(),
   status: RunStatusEnum.optional(),
-  // 期間は 3 タブで共有する。保持期間が一番長い録画 (180 日) に合わせて上限を取り、
+  // 期間は全タブで共有する。保持期間が一番長い録画 (180 日) に合わせて上限を取り、
   // 実行履歴と生ログには投げる直前に各テーブルの保持期間で頭打ちを掛ける。
   hours: z.coerce.number().int().min(1).max(4320).default(24),
   level: LogLevelEnum.default('info'),
   // 録画の絞り込みは実行履歴の kind / status と意味が違うので別のキーで持つ。
   recKind: RecordingEventKindEnum.optional(),
   recStatus: RecordingEventStatusEnum.optional(),
+  catKind: CatalogEventKindEnum.optional(),
+  catProvider: z.string().nonempty().optional(),
   q: z.string().nonempty().optional()
 })
 
@@ -86,6 +99,19 @@ const REC_STATUS_OPTIONS: { value: Search['recStatus']; label: string }[] = [
   { value: 'ok', label: recordingStatusLabel.ok }
 ]
 
+const CAT_KIND_OPTIONS: { value: Search['catKind']; label: string }[] = [
+  { value: undefined, label: 'すべて' },
+  { value: 'title-added', label: catalogKindLabel['title-added'] },
+  { value: 'season-added', label: catalogKindLabel['season-added'] },
+  { value: 'episodes-added', label: catalogKindLabel['episodes-added'] },
+  { value: 'episodes-updated', label: catalogKindLabel['episodes-updated'] }
+]
+
+const CAT_PROVIDER_OPTIONS: { value: Search['catProvider']; label: string }[] = [
+  { value: undefined, label: 'すべて' },
+  ...Object.entries(providerLabel).map(([value, label]) => ({ value, label }))
+]
+
 const RUN_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 24, label: '直近 24 時間' },
   { value: 72, label: '直近 3 日' },
@@ -97,8 +123,7 @@ const RUN_HOURS_OPTIONS: { value: number; label: string }[] = [
 const ENTRY_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 24, label: '直近 24 時間' },
   { value: 72, label: '直近 3 日' },
-  { value: 168, label: '直近 7 日' },
-  { value: 336, label: '直近 14 日' }
+  { value: 168, label: '直近 7 日' }
 ]
 
 const RECORDING_HOURS_OPTIONS: { value: number; label: string }[] = [
@@ -109,13 +134,16 @@ const RECORDING_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 4320, label: '直近 180 日' }
 ]
 
-/** log_entries は 14 日しか持たないので、実行履歴側の広い期間をそのまま投げない。 */
-const ENTRY_MAX_HOURS = 336
+/** 生ログは Workers Logs (保持 7 日) から引くので、実行履歴側の広い期間をそのまま投げない。 */
+const ENTRY_MAX_HOURS = 168
 
 /** sync_runs の保持期間は 90 日。録画タブから戻ってきた 180 日をそのまま投げない。 */
 const RUN_MAX_HOURS = 2160
 
-/** 開いているタブのぶんだけ先に取る。3 本とも取ると表示しない 2 本まで待つことになる。 */
+/** catalog_events の保持期間も 90 日。 */
+const CATALOG_MAX_HOURS = 2160
+
+/** 開いているタブのぶんだけ先に取る。全部取ると表示しないタブのぶんまで待つことになる。 */
 const ensureTabData = (queryClient: QueryClient, deps: Search) => {
   const limit = readSettings().pageSize
   if (deps.tab === 'entries')
@@ -130,6 +158,16 @@ const ensureTabData = (queryClient: QueryClient, deps: Search) => {
         kind: deps.recKind,
         status: deps.recStatus,
         hours: deps.hours
+      })
+    )
+  if (deps.tab === 'catalog')
+    return queryClient.ensureQueryData(
+      catalogEventsQueryOptions({
+        page: 1,
+        limit,
+        kind: deps.catKind,
+        provider: deps.catProvider,
+        hours: Math.min(deps.hours, CATALOG_MAX_HOURS)
       })
     )
   return queryClient.ensureQueryData(
@@ -223,9 +261,22 @@ function LogsAdminPage() {
     placeholderData: keepPreviousData
   })
 
+  const catalogHours = Math.min(search.hours, CATALOG_MAX_HOURS)
+  const { data: catalogData } = useQuery({
+    ...catalogEventsQueryOptions({
+      page,
+      limit: settings.pageSize,
+      kind: search.catKind,
+      provider: search.catProvider,
+      hours: catalogHours
+    }),
+    placeholderData: keepPreviousData
+  })
+
   const entryHours = Math.min(search.hours, ENTRY_MAX_HOURS)
   const {
     data: entryPages,
+    isError: entriesFailed,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage
@@ -243,9 +294,10 @@ function LogsAdminPage() {
   const total = data?.total ?? 0
   const totalPages = data?.totalPages ?? 0
   const entries = entryPages?.pages.flatMap((p) => p.data) ?? []
-  const recordings = recordingData?.data ?? []
   const recordingTotal = recordingData?.total ?? 0
   const recordingTotalPages = recordingData?.totalPages ?? 0
+  const catalogTotal = catalogData?.total ?? 0
+  const catalogTotalPages = catalogData?.totalPages ?? 0
 
   const updateSearch = (patch: Partial<Search>) => {
     setPage(1)
@@ -264,7 +316,7 @@ function LogsAdminPage() {
       <header>
         <h1 className='text-2xl font-bold tracking-tight'>同期ログ</h1>
         <p className='mt-1 text-sm text-muted-foreground'>
-          cron / Queue バッチ / 手動実行の履歴と、Worker の生ログ、録画リクエストの結果
+          cron / Queue バッチ / 手動実行の履歴と、Worker の生ログ、録画リクエストの結果、カタログに入った変化
         </p>
       </header>
 
@@ -308,6 +360,9 @@ function LogsAdminPage() {
             </TabsTrigger>
             <TabsTrigger value='recordings' className={tabTriggerClass}>
               録画
+            </TabsTrigger>
+            <TabsTrigger value='catalog' className={tabTriggerClass}>
+              カタログ
             </TabsTrigger>
           </TabsList>
         </div>
@@ -371,7 +426,11 @@ function LogsAdminPage() {
             />
           </div>
 
-          {entries.length === 0 ? (
+          {entriesFailed && entries.length === 0 ? (
+            <div className='py-20 text-center text-sm text-destructive'>
+              Workers Logs から取得できませんでした (読み取り用の secret が未設定か、API が失敗しています)
+            </div>
+          ) : entries.length === 0 ? (
             <div className='py-20 text-center text-sm text-muted-foreground'>該当するログはありません</div>
           ) : (
             <EntriesTable entries={entries} />
@@ -414,14 +473,40 @@ function LogsAdminPage() {
             />
           </div>
 
-          {recordings.length === 0 ? (
-            <div className='py-20 text-center text-sm text-muted-foreground'>この期間の録画イベントはありません</div>
-          ) : (
-            <RecordingsTable events={recordings} />
-          )}
+          <RecordingsTable events={recordingData?.data} />
 
           {recordingTotalPages > 1 && (
             <SmartPagination page={page} totalPages={recordingTotalPages} onPageChange={setPage} />
+          )}
+        </TabsContent>
+
+        <TabsContent value='catalog' className='flex min-w-0 flex-col gap-3 pt-4'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <h2 className='mr-auto text-sm font-semibold'>カタログ変化 ({catalogTotal.toLocaleString('ja-JP')} 件)</h2>
+            <FilterPopover
+              label='期間'
+              value={catalogHours}
+              options={hoursOptions}
+              onSelect={(v) => updateSearch({ hours: v })}
+            />
+            <FilterPopover
+              label='種別'
+              value={search.catKind}
+              options={CAT_KIND_OPTIONS}
+              onSelect={(v) => updateSearch({ catKind: v })}
+            />
+            <FilterPopover
+              label='配信元'
+              value={search.catProvider}
+              options={CAT_PROVIDER_OPTIONS}
+              onSelect={(v) => updateSearch({ catProvider: v })}
+            />
+          </div>
+
+          <CatalogTable events={catalogData?.data} />
+
+          {catalogTotalPages > 1 && (
+            <SmartPagination page={page} totalPages={catalogTotalPages} onPageChange={setPage} />
           )}
         </TabsContent>
       </Tabs>
