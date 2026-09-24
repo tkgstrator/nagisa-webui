@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
 import { StatTile } from '@/app/components/stat-tile'
 import { recordStatusAccent, recordStatusLabel, recordStatusNote } from '@/app/lib/constants'
@@ -20,16 +21,6 @@ export const Route = createFileRoute('/admin/status/')({
 const headClass =
   'px-2.5 py-2 text-left text-[11px] font-semibold tracking-[0.03em] text-muted-foreground max-sm:px-[5px] max-sm:py-[9px]'
 const cellClass = 'p-2.5 align-middle max-sm:px-[5px] max-sm:py-[9px]'
-
-/** 秒 → 「3 日 4 時間」。分未満は切り捨てて「1 分未満」に畳む。 */
-const formatUptime = (seconds: number): string => {
-  const d = Math.floor(seconds / 86_400)
-  const h = Math.floor((seconds % 86_400) / 3_600)
-  const m = Math.floor((seconds % 3_600) / 60)
-  if (d > 0) return `${d} 日 ${h} 時間`
-  if (h > 0) return `${h} 時間 ${m} 分`
-  return m > 0 ? `${m} 分` : '1 分未満'
-}
 
 /** 台帳の合計サイズ。TB を超えたら TB 表記にする。 */
 const formatSize = (bytes: number): string => {
@@ -88,6 +79,8 @@ const Section = ({ title, description, children }: { title: string; description:
 const tileGrid = 'grid grid-cols-4 gap-6 max-lg:grid-cols-2'
 
 function StatusAdminPage() {
+  const content = useIntlayer('admin-status')
+
   // 上流 (nagisa) を叩く 3 本は落ちていることが正常系なので、失敗を画面に出すだけで
   // ページ全体は落とさない。sync-state はローカル D1 だけなので必ず返る。
   const status = useQuery(nagisaStatusQueryOptions())
@@ -100,127 +93,151 @@ function StatusAdminPage() {
   const leaseUntil = sync.data?.leaseUntil ?? null
   const leaseExpired = leaseUntil !== null && new Date(leaseUntil).getTime() <= Date.now()
 
+  /** 秒 → 「3 日 4 時間」。分未満は切り捨てて「1 分未満」に畳む。 */
+  const formatUptime = (seconds: number): string => {
+    const d = Math.floor(seconds / 86_400)
+    const h = Math.floor((seconds % 86_400) / 3_600)
+    const m = Math.floor((seconds % 3_600) / 60)
+    if (d > 0) return content.uptime.days({ d, h }).value
+    if (h > 0) return content.uptime.hours({ h, m }).value
+    return m > 0 ? content.uptime.minutes({ m }).value : content.uptime.lessThanMinute.value
+  }
+
   return (
     <PageContainer className='gap-6'>
       <header>
-        <h1 className='text-2xl font-bold tracking-tight'>サーバーステータス</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>
-          Nagisa の稼働状況・キュー・録画台帳と、WebUI 側がどこまで同期できているか
-        </p>
+        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
+        <p className='mt-1 text-sm text-muted-foreground'>{content.description.value}</p>
       </header>
 
-      <Section title='Nagisa' description='GET /api/status。落ちていればここだけが取得できなくなる'>
+      <Section title='Nagisa' description={content.nagisaSection.description.value}>
         {status.isPending ? (
-          <Notice tone='mute'>取得中…</Notice>
+          <Notice tone='mute'>{content.loading.value}</Notice>
         ) : status.isError || status.data === undefined ? (
-          <Notice tone='err'>Nagisa に接続できません (Service Auth / BACKEND_URL を確認)</Notice>
+          <Notice tone='err'>{content.nagisaSection.error.value}</Notice>
         ) : (
           <div className={tileGrid}>
             <Field
-              label='バージョン'
+              label={content.nagisaSection.version.value}
               value={`v${status.data.version}`}
-              note={`稼働 ${formatUptime(status.data.uptime)}`}
+              note={content.nagisaSection.uptimeNote({ uptime: formatUptime(status.data.uptime) }).value}
               tone='ok'
             />
             <Field
-              label='Redis'
-              value={status.data.redis === null ? '不明' : status.data.redis.connected ? '接続' : '切断'}
+              label={content.nagisaSection.redisLabel.value}
+              value={
+                status.data.redis === null
+                  ? content.unknown.value
+                  : status.data.redis.connected
+                    ? content.nagisaSection.redisConnected.value
+                    : content.nagisaSection.redisDisconnected.value
+              }
               note={
-                status.data.redis === null ? 'nagisa が情報を返していない' : `メモリ ${status.data.redis.memory_used}`
+                status.data.redis === null
+                  ? content.nagisaSection.redisUnknownNote.value
+                  : content.nagisaSection.redisMemoryNote({ memory: status.data.redis.memory_used }).value
               }
               tone={status.data.redis?.connected === true ? 'ok' : 'err'}
             />
             <Field
-              label='CPU / メモリ'
+              label={content.nagisaSection.cpuMemory.value}
               value={
                 status.data.system === null
-                  ? '不明'
+                  ? content.unknown.value
                   : `${status.data.system.cpu_percent.toFixed(1)}% / ${status.data.system.memory_percent.toFixed(1)}%`
               }
-              note='ホストの使用率'
+              note={content.nagisaSection.cpuMemoryNote.value}
               tone={(status.data.system?.memory_percent ?? 0) >= 90 ? 'warn' : 'mute'}
             />
             <Field
-              label='ディスク空き'
-              value={status.data.system === null ? '不明' : `${status.data.system.disk_free_gb.toFixed(1)} GB`}
-              note='録画先の空き容量'
+              label={content.nagisaSection.diskFree.value}
+              value={
+                status.data.system === null ? content.unknown.value : `${status.data.system.disk_free_gb.toFixed(1)} GB`
+              }
+              note={content.nagisaSection.diskFreeNote.value}
               tone={(status.data.system?.disk_free_gb ?? Number.POSITIVE_INFINITY) < 100 ? 'warn' : 'mute'}
             />
           </div>
         )}
       </Section>
 
-      <Section
-        title='キュー'
-        description='GET /api/queue/snapshot。completed / failed は保持期間で落ちるので件数は目安 (完了の根拠は台帳)'
-      >
+      <Section title={content.queueSection.title.value} description={content.queueSection.description.value}>
         {snapshot.isPending ? (
-          <Notice tone='mute'>取得中…</Notice>
+          <Notice tone='mute'>{content.loading.value}</Notice>
         ) : snapshot.isError || snapshot.data === undefined ? (
-          <Notice tone='err'>キューのスナップショットを取得できません</Notice>
+          <Notice tone='err'>{content.queueSection.error.value}</Notice>
         ) : (
           <>
             <div className={tileGrid}>
               <StatTile
-                label='実行中'
+                label={content.queueSection.active.value}
                 value={snapshot.data.counts.active}
-                unit='件'
-                note='ダウンロード中'
+                unit={content.queueSection.unit.value}
+                note={content.queueSection.activeNote.value}
                 tone='primary'
               />
               <StatTile
-                label='待機'
+                label={content.queueSection.waiting.value}
                 value={snapshot.data.counts.wait + snapshot.data.counts.delayed}
-                unit='件'
-                note={`うち遅延 ${snapshot.data.counts.delayed.toLocaleString('ja-JP')} 件`}
+                unit={content.queueSection.unit.value}
+                note={
+                  content.queueSection.waitingNote({ count: snapshot.data.counts.delayed.toLocaleString('ja-JP') })
+                    .value
+                }
                 tone='warn'
               />
               <StatTile
-                label='失敗'
+                label={content.queueSection.failed.value}
                 value={snapshot.data.counts.failed}
-                unit='件'
-                note='キューに残っている失敗'
+                unit={content.queueSection.unit.value}
+                note={content.queueSection.failedNote.value}
                 tone='err'
               />
               <StatTile
-                label='完了'
+                label={content.queueSection.completed.value}
                 value={snapshot.data.counts.completed}
-                unit='件'
-                note='保持期間内のもののみ'
+                unit={content.queueSection.unit.value}
+                note={content.queueSection.completedNote.value}
                 tone='ok'
               />
             </div>
             <p className='text-xs text-muted-foreground'>
-              取得時刻 {formatAbsolute(new Date(snapshot.data.generated_at * 1000).toISOString())}
+              {content.queueSection.fetchedAt({
+                time: formatAbsolute(new Date(snapshot.data.generated_at * 1000).toISOString())
+              })}
             </p>
           </>
         )}
       </Section>
 
-      <Section title='録画台帳 (Nagisa)' description='GET /api/library/stats。実体のファイルを数えたもの'>
+      <Section title={content.librarySection.title.value} description={content.librarySection.description.value}>
         {stats.isPending ? (
-          <Notice tone='mute'>取得中…</Notice>
+          <Notice tone='mute'>{content.loading.value}</Notice>
         ) : stats.isError || stats.data === undefined ? (
-          <Notice tone='err'>台帳の集計を取得できません</Notice>
+          <Notice tone='err'>{content.librarySection.error.value}</Notice>
         ) : (
           <div className={tileGrid}>
             <StatTile
-              label='録画ファイル'
+              label={content.librarySection.recordings.value}
               value={stats.data.recordings}
-              unit='件'
-              note='台帳が把握している実体'
+              unit={content.librarySection.unit.value}
+              note={content.librarySection.recordingsNote.value}
               tone='ok'
             />
             <StatTile
-              label='未解決'
+              label={content.librarySection.unresolved.value}
               value={stats.data.unresolved}
-              unit='件'
-              note='provider / episode_id を当てられていない'
+              unit={content.librarySection.unit.value}
+              note={content.librarySection.unresolvedNote.value}
               tone='warn'
             />
-            <Field label='合計サイズ' value={formatSize(stats.data.total_size)} note='ライブラリ全体' />
             <Field
-              label='台帳の位置'
+              label={content.librarySection.totalSize.value}
+              value={formatSize(stats.data.total_size)}
+              note={content.librarySection.totalSizeNote.value}
+            />
+            <Field
+              label={content.librarySection.position.value}
               value={`seq ${stats.data.last_seq.toLocaleString('ja-JP')}`}
               note={`epoch ${stats.data.epoch}`}
               mono
@@ -229,64 +246,82 @@ function StatusAdminPage() {
         )}
       </Section>
 
-      <Section title='WebUI 側の同期' description='ローカル D1 だけを見るので、Nagisa が落ちていてもここは必ず出る'>
+      <Section title={content.syncSection.title.value} description={content.syncSection.description.value}>
         {sync.isPending ? (
-          <Notice tone='mute'>取得中…</Notice>
+          <Notice tone='mute'>{content.loading.value}</Notice>
         ) : sync.data === undefined ? (
-          <Notice tone='err'>同期状態を取得できません</Notice>
+          <Notice tone='err'>{content.syncSection.error.value}</Notice>
         ) : (
           <>
             {/*
               react-query は再取得に失敗しても直前の data を保持する。黙って出すと
               「同期が止まっている」と「同期状態を読めていない」が見分けられない。
             */}
-            {sync.isError && <Notice tone='warn'>再取得に失敗しています (以下は直前に取得できた内容)</Notice>}
+            {sync.isError && <Notice tone='warn'>{content.syncSection.staleWarning.value}</Notice>}
             <div className={tileGrid}>
               <Field
-                label='最終成功'
-                value={sync.data.lastSucceededAt === null ? '未実行' : formatRelative(sync.data.lastSucceededAt)}
+                label={content.syncSection.lastSucceeded.value}
+                value={
+                  sync.data.lastSucceededAt === null
+                    ? content.syncSection.neverRun.value
+                    : formatRelative(sync.data.lastSucceededAt)
+                }
                 note={
                   sync.data.lastSucceededAt === null
-                    ? '一度も完走していない'
+                    ? content.syncSection.neverRunNote.value
                     : formatAbsolute(sync.data.lastSucceededAt)
                 }
                 tone={sync.data.lastSucceededAt === null ? 'err' : 'ok'}
               />
               <Field
-                label='カーソル'
+                label={content.syncSection.cursor.value}
                 value={
                   sync.data.snapshotCursor !== null
-                    ? '初回取り込み中'
+                    ? content.syncSection.cursorSnapshotting.value
                     : sync.data.cursor === null
-                      ? '未取得'
-                      : '差分を追跡中'
+                      ? content.syncSection.cursorUnfetched.value
+                      : content.syncSection.cursorTracking.value
                 }
                 note={
                   sync.data.snapshotCursor !== null && sync.data.snapshotStartedAt !== null
-                    ? `${formatRelative(sync.data.snapshotStartedAt)}に開始`
+                    ? content.syncSection.cursorSnapshotStartedNote({
+                        time: formatRelative(sync.data.snapshotStartedAt)
+                      }).value
                     : sync.data.cursor === null
-                      ? '台帳同期をまだ走らせていない'
-                      : '差分カーソルを保持している'
+                      ? content.syncSection.cursorNeverRunNote.value
+                      : content.syncSection.cursorTrackingNote.value
                 }
                 tone={sync.data.cursor === null && sync.data.snapshotCursor === null ? 'warn' : 'mute'}
               />
               <Field
-                label='実行ロック'
-                value={leaseUntil === null ? '空き' : leaseExpired ? '期限切れ' : '実行中'}
+                label={content.syncSection.lock.value}
+                value={
+                  leaseUntil === null
+                    ? content.syncSection.lockFree.value
+                    : leaseExpired
+                      ? content.syncSection.lockExpired.value
+                      : content.syncSection.lockRunning.value
+                }
                 note={
                   leaseUntil === null
-                    ? '同期は走っていない'
+                    ? content.syncSection.lockFreeNote.value
                     : leaseExpired
-                      ? `${sync.data.leaseOwner ?? '不明'} が ${formatRelative(leaseUntil)}に失効 (異常終了の疑い)`
-                      : `${sync.data.leaseOwner ?? '不明'} / ${formatAbsolute(leaseUntil)}まで`
+                      ? content.syncSection.lockExpiredNote({
+                          owner: sync.data.leaseOwner ?? content.unknown.value,
+                          time: formatRelative(leaseUntil)
+                        }).value
+                      : content.syncSection.lockRunningNote({
+                          owner: sync.data.leaseOwner ?? content.unknown.value,
+                          time: formatAbsolute(leaseUntil)
+                        }).value
                 }
                 tone={leaseExpired ? 'warn' : 'mute'}
               />
               <StatTile
-                label='追跡中'
+                label={content.syncSection.tracked.value}
                 value={sync.data.tracked}
-                unit='件'
-                note='job id を持つ待機 / 実行中'
+                unit={content.syncSection.unit.value}
+                note={content.syncSection.trackedNote.value}
                 tone='primary'
               />
             </div>
@@ -296,11 +331,11 @@ function StatusAdminPage() {
 
       {sync.data !== undefined && (
         <Section
-          title='録画状態の内訳'
+          title={content.breakdownSection.title.value}
           description={
             sync.isError
-              ? 'エピソード単位。再取得に失敗しているので、以下は直前に取得できた件数'
-              : 'エピソード単位。completed を書けるのは台帳同期だけ'
+              ? content.breakdownSection.descriptionError.value
+              : content.breakdownSection.descriptionOk.value
           }
         >
           <div className='overflow-x-auto'>
@@ -308,13 +343,13 @@ function StatusAdminPage() {
               <thead>
                 <tr className='border-b border-border'>
                   <th scope='col' className={`${headClass} pl-[13px]`}>
-                    状態
+                    {content.breakdownSection.status.value}
                   </th>
                   <th scope='col' className={`${headClass} text-right`}>
-                    件数
+                    {content.breakdownSection.count.value}
                   </th>
                   <th scope='col' className={headClass}>
-                    意味
+                    {content.breakdownSection.meaning.value}
                   </th>
                 </tr>
               </thead>

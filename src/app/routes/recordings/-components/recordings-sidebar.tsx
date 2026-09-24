@@ -1,3 +1,4 @@
+import { useIntlayer } from 'react-intlayer'
 import { SidebarSlot } from '@/app/components/app-sidebar'
 import type { RecordedFilter } from './recordings-toolbar'
 
@@ -30,15 +31,23 @@ type RecordingsSidebarProps = {
   onFilterChange: (value: RecordedFilter) => void
 }
 
-export const RecordingsSidebar = ({ total, recorded, pending, onFilterChange }: RecordingsSidebarProps) => (
-  <SidebarSlot>
-    <div className='border-t border-border pt-3.5 max-sm:hidden'>
-      <h3 className='px-2.5 pb-2 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground uppercase'>
-        録画サマリ
-      </h3>
-      <Stat dot='bg-warning' label='録画予約中' value={total} onSelect={() => onFilterChange('all')} />
-      <Stat dot='bg-success' label='録画済み' value={recorded} onSelect={() => onFilterChange('recorded')} />
-      <Stat dot='bg-info' label='未録画' value={pending} onSelect={() => onFilterChange('pending')} />
-    </div>
-  </SidebarSlot>
-)
+export const RecordingsSidebar = ({ total, recorded, pending, onFilterChange }: RecordingsSidebarProps) => {
+  const content = useIntlayer('recordings-recordings-sidebar')
+  return (
+    <SidebarSlot>
+      <div className='border-t border-border pt-3.5 max-sm:hidden'>
+        <h3 className='px-2.5 pb-2 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground uppercase'>
+          {content.heading}
+        </h3>
+        <Stat dot='bg-warning' label={content.scheduled.value} value={total} onSelect={() => onFilterChange('all')} />
+        <Stat
+          dot='bg-success'
+          label={content.recorded.value}
+          value={recorded}
+          onSelect={() => onFilterChange('recorded')}
+        />
+        <Stat dot='bg-info' label={content.pending.value} value={pending} onSelect={() => onFilterChange('pending')} />
+      </div>
+    </SidebarSlot>
+  )
+}

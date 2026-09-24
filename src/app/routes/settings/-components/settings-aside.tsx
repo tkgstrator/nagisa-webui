@@ -1,14 +1,18 @@
+import { getIntlayer } from 'intlayer'
 import { useEffect, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { cn } from '@/app/lib/utils'
 import { PROVIDER_KEYS, useSettings } from '../-lib/settings'
 
+const settingsAsideModuleContent = getIntlayer('settings-settings-aside')
+
 const SECTIONS = [
-  { id: 's-view', label: '表示' },
-  { id: 's-provider', label: '配信プロバイダ' },
-  { id: 's-rec', label: '録画' },
-  { id: 's-admin', label: '管理' },
-  { id: 's-data', label: 'データ' },
-  { id: 's-about', label: 'アプリ情報' }
+  { id: 's-view', label: settingsAsideModuleContent.sections.view },
+  { id: 's-provider', label: settingsAsideModuleContent.sections.provider },
+  { id: 's-rec', label: settingsAsideModuleContent.sections.rec },
+  { id: 's-admin', label: settingsAsideModuleContent.sections.admin },
+  { id: 's-data', label: settingsAsideModuleContent.sections.data },
+  { id: 's-about', label: settingsAsideModuleContent.sections.about }
 ] as const
 
 /** 画面内で一番上に見えている節を現在地として返す。 */
@@ -39,6 +43,7 @@ export const SettingsAside = ({ adminLinkCount }: { adminLinkCount: number }) =>
   const active = useActiveSection()
   const { settings } = useSettings()
   const enabled = PROVIDER_KEYS.filter((key) => settings.providers[key]).length
+  const content = useIntlayer('settings-settings-aside')
 
   const counts: Record<string, string | undefined> = {
     's-view': '5',
@@ -52,11 +57,11 @@ export const SettingsAside = ({ adminLinkCount }: { adminLinkCount: number }) =>
   return (
     <aside className='sticky top-6 flex flex-col gap-6 max-lg:static max-lg:order-first max-lg:gap-0'>
       <nav
-        aria-label='設定の節'
+        aria-label={content.navAriaLabel.value}
         className='flex flex-col gap-0.5 max-lg:flex-row max-lg:gap-1.5 max-lg:overflow-x-auto max-lg:pb-0.5 max-lg:[scrollbar-width:none]'
       >
         <h3 className='px-3 pb-2 text-[11px] font-bold tracking-[0.06em] text-muted-foreground uppercase max-lg:hidden'>
-          この画面の中身
+          {content.sectionsHeading}
         </h3>
         {SECTIONS.map((section) => {
           const current = active === section.id
@@ -89,9 +94,11 @@ export const SettingsAside = ({ adminLinkCount }: { adminLinkCount: number }) =>
       </nav>
 
       <p className='rounded-r-[11px] border-l-[3px] border-l-border bg-muted px-4 py-3.5 text-[11.5px] leading-[1.6] text-muted-foreground max-lg:hidden'>
-        ここの設定は<b className='font-bold text-foreground'>このブラウザにだけ</b>
-        保存される。別の端末やシークレットウィンドウには引き継がれない。持ち運ぶときは
-        <b className='font-bold text-foreground'>データ</b>の「書き出す」を使う。
+        {content.localOnly.lead}
+        <b className='font-bold text-foreground'>{content.localOnly.scope}</b>
+        {content.localOnly.body}
+        <b className='font-bold text-foreground'>{content.localOnly.dataLabel}</b>
+        {content.localOnly.tail}
       </p>
     </aside>
   )

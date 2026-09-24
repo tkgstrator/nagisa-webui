@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Activity, FileQuestion, KeyRound, ScrollText, Send } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
 
 export const Route = createFileRoute('/admin/')({
@@ -8,53 +9,29 @@ export const Route = createFileRoute('/admin/')({
 
 const ADMIN_ITEMS: {
   to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema' | '/admin/logs' | '/admin/status'
-  title: string
-  description: string
+  key: 'unidentified' | 'nagisa' | 'abema' | 'logs' | 'status'
   icon: typeof FileQuestion
 }[] = [
-  {
-    to: '/admin/unidentified',
-    title: '未識別タイトル一覧',
-    description: 'AniList で識別できなかったタイトルを確認・調整する',
-    icon: FileQuestion
-  },
-  {
-    to: '/admin/nagisa',
-    title: 'Nagisa ジョブ投入',
-    description: 'プロバイダと content_id を指定して Nagisa に録画ジョブを直接投入する',
-    icon: Send
-  },
-  {
-    to: '/admin/abema',
-    title: 'ABEMA 鍵アーカイブ',
-    description: '復号鍵が未取得の ABEMA 作品を確認し、取得ジョブをキューに投入する',
-    icon: KeyRound
-  },
-  {
-    to: '/admin/logs',
-    title: '同期ログ',
-    description: 'cron / Queue バッチの実行履歴と、cron が動いているかを確認する',
-    icon: ScrollText
-  },
-  {
-    to: '/admin/status',
-    title: 'サーバーステータス',
-    description: 'Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状態を確認する',
-    icon: Activity
-  }
+  { to: '/admin/unidentified', key: 'unidentified', icon: FileQuestion },
+  { to: '/admin/nagisa', key: 'nagisa', icon: Send },
+  { to: '/admin/abema', key: 'abema', icon: KeyRound },
+  { to: '/admin/logs', key: 'logs', icon: ScrollText },
+  { to: '/admin/status', key: 'status', icon: Activity }
 ]
 
 function AdminHubPage() {
+  const content = useIntlayer('admin')
   return (
     <PageContainer className='gap-6'>
       <div>
-        <h1 className='text-2xl font-bold tracking-tight'>管理</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>運用・デバッグ用のツール</p>
+        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
+        <p className='mt-1 text-sm text-muted-foreground'>{content.description.value}</p>
       </div>
 
       <div className='grid gap-3 sm:grid-cols-2'>
         {ADMIN_ITEMS.map((item) => {
           const Icon = item.icon
+          const itemContent = content.items[item.key]
           return (
             <Link
               key={item.to}
@@ -65,8 +42,8 @@ function AdminHubPage() {
                 <Icon className='size-4' />
               </div>
               <div className='min-w-0 flex-1 space-y-0.5'>
-                <h2 className='text-sm font-semibold'>{item.title}</h2>
-                <p className='text-xs text-muted-foreground'>{item.description}</p>
+                <h2 className='text-sm font-semibold'>{itemContent.title.value}</h2>
+                <p className='text-xs text-muted-foreground'>{itemContent.description.value}</p>
               </div>
             </Link>
           )

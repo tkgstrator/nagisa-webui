@@ -1,12 +1,15 @@
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { ChevronRight, Info } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/app/components/ui/carousel'
 import { providerColor, providerLabel, statusLabel } from '@/app/lib/constants'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
 
 type BadgeType = 'updatedAt' | 'nextEpisodeDate' | 'expiredAt'
+
+type AnimeCarouselContent = ReturnType<typeof useIntlayer<'anime-carousel'>>
 
 /** モックの `.car-badge` / `.poster .tag` のトーン。色は全てデザイントークン経由。 */
 type FlagTone = 'new' | 'added' | 'soon' | 'exp'
@@ -49,17 +52,20 @@ const Rail = ({ children, className }: { children: React.ReactNode; className?: 
   </div>
 )
 
-const SectionHead = ({ title, subtitle, viewAllLink }: { title: string; subtitle?: string; viewAllLink?: string }) => (
-  <div className='mb-3 flex items-baseline justify-between gap-3'>
-    <h3 className='flex min-w-0 flex-wrap items-center gap-2.5 text-base font-semibold tracking-[-0.01em] max-sm:text-[15px]'>
-      {title}
-      {subtitle !== undefined && (
-        <span className='text-xs font-normal leading-[1.5] text-muted-foreground'>{subtitle}</span>
-      )}
-    </h3>
-    {viewAllLink !== undefined && <ViewAllLink to={viewAllLink} label='すべて見る' />}
-  </div>
-)
+const SectionHead = ({ title, subtitle, viewAllLink }: { title: string; subtitle?: string; viewAllLink?: string }) => {
+  const content = useIntlayer('anime-carousel')
+  return (
+    <div className='mb-3 flex items-baseline justify-between gap-3'>
+      <h3 className='flex min-w-0 flex-wrap items-center gap-2.5 text-base font-semibold tracking-[-0.01em] max-sm:text-[15px]'>
+        {title}
+        {subtitle !== undefined && (
+          <span className='text-xs font-normal leading-[1.5] text-muted-foreground'>{subtitle}</span>
+        )}
+      </h3>
+      {viewAllLink !== undefined && <ViewAllLink to={viewAllLink} label={content.viewAll.value} />}
+    </div>
+  )
+}
 
 /** モックの `.car-more` / `.more`。ホバーで矢印が少し右へ動く。 */
 export const ViewAllLink = ({ to, label, className }: { to: string; label: string; className?: string }) => (
@@ -130,35 +136,36 @@ function roundTo10Min(d: dayjs.Dayjs): dayjs.Dayjs {
   return d.minute(Math.floor(d.minute() / 10) * 10).second(0)
 }
 
-function formatDateBadge(date: string, type: BadgeType): string {
+function formatDateBadge(date: string, type: BadgeType, content: AnimeCarouselContent): string {
   const d = roundTo10Min(dayjs(date))
   if (type === 'updatedAt') return d.format('M/D H:mm')
-  if (type === 'expiredAt') return `${d.format('M/D')}まで`
+  if (type === 'expiredAt') return content.dateBadge.until({ date: d.format('M/D') }).value
   const now = dayjs()
-  if (d.isSame(now, 'day')) return `今日 ${d.format('H:mm')}`
-  if (d.isSame(now.add(1, 'day'), 'day')) return `明日 ${d.format('H:mm')}`
+  if (d.isSame(now, 'day')) return content.dateBadge.today({ time: d.format('H:mm') }).value
+  if (d.isSame(now.add(1, 'day'), 'day')) return content.dateBadge.tomorrow({ time: d.format('H:mm') }).value
   return d.format('M/D H:mm')
 }
 
-function badgeDate(anime: AnimeSchema, badgeType?: BadgeType): string | null {
+function badgeDate(anime: AnimeSchema, badgeType: BadgeType | undefined, content: AnimeCarouselContent): string | null {
   if (badgeType === undefined) return null
   const value =
     badgeType === 'updatedAt' ? anime.updatedAt : badgeType === 'expiredAt' ? anime.expiredAt : anime.nextEpisodeDate
   if (!value) return null
-  return formatDateBadge(value, badgeType)
+  return formatDateBadge(value, badgeType, content)
 }
 
-function seasonLabel(anime: AnimeSchema): string {
-  return `${anime.year}年${QuarterLabel[anime.quarter] ?? ''}`
+function seasonLabel(anime: AnimeSchema, content: AnimeCarouselContent): string {
+  return content.season({ year: anime.year, quarter: QuarterLabel[anime.quarter] ?? '' }).value
 }
 
 /** サムネ右下の録画状態。API が持つのは scheduled / recorded の 2 値のみ。 */
 function RecordingState({ anime }: { anime: AnimeSchema }) {
+  const content = useIntlayer('anime-carousel')
   if (anime.recorded) {
     return (
       <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-success dark:text-overlay-foreground'>
         <i className='size-1.5 rounded-full bg-success' />
-        録画済み
+        {content.recordingState.recorded}
       </span>
     )
   }
@@ -166,7 +173,7 @@ function RecordingState({ anime }: { anime: AnimeSchema }) {
     return (
       <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-overlay-foreground'>
         <i className='size-1.5 animate-pulse rounded-full bg-info' />
-        予約中
+        {content.recordingState.scheduled}
       </span>
     )
   }
@@ -182,8 +189,9 @@ function CarouselCard({
   badgeType?: BadgeType
   flag?: { tone: FlagTone; label: string; pulse?: boolean }
 }) {
-  const time = badgeDate(anime, badgeType)
-  const season = seasonLabel(anime)
+  const content = useIntlayer('anime-carousel')
+  const time = badgeDate(anime, badgeType, content)
+  const season = seasonLabel(anime, content)
 
   return (
     <Link to='/anime/$id' params={{ id: anime.id }} className='group flex min-w-0 flex-col gap-2'>
@@ -233,8 +241,9 @@ function PosterTile({
   showMeta: boolean
   tag?: { tone: FlagTone; label: (anime: AnimeSchema) => string | null }
 }) {
+  const content = useIntlayer('anime-carousel')
   const tagLabel = tag?.label(anime) ?? null
-  const time = badgeDate(anime, badgeType)
+  const time = badgeDate(anime, badgeType, content)
   const status = statusLabel[anime.status] ?? null
 
   return (

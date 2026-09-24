@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { ChevronRight } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import type { AnimeSchema } from '@/schemas/anime.dto'
@@ -10,21 +11,23 @@ type ScheduledUpdatesListProps = {
   subtitle?: string
 }
 
+type ScheduledUpdatesListContent = ReturnType<typeof useIntlayer<'scheduled-updates-list'>>
+
 /** モックの `.su-row` と同じグリッド定義。列は サムネ / 作品 / 更新 の 3 列。列見出しは持たない。 */
 const rowGrid = 'grid grid-cols-[76px_minmax(0,1fr)_84px] items-center gap-3 max-sm:grid-cols-[56px_minmax(0,1fr)_60px]'
 
 /** 「N 分前」のような相対表記。dayjs の relativeTime プラグインには依存しない。 */
-function relativeLabel(date: string): string {
+function relativeLabel(date: string, content: ScheduledUpdatesListContent): string {
   const d = dayjs(date)
   const now = dayjs()
   const minutes = now.diff(d, 'minute')
-  if (minutes < 1) return 'たった今'
-  if (minutes < 60) return `${minutes} 分前`
+  if (minutes < 1) return content.relative.justNow.value
+  if (minutes < 60) return content.relative.minutesAgo({ minutes }).value
   const hours = now.diff(d, 'hour')
-  if (hours < 24 && d.isSame(now, 'day')) return `${hours} 時間前`
-  if (d.isSame(now.subtract(1, 'day'), 'day')) return '昨日'
+  if (hours < 24 && d.isSame(now, 'day')) return content.relative.hoursAgo({ hours }).value
+  if (d.isSame(now.subtract(1, 'day'), 'day')) return content.relative.yesterday.value
   const days = now.diff(d, 'day')
-  if (days < 7) return `${days} 日前`
+  if (days < 7) return content.relative.daysAgo({ days }).value
   return d.format('M/D')
 }
 
@@ -33,15 +36,17 @@ function relativeLabel(date: string): string {
  * SPEC.md の通り複合指標は 1 セルに詰めず、状態はタグ、更新日時は独立した右寄せ列に置く。
  */
 export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListProps) {
+  const content = useIntlayer('scheduled-updates-list')
+
   if (anime.length === 0) {
     return (
       <section className='border-l-[3px] border-border py-5 pr-3 pl-[13px]'>
-        <p className='text-[12.5px] text-muted-foreground'>録画予約中の作品はまだありません。</p>
+        <p className='text-[12.5px] text-muted-foreground'>{content.empty.message}</p>
         <Link
           to='/browse'
           className='group/cta mt-2 inline-flex items-center gap-1.5 text-xs text-primary hover:underline'
         >
-          アニメ一覧から予約する
+          {content.empty.cta}
           <ChevronRight className='size-3.5 transition-transform group-hover/cta:translate-x-0.5' />
         </Link>
       </section>
@@ -52,7 +57,7 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
     <section className='border-l-[3px] border-primary'>
       <div className='flex flex-wrap items-baseline justify-between gap-3 border-b border-border py-1 pr-2.5 pb-2 pl-[13px]'>
         <h3 className='text-[13px] font-bold'>
-          録画予約中の更新
+          {content.heading}
           {subtitle !== undefined && (
             <span className='ml-2 text-[11.5px] font-normal text-muted-foreground max-sm:ml-0 max-sm:block'>
               {subtitle}
@@ -63,7 +68,7 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
           to='/recordings'
           className='group/more inline-flex items-center gap-0.5 text-[11.5px] text-muted-foreground transition-colors hover:text-foreground'
         >
-          録画一覧へ
+          {content.viewAll}
           <ChevronRight className='size-3.5 transition-transform group-hover/more:translate-x-0.5' />
         </Link>
       </div>
@@ -92,22 +97,22 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
                 </span>
                 {item.recorded ? (
                   <span className='inline-flex h-4 flex-none items-center rounded border border-success/45 px-1.5 text-[10.5px] leading-none text-success dark:text-foreground'>
-                    録画済み
+                    {content.recorded}
                   </span>
                 ) : (
                   <span className='inline-flex h-4 flex-none items-center rounded border border-border px-1.5 text-[10.5px] leading-none dark:text-foreground'>
-                    未録画
+                    {content.unrecorded}
                   </span>
                 )}
                 {item.expiredAt !== null && (
                   <span className='inline-flex h-4 flex-none items-center rounded border border-warning/45 bg-warning/20 px-1.5 text-[10.5px] leading-none text-warning-foreground'>
-                    配信終了予定
+                    {content.expiring}
                   </span>
                 )}
               </span>
             </span>
             <span className='whitespace-nowrap text-right text-xs tabular-nums text-muted-foreground'>
-              <span className='block'>{relativeLabel(item.updatedAt)}</span>
+              <span className='block'>{relativeLabel(item.updatedAt, content)}</span>
               <span className='block text-[10.5px] opacity-75 max-sm:hidden'>
                 {dayjs(item.updatedAt).format('M/D H:mm')}
               </span>

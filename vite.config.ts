@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { intlayer } from 'vite-intlayer'
 
 const version = JSON.parse(readFileSync('./package.json', 'utf-8')).version
 const hash = execSync('git rev-parse --short HEAD').toString().trim()
@@ -124,8 +125,12 @@ export default defineConfig(({ mode }) => ({
       autoCodeSplitting: true,
       routesDirectory: 'src/app/routes',
       generatedRouteTree: 'src/app/routeTree.gen.ts',
+      // 文言ファイルはルートと同じディレクトリに置くので、ルートとして拾わせない。
+      routeFileIgnorePattern: '\\.content\\.ts$',
     }),
     react(),
+    // src/app 配下の *.content.ts を辞書にまとめ、useIntlayer から引けるようにする。
+    intlayer(),
     tailwindcss(),
   ],
   // `/engine` サブパスを明示しないと初回 dynamic import で
