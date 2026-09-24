@@ -1,9 +1,15 @@
-import type { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
+import { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
 import type { NagisaLibraryItem } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
 import { IN_CHUNK } from './limits'
 
 type Prisma = ReturnType<typeof createPrismaClient>
+
+/** `Write` を D1 の `batch()` で 1 往復にまとめて流す。文が無ければ何もしない。 */
+export async function applyStatements(db: D1Database, writes: Write[]): Promise<D1Result[]> {
+  if (writes.length === 0) return []
+  return db.batch(writes.map((w) => db.prepare(w.sql).bind(...w.values)))
+}
 
 /** `IN (...)` を D1 の bound parameter 上限に収めるために分ける。 */
 export function chunk<T>(xs: T[], size: number): T[][] {
@@ -106,8 +112,17 @@ export interface LedgerRow {
   item: NagisaLibraryItem
 }
 
-/** `$transaction([...])` に並べる 1 文。raw も updateMany も同じ形で扱える。 */
-export type Write = PrismaSql.PrismaPromise<unknown>
+/**
+ * D1 の `batch()` に並べる 1 文。`Prisma.sql` で組み立て、`applyBatched` が
+ * `?` プレースホルダの文に直して流す。
+ *
+ * `$transaction([...])` は使わない。D1 adapter のトランザクションは名ばかりで
+ * (文を 1 本ずつ別に投げ、commit / rollback は何もしない)、しかも Prisma 側の
+ * 既定 5 秒の期限だけは掛かる。300 文を積むと往復だけで期限を越え、
+ * 途中まで書いたところで毎回落ちていた。`batch()` なら 1 往復で済み、
+ * 本当に原子的になる。
+ */
+export type Write = PrismaSql.Sql
 
 /**
  * 同じエピソードを指す台帳行が 2 つあったとき、`candidate` が `held` に勝つか。
@@ -133,7 +148,7 @@ export function beatsCurrent(candidate: LedgerRow, held: LedgerRow): boolean {
  *
  * `episode_id` は indexed なので IN 1 本で引き、provider / content_id の一致は
  * JS 側で確かめる。relation filter を `updateMany` の where に書くと
- * Prisma が暗黙の SELECT を挟み、`$transaction([...])` の原子性が崩れる。
+ * Prisma が暗黙の SELECT を挟み、同じ `batch()` に並べられなくなる。
  * (ここは読むだけなので relation filter を使ってよい。)
  */
 export async function resolveEpisodes(prisma: Prisma, rows: LedgerRow[]): Promise<Map<MatchKey, string[]>> {
@@ -229,7 +244,7 @@ async function resolveByTmdb(prisma: Prisma, rows: LedgerRow[]): Promise<Map<Mat
  * 流してよい (二重に走っても同じ値を書くだけ)。ページを跨いだ足場は
  * 次の bootstrap で拾われる。
  */
-export async function learnTmdbIds(prisma: Prisma, rows: LedgerRow[]): Promise<number> {
+export async function learnTmdbIds(prisma: Prisma, db: D1Database, rows: LedgerRow[]): Promise<number> {
   const wanted = new Map<string, { provider: string; contentId: string; tmdbId: number }>()
   for (const { item } of rows) {
     if (item.provider === UNKNOWN_PROVIDER || !item.content_id || item.tmdb_id == null) continue
@@ -256,6 +271,11 @@ export async function learnTmdbIds(prisma: Prisma, rows: LedgerRow[]): Promise<n
   })
   if (stale.length === 0) return 0
 
-  await prisma.$transaction(stale.map((a) => prisma.anime.update({ where: { id: a.id }, data: { tmdbId: a.tmdbId } })))
+  // updated_at は Prisma の @updatedAt が書く列なので、raw では自前で入れる。
+  const now = sqlDate(new Date())
+  await applyStatements(
+    db,
+    stale.map((a) => PrismaSql.sql`UPDATE anime SET tmdb_id = ${a.tmdbId}, updated_at = ${now} WHERE id = ${a.id}`)
+  )
   return stale.length
 }

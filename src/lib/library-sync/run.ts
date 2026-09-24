@@ -1,7 +1,7 @@
 import { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
 import type { createPrismaClient } from '../db'
 import { getAppLogger } from '../logger'
-import { chunk, sqlDate, type Write } from './ledger'
+import { applyStatements, chunk, sqlDate, type Write } from './ledger'
 import { MAX_WRITES_PER_BATCH, SYNC_KEY } from './limits'
 
 const logger = getAppLogger('library-sync')
@@ -75,7 +75,7 @@ export async function holdsLease(prisma: Prisma, owner: string): Promise<boolean
 export const leaseWhere = (owner: string, now: Date) => ({ key: SYNC_KEY, leaseOwner: owner, leaseUntil: { gt: now } })
 
 /**
- * 1 ページぶんの書き込みを流す。文が多い回だけ複数のトランザクションに割り、
+ * 1 ページぶんの書き込みを流す。文が多い回だけ複数の `batch()` に割り、
  * **カーソル更新 (`tail`) は必ず最後のバッチに置く**。返すのは最後のバッチの
  * 結果で、`fenced` はそれを見る。
  *
@@ -91,29 +91,38 @@ export const leaseWhere = (owner: string, now: Date) => ({ key: SYNC_KEY, leaseO
  * 時点の* 書き込みなので不正ではなく、しかも冪等なので新しい所有者が同じ
  * ページを読み直せば上書きされる。
  */
-export async function applyBatched(prisma: Prisma, writes: Write[], tail: Write[]): Promise<unknown[]> {
+export async function applyBatched(db: D1Database, writes: Write[], tail: Write[]): Promise<D1Result[]> {
   // tail のぶんを引いて割る。引かないと最後のバッチだけ上限 + tail 件になる。
   const batches = chunk(writes, Math.max(1, MAX_WRITES_PER_BATCH - tail.length))
   if (batches.length === 0) batches.push([])
-  let applied: unknown[] = []
+  let applied: D1Result[] = []
   for (let i = 0; i < batches.length; i++) {
     const batch = i === batches.length - 1 ? [...batches[i], ...tail] : batches[i]
     if (batch.length === 0) continue
-    applied = await prisma.$transaction(batch)
+    applied = await applyStatements(db, batch)
   }
   return applied
 }
 
 /**
+ * `sync_state` を lease 付きで書き換える 1 文 (`leaseWhere` の raw 版)。
+ * エピソード更新と同じ `batch()` に並べるため Prisma の `updateMany` は使えない。
+ * `updated_at` は `@updatedAt` 列なので自前で入れる。
+ */
+export const stateWrite = (owner: string, now: Date, set: PrismaSql.Sql): Write =>
+  PrismaSql.sql`UPDATE sync_state SET ${set}, updated_at = ${sqlDate(new Date())}
+    WHERE key = 'library' AND lease_owner = ${owner} AND lease_until > ${sqlDate(now)}`
+
+/**
  * 適用バッチの結果から「lease を失ったまま実行されたか」を見る。
  *
- * バッチの最後に置いた `syncState.updateMany` が 0 件なら、同じバッチの
+ * バッチの最後に置いた `stateWrite` が 0 件なら、同じバッチの
  * エピソード更新も (同じ `leaseGuard` を共有しているので) 1 行も書いていない。
  * つまり **何も起きなかった** ことが確定する。復旧処理は要らず、降りるだけでよい。
  */
-export function fenced(applied: unknown[], result: LibrarySyncResult, phase: string): boolean {
+export function fenced(applied: D1Result[], result: LibrarySyncResult, phase: string): boolean {
   const last = applied.at(-1)
-  const count = typeof last === 'object' && last !== null && 'count' in last ? (last as { count: number }).count : 1
+  const count = last ? last.meta.changes : 1
   if (count > 0) return false
   logger.warn({ action: 'library-lease-lost', phase })
   result.aborted = 'lease_lost'

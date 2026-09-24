@@ -26,7 +26,6 @@ type Prisma = ReturnType<typeof createPrismaClient>
  * id も tmdb_id も復元できなかった行) が同期を止めてはいけない (§7-5)。
  */
 export function buildUpsertWrites(
-  prisma: Prisma,
   rows: LedgerRow[],
   resolved: Map<MatchKey, string[]>,
   now: Date,
@@ -108,7 +107,7 @@ export function buildUpsertWrites(
           : PrismaSql.empty
     for (const part of chunk(ids, IN_CHUNK)) {
       writes.push(
-        prisma.$executeRaw`
+        PrismaSql.sql`
           UPDATE episodes SET
             record_status = 'completed',
             record_source = 'reconcile',
@@ -138,7 +137,7 @@ export function buildUpsertWrites(
   if (skipOlder) {
     for (const part of chunk([...winners.keys()], IN_CHUNK)) {
       writes.push(
-        prisma.$executeRaw`
+        PrismaSql.sql`
           UPDATE episodes SET record_synced_at = ${sqlDate(now)}
           WHERE id IN (${PrismaSql.join(part)}) AND record_status = 'completed' ${guard}`
       )
@@ -152,8 +151,8 @@ export function buildUpsertWrites(
  * パスの表記揺れに依存せずに引ける。completed 以外は触らない
  * (再指示で pending に戻っている話を missing に引き戻さないため)。
  */
-export const buildDeleteWrite = (prisma: Prisma, recordingId: string, now: Date, owner: string): Write =>
-  prisma.$executeRaw`
+export const buildDeleteWrite = (recordingId: string, now: Date, owner: string): Write =>
+  PrismaSql.sql`
     UPDATE episodes SET
       record_status = 'missing',
       record_source = 'reconcile',
@@ -202,7 +201,7 @@ export async function buildSweep(
   result.deletes += orphans
   // 日時の比較は Prisma が書く表記 (TEXT / `+00:00` 固定) どうしで行う。sqlDate を参照。
   return [
-    prisma.$executeRaw`
+    PrismaSql.sql`
       UPDATE episodes SET
         record_status = 'missing',
         record_source = 'reconcile',
