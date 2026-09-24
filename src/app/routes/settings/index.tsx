@@ -9,6 +9,7 @@ import { ADMIN_LINK_COUNT, AdminSection } from './-components/admin-section'
 import { DataSection } from './-components/data-section'
 import { DisplaySection } from './-components/display-section'
 import { CheckIcon } from './-components/icons'
+import { LibrarySyncSection } from './-components/library-sync-section'
 import { ProviderSection } from './-components/provider-section'
 import { RecordingSection } from './-components/recording-section'
 import { SettingsAside } from './-components/settings-aside'
@@ -71,6 +72,7 @@ const SettingsPage = () => {
           <DisplaySection />
           <ProviderSection />
           <RecordingSection />
+          <LibrarySyncSection />
           <AdminSection />
           <DataSection />
           <AboutSection />

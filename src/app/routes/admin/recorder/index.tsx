@@ -14,7 +14,7 @@ import { providerLabel } from '@/app/lib/constants'
 import { useSettings } from '@/app/routes/settings/-lib/settings'
 import type { NagisaEnqueueRequest, NagisaEnqueueResponse } from '@/schemas/nagisa.dto'
 
-export const Route = createFileRoute('/admin/nagisa/')({
+export const Route = createFileRoute('/admin/recorder/')({
   component: NagisaJobEditorPage
 })
 
@@ -57,7 +57,7 @@ function NagisaJobEditorPage() {
     v === UNSET || v == null ? content.unset.value : (LANGUAGES.find((l) => l.value === v)?.label ?? String(v))
 
   const mutation = useMutation<NagisaEnqueueResponse, Error, NagisaEnqueueRequest>({
-    mutationFn: (body) => api.enqueueNagisaJob(body)
+    mutationFn: (body) => api.enqueueRecordingJob(body)
   })
 
   const parseEpisodes = (): number[] | null | { error: string } => {

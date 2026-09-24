@@ -10,7 +10,7 @@ import { PgSec, SecMoreLabel, secMoreClass } from './section'
 const linkClass =
   'flex items-center gap-3 rounded-r-[10px] border-l-[3px] border-l-primary px-4 py-3.5 transition-[background-color,transform] duration-200 hover:translate-x-[3px] hover:bg-muted [&_svg]:text-primary'
 
-type AdminPath = '/admin/unidentified' | '/admin/nagisa' | '/changelog'
+type AdminPath = '/admin/unidentified' | '/admin/recorder' | '/changelog'
 
 /** 目次の件数表示に使う。実ルートがあるリンクだけを数える。 */
 export const ADMIN_LINK_COUNT = 3
@@ -62,7 +62,7 @@ export const AdminSection = () => {
           description={content.unidentified.description}
         />
         <AdminLink
-          to='/admin/nagisa'
+          to='/admin/recorder'
           icon={<JobIcon />}
           title={content.nagisaJob.title}
           description={content.nagisaJob.description}

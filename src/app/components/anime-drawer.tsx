@@ -106,7 +106,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
         toast.success(content.toasts.refreshSuccess.value)
       }
       invalidateRelated()
-      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
     },
     onError: (error) => toast.error(getApiErrorMessage(error, content.toasts.refreshFailedFallback.value))
   })

@@ -1,5 +1,7 @@
 # 録画機能設計: 自動録画 & 即時録画
 
+> **API パスは [`docs/plans/api-restful-renaming.md`](../plans/api-restful-renaming.md) で改名済み (本書のパスは当時のもの)**。例: `POST /api/anime/:id/record` → `POST /api/anime/{id}/recording-jobs`。
+>
 > **一部廃止 (2026-09-23)**: 本書の **Webhook (`POST /api/webhooks/record-status`) に関する節は廃止**。
 > 本番 nagisa に環境変数が無く、実装以来 1 件も送信されていないことが実測で確定したため、
 > 状態同期は **Workers → nagisa の pull 一方向**へ移行します。

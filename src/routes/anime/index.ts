@@ -8,7 +8,6 @@ import { RecordStatusEnum } from '../../schemas/recording.dto'
 import { registerBadged } from './badged'
 import type { Bindings } from './bindings'
 import { registerRecord } from './record'
-import { registerRecordingStatus } from './recording-status'
 import { registerRefresh } from './refresh'
 
 const logger = getAppLogger('routes')
@@ -201,7 +200,6 @@ anime.openapi(
 )
 
 registerRecord(anime)
-registerRecordingStatus(anime)
 registerRefresh(anime)
 
 export default anime

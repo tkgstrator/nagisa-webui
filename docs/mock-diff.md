@@ -40,7 +40,7 @@ compose では `ports` を宣言していない。viewer の UI は vite dev ser
 
 `/api/*` だけは `server.proxy` では勝てない。`@cloudflare/vite-plugin` が `configureServer` の中で middleware を直接 `use` するため、vite が proxy を挟むより前にアプリ側 Worker が並び、`/api/screens` は Hono の `404`(`text/plain`)になる。そこで `vite.config.ts` に `enforce: 'pre'` の `mock-diff-api-proxy` plugin を置き、Worker より手前で sidecar へ横流ししている。対象は `MOCK_DIFF_API_PATHS`(現在は `/api/screens` `/api/compare` `/api/workspace`)で、viewer 側にエンドポイントが増えたらここに足す。
 
-アプリ側の API 名前空間(`/api/admin` `/api/anime` `/api/img` `/api/nagisa` `/api/recordings` `/api/webhooks`)とは衝突していない。将来 viewer 側と同名のパスが生えると先取りされる点にだけ注意する。
+アプリ側の API 名前空間(`/api/admin` `/api/anime` `/api/episodes` `/api/img` `/api/recorder` `/api/recording-library` `/api/recording-jobs`)とは衝突していない。将来 viewer 側と同名のパスが生えると先取りされる点にだけ注意する。
 
 ## 撮影先が compose のサービス名ではなくコンテナ名な理由
 

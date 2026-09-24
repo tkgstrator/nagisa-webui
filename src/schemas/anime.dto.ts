@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { NagisaAnilistRecordingSchema, NagisaQueueSnapshotJobSchema } from './nagisa.dto'
 import { RecordStatusEnum } from './recording.dto'
 
 export const AnimeSchema = z.object({
@@ -121,29 +120,3 @@ export const RefreshAnimeResponseSchema = z.object({
     library: z.object({ skipped: z.boolean(), upserts: z.number(), deletes: z.number(), error: z.string().nullable() })
   })
 })
-
-/**
- * `GET /anime/:id/recording-status`。同じ AniList 作品に属する全配信元について、
- * nagisa の台帳にあるファイルと、待機中・実行中のジョブを返す。
- *
- * nagisa に問い合わせられなかったときも 200 で返し、理由を error に畳む
- * (作品ページの脇に出す補助情報なので、ページ全体を落とさない)。
- */
-export const AnimeRecordingTitleSchema = z.object({
-  /** D1 に同じ (provider, contentId) の作品があればその id。無ければ null */
-  animeId: z.string().nullable(),
-  provider: z.string().nonempty(),
-  contentId: z.string().nonempty(),
-  recordings: z.array(NagisaAnilistRecordingSchema),
-  /** キューが読めなかったときは null (空配列 = 何も走っていない、とは別物) */
-  jobs: z.array(NagisaQueueSnapshotJobSchema).nullable()
-})
-export type AnimeRecordingTitle = z.infer<typeof AnimeRecordingTitleSchema>
-
-export const AnimeRecordingStatusSchema = z.object({
-  aniListId: z.number().int(),
-  error: z.string().nullable(),
-  queueAvailable: z.boolean(),
-  titles: z.array(AnimeRecordingTitleSchema)
-})
-export type AnimeRecordingStatus = z.infer<typeof AnimeRecordingStatusSchema>

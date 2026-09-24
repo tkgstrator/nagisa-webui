@@ -10,6 +10,9 @@ import api from '@/app/lib/api'
 import { queryKeys } from '@/app/lib/query-keys'
 import { archiveStatsQueryOptions } from '@/app/lib/query-options'
 
+/** この画面は ABEMA 専用。API 側は provider を受けるが、ここでは固定 */
+const PROVIDER = 'abema'
+
 export const Route = createFileRoute('/admin/abema/')({
   component: AbemaArchivePage
 })
@@ -17,17 +20,17 @@ export const Route = createFileRoute('/admin/abema/')({
 function AbemaArchivePage() {
   const content = useIntlayer('admin-abema')
   const queryClient = useQueryClient()
-  const { data: stats, isPending } = useQuery(archiveStatsQueryOptions())
+  const { data: stats, isPending } = useQuery(archiveStatsQueryOptions(PROVIDER))
 
   const enqueueMutation = useMutation({
-    mutationFn: () => api.enqueueArchive(undefined),
+    mutationFn: () => api.enqueueArchive({ provider: PROVIDER }),
     onSuccess: ({ enqueued }) => {
       if (enqueued === 0) {
         toast.info(content.toast.nothingToEnqueue.value)
       } else {
         toast.success(content.toast.enqueued({ enqueued }).value)
       }
-      queryClient.invalidateQueries({ queryKey: queryKeys.admin.archiveStats })
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.archiveStats(PROVIDER) })
     },
     onError: () => toast.error(content.toast.enqueueFailed.value)
   })

@@ -6,9 +6,9 @@ import { PageContainer } from '@/app/components/page-container'
 import { StatTile } from '@/app/components/stat-tile'
 import { recordStatusAccent, recordStatusLabel, recordStatusNote } from '@/app/lib/constants'
 import {
-  nagisaLibraryStatsQueryOptions,
-  nagisaQueueSnapshotQueryOptions,
-  nagisaStatusQueryOptions,
+  recorderQueueSnapshotQueryOptions,
+  recorderStatusQueryOptions,
+  recordingLibraryStatsQueryOptions,
   recordingSyncStateQueryOptions
 } from '@/app/lib/query-options'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
@@ -83,9 +83,9 @@ function StatusAdminPage() {
 
   // 上流 (nagisa) を叩く 3 本は落ちていることが正常系なので、失敗を画面に出すだけで
   // ページ全体は落とさない。sync-state はローカル D1 だけなので必ず返る。
-  const status = useQuery(nagisaStatusQueryOptions())
-  const snapshot = useQuery(nagisaQueueSnapshotQueryOptions())
-  const stats = useQuery(nagisaLibraryStatsQueryOptions())
+  const status = useQuery(recorderStatusQueryOptions())
+  const snapshot = useQuery(recorderQueueSnapshotQueryOptions())
+  const stats = useQuery(recordingLibraryStatsQueryOptions())
   const sync = useQuery(recordingSyncStateQueryOptions())
 
   // ロックは期限を見ないと意味が反転する。同期が異常終了すると lease_until だけが

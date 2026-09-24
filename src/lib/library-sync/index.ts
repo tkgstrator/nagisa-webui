@@ -43,7 +43,8 @@ type Prisma = ReturnType<typeof createPrismaClient>
  */
 export async function syncLibrary(
   prisma: Prisma,
-  env: Partial<NagisaEnv> & { DB: D1Database }
+  env: Partial<NagisaEnv> & { DB: D1Database },
+  options?: { force?: boolean }
 ): Promise<LibrarySyncResult> {
   const result = emptyResult()
   const owner = crypto.randomUUID()
@@ -63,6 +64,16 @@ export async function syncLibrary(
   }
 
   try {
+    if (options?.force) {
+      // 手動のフル同期。lease を握った直後、下の state 分岐に入る前に
+      // bootstrap の継続印と差分カーソルを消しておく。これで state 分岐は
+      // 必ず `bootstrapLibrary(..., 'initial', ...)` に合流し、台帳を頭から取り直す。
+      await prisma.syncState.updateMany({
+        where: leaseWhere(owner, new Date(now)),
+        data: { snapshotCursor: null, snapshotStartedAt: null, libraryCursor: null }
+      })
+    }
+
     const state = await prisma.syncState.findUnique({ where: { key: SYNC_KEY } })
     // bootstrap が終わっていない印は 2 つある。途中のページで止まったなら
     // `snapshotCursor`、最終ページの掃き出しを拒否して止まったなら

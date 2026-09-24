@@ -3,9 +3,9 @@ import { atomWithStorage } from 'jotai/utils'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import type { RecordedFilter, SortValue } from '@/app/routes/recordings/-components/recordings-toolbar'
 import { parseSortPreference, readSettings, type Settings } from '@/app/routes/settings/-lib/settings'
-import { nagisaStatusQueryOptions } from './query-options'
+import { recorderStatusQueryOptions } from './query-options'
 
-export const nagisaStatusAtom = atomWithQuery(() => nagisaStatusQueryOptions())
+export const recorderStatusAtom = atomWithQuery(() => recorderStatusQueryOptions())
 
 interface BrowseFilters {
   provider?: string

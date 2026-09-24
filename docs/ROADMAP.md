@@ -22,7 +22,7 @@
 
 ## Phase 3: 録画管理 UI
 
-12. **録画チェック機能** — アニメ一覧の各行にチェックボックスを配置。チェック → `POST /api/recordings`
+12. **録画チェック機能** — アニメ一覧の各行にチェックボックスを配置。チェック → `PATCH /api/episodes/{id}`
 13. **話数管理** — 録画済みの話数を表示・更新できる UI。episode_number の入力・更新
 14. **録画状態バッジ** — pending / recorded をバッジで色分け表示
 15. **録画一覧ページ** — `src/app/routes/recordings.tsx` で録画リスト専用ビュー
