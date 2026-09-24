@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { useIntlayer } from 'react-intlayer'
 import { providerLabel } from '@/app/lib/constants'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
 import { getProviderTitleUrl } from '../-lib/format'
@@ -18,6 +19,7 @@ const Row = ({ label, children, mono }: { label: string; children: React.ReactNo
 )
 
 export function AnimeInfo({ anime }: { anime: AnimeInfoSchema }) {
+  const content = useIntlayer('anime-id-anime-info')
   const titleUrl = getProviderTitleUrl(anime.provider, anime.contentId)
 
   return (
@@ -26,11 +28,11 @@ export function AnimeInfo({ anime }: { anime: AnimeInfoSchema }) {
         id='info-heading'
         className='mb-2 flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
       >
-        作品情報
+        {content.heading}
       </h3>
       <div className='border-l-[3px] border-border px-3 py-1'>
         {anime.aniListId > 0 && (
-          <Row label='AniList'>
+          <Row label={content.rows.aniList.value}>
             <a
               href={`https://anilist.co/anime/${anime.aniListId}`}
               target='_blank'
@@ -41,7 +43,7 @@ export function AnimeInfo({ anime }: { anime: AnimeInfoSchema }) {
             </a>
           </Row>
         )}
-        <Row label='配信元'>
+        <Row label={content.rows.provider.value}>
           {titleUrl === null ? (
             providerLabel[anime.provider]
           ) : (
@@ -51,14 +53,14 @@ export function AnimeInfo({ anime }: { anime: AnimeInfoSchema }) {
           )}
         </Row>
         {anime.expiredAt !== null && (
-          <Row label='配信終了'>
+          <Row label={content.rows.expiredAt.value}>
             <span className='tabular-nums'>{dayjs(anime.expiredAt).format('YYYY/MM/DD')}</span>
           </Row>
         )}
-        <Row label='最終更新'>
+        <Row label={content.rows.updatedAt.value}>
           <span className='tabular-nums'>{dayjs(anime.updatedAt).format('YYYY/MM/DD')}</span>
         </Row>
-        <Row label='識別子' mono>
+        <Row label={content.rows.contentId.value} mono>
           {anime.contentId}
         </Row>
       </div>

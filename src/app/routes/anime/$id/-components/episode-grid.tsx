@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { Check, ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import { Checkbox } from '@/app/components/ui/checkbox'
 import api from '@/app/lib/api'
@@ -65,6 +66,7 @@ const RecordState = ({
   sending: boolean
   onRecord: () => void
 }) => {
+  const content = useIntlayer('anime-id-episode-grid')
   const busy = sending || progress === 'pending' || progress === 'downloading'
   const style = busy
     ? 'border-info/40 bg-info/10 text-info'
@@ -85,23 +87,23 @@ const RecordState = ({
           ? 'border-[1.5px] border-destructive'
           : 'border-[1.5px] border-muted-foreground'
   const label = sending
-    ? '送信中'
+    ? content.recordButton.sending.value
     : progress === 'pending'
-      ? '予約済み'
+      ? content.recordButton.pending.value
       : progress === 'downloading'
-        ? '録画中'
+        ? content.recordButton.downloading.value
         : status === 'future'
-          ? '配信予定'
+          ? content.recordButton.future.value
           : status === 'done'
-            ? '録画済み'
+            ? content.recordButton.done.value
             : progress === 'failed'
-              ? '再試行'
-              : '録画する'
+              ? content.recordButton.retry.value
+              : content.recordButton.record.value
   const title =
     progress === 'failed'
-      ? (error ?? '録画に失敗しました')
+      ? (error ?? content.recordButton.failedTitle.value)
       : status === 'done'
-        ? '押すと録画をもう一度送る (nagisa 側で既存ファイルは飛ばされる)'
+        ? content.recordButton.doneTitle.value
         : undefined
 
   return (
@@ -136,10 +138,11 @@ const EpisodeRow = ({
   onSelect: (episode: Episode, selected: boolean) => void
   onRecord: (episodeIds: string[]) => void
 }) => {
+  const content = useIntlayer('anime-id-episode-grid')
   const status = episodeStatus(episode)
   const progress = progressOf(episode)
   const watchUrl = getWatchUrl(provider, episode.episodeId)
-  const title = episode.title || `第${episode.episodeNumber}話`
+  const title = episode.title || content.episodeLabel({ number: episode.episodeNumber }).value
 
   return (
     <li
@@ -147,7 +150,7 @@ const EpisodeRow = ({
       className={`grid grid-cols-[16px_3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] p-3 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[16px_2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2 ${progress === 'failed' ? 'border-l-destructive' : rowAccent[status]}`}
     >
       <Checkbox
-        aria-label={`第${episode.episodeNumber}話を選択`}
+        aria-label={content.selectEpisodeLabel({ number: episode.episodeNumber }).value}
         checked={selected}
         disabled={status === 'future'}
         onCheckedChange={(checked) => onSelect(episode, checked)}
@@ -166,7 +169,7 @@ const EpisodeRow = ({
       >
         {episode.hasLocalKey && (
           <span className='absolute top-1 left-1 rounded-full bg-success px-1.5 py-px text-[9.5px] font-bold text-success-foreground'>
-            無料
+            {content.freeBadge}
           </span>
         )}
         {episode.duration > 0 && (
@@ -190,19 +193,21 @@ const EpisodeRow = ({
           <span className='hidden max-sm:inline'>{formatMonthDay(episode.releaseDate)}</span>
           {episode.hasSubtitles && (
             <span className='inline-flex h-4 items-center rounded border border-border px-[5px] text-[10.5px] leading-none'>
-              字幕
+              {content.subtitlesBadge}
             </span>
           )}
           {episode.hasDub && (
             <span className='inline-flex h-4 items-center rounded border border-border px-[5px] text-[10.5px] leading-none'>
-              吹替
+              {content.dubBadge}
             </span>
           )}
         </div>
       </div>
 
       <span className='text-right text-[13px] leading-[19.5px] text-muted-foreground tabular-nums max-sm:hidden'>
-        {status === 'future' ? `${formatMonthDay(episode.releaseDate)} 配信` : formatDate(episode.releaseDate)}
+        {status === 'future'
+          ? content.releaseOn({ date: formatMonthDay(episode.releaseDate) }).value
+          : formatDate(episode.releaseDate)}
       </span>
       <span className='text-right text-[13px] leading-[19.5px] text-muted-foreground tabular-nums max-sm:hidden'>
         {episode.duration > 0 ? formatDuration(episode.duration) : '—'}
@@ -220,6 +225,7 @@ const EpisodeRow = ({
 }
 
 export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
+  const content = useIntlayer('anime-id-episode-grid')
   const seasons = anime.seasons
   const [activeSeasonId, setActiveSeasonId] = useState(seasons[0]?.id ?? '')
   const [filter, setFilter] = useState<Filter>('all')
@@ -233,12 +239,13 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   const record = useMutation({
     mutationFn: (episodeIds: string[]) => api.recordAnime({ episodeIds }, { params: { id: anime.id } }),
     onSuccess: (data, episodeIds) => {
-      toast.success(`${episodeIds.length} 話の録画を送信しました`, {
-        description: data.count === episodeIds.length ? undefined : `nagisa が受け付けたのは ${data.count} 件`
+      toast.success(content.recordToast.success({ count: episodeIds.length }).value, {
+        description:
+          data.count === episodeIds.length ? undefined : content.recordToast.acceptedCount({ count: data.count }).value
       })
       setSelectedIds(new Set())
     },
-    onError: () => toast.error('録画リクエストに失敗しました'),
+    onError: () => toast.error(content.recordToast.error.value),
     // 失敗したときもサーバー側は録画イベントと失敗状態を書いているので、どちらでも読み直す
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
@@ -292,10 +299,10 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
     return (
       <section aria-labelledby='ep-heading'>
         <h2 id='ep-heading' className='mb-3.5 text-base font-bold'>
-          エピソード
+          {content.heading}
         </h2>
         <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>
-          エピソード情報はまだありません
+          {content.noEpisodes}
         </p>
       </section>
     )
@@ -312,13 +319,13 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
     <section aria-labelledby='ep-heading'>
       {/* シーズン名と話数はすぐ下のタブが出すので、見出しでは繰り返さない。 */}
       <h2 id='ep-heading' className='mb-3.5 text-base font-bold'>
-        エピソード
+        {content.heading}
       </h2>
 
       <div
         className='flex gap-0.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--border)]'
         role='tablist'
-        aria-label='シーズン'
+        aria-label={content.seasonTabsLabel.value}
       >
         {seasons.map((item) => (
           <button
@@ -338,13 +345,13 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
         ))}
         <span className='flex-1' />
         <span className='self-center whitespace-nowrap px-1 text-xs leading-[18px] text-muted-foreground max-sm:hidden'>
-          {anime.scheduled ? '新着エピソードを自動録画' : '自動録画は無効'}
+          {anime.scheduled ? content.autoRecordOn : content.autoRecordOff}
         </span>
       </div>
 
       <section
         className='mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-3 rounded-r-lg border-l-[3px] border-l-primary bg-muted/60 px-4 py-3.5 max-sm:grid-cols-[minmax(0,1fr)]'
-        aria-label='録画状況'
+        aria-label={content.recordingStatusLabel.value}
       >
         <div>
           <div className='flex h-3.5 gap-[3px]'>
@@ -352,43 +359,46 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
               <a
                 key={episode.id}
                 href={`#ep-${episode.id}`}
-                title={`第${episode.episodeNumber}話`}
+                title={content.episodeLabel({ number: episode.episodeNumber }).value}
                 className={`min-w-0 flex-1 rounded-[3px] ${stripColor[episodeStatus(episode)]}`}
               >
-                <span className='sr-only'>第{episode.episodeNumber}話</span>
+                <span className='sr-only'>{content.episodeLabel({ number: episode.episodeNumber })}</span>
               </a>
             ))}
           </div>
           <div className='mt-[18px] flex justify-between text-[11px] text-muted-foreground tabular-nums'>
-            <span>第{first}話</span>
-            {middle !== null && <span>第{middle}話</span>}
-            <span>第{last}話</span>
+            <span>{content.episodeLabel({ number: first })}</span>
+            {middle !== null && <span>{content.episodeLabel({ number: middle })}</span>}
+            <span>{content.episodeLabel({ number: last })}</span>
           </div>
         </div>
         <div className='grid grid-cols-3 gap-x-[18px] max-sm:col-start-1'>
-          <Stat label='録画済み' value={stats.done} dot='bg-success' />
-          <Stat label='未録画' value={stats.todo} dot='bg-muted-foreground/45' />
-          <Stat label='配信予定' value={stats.future} dot='bg-border' />
+          <Stat label={content.stats.done.value} value={stats.done} dot='bg-success' />
+          <Stat label={content.stats.todo.value} value={stats.todo} dot='bg-muted-foreground/45' />
+          <Stat label={content.stats.future.value} value={stats.future} dot='bg-border' />
         </div>
       </section>
 
-      <fieldset className='mb-3 flex flex-wrap items-center gap-1.5 border-0 p-0' aria-label='絞り込み'>
+      <fieldset
+        className='mb-3 flex flex-wrap items-center gap-1.5 border-0 p-0'
+        aria-label={content.filterFieldsetLabel.value}
+      >
         <span className='inline-flex h-7 items-center gap-2 pr-1.5 pl-[15px] text-[12.5px] text-muted-foreground max-sm:pl-[11px]'>
           <Checkbox
-            aria-label='表示中の話をすべて選択'
+            aria-label={content.selectAllLabel.value}
             checked={allSelected}
             disabled={selectable.length === 0}
             onCheckedChange={selectAll}
           />
         </span>
         <button type='button' aria-pressed={filter === 'all'} onClick={() => setFilter('all')} className={chipClass}>
-          すべて <span className='opacity-80 tabular-nums'>{season.episodes.length}</span>
+          {content.filterChips.all} <span className='opacity-80 tabular-nums'>{season.episodes.length}</span>
         </button>
         <button type='button' aria-pressed={filter === 'todo'} onClick={() => setFilter('todo')} className={chipClass}>
-          未録画 <span className='opacity-80 tabular-nums'>{stats.todo}</span>
+          {content.filterChips.todo} <span className='opacity-80 tabular-nums'>{stats.todo}</span>
         </button>
         <button type='button' aria-pressed={filter === 'free'} onClick={() => setFilter('free')} className={chipClass}>
-          無料 <span className='opacity-80 tabular-nums'>{stats.free}</span>
+          {content.filterChips.free} <span className='opacity-80 tabular-nums'>{stats.free}</span>
         </button>
         <span className='flex-1' />
         <button
@@ -397,14 +407,14 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
           onClick={() => record.mutate(selected.map((episode) => episode.id))}
           className={`${chipClass} border-primary/40 font-semibold text-primary enabled:hover:bg-primary/10 disabled:cursor-default disabled:border-border disabled:font-normal disabled:text-muted-foreground disabled:hover:bg-transparent`}
         >
-          選択した話を録画 <span className='opacity-80 tabular-nums'>{selected.length}</span>
+          {content.recordSelected} <span className='opacity-80 tabular-nums'>{selected.length}</span>
         </button>
         <button
           type='button'
           onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
           className={`${chipClass} border-transparent`}
         >
-          話数順 {order === 'asc' ? '↑' : '↓'}
+          {content.orderButton} {order === 'asc' ? '↑' : '↓'}
         </button>
       </fieldset>
 
@@ -424,10 +434,11 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
 
       <div className='flex items-center justify-between px-3 pt-3 text-xs leading-[18px] text-muted-foreground'>
         <span className='tabular-nums'>
-          録画済み {stats.done} 話{stats.duration > 0 && ` · ${formatRuntime(stats.duration)}`}
+          {content.footerRecorded({ count: stats.done })}
+          {stats.duration > 0 && ` · ${formatRuntime(stats.duration)}`}
         </span>
         <Link to='/recordings' className='inline-flex items-center gap-1 font-semibold text-primary'>
-          録画一覧で開く
+          {content.openRecordings}
           <ChevronRight className='size-3' />
         </Link>
       </div>

@@ -6,8 +6,8 @@ import {
   chunk,
   type LedgerRow,
   type MatchKey,
-  matchKey,
   parseMtime,
+  rowKey,
   sqlDate,
   toMb,
   type Write
@@ -23,7 +23,7 @@ type Prisma = ReturnType<typeof createPrismaClient>
  * upsert イベント群を D1 の書き込みに変換する。
  *
  * 該当 0 件でも失敗にしない。nagisa にしか無い録画 (Workers が追跡していない作品、
- * content_id を復元できなかった行) が同期を止めてはいけない (§7-5)。
+ * id も tmdb_id も復元できなかった行) が同期を止めてはいけない (§7-5)。
  */
 export function buildUpsertWrites(
   prisma: Prisma,
@@ -58,12 +58,12 @@ export function buildUpsertWrites(
   const winners = new Map<string, LedgerRow>()
 
   for (const row of rows) {
-    const { provider, content_id, episode_id } = row.item
-    if (!content_id || !episode_id) {
+    const key = rowKey(row.item)
+    if (key === null) {
       unmatched++
       continue
     }
-    const ids = resolved.get(matchKey(provider, content_id, episode_id))
+    const ids = resolved.get(key)
     if (!ids || ids.length === 0) {
       unmatched++
       continue

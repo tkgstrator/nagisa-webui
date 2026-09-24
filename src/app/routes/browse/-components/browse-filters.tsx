@@ -1,3 +1,4 @@
+import { useIntlayer } from 'react-intlayer'
 import { providerLabel } from '@/app/lib/constants'
 
 /** プロバイダのドット色。バッジ用の providerColor と違い前景色だけが要る。 */
@@ -10,28 +11,6 @@ const providerDot: Record<string, string> = {
 }
 
 const PROVIDERS = ['amazon', 'hulu', 'crunchyroll', 'abema', 'netflix'] as const
-
-const QUARTERS = [
-  { value: 0, label: '冬' },
-  { value: 1, label: '春' },
-  { value: 2, label: '夏' },
-  { value: 3, label: '秋' }
-] as const
-
-const STATUSES = [
-  { value: 'RELEASING', label: '放送中' },
-  { value: 'FINISHED', label: '完結' },
-  { value: 'NOT_YET_RELEASED', label: '未放送' },
-  { value: 'HIATUS', label: '休止' },
-  { value: 'CANCELLED', label: '中止' }
-] as const
-
-const BADGES = [
-  { value: 'NEW_EPISODE', label: '新着エピソード' },
-  { value: 'RECENTLY_ADDED', label: '新着追加' },
-  { value: 'COMING_SOON', label: '配信予定' },
-  { value: 'EXPIRING', label: '配信終了予定' }
-] as const
 
 const pillClass =
   'inline-flex h-[26px] items-center rounded-full border border-border px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring active:scale-[0.94] aria-pressed:border-transparent aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground'
@@ -82,114 +61,140 @@ export const BrowseFilterPanel = ({
   onChangeStatus,
   onChangeBadge,
   onReset
-}: BrowseFilterPanelProps) => (
-  <div className='flex flex-col gap-4'>
-    <FilterGroup title='配信元'>
-      <div className='flex flex-col gap-px'>
-        {PROVIDERS.map((key) => (
-          <label key={key} className={checkClass}>
-            <input
-              type='checkbox'
-              className='ml-1 mr-[3px] size-3.5 shrink-0 accent-primary'
-              checked={provider === key}
-              onChange={() => onChangeProvider(provider === key ? undefined : key)}
-            />
-            <span aria-hidden='true' className={`size-2 shrink-0 rounded-full opacity-60 ${providerDot[key]}`} />
-            {providerLabel[key]}
-          </label>
-        ))}
-      </div>
-    </FilterGroup>
+}: BrowseFilterPanelProps) => {
+  const content = useIntlayer('browse-browse-filters')
 
-    <FilterGroup title='年'>
-      <div className='flex flex-wrap gap-1.5 px-2.5'>
-        <button
-          type='button'
-          className={pillClass}
-          aria-pressed={year === undefined}
-          onClick={() => onChangeYear(undefined)}
-        >
-          すべて
-        </button>
-        {years.map((y) => (
+  const QUARTERS = [
+    { value: 0, label: content.quarters.winter.value },
+    { value: 1, label: content.quarters.spring.value },
+    { value: 2, label: content.quarters.summer.value },
+    { value: 3, label: content.quarters.autumn.value }
+  ] as const
+
+  const STATUSES = [
+    { value: 'RELEASING', label: content.statuses.releasing.value },
+    { value: 'FINISHED', label: content.statuses.finished.value },
+    { value: 'NOT_YET_RELEASED', label: content.statuses.notYetReleased.value },
+    { value: 'HIATUS', label: content.statuses.hiatus.value },
+    { value: 'CANCELLED', label: content.statuses.cancelled.value }
+  ] as const
+
+  const BADGES = [
+    { value: 'NEW_EPISODE', label: content.badges.newEpisode.value },
+    { value: 'RECENTLY_ADDED', label: content.badges.recentlyAdded.value },
+    { value: 'COMING_SOON', label: content.badges.comingSoon.value },
+    { value: 'EXPIRING', label: content.badges.expiring.value }
+  ] as const
+
+  return (
+    <div className='flex flex-col gap-4'>
+      <FilterGroup title={content.groups.provider.value}>
+        <div className='flex flex-col gap-px'>
+          {PROVIDERS.map((key) => (
+            <label key={key} className={checkClass}>
+              <input
+                type='checkbox'
+                className='ml-1 mr-[3px] size-3.5 shrink-0 accent-primary'
+                checked={provider === key}
+                onChange={() => onChangeProvider(provider === key ? undefined : key)}
+              />
+              <span aria-hidden='true' className={`size-2 shrink-0 rounded-full opacity-60 ${providerDot[key]}`} />
+              {providerLabel[key]}
+            </label>
+          ))}
+        </div>
+      </FilterGroup>
+
+      <FilterGroup title={content.groups.year.value}>
+        <div className='flex flex-wrap gap-1.5 px-2.5'>
           <button
-            key={y}
             type='button'
             className={pillClass}
-            aria-pressed={year === y}
-            onClick={() => onChangeYear(year === y ? undefined : y)}
+            aria-pressed={year === undefined}
+            onClick={() => onChangeYear(undefined)}
           >
-            {y}
+            {content.allYears}
           </button>
-        ))}
-      </div>
-    </FilterGroup>
+          {years.map((y) => (
+            <button
+              key={y}
+              type='button'
+              className={pillClass}
+              aria-pressed={year === y}
+              onClick={() => onChangeYear(year === y ? undefined : y)}
+            >
+              {y}
+            </button>
+          ))}
+        </div>
+      </FilterGroup>
 
-    <FilterGroup title='クール'>
-      <div className='flex flex-wrap gap-1.5 px-2.5'>
-        {QUARTERS.map((q) => (
-          <button
-            key={q.value}
-            type='button'
-            className={pillClass}
-            aria-pressed={quarter === q.value}
-            onClick={() => onChangeQuarter(quarter === q.value ? undefined : q.value)}
-          >
-            {q.label}
-          </button>
-        ))}
-      </div>
-    </FilterGroup>
+      <FilterGroup title={content.groups.quarter.value}>
+        <div className='flex flex-wrap gap-1.5 px-2.5'>
+          {QUARTERS.map((q) => (
+            <button
+              key={q.value}
+              type='button'
+              className={pillClass}
+              aria-pressed={quarter === q.value}
+              onClick={() => onChangeQuarter(quarter === q.value ? undefined : q.value)}
+            >
+              {q.label}
+            </button>
+          ))}
+        </div>
+      </FilterGroup>
 
-    <FilterGroup title='ステータス'>
-      <div className='flex flex-wrap gap-1.5 px-2.5'>
-        {STATUSES.map((s) => (
-          <button
-            key={s.value}
-            type='button'
-            className={pillClass}
-            aria-pressed={status === s.value}
-            onClick={() => onChangeStatus(status === s.value ? undefined : s.value)}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
-    </FilterGroup>
+      <FilterGroup title={content.groups.status.value}>
+        <div className='flex flex-wrap gap-1.5 px-2.5'>
+          {STATUSES.map((s) => (
+            <button
+              key={s.value}
+              type='button'
+              className={pillClass}
+              aria-pressed={status === s.value}
+              onClick={() => onChangeStatus(status === s.value ? undefined : s.value)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </FilterGroup>
 
-    <FilterGroup title='バッジ'>
-      <div className='flex flex-col gap-px'>
-        {BADGES.map((b) => (
-          <label key={b.value} className={checkClass}>
-            <input
-              type='checkbox'
-              className='ml-1 mr-[3px] size-3.5 shrink-0 accent-primary'
-              checked={badge === b.value}
-              onChange={() => onChangeBadge(badge === b.value ? undefined : b.value)}
-            />
-            {b.label}
-          </label>
-        ))}
-      </div>
-    </FilterGroup>
+      <FilterGroup title={content.groups.badge.value}>
+        <div className='flex flex-col gap-px'>
+          {BADGES.map((b) => (
+            <label key={b.value} className={checkClass}>
+              <input
+                type='checkbox'
+                className='ml-1 mr-[3px] size-3.5 shrink-0 accent-primary'
+                checked={badge === b.value}
+                onChange={() => onChangeBadge(badge === b.value ? undefined : b.value)}
+              />
+              {b.label}
+            </label>
+          ))}
+        </div>
+      </FilterGroup>
 
-    <button
-      type='button'
-      onClick={onReset}
-      disabled={!hasFilters}
-      className='mx-2.5 mt-1 flex h-[30px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40'
-    >
-      <svg
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='2'
-        className='size-[13px]'
-        aria-hidden='true'
+      <button
+        type='button'
+        onClick={onReset}
+        disabled={!hasFilters}
+        className='mx-2.5 mt-1 flex h-[30px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40'
       >
-        <path d='M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7' />
-      </svg>
-      フィルタをリセット
-    </button>
-  </div>
-)
+        <svg
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          strokeWidth='2'
+          className='size-[13px]'
+          aria-hidden='true'
+        >
+          <path d='M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7' />
+        </svg>
+        {content.reset}
+      </button>
+    </div>
+  )
+}

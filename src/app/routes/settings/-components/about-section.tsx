@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { animeListQueryOptions, scheduledCountQueryOptions } from '@/app/lib/query-options'
 import { cn } from '@/app/lib/utils'
 import { PgSec, SecMoreLabel, secMoreClass } from './section'
@@ -22,22 +23,23 @@ const Meta = ({ label, value, mono = false }: { label: string; value: ReactNode;
 export const AboutSection = () => {
   const { data: animeList } = useQuery(animeListQueryOptions({ page: 1, limit: 1 }))
   const { data: scheduled } = useQuery(scheduledCountQueryOptions())
+  const content = useIntlayer('settings-about-section')
 
   return (
     <PgSec
       id='s-about'
-      title='アプリ情報'
+      title={content.title.value}
       more={
         <Link to='/changelog' className={secMoreClass}>
-          <SecMoreLabel>変更履歴</SecMoreLabel>
+          <SecMoreLabel>{content.changelogLabel}</SecMoreLabel>
         </Link>
       }
     >
       <dl className='grid grid-cols-4 gap-px overflow-hidden rounded-[14px] bg-border max-sm:grid-cols-2'>
-        <Meta label='バージョン' value={`v${__APP_VERSION__}`} />
-        <Meta label='ビルド' value={__GIT_HASH__} mono />
-        <Meta label='登録作品' value={animeList?.total?.toLocaleString('ja-JP') ?? '—'} />
-        <Meta label='録画予約' value={scheduled?.toLocaleString('ja-JP') ?? '—'} />
+        <Meta label={content.meta.version.value} value={`v${__APP_VERSION__}`} />
+        <Meta label={content.meta.build.value} value={__GIT_HASH__} mono />
+        <Meta label={content.meta.animeCount.value} value={animeList?.total?.toLocaleString('ja-JP') ?? '—'} />
+        <Meta label={content.meta.scheduledCount.value} value={scheduled?.toLocaleString('ja-JP') ?? '—'} />
       </dl>
     </PgSec>
   )

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { providerLabel } from '@/app/lib/constants'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
@@ -8,28 +9,6 @@ const hueOf = (seed: string) => {
   let h = 0
   for (let i = 0; i < seed.length; i += 1) h = (h * 31 + seed.charCodeAt(i)) % 360
   return h
-}
-
-const statusText: Record<string, { label: string; className: string }> = {
-  RELEASING: { label: '放送中', className: 'text-status-releasing-foreground' },
-  FINISHED: { label: '完結', className: 'text-status-finished-foreground' },
-  NOT_YET_RELEASED: { label: '未放送', className: 'text-status-not-yet-foreground' },
-  CANCELLED: { label: '中止', className: 'text-status-cancelled-foreground' },
-  HIATUS: { label: '休止', className: 'text-status-hiatus-foreground' }
-}
-
-const badgeTag: Record<string, { label: string; className: string; pulse: boolean }> = {
-  NEW_EPISODE: { label: '新着', className: 'bg-info text-info-foreground', pulse: true },
-  RECENTLY_ADDED: { label: '新着追加', className: 'bg-success text-success-foreground', pulse: false },
-  COMING_SOON: { label: '配信予定', className: 'bg-warning text-warning-foreground', pulse: false },
-  EXPIRING: { label: '配信終了予定', className: 'bg-destructive text-destructive-foreground', pulse: false }
-}
-
-/** 一覧 API にエピソード番号が無いため、代わりに次回配信日 / 配信終了日を出す。 */
-const episodeLine = (anime: AnimeSchema) => {
-  if (anime.expiredAt !== null) return `${dayjs(anime.expiredAt).format('M/D')} まで`
-  if (anime.nextEpisodeDate !== null) return `${dayjs(anime.nextEpisodeDate).format('M/D')} 更新`
-  return null
 }
 
 export function AnimeCard({
@@ -49,6 +28,43 @@ export function AnimeCard({
   onFilterStatus: (status: string | undefined) => void
   onSelect: (animeId: string) => void
 }) {
+  const content = useIntlayer('browse-anime-card')
+
+  const statusText: Record<string, { label: string; className: string }> = {
+    RELEASING: { label: content.status.releasing.value, className: 'text-status-releasing-foreground' },
+    FINISHED: { label: content.status.finished.value, className: 'text-status-finished-foreground' },
+    NOT_YET_RELEASED: { label: content.status.notYetReleased.value, className: 'text-status-not-yet-foreground' },
+    CANCELLED: { label: content.status.cancelled.value, className: 'text-status-cancelled-foreground' },
+    HIATUS: { label: content.status.hiatus.value, className: 'text-status-hiatus-foreground' }
+  }
+
+  const badgeTag: Record<string, { label: string; className: string; pulse: boolean }> = {
+    NEW_EPISODE: { label: content.badge.newEpisode.value, className: 'bg-info text-info-foreground', pulse: true },
+    RECENTLY_ADDED: {
+      label: content.badge.recentlyAdded.value,
+      className: 'bg-success text-success-foreground',
+      pulse: false
+    },
+    COMING_SOON: {
+      label: content.badge.comingSoon.value,
+      className: 'bg-warning text-warning-foreground',
+      pulse: false
+    },
+    EXPIRING: {
+      label: content.badge.expiring.value,
+      className: 'bg-destructive text-destructive-foreground',
+      pulse: false
+    }
+  }
+
+  /** 一覧 API にエピソード番号が無いため、代わりに次回配信日 / 配信終了日を出す。 */
+  const episodeLine = (item: AnimeSchema) => {
+    if (item.expiredAt !== null) return content.expiresOn({ date: dayjs(item.expiredAt).format('M/D') }).value
+    if (item.nextEpisodeDate !== null)
+      return content.updatesOn({ date: dayjs(item.nextEpisodeDate).format('M/D') }).value
+    return null
+  }
+
   const hue = hueOf(anime.id)
   const tag = anime.badge !== null ? badgeTag[anime.badge] : undefined
   const status = statusText[anime.status]
@@ -62,7 +78,7 @@ export function AnimeCard({
       <button
         type='button'
         onClick={() => onSelect(anime.id)}
-        aria-label={`${anime.title} の詳細`}
+        aria-label={content.detailAriaLabel({ title: anime.title }).value}
         className='group/tile block w-full rounded-[10px] text-left focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring'
       >
         <div className='relative aspect-video overflow-hidden rounded-[10px] transition-[transform,box-shadow] duration-300 ease-out after:absolute after:inset-0 after:bg-[linear-gradient(180deg,transparent_28%,var(--overlay)_100%)] after:content-[""] group-hover:-translate-y-1.5 group-hover:scale-[1.045] group-hover:shadow-[0_22px_34px_-16px_var(--overlay)]'>

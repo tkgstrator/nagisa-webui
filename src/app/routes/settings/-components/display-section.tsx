@@ -1,3 +1,5 @@
+import { getIntlayer } from 'intlayer'
+import { useIntlayer } from 'react-intlayer'
 import {
   type CardDensity,
   PAGE_SIZE_OPTIONS,
@@ -10,19 +12,24 @@ import { StNote, StPanel, StRow, StSegment, StSelect, StSwitch } from './control
 import { BoltIcon, DensityIcon, PageSizeIcon, SortIcon, ThemeIcon } from './icons'
 import { PgSec } from './section'
 
+const displaySectionModuleContent = getIntlayer('settings-display-section')
+
 const THEME_OPTIONS = [
-  { value: 'light', label: 'ライト' },
-  { value: 'dark', label: 'ダーク' },
-  { value: 'system', label: 'システム' }
+  { value: 'light', label: displaySectionModuleContent.themeOptions.light },
+  { value: 'dark', label: displaySectionModuleContent.themeOptions.dark },
+  { value: 'system', label: displaySectionModuleContent.themeOptions.system }
 ] as const satisfies readonly { value: ThemePreference; label: string }[]
 
 const DENSITY_OPTIONS = [
-  { value: 'comfortable', label: 'ゆったり' },
-  { value: 'default', label: '標準' },
-  { value: 'compact', label: '詰める' }
+  { value: 'comfortable', label: displaySectionModuleContent.densityOptions.comfortable },
+  { value: 'default', label: displaySectionModuleContent.densityOptions.default },
+  { value: 'compact', label: displaySectionModuleContent.densityOptions.compact }
 ] as const satisfies readonly { value: CardDensity; label: string }[]
 
-const PAGE_SIZE_SELECT = PAGE_SIZE_OPTIONS.map((size) => ({ value: String(size), label: `${size} 件` }))
+const PAGE_SIZE_SELECT = PAGE_SIZE_OPTIONS.map((size) => ({
+  value: String(size),
+  label: displaySectionModuleContent.pageSizeOption({ size })
+}))
 
 const SORT_SELECT = (Object.keys(SORT_LABELS) as SortPreference[]).map((value) => ({
   value,
@@ -31,13 +38,14 @@ const SORT_SELECT = (Object.keys(SORT_LABELS) as SortPreference[]).map((value) =
 
 export const DisplaySection = () => {
   const { settings, update } = useSettings()
+  const content = useIntlayer('settings-display-section')
 
   return (
-    <PgSec id='s-view' title='表示' count='一覧とカードの見え方'>
+    <PgSec id='s-view' title={content.title.value} count={content.count}>
       <StPanel>
-        <StRow index={0} icon={<ThemeIcon />} label='テーマ' description='「システム」は OS の外観設定に追従する。'>
+        <StRow index={0} icon={<ThemeIcon />} label={content.theme.label.value} description={content.theme.description}>
           <StSegment
-            label='テーマ'
+            label={content.theme.label.value}
             value={settings.theme}
             options={THEME_OPTIONS}
             onValueChange={(next) => update('theme', next)}
@@ -48,11 +56,11 @@ export const DisplaySection = () => {
         <StRow
           index={1}
           icon={<PageSizeIcon />}
-          label='1 ページの表示件数'
-          description='アニメ一覧・録画一覧・未識別タイトルに適用される。'
+          label={content.pageSize.label.value}
+          description={content.pageSize.description}
         >
           <StSelect
-            label='1 ページの表示件数'
+            label={content.pageSize.label.value}
             value={String(settings.pageSize)}
             options={PAGE_SIZE_SELECT}
             onValueChange={(next) => update('pageSize', Number(next))}
@@ -60,9 +68,14 @@ export const DisplaySection = () => {
         </StRow>
 
         {/* browse の絞り込み初期値と「すべて解除」後の並び順になる。 */}
-        <StRow index={2} icon={<SortIcon />} label='既定の並び順' description='URL に指定があればそちらが優先される。'>
+        <StRow
+          index={2}
+          icon={<SortIcon />}
+          label={content.defaultSort.label.value}
+          description={content.defaultSort.description}
+        >
           <StSelect
-            label='既定の並び順'
+            label={content.defaultSort.label.value}
             value={settings.defaultSort}
             options={SORT_SELECT}
             onValueChange={(next) => update('defaultSort', next)}
@@ -73,11 +86,11 @@ export const DisplaySection = () => {
         <StRow
           index={3}
           icon={<DensityIcon />}
-          label='カードの密度'
-          description='1 行あたりの枚数とサムネイルの大きさが変わる。'
+          label={content.density.label.value}
+          description={content.density.description}
         >
           <StSegment
-            label='カードの密度'
+            label={content.density.label.value}
             value={settings.density}
             options={DENSITY_OPTIONS}
             onValueChange={(next) => update('density', next)}
@@ -87,12 +100,12 @@ export const DisplaySection = () => {
         <StRow
           index={4}
           icon={<BoltIcon />}
-          label='アニメーション'
-          description='OS で「視差を減らす」が有効なときは、この設定によらず抑制される。'
+          label={content.animations.label.value}
+          description={content.animations.description}
         >
-          <StNote>{settings.animations ? '有効' : '無効'}</StNote>
+          <StNote>{settings.animations ? content.animations.on : content.animations.off}</StNote>
           <StSwitch
-            label='アニメーション'
+            label={content.animations.label.value}
             checked={settings.animations}
             onCheckedChange={(next) => update('animations', next)}
           />

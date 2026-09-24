@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { ArrowDownUp, Film } from 'lucide-react'
 import { useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { z } from 'zod'
 import { ProviderBadge } from '@/app/components/anime-badges'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
@@ -28,14 +29,6 @@ const SearchSchema = z.object({
 
 type Provider = z.infer<typeof ProviderTypeEnum>
 
-const PROVIDER_FILTER_OPTIONS: { value: Provider | undefined; label: string }[] = [
-  { value: undefined, label: 'すべて' },
-  { value: 'amazon', label: providerLabel.amazon ?? 'amazon' },
-  { value: 'hulu', label: providerLabel.hulu ?? 'hulu' },
-  { value: 'crunchyroll', label: providerLabel.crunchyroll ?? 'crunchyroll' },
-  { value: 'abema', label: providerLabel.abema ?? 'abema' }
-]
-
 export const Route = createFileRoute('/admin/unidentified/')({
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
@@ -54,10 +47,19 @@ export const Route = createFileRoute('/admin/unidentified/')({
 })
 
 function UnidentifiedAdminPage() {
+  const content = useIntlayer('admin-unidentified')
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
   const [page, setPage] = useState(1)
   const { settings } = useSettings()
+
+  const PROVIDER_FILTER_OPTIONS: { value: Provider | undefined; label: string }[] = [
+    { value: undefined, label: content.filterAll.value },
+    { value: 'amazon', label: providerLabel.amazon ?? 'amazon' },
+    { value: 'hulu', label: providerLabel.hulu ?? 'hulu' },
+    { value: 'crunchyroll', label: providerLabel.crunchyroll ?? 'crunchyroll' },
+    { value: 'abema', label: providerLabel.abema ?? 'abema' }
+  ]
 
   const { data } = useQuery({
     ...unidentifiedListQueryOptions({
@@ -84,8 +86,8 @@ function UnidentifiedAdminPage() {
   return (
     <PageContainer className='gap-6'>
       <div>
-        <h1 className='text-2xl font-bold tracking-tight'>未識別タイトル一覧</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>AniList で識別できなかった {total} 件のタイトル</p>
+        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
+        <p className='mt-1 text-sm text-muted-foreground'>{content.unresolvedCount({ total })}</p>
       </div>
 
       <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
@@ -93,19 +95,20 @@ function UnidentifiedAdminPage() {
           <SearchBar value={search.q ?? ''} onChange={(v) => updateSearch({ q: v || undefined })} />
         </div>
         <FilterPopover
-          label='プロバイダ'
+          label={content.providerFilterLabel.value}
           value={search.provider}
           options={PROVIDER_FILTER_OPTIONS}
           onSelect={(v) => updateSearch({ provider: v })}
         />
         <Button variant='outline' onClick={toggleOrder} className='sm:w-44'>
           <ArrowDownUp className='h-4 w-4' />
-          更新日 {search.order === 'desc' ? '新しい順' : '古い順'}
+          {content.sortButton.prefix.value}{' '}
+          {search.order === 'desc' ? content.sortButton.desc.value : content.sortButton.asc.value}
         </Button>
       </div>
 
       {items.length === 0 ? (
-        <div className='py-20 text-center text-sm text-muted-foreground'>該当するタイトルはありません</div>
+        <div className='py-20 text-center text-sm text-muted-foreground'>{content.emptyState.value}</div>
       ) : (
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
           {items.map((item) => {
@@ -133,7 +136,7 @@ function UnidentifiedAdminPage() {
                   <span className='truncate font-mono text-[10px] text-muted-foreground'>{item.contentId}</span>
                 </div>
                 <p className='mt-0.5 text-[10px] text-muted-foreground'>
-                  更新 {dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm')}
+                  {content.updatedPrefix.value} {dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm')}
                 </p>
               </>
             )

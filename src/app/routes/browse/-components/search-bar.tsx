@@ -1,10 +1,12 @@
 import { useAtomValue } from 'jotai'
 import { Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { Input } from '@/app/components/ui/input'
 import { searchFocusAtom } from '@/app/lib/atoms'
 
 export function SearchBar({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const content = useIntlayer('browse-search-bar')
   const [localValue, setLocalValue] = useState(value)
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -38,11 +40,11 @@ export function SearchBar({ value, onChange }: { value: string; onChange: (value
       <Input
         ref={inputRef}
         type='search'
-        placeholder='タイトルで検索'
+        placeholder={content.placeholder.value}
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
         className='h-[34px] rounded-full bg-background pr-3 pl-8 text-[12.5px] focus-visible:border-primary md:text-[12.5px]'
-        aria-label='タイトルで検索'
+        aria-label={content.placeholder.value}
       />
     </div>
   )

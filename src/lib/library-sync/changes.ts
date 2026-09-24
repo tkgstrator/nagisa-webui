@@ -1,7 +1,7 @@
 import type { NagisaLibraryChange } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
 import { getAppLogger } from '../logger'
-import { chunk, type LedgerRow, resolveEpisodes } from './ledger'
+import { chunk, type LedgerRow, learnTmdbIds, resolveEpisodes } from './ledger'
 import { IN_CHUNK, MASS_DELETE_MIN, MASS_DELETE_RATIO, MAX_WRITES_PER_PAGE } from './limits'
 import { applyBatched, fenced, holdsLease, type LibrarySyncResult, leaseWhere } from './run'
 import { buildDeleteWrite, buildUpsertWrites } from './writes'
@@ -57,6 +57,8 @@ export async function applyChangesPage(
     }
   }
 
+  // 作品の tmdbId を先に覚えておくと、同じページの id を持たない行がそれで当たる。
+  result.tmdbLearned += await learnTmdbIds(prisma, upsertRows)
   const resolved = await resolveEpisodes(prisma, upsertRows)
   const { writes, unmatched } = buildUpsertWrites(prisma, upsertRows, resolved, now, owner, false)
   const deleteWrites = deleteIds.map((id) => buildDeleteWrite(prisma, id, now, owner))
