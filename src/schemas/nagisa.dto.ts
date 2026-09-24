@@ -95,15 +95,27 @@ const NagisaJobProgressSchema = z.object({
   total: z.number().int()
 })
 
+/**
+ * `episodes: null` は「そのシーズンの全話」(投入時の `NagisaSeasonFilterSchema` と同じ意味)。
+ * 必須にすると全話指定のジョブが 1 件でもキューに居るだけで応答全体の parse が落ちる。
+ */
 const NagisaStatusJobSeasonSchema = z.object({
   season_number: z.number().int(),
-  episodes: z.array(z.number().int())
+  episodes: z.array(z.number().int()).nullable()
 })
+
+/**
+ * キューには録画ジョブ以外も積まれる。台帳の reindex ジョブは
+ * `provider` / `content_id` が null (ライブラリ全体が対象)。ここを必須にすると
+ * nightly の reindex が走っているあいだ job-sync が毎分落ち続ける。
+ */
+const JobProviderSchema = ProviderEnum.nullable()
+const JobContentIdSchema = z.string().nullable()
 
 export const NagisaStatusJobSchema = z.object({
   job_id: z.string().nonempty(),
-  provider: ProviderEnum,
-  content_id: z.string().nonempty(),
+  provider: JobProviderSchema,
+  content_id: JobContentIdSchema,
   title: z.string().nullable(),
   seasons: z.array(NagisaStatusJobSeasonSchema).nullable(),
   marketplace: MarketplaceEnum.nullable(),
@@ -165,8 +177,8 @@ export type NagisaJobState = z.infer<typeof NagisaJobStateEnum>
 export const NagisaQueueSnapshotJobSchema = z.object({
   job_id: z.string().nonempty(),
   state: NagisaJobStateEnum,
-  provider: ProviderEnum,
-  content_id: z.string().nonempty(),
+  provider: JobProviderSchema,
+  content_id: JobContentIdSchema,
   title: z.string().nullable(),
   seasons: z.array(NagisaStatusJobSeasonSchema).nullable(),
   progress: NagisaJobProgressSchema.nullable(),
