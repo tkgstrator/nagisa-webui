@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
@@ -49,6 +50,7 @@ export const Route = createFileRoute('/anime/$id/')({
 })
 
 function AnimeDetailPage() {
+  const content = useIntlayer('anime-id')
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
   const { data: anime } = useSuspenseQuery(animeDetailQueryOptions(id))
@@ -69,12 +71,12 @@ function AnimeDetailPage() {
     mutationFn: () => api.recordAnime(undefined, { params: { id } }),
     onSuccess: (data) => {
       if (data.count === 0) {
-        toast.info('録画対象のエピソードがありません')
+        toast.info(content.toast.noRecordableEpisodes.value)
         return
       }
-      toast.success('録画を開始しました')
+      toast.success(content.toast.recordingStarted.value)
     },
-    onError: () => toast.error('録画リクエストに失敗しました'),
+    onError: () => toast.error(content.toast.recordingRequestFailed.value),
     // 失敗しても各話の録画状態は書き換わっているので読み直す
     onSettled: invalidateRelated
   })
@@ -84,16 +86,16 @@ function AnimeDetailPage() {
     onSuccess: (data) => {
       // 配信元の更新は済んでいる。nagisa との同期だけが落ちた場合は、そうと分かるように出す
       if (data.sync.jobs.error !== null || data.sync.library.error !== null) {
-        toast.warning('タイトル情報は更新しましたが、録画状態の同期に失敗しました', {
+        toast.warning(content.toast.refreshedWithSyncError.value, {
           description: data.sync.jobs.error ?? data.sync.library.error ?? undefined
         })
       } else {
-        toast.success('タイトル情報と録画状態を更新しました')
+        toast.success(content.toast.refreshed.value)
       }
       invalidateRelated()
       queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
     },
-    onError: (error) => toast.error(getApiErrorMessage(error, '情報の更新に失敗しました'))
+    onError: (error) => toast.error(getApiErrorMessage(error, content.toast.refreshFailed.value))
   })
 
   const updating = updateAnimeMutation.isPending || recordAnimeMutation.isPending || refreshAnimeMutation.isPending
@@ -121,13 +123,16 @@ function AnimeDetailPage() {
     <PageContainer className='gap-10 max-sm:gap-[30px]'>
       <BroadcastSchedule anime={anime} />
 
-      <nav className='flex items-start gap-1.5 text-[12.5px] text-muted-foreground' aria-label='パス'>
+      <nav
+        className='flex items-start gap-1.5 text-[12.5px] text-muted-foreground'
+        aria-label={content.breadcrumb.ariaLabel.value}
+      >
         <Link
           to='/browse'
           className='inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
         >
           <ChevronLeft className='size-3' />
-          アニメ一覧
+          {content.breadcrumb.browse}
         </Link>
         <span className='py-[3px]'>/</span>
         {/* 採用案 (breadcrumbs-astra) は省略記号を付けず、幅が足りなければ折り返す */}

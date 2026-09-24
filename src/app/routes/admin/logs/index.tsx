@@ -1,7 +1,9 @@
 import { keepPreviousData, type QueryClient, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { getIntlayer } from 'intlayer'
 import { Search as SearchIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { z } from 'zod'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
@@ -62,15 +64,17 @@ const SearchSchema = z.object({
 
 type Search = z.infer<typeof SearchSchema>
 
+const adminLogsModuleContent = getIntlayer('admin-logs')
+
 const KIND_OPTIONS: { value: Search['kind']; label: string }[] = [
-  { value: undefined, label: 'すべて' },
+  { value: undefined, label: adminLogsModuleContent.common.all },
   { value: 'cron', label: runKindLabel.cron },
   { value: 'queue', label: runKindLabel.queue },
   { value: 'manual', label: runKindLabel.manual }
 ]
 
 const STATUS_OPTIONS: { value: Search['status']; label: string }[] = [
-  { value: undefined, label: 'すべて' },
+  { value: undefined, label: adminLogsModuleContent.common.all },
   { value: 'failed', label: runStatusLabel.failed },
   { value: 'partial', label: runStatusLabel.partial },
   { value: 'success', label: runStatusLabel.success },
@@ -79,14 +83,14 @@ const STATUS_OPTIONS: { value: Search['status']; label: string }[] = [
 
 /** 指定した重大度「以上」が返る。debug は D1 に入らないので出さない。 */
 const LEVEL_OPTIONS: { value: Search['level']; label: string }[] = [
-  { value: 'info', label: `${logLevelLabel.info} 以上 (すべて)` },
-  { value: 'warning', label: `${logLevelLabel.warning} 以上` },
-  { value: 'error', label: `${logLevelLabel.error} のみ` },
-  { value: 'fatal', label: `${logLevelLabel.fatal} のみ` }
+  { value: 'info', label: adminLogsModuleContent.options.level.infoAndAbove({ label: logLevelLabel.info }) },
+  { value: 'warning', label: adminLogsModuleContent.options.level.andAbove({ label: logLevelLabel.warning }) },
+  { value: 'error', label: adminLogsModuleContent.options.level.onlyLabel({ label: logLevelLabel.error }) },
+  { value: 'fatal', label: adminLogsModuleContent.options.level.onlyLabel({ label: logLevelLabel.fatal }) }
 ]
 
 const REC_KIND_OPTIONS: { value: Search['recKind']; label: string }[] = [
-  { value: undefined, label: 'すべて' },
+  { value: undefined, label: adminLogsModuleContent.common.all },
   { value: 'request', label: recordingKindLabel.request },
   { value: 'status', label: recordingKindLabel.status },
   { value: 'recorded', label: recordingKindLabel.recorded },
@@ -94,13 +98,13 @@ const REC_KIND_OPTIONS: { value: Search['recKind']; label: string }[] = [
 ]
 
 const REC_STATUS_OPTIONS: { value: Search['recStatus']; label: string }[] = [
-  { value: undefined, label: 'すべて' },
+  { value: undefined, label: adminLogsModuleContent.common.all },
   { value: 'error', label: recordingStatusLabel.error },
   { value: 'ok', label: recordingStatusLabel.ok }
 ]
 
 const CAT_KIND_OPTIONS: { value: Search['catKind']; label: string }[] = [
-  { value: undefined, label: 'すべて' },
+  { value: undefined, label: adminLogsModuleContent.common.all },
   { value: 'title-added', label: catalogKindLabel['title-added'] },
   { value: 'season-added', label: catalogKindLabel['season-added'] },
   { value: 'episodes-added', label: catalogKindLabel['episodes-added'] },
@@ -108,30 +112,30 @@ const CAT_KIND_OPTIONS: { value: Search['catKind']; label: string }[] = [
 ]
 
 const CAT_PROVIDER_OPTIONS: { value: Search['catProvider']; label: string }[] = [
-  { value: undefined, label: 'すべて' },
+  { value: undefined, label: adminLogsModuleContent.common.all },
   ...Object.entries(providerLabel).map(([value, label]) => ({ value, label }))
 ]
 
 const RUN_HOURS_OPTIONS: { value: number; label: string }[] = [
-  { value: 24, label: '直近 24 時間' },
-  { value: 72, label: '直近 3 日' },
-  { value: 168, label: '直近 7 日' },
-  { value: 720, label: '直近 30 日' },
-  { value: 2160, label: '直近 90 日' }
+  { value: 24, label: adminLogsModuleContent.options.hours.h24 },
+  { value: 72, label: adminLogsModuleContent.options.hours.h72 },
+  { value: 168, label: adminLogsModuleContent.options.hours.h168 },
+  { value: 720, label: adminLogsModuleContent.options.hours.h720 },
+  { value: 2160, label: adminLogsModuleContent.options.hours.h2160 }
 ]
 
 const ENTRY_HOURS_OPTIONS: { value: number; label: string }[] = [
-  { value: 24, label: '直近 24 時間' },
-  { value: 72, label: '直近 3 日' },
-  { value: 168, label: '直近 7 日' }
+  { value: 24, label: adminLogsModuleContent.options.hours.h24 },
+  { value: 72, label: adminLogsModuleContent.options.hours.h72 },
+  { value: 168, label: adminLogsModuleContent.options.hours.h168 }
 ]
 
 const RECORDING_HOURS_OPTIONS: { value: number; label: string }[] = [
-  { value: 24, label: '直近 24 時間' },
-  { value: 168, label: '直近 7 日' },
-  { value: 720, label: '直近 30 日' },
-  { value: 2160, label: '直近 90 日' },
-  { value: 4320, label: '直近 180 日' }
+  { value: 24, label: adminLogsModuleContent.options.hours.h24 },
+  { value: 168, label: adminLogsModuleContent.options.hours.h168 },
+  { value: 720, label: adminLogsModuleContent.options.hours.h720 },
+  { value: 2160, label: adminLogsModuleContent.options.hours.h2160 },
+  { value: 4320, label: adminLogsModuleContent.options.hours.h4320 }
 ]
 
 /** 生ログは Workers Logs (保持 7 日) から引くので、実行履歴側の広い期間をそのまま投げない。 */
@@ -197,6 +201,7 @@ const tabTriggerClass =
 
 /** summary の部分一致。入力ごとに URL を書き換えると履歴が荒れるので 300ms 待つ。 */
 function SummarySearch({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const content = useIntlayer('admin-logs')
   const [localValue, setLocalValue] = useState(value)
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null)
 
@@ -221,17 +226,18 @@ function SummarySearch({ value, onChange }: { value: string; onChange: (value: s
       <SearchIcon className='pointer-events-none absolute top-1/2 left-2.5 size-[15px] -translate-y-1/2 text-muted-foreground' />
       <Input
         type='search'
-        placeholder='本文で検索'
+        placeholder={content.search.placeholder.value}
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
         className='h-[34px] rounded-full bg-background pr-3 pl-8 text-[12.5px] focus-visible:border-primary md:text-[12.5px]'
-        aria-label='ログ本文で検索'
+        aria-label={content.search.ariaLabel.value}
       />
     </div>
   )
 }
 
 function LogsAdminPage() {
+  const content = useIntlayer('admin-logs')
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
   const [page, setPage] = useState(1)
@@ -314,32 +320,42 @@ function LogsAdminPage() {
   return (
     <PageContainer className='gap-6'>
       <header>
-        <h1 className='text-2xl font-bold tracking-tight'>同期ログ</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>
-          cron / Queue バッチ / 手動実行の履歴と、Worker の生ログ、録画リクエストの結果、カタログに入った変化
-        </p>
+        <h1 className='text-2xl font-bold tracking-tight'>{content.page.title}</h1>
+        <p className='mt-1 text-sm text-muted-foreground'>{content.page.description}</p>
       </header>
 
       {stats === undefined ? (
         <p className='border-l-[3px] border-border px-3.5 py-3 text-sm text-muted-foreground'>
-          集計を取得できませんでした
+          {content.stats.unavailable}
         </p>
       ) : (
-        <section aria-label='直近 24 時間の実行' className='grid grid-cols-4 gap-6 max-lg:grid-cols-2'>
-          <StatTile label='実行' value={stats.recent.total} unit='件' note='直近 24 時間' tone='primary' />
-          <StatTile label='成功' value={stats.recent.success} unit='件' note='全件処理できた実行' tone='ok' />
+        <section aria-label={content.stats.ariaLabel.value} className='grid grid-cols-4 gap-6 max-lg:grid-cols-2'>
           <StatTile
-            label='一部失敗'
+            label={content.stats.total.label.value}
+            value={stats.recent.total}
+            unit={content.stats.unit.value}
+            note={content.stats.total.note.value}
+            tone='primary'
+          />
+          <StatTile
+            label={content.stats.success.label.value}
+            value={stats.recent.success}
+            unit={content.stats.unit.value}
+            note={content.stats.success.note.value}
+            tone='ok'
+          />
+          <StatTile
+            label={content.stats.partial.label.value}
             value={stats.recent.partial}
-            unit='件'
-            note='一部のジョブが落ちた実行'
+            unit={content.stats.unit.value}
+            note={content.stats.partial.note.value}
             tone='warn'
           />
           <StatTile
-            label='失敗'
+            label={content.stats.failed.label.value}
             value={stats.recent.failed}
-            unit='件'
-            note={`実行中 ${stats.recent.running.toLocaleString('ja-JP')} 件`}
+            unit={content.stats.unit.value}
+            note={content.stats.failed.note({ count: stats.recent.running.toLocaleString('ja-JP') }).value}
             tone='err'
           />
         </section>
@@ -353,45 +369,47 @@ function LogsAdminPage() {
         <div className='-mx-1 overflow-x-auto px-1'>
           <TabsList variant='line' className={tabListClass}>
             <TabsTrigger value='runs' className={tabTriggerClass}>
-              実行履歴
+              {content.tabs.runs}
             </TabsTrigger>
             <TabsTrigger value='entries' className={tabTriggerClass}>
-              生ログ
+              {content.tabs.entries}
             </TabsTrigger>
             <TabsTrigger value='recordings' className={tabTriggerClass}>
-              録画
+              {content.tabs.recordings}
             </TabsTrigger>
             <TabsTrigger value='catalog' className={tabTriggerClass}>
-              カタログ
+              {content.tabs.catalog}
             </TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value='runs' className='flex min-w-0 flex-col gap-6 pt-4'>
           {stats !== undefined && (
-            <section aria-label='cron の稼働状況' className='flex flex-col gap-2'>
-              <h2 className='text-sm font-semibold'>cron の稼働状況</h2>
+            <section aria-label={content.runsTab.cronAriaLabel.value} className='flex flex-col gap-2'>
+              <h2 className='text-sm font-semibold'>{content.runsTab.cronHeading}</h2>
               <CronTable crons={stats.crons} />
             </section>
           )}
 
-          <section aria-label='実行履歴' className='flex flex-col gap-3'>
+          <section aria-label={content.runsTab.sectionAriaLabel.value} className='flex flex-col gap-3'>
             <div className='flex flex-wrap items-center gap-2'>
-              <h2 className='mr-auto text-sm font-semibold'>実行履歴 ({total.toLocaleString('ja-JP')} 件)</h2>
+              <h2 className='mr-auto text-sm font-semibold'>
+                {content.runsTab.heading({ count: total.toLocaleString('ja-JP') })}
+              </h2>
               <FilterPopover
-                label='期間'
+                label={content.filters.period.value}
                 value={runHours}
                 options={hoursOptions}
                 onSelect={(v) => updateSearch({ hours: v })}
               />
               <FilterPopover
-                label='種別'
+                label={content.filters.kind.value}
                 value={search.kind}
                 options={KIND_OPTIONS}
                 onSelect={(v) => updateSearch({ kind: v })}
               />
               <FilterPopover
-                label='状態'
+                label={content.filters.status.value}
                 value={search.status}
                 options={STATUS_OPTIONS}
                 onSelect={(v) => updateSearch({ status: v })}
@@ -399,7 +417,7 @@ function LogsAdminPage() {
             </div>
 
             {runs.length === 0 ? (
-              <div className='py-20 text-center text-sm text-muted-foreground'>該当する実行はありません</div>
+              <div className='py-20 text-center text-sm text-muted-foreground'>{content.runsTab.empty}</div>
             ) : (
               <RunsTable runs={runs} />
             )}
@@ -410,16 +428,16 @@ function LogsAdminPage() {
 
         <TabsContent value='entries' className='flex min-w-0 flex-col gap-3 pt-4'>
           <div className='flex flex-wrap items-center gap-2'>
-            <h2 className='mr-auto text-sm font-semibold'>生ログ</h2>
+            <h2 className='mr-auto text-sm font-semibold'>{content.entriesTab.heading}</h2>
             <SummarySearch value={search.q ?? ''} onChange={(v) => updateSearch({ q: v || undefined })} />
             <FilterPopover
-              label='期間'
+              label={content.filters.period.value}
               value={entryHours}
               options={hoursOptions}
               onSelect={(v) => updateSearch({ hours: v })}
             />
             <FilterPopover
-              label='レベル'
+              label={content.filters.level.value}
               value={search.level}
               options={LEVEL_OPTIONS}
               onSelect={(v) => updateSearch({ level: v })}
@@ -427,11 +445,9 @@ function LogsAdminPage() {
           </div>
 
           {entriesFailed && entries.length === 0 ? (
-            <div className='py-20 text-center text-sm text-destructive'>
-              Workers Logs から取得できませんでした (読み取り用の secret が未設定か、API が失敗しています)
-            </div>
+            <div className='py-20 text-center text-sm text-destructive'>{content.entriesTab.fetchError}</div>
           ) : entries.length === 0 ? (
-            <div className='py-20 text-center text-sm text-muted-foreground'>該当するログはありません</div>
+            <div className='py-20 text-center text-sm text-muted-foreground'>{content.entriesTab.empty}</div>
           ) : (
             <EntriesTable entries={entries} />
           )}
@@ -443,7 +459,11 @@ function LogsAdminPage() {
               disabled={!hasNextPage || isFetchingNextPage}
               className='w-48'
             >
-              {isFetchingNextPage ? '読み込み中…' : hasNextPage ? 'さらに読み込む' : 'これ以上ありません'}
+              {isFetchingNextPage
+                ? content.entriesTab.loading
+                : hasNextPage
+                  ? content.entriesTab.loadMore
+                  : content.entriesTab.noMore}
             </Button>
           </div>
         </TabsContent>
@@ -451,22 +471,22 @@ function LogsAdminPage() {
         <TabsContent value='recordings' className='flex min-w-0 flex-col gap-3 pt-4'>
           <div className='flex flex-wrap items-center gap-2'>
             <h2 className='mr-auto text-sm font-semibold'>
-              録画イベント ({recordingTotal.toLocaleString('ja-JP')} 件)
+              {content.recordingsTab.heading({ count: recordingTotal.toLocaleString('ja-JP') })}
             </h2>
             <FilterPopover
-              label='期間'
+              label={content.filters.period.value}
               value={search.hours}
               options={hoursOptions}
               onSelect={(v) => updateSearch({ hours: v })}
             />
             <FilterPopover
-              label='種別'
+              label={content.filters.kind.value}
               value={search.recKind}
               options={REC_KIND_OPTIONS}
               onSelect={(v) => updateSearch({ recKind: v })}
             />
             <FilterPopover
-              label='結果'
+              label={content.filters.result.value}
               value={search.recStatus}
               options={REC_STATUS_OPTIONS}
               onSelect={(v) => updateSearch({ recStatus: v })}
@@ -482,21 +502,23 @@ function LogsAdminPage() {
 
         <TabsContent value='catalog' className='flex min-w-0 flex-col gap-3 pt-4'>
           <div className='flex flex-wrap items-center gap-2'>
-            <h2 className='mr-auto text-sm font-semibold'>カタログ変化 ({catalogTotal.toLocaleString('ja-JP')} 件)</h2>
+            <h2 className='mr-auto text-sm font-semibold'>
+              {content.catalogTab.heading({ count: catalogTotal.toLocaleString('ja-JP') })}
+            </h2>
             <FilterPopover
-              label='期間'
+              label={content.filters.period.value}
               value={catalogHours}
               options={hoursOptions}
               onSelect={(v) => updateSearch({ hours: v })}
             />
             <FilterPopover
-              label='種別'
+              label={content.filters.kind.value}
               value={search.catKind}
               options={CAT_KIND_OPTIONS}
               onSelect={(v) => updateSearch({ catKind: v })}
             />
             <FilterPopover
-              label='配信元'
+              label={content.filters.provider.value}
               value={search.catProvider}
               options={CAT_PROVIDER_OPTIONS}
               onSelect={(v) => updateSearch({ catProvider: v })}

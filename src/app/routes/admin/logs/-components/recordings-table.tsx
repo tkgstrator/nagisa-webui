@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import type { RecordingEventSchema } from '@/schemas/log.dto'
 import {
@@ -74,6 +75,8 @@ export const SkeletonRows = ({ widths }: { widths: string[] }) => (
  * (詰めると値が無いときにどちらが欠けているのか読めない)。
  */
 export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] | undefined }) => {
+  const content = useIntlayer('admin-logs-recordings-table')
+
   if (events === undefined)
     return (
       <SkeletonRows
@@ -89,35 +92,35 @@ export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] | u
         ]}
       />
     )
-  if (events.length === 0) return <EmptyRows message='この期間の録画イベントはありません' />
+  if (events.length === 0) return <EmptyRows message={content.empty.value} />
   return (
     <div className='overflow-x-auto'>
       <table className='w-full border-collapse text-[13px]'>
         <thead>
           <tr className='border-b border-border'>
             <th scope='col' className={`${headClass} pl-[13px]`}>
-              日時
+              {content.headers.dateTime}
             </th>
             <th scope='col' className={headClass}>
-              作品
+              {content.headers.anime}
             </th>
             <th scope='col' className={`${headClass} max-sm:hidden`}>
-              配信元
+              {content.headers.provider}
             </th>
             <th scope='col' className={headClass}>
-              種別
+              {content.headers.kind}
             </th>
             <th scope='col' className={`${headClass} max-sm:hidden`}>
-              経路
+              {content.headers.route}
             </th>
             <th scope='col' className={numHeadClass}>
-              話数
+              {content.headers.episode}
             </th>
             <th scope='col' className={`${numHeadClass} max-sm:hidden`}>
-              HTTP
+              {content.headers.http}
             </th>
             <th scope='col' className={numHeadClass}>
-              結果
+              {content.headers.result}
             </th>
           </tr>
         </thead>

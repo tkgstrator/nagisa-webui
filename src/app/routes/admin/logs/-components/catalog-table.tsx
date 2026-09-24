@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useIntlayer } from 'react-intlayer'
 import type { CatalogEventSchema } from '@/schemas/log.dto'
 import { catalogAccent, catalogFieldLabel, catalogKindLabel, formatClock, formatDay } from '../-lib/format'
 import { EmptyRows, ProviderBadge, rowAccentClass, rowClass, SkeletonRows } from './recordings-table'
@@ -36,33 +37,35 @@ const CatalogDetail = ({ event }: { event: CatalogEventSchema }) => {
  * エピソードの追加・更新は 1 回の同期につき作品単位 1 行で、どの話かは「内容」列に畳んで出す。
  */
 export const CatalogTable = ({ events }: { events: CatalogEventSchema[] | undefined }) => {
+  const content = useIntlayer('admin-logs-catalog-table')
+
   if (events === undefined)
     return (
       <SkeletonRows widths={['w-[74px]', 'flex-1', 'w-[92px] max-sm:hidden', 'w-24', 'w-32 max-sm:hidden', 'w-11']} />
     )
-  if (events.length === 0) return <EmptyRows message='この期間のカタログ変化はありません' />
+  if (events.length === 0) return <EmptyRows message={content.empty.value} />
   return (
     <div className='overflow-x-auto'>
       <table className='w-full border-collapse text-[13px]'>
         <thead>
           <tr className='border-b border-border'>
             <th scope='col' className={`${headClass} pl-[13px]`}>
-              日時
+              {content.headers.dateTime}
             </th>
             <th scope='col' className={headClass}>
-              作品
+              {content.headers.anime}
             </th>
             <th scope='col' className={`${headClass} max-sm:hidden`}>
-              配信元
+              {content.headers.provider}
             </th>
             <th scope='col' className={headClass}>
-              種別
+              {content.headers.kind}
             </th>
             <th scope='col' className={`${headClass} max-sm:hidden`}>
-              内容
+              {content.headers.detail}
             </th>
             <th scope='col' className={numHeadClass}>
-              話数
+              {content.headers.episode}
             </th>
           </tr>
         </thead>

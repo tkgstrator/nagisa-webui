@@ -1,11 +1,14 @@
 import dayjs from 'dayjs'
+import { getIntlayer } from 'intlayer'
 import type { CatalogEventSchema, LogLevelEnum, RecordingEventSchema, SyncRunSchema } from '@/schemas/log.dto'
 
+const content = getIntlayer('admin-logs-format')
+
 export const runStatusLabel: Record<SyncRunSchema['status'], string> = {
-  running: '実行中',
-  success: '成功',
-  partial: '一部失敗',
-  failed: '失敗'
+  running: content.runStatusLabel.running,
+  success: content.runStatusLabel.success,
+  partial: content.runStatusLabel.partial,
+  failed: content.runStatusLabel.failed
 }
 
 /** 行頭のアクセント。失敗 → destructive、一部失敗 → warning、成功 → success、実行中 → primary。 */
@@ -24,17 +27,17 @@ export const runStatusBadge: Record<SyncRunSchema['status'], string> = {
 }
 
 export const runKindLabel: Record<SyncRunSchema['kind'], string> = {
-  cron: 'Schedule',
-  queue: 'Queue',
-  manual: 'Manual'
+  cron: content.runKindLabel.cron,
+  queue: content.runKindLabel.queue,
+  manual: content.runKindLabel.manual
 }
 
 export const logLevelLabel: Record<LogLevelEnum, string> = {
-  debug: 'DEBUG',
-  info: 'INFO',
-  warning: 'WARN',
-  error: 'ERROR',
-  fatal: 'FATAL'
+  debug: content.logLevelLabel.debug,
+  info: content.logLevelLabel.info,
+  warning: content.logLevelLabel.warning,
+  error: content.logLevelLabel.error,
+  fatal: content.logLevelLabel.fatal
 }
 
 /** 行頭のアクセント。info / debug は平常運転なので色を付けない。 */
@@ -55,20 +58,20 @@ export const logLevelBadge: Record<LogLevelEnum, string> = {
 }
 
 export const recordingKindLabel: Record<RecordingEventSchema['kind'], string> = {
-  request: '予約送信',
-  status: '状態照会',
-  recorded: '録画完了',
-  'not-found': '見つからない'
+  request: content.recordingKindLabel.request,
+  status: content.recordingKindLabel.status,
+  recorded: content.recordingKindLabel.recorded,
+  'not-found': content.recordingKindLabel.notFound
 }
 
 export const recordingSourceLabel: Record<RecordingEventSchema['source'], string> = {
-  cron: 'Schedule',
-  manual: 'Manual'
+  cron: content.recordingSourceLabel.cron,
+  manual: content.recordingSourceLabel.manual
 }
 
 export const recordingStatusLabel: Record<RecordingEventSchema['status'], string> = {
-  ok: '成功',
-  error: '失敗'
+  ok: content.recordingStatusLabel.ok,
+  error: content.recordingStatusLabel.error
 }
 
 /**
@@ -86,17 +89,17 @@ export const recordingStatusBadge: Record<RecordingEventSchema['status'], string
 }
 
 export const catalogKindLabel: Record<CatalogEventSchema['kind'], string> = {
-  'title-added': '新規タイトル',
-  'season-added': 'シーズン追加',
-  'episodes-added': 'エピソード追加',
-  'episodes-updated': 'エピソード更新'
+  'title-added': content.catalogKindLabel.titleAdded,
+  'season-added': content.catalogKindLabel.seasonAdded,
+  'episodes-added': content.catalogKindLabel.episodesAdded,
+  'episodes-updated': content.catalogKindLabel.episodesUpdated
 }
 
 export const catalogFieldLabel: Record<NonNullable<CatalogEventSchema['fields']>[number], string> = {
-  image: '画像',
-  description: 'あらすじ',
-  duration: '尺',
-  releaseDate: '配信日'
+  image: content.catalogFieldLabel.image,
+  description: content.catalogFieldLabel.description,
+  duration: content.catalogFieldLabel.duration,
+  releaseDate: content.catalogFieldLabel.releaseDate
 }
 
 /** 行頭のアクセント。作品単位で増えたもの (タイトル / シーズン) だけ色を付け、話単位の出入りは素のまま。 */
@@ -118,8 +121,8 @@ export const formatDay = (value: string): string => {
   const target = dayjs(value)
   if (!target.isValid()) return '—'
   const days = dayjs().startOf('day').diff(target.startOf('day'), 'day')
-  if (days === 0) return '今日'
-  if (days === 1) return '昨日'
+  if (days === 0) return content.day.today
+  if (days === 1) return content.day.yesterday
   return target.format('M/D')
 }
 
@@ -129,13 +132,13 @@ export const formatDay = (value: string): string => {
  */
 const cronLabels: Record<string, string> = {
   // 録画同期の 2 本は cron 式ではなく仕事の名前で記録される (→ `scheduled.ts`)。
-  'job-sync': '録画ジョブ追従',
-  'library-sync': '録画台帳の差分',
-  '0 */1 * * *': '新着 / 配信予定',
-  '0 0 * * *': '配信終了間近',
-  '0 3 * * *': 'カタログ全件',
-  '0 4 * * *': 'ABEMA 鍵アーカイブ',
-  '0 5 * * SUN': 'AniList 同期'
+  'job-sync': content.cronLabels.jobSync,
+  'library-sync': content.cronLabels.librarySync,
+  '0 */1 * * *': content.cronLabels.hourly,
+  '0 0 * * *': content.cronLabels.endingSoon,
+  '0 3 * * *': content.cronLabels.catalogFull,
+  '0 4 * * *': content.cronLabels.abemaKeyArchive,
+  '0 5 * * SUN': content.cronLabels.aniListSync
 }
 
 /** cron 以外の trigger (`batch` など) はそのまま返す。 */
@@ -146,8 +149,8 @@ export const triggerLabel = (run: SyncRunSchema): string =>
 export const formatDuration = (ms: number | null): string => {
   if (ms === null) return '—'
   if (ms < 1000) return `${ms} ms`
-  if (ms < 60_000) return `${(ms / 1000).toFixed(1)} 秒`
+  if (ms < 60_000) return content.duration.seconds({ value: (ms / 1000).toFixed(1) })
   const minutes = Math.floor(ms / 60_000)
   const seconds = Math.floor((ms % 60_000) / 1000)
-  return `${minutes} 分 ${String(seconds).padStart(2, '0')} 秒`
+  return content.duration.minutesSeconds({ minutes, seconds: String(seconds).padStart(2, '0') })
 }
