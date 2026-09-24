@@ -203,7 +203,12 @@ export const NagisaLibraryItemSchema = z.object({
   /** ライブラリルートからの相対パス */
   path: z.string().nonempty(),
   size: z.number().int(),
-  mtime: z.string().nullable()
+  mtime: z.string().nullable(),
+  /**
+   * フォルダ名の `[tmdbid-N]`。TMDb で解決できなかったフォルダは null、
+   * この列を持たない古い nagisa は送ってこない
+   */
+  tmdb_id: z.number().int().nullish()
 })
 export type NagisaLibraryItem = z.infer<typeof NagisaLibraryItemSchema>
 
