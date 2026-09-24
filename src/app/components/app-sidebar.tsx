@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useIntlayer } from 'react-intlayer'
 import { GlobalSearchHotkey } from '@/app/components/global-search-bar'
 import { ServerStatusDialog } from '@/app/components/server-status-dialog'
 import { nagisaStatusAtom } from '@/app/lib/atoms'
@@ -73,11 +74,16 @@ const RecordingsCount = () => {
 
 /** サイドバー最下段の疎通表示。行そのものが詳細ダイアログのトリガーを兼ねる。 */
 const ServerStatusLine = () => {
+  const content = useIntlayer('app-sidebar')
   const { data: status, isPending, isError } = useAtomValue(nagisaStatusAtom)
   const isDown = isError || !status
 
   const dotClass = isPending ? 'animate-pulse bg-warning' : isDown ? 'bg-destructive' : 'animate-pulse bg-success'
-  const label = isPending ? '接続を確認中' : isDown ? 'サーバー停止中' : 'サーバー稼働中'
+  const label = isPending
+    ? content.status.connecting.value
+    : isDown
+      ? content.status.down.value
+      : content.status.up.value
 
   return (
     <ServerStatusDialog
@@ -95,6 +101,7 @@ const ServerStatusLine = () => {
 }
 
 export const AppSidebar = () => {
+  const content = useIntlayer('app-sidebar')
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   /** 作品詳細はアニメ一覧配下として扱う。パンくずの「アニメ一覧 / 作品名」と揃える。 */
   const browseActive = pathname.startsWith('/anime/')
@@ -125,10 +132,10 @@ export const AppSidebar = () => {
         </Link>
       </div>
 
-      <nav className='flex flex-col gap-0.5 max-sm:ml-auto max-sm:flex-row' aria-label='メイン'>
+      <nav className='flex flex-col gap-0.5 max-sm:ml-auto max-sm:flex-row' aria-label={content.navAriaLabel.value}>
         <Link to='/' className={navLinkClass} activeOptions={{ exact: true }}>
           <HomeIcon />
-          <span className='max-sm:sr-only'>ホーム</span>
+          <span className='max-sm:sr-only'>{content.nav.home}</span>
         </Link>
         <Link
           to='/browse'
@@ -136,16 +143,16 @@ export const AppSidebar = () => {
           aria-current={browseActive ? 'page' : undefined}
         >
           <BrowseIcon />
-          <span className='max-sm:sr-only'>アニメ一覧</span>
+          <span className='max-sm:sr-only'>{content.nav.browse}</span>
         </Link>
         <Link to='/recordings' className={navLinkClass}>
           <RecordingsIcon />
-          <span className='max-sm:sr-only'>録画一覧</span>
+          <span className='max-sm:sr-only'>{content.nav.recordings}</span>
           <RecordingsCount />
         </Link>
         <Link to='/settings' className={navLinkClass}>
           <SettingsIcon />
-          <span className='max-sm:sr-only'>設定</span>
+          <span className='max-sm:sr-only'>{content.nav.settings}</span>
         </Link>
       </nav>
 
