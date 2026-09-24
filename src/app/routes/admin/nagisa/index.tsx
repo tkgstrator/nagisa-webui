@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2, Send } from 'lucide-react'
 import { useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
 import { Button } from '@/app/components/ui/button'
 import { Checkbox } from '@/app/components/ui/checkbox'
@@ -22,26 +23,15 @@ type Marketplace = NonNullable<NagisaEnqueueRequest['marketplace']>
 type Language = NonNullable<NagisaEnqueueRequest['language']>
 
 const PROVIDERS: Provider[] = ['amazon', 'crunchyroll', 'hulu', 'abema']
-const MARKETPLACES: { value: Marketplace; label: string }[] = [
-  { value: 'jp', label: '日本 (jp)' },
-  { value: 'us', label: '米国 (us)' }
-]
-const LANGUAGES: { value: Language; label: string }[] = [
-  { value: 'sub', label: '字幕 (sub)' },
-  { value: 'dub', label: '吹替 (dub)' }
-]
 
 /** Select の value で「未指定」を表すセンチネル（空文字は base-ui で扱いづらい） */
 const UNSET = '__unset__'
 
 /** Select の trigger に表示するラベルを value から引く */
 const providerValueLabel = (v: unknown) => (typeof v === 'string' ? (providerLabel[v] ?? v) : '')
-const marketplaceValueLabel = (v: unknown) =>
-  v === UNSET || v == null ? '未指定' : (MARKETPLACES.find((m) => m.value === v)?.label ?? String(v))
-const languageValueLabel = (v: unknown) =>
-  v === UNSET || v == null ? '未指定' : (LANGUAGES.find((l) => l.value === v)?.label ?? String(v))
 
 function NagisaJobEditorPage() {
+  const content = useIntlayer('admin-nagisa')
   const { settings } = useSettings()
   const [provider, setProvider] = useState<Provider>('amazon')
   const [contentId, setContentId] = useState('')
@@ -51,6 +41,20 @@ function NagisaJobEditorPage() {
   const [language, setLanguage] = useState<Language | typeof UNSET>(settings.defaultLanguage)
   const [force, setForce] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+
+  const MARKETPLACES: { value: Marketplace; label: string }[] = [
+    { value: 'jp', label: content.marketplaces.jp.value },
+    { value: 'us', label: content.marketplaces.us.value }
+  ]
+  const LANGUAGES: { value: Language; label: string }[] = [
+    { value: 'sub', label: content.languages.sub.value },
+    { value: 'dub', label: content.languages.dub.value }
+  ]
+
+  const marketplaceValueLabel = (v: unknown) =>
+    v === UNSET || v == null ? content.unset.value : (MARKETPLACES.find((m) => m.value === v)?.label ?? String(v))
+  const languageValueLabel = (v: unknown) =>
+    v === UNSET || v == null ? content.unset.value : (LANGUAGES.find((l) => l.value === v)?.label ?? String(v))
 
   const mutation = useMutation<NagisaEnqueueResponse, Error, NagisaEnqueueRequest>({
     mutationFn: (body) => api.enqueueNagisaJob(body)
@@ -66,7 +70,7 @@ function NagisaJobEditorPage() {
     for (const p of parts) {
       const n = Number(p)
       if (!Number.isInteger(n) || n <= 0) {
-        return { error: `エピソード番号は正の整数で指定してください: "${p}"` }
+        return { error: content.validation.episodeNumberInvalid({ value: p }).value }
       }
       nums.push(n)
     }
@@ -80,7 +84,7 @@ function NagisaJobEditorPage() {
     }
     const n = Number(trimmed)
     if (!Number.isInteger(n) || n <= 0) {
-      return { error: `season_number は正の整数で指定してください: "${trimmed}"` }
+      return { error: content.validation.seasonNumberInvalid({ value: trimmed }).value }
     }
     return n
   }
@@ -88,7 +92,7 @@ function NagisaJobEditorPage() {
   const buildBody = (): NagisaEnqueueRequest | { error: string } => {
     const id = contentId.trim()
     if (!id) {
-      return { error: 'content_id を入力してください' }
+      return { error: content.validation.contentIdRequired.value }
     }
     const seasonNumber = parseSeasonNumber()
     if (seasonNumber && typeof seasonNumber === 'object' && 'error' in seasonNumber) {
@@ -100,7 +104,7 @@ function NagisaJobEditorPage() {
     }
     // episodes だけ指定されていて season_number が無いのは Nagisa 側でどう扱われるか不明なので弾く
     if (Array.isArray(episodes) && episodes.length > 0 && typeof seasonNumber !== 'number') {
-      return { error: 'episodes を指定する場合は season_number も指定してください' }
+      return { error: content.validation.episodesRequireSeasonNumber.value }
     }
     const seasons =
       typeof seasonNumber === 'number'
@@ -141,10 +145,10 @@ function NagisaJobEditorPage() {
   return (
     <PageContainer className='gap-6'>
       <div>
-        <h1 className='text-2xl font-bold tracking-tight'>Nagisa ジョブ投入</h1>
+        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
         <p className='mt-1 text-sm text-muted-foreground'>
-          バックエンド経由で Nagisa の <code className='rounded bg-muted px-1.5 py-0.5 text-xs'>/api/queues</code>{' '}
-          に録画ジョブを直接投入する
+          {content.description.prefix.value} <code className='rounded bg-muted px-1.5 py-0.5 text-xs'>/api/queues</code>{' '}
+          {content.description.suffix.value}
         </p>
       </div>
 
@@ -169,7 +173,7 @@ function NagisaJobEditorPage() {
           <Label htmlFor='contentId'>content_id</Label>
           <Input
             id='contentId'
-            placeholder='例: B0DXV9MP4Y / lycoris-recoil など'
+            placeholder={content.placeholders.contentId.value}
             value={contentId}
             onChange={(e) => setContentId(e.target.value)}
           />
@@ -177,35 +181,35 @@ function NagisaJobEditorPage() {
 
         <div className='grid gap-4 sm:grid-cols-[1fr_2fr]'>
           <div className='space-y-1.5'>
-            <Label htmlFor='seasonNumber'>season_number（任意・空欄で全シーズン）</Label>
+            <Label htmlFor='seasonNumber'>{content.labels.seasonNumber.value}</Label>
             <Input
               id='seasonNumber'
-              placeholder='例: 1'
+              placeholder={content.placeholders.seasonNumber.value}
               value={seasonNumberText}
               onChange={(e) => setSeasonNumberText(e.target.value)}
             />
           </div>
           <div className='space-y-1.5'>
-            <Label htmlFor='episodes'>episodes（任意・空欄で全話）</Label>
+            <Label htmlFor='episodes'>{content.labels.episodes.value}</Label>
             <Input
               id='episodes'
-              placeholder='例: 1, 2, 3'
+              placeholder={content.placeholders.episodes.value}
               value={episodesText}
               onChange={(e) => setEpisodesText(e.target.value)}
             />
-            <p className='text-xs text-muted-foreground'>カンマ・スペース・改行区切り。season_number と併用。</p>
+            <p className='text-xs text-muted-foreground'>{content.episodesHint.value}</p>
           </div>
         </div>
 
         <div className='grid gap-4 sm:grid-cols-2'>
           <div className='space-y-1.5'>
-            <Label htmlFor='marketplace'>marketplace（任意）</Label>
+            <Label htmlFor='marketplace'>{content.labels.marketplace.value}</Label>
             <Select value={marketplace} onValueChange={(v) => setMarketplace(v as Marketplace | typeof UNSET)}>
               <SelectTrigger id='marketplace' className='w-full'>
                 <SelectValue>{marketplaceValueLabel}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={UNSET}>未指定</SelectItem>
+                <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
                 {MARKETPLACES.map((m) => (
                   <SelectItem key={m.value} value={m.value}>
                     {m.label}
@@ -215,13 +219,13 @@ function NagisaJobEditorPage() {
             </Select>
           </div>
           <div className='space-y-1.5'>
-            <Label htmlFor='language'>language（任意）</Label>
+            <Label htmlFor='language'>{content.labels.language.value}</Label>
             <Select value={language} onValueChange={(v) => setLanguage(v as Language | typeof UNSET)}>
               <SelectTrigger id='language' className='w-full'>
                 <SelectValue>{languageValueLabel}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={UNSET}>未指定</SelectItem>
+                <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
                 {LANGUAGES.map((l) => (
                   <SelectItem key={l.value} value={l.value}>
                     {l.label}
@@ -237,7 +241,7 @@ function NagisaJobEditorPage() {
           <span>
             <span className='font-medium'>force</span>
             <span className='ml-1 text-muted-foreground'>
-              — 既存の出力ファイルがあってもスキップせず再ダウンロードする (Nagisa の <code>-F</code> 相当)
+              {content.forceHint.prefix.value} <code>-F</code> {content.forceHint.suffix.value}
             </span>
           </span>
         </label>
@@ -247,15 +251,15 @@ function NagisaJobEditorPage() {
         <div className='flex items-center gap-3'>
           <Button onClick={onSubmit} disabled={mutation.isPending}>
             {mutation.isPending ? <Loader2 className='animate-spin' /> : <Send />}
-            投入
+            {content.submit.value}
           </Button>
-          {mutation.isPending && <span className='text-sm text-muted-foreground'>送信中…</span>}
+          {mutation.isPending && <span className='text-sm text-muted-foreground'>{content.submitting.value}</span>}
         </div>
       </div>
 
       {preview && (
         <div className='space-y-1.5'>
-          <p className='text-sm font-medium leading-none'>送信内容プレビュー</p>
+          <p className='text-sm font-medium leading-none'>{content.previewTitle.value}</p>
           <pre className='overflow-x-auto rounded-xl border border-border bg-muted p-3 font-mono text-xs'>
             {JSON.stringify(preview, null, 2)}
           </pre>
@@ -264,7 +268,7 @@ function NagisaJobEditorPage() {
 
       {mutation.isError && (
         <div className='space-y-1.5'>
-          <p className='text-sm font-medium leading-none'>エラー</p>
+          <p className='text-sm font-medium leading-none'>{content.errorTitle.value}</p>
           <pre className='overflow-x-auto rounded-xl border border-destructive/50 bg-destructive/10 p-3 font-mono text-xs text-destructive'>
             {mutation.error.message}
           </pre>
@@ -273,7 +277,7 @@ function NagisaJobEditorPage() {
 
       {mutation.isSuccess && (
         <div className='space-y-3'>
-          <div className='text-sm text-muted-foreground'>{mutation.data.count} 件のジョブを投入しました</div>
+          <div className='text-sm text-muted-foreground'>{content.enqueuedCount({ count: mutation.data.count })}</div>
           {mutation.data.jobs.map((job) => (
             <div key={job.job_id} className='space-y-1.5'>
               <p className='text-sm font-medium leading-none'>
@@ -284,15 +288,19 @@ function NagisaJobEditorPage() {
                   <div className='font-medium'>{job.preview.title}</div>
                   {job.preview.title_en && <div className='text-xs text-muted-foreground'>{job.preview.title_en}</div>}
                   <div className='text-xs text-muted-foreground'>
-                    {job.preview.content_type} ・ {job.preview.selected_episodes} / {job.preview.total_episodes} 話 ・{' '}
-                    {job.preview.marketplace}
+                    {content.jobPreviewMeta({
+                      contentType: job.preview.content_type,
+                      selected: job.preview.selected_episodes,
+                      total: job.preview.total_episodes,
+                      marketplace: job.preview.marketplace
+                    })}
                   </div>
                 </div>
               )}
             </div>
           ))}
           <div className='space-y-1.5'>
-            <p className='text-sm font-medium leading-none'>レスポンス全体</p>
+            <p className='text-sm font-medium leading-none'>{content.responseTitle.value}</p>
             <pre className='overflow-x-auto rounded-xl border border-border bg-muted p-3 font-mono text-xs'>
               {JSON.stringify(mutation.data, null, 2)}
             </pre>

@@ -1,3 +1,5 @@
+import { useIntlayer } from 'react-intlayer'
+
 type Tone = 'primary' | 'ok' | 'warn' | 'mute'
 
 const toneBorder: Record<Tone, string> = {
@@ -59,25 +61,32 @@ export const SummaryStats = ({
   expiring,
   expiringSoonestDays,
   visible
-}: SummaryStatsProps) => (
-  <section
-    className='grid grid-cols-4 gap-6 max-sm:grid-cols-2 max-sm:gap-x-3.5 max-sm:gap-y-4'
-    aria-label='録画状況のサマリ'
-  >
-    <Stat tone='primary' label='予約中' value={total} unit='作品' />
-    <Stat
-      tone='ok'
-      label='録画済み (表示中)'
-      value={recorded}
-      unit={`/ ${visible} 作品`}
-      ratio={visible === 0 ? 0 : Math.round((recorded / visible) * 100)}
-    />
-    <Stat tone='mute' label='未録画 (表示中)' value={pending} unit='作品' />
-    <Stat
-      tone='warn'
-      label='配信終了予定 (表示中)'
-      value={expiring}
-      unit={expiringSoonestDays === null ? '作品' : `作品 · 最短 ${expiringSoonestDays} 日`}
-    />
-  </section>
-)
+}: SummaryStatsProps) => {
+  const content = useIntlayer('recordings-summary-stats')
+  return (
+    <section
+      className='grid grid-cols-4 gap-6 max-sm:grid-cols-2 max-sm:gap-x-3.5 max-sm:gap-y-4'
+      aria-label={content.ariaLabel.value}
+    >
+      <Stat tone='primary' label={content.stats.scheduled.value} value={total} unit={content.unit.value} />
+      <Stat
+        tone='ok'
+        label={content.stats.recordedVisible.value}
+        value={recorded}
+        unit={content.recordedUnit({ visible }).value}
+        ratio={visible === 0 ? 0 : Math.round((recorded / visible) * 100)}
+      />
+      <Stat tone='mute' label={content.stats.pendingVisible.value} value={pending} unit={content.unit.value} />
+      <Stat
+        tone='warn'
+        label={content.stats.expiringVisible.value}
+        value={expiring}
+        unit={
+          expiringSoonestDays === null
+            ? content.unit.value
+            : content.expiringUnitWithDays({ days: expiringSoonestDays }).value
+        }
+      />
+    </section>
+  )
+}

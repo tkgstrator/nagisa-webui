@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { getIntlayer } from 'intlayer'
 
 dayjs.extend(duration)
 
-const WEEKDAY = ['日', '月', '火', '水', '木', '金', '土']
+const content = getIntlayer('anime-id-format')
 
 export function formatDuration(seconds: number): string {
   const d = dayjs.duration(seconds, 'seconds')
@@ -15,7 +16,7 @@ export function formatRuntime(seconds: number): string {
   const minutes = Math.round(seconds / 60)
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
-  return h > 0 ? `${h}時間${m}分` : `${m}分`
+  return h > 0 ? content.hoursMinutes({ hours: h, minutes: m }) : content.minutes({ minutes: m })
 }
 
 export function formatDate(dateStr: string): string {
@@ -25,7 +26,7 @@ export function formatDate(dateStr: string): string {
 /** サイドバーの放送スケジュール向け。7/25 (金) の形にする。 */
 export function formatMonthDay(dateStr: string): string {
   const d = dayjs(dateStr)
-  return `${d.format('M/D')} (${WEEKDAY[d.day()]})`
+  return `${d.format('M/D')} (${content.weekday[d.day()]})`
 }
 
 export type EpisodeStatus = 'done' | 'todo' | 'future'

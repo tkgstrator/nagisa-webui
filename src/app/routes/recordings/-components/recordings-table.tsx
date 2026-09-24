@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Fragment } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { providerColor, providerLabel, statusColor, statusLabel } from '@/app/lib/constants'
 import { useSettings } from '@/app/routes/settings/-lib/settings'
@@ -86,6 +87,7 @@ type RowProps = {
 
 const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: RowProps) => {
   const { settings } = useSettings()
+  const content = useIntlayer('recordings-recordings-table')
   const season = seasonLabel(anime.year, anime.quarter)
   const remaining = anime.expiredAt === null ? null : daysUntil(anime.expiredAt)
   return (
@@ -93,7 +95,11 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
       className={`border-b border-border transition-colors ${selected ? 'bg-accent/55 hover:bg-accent/75' : 'hover:bg-muted focus-within:bg-muted'}`}
     >
       <td className={`${cellClass} border-l-[3px] ${rowAccent(anime)}`}>
-        <Checkbox checked={selected} onChange={() => onToggleSelected(anime.id)} label={`${anime.title} を選択`} />
+        <Checkbox
+          checked={selected}
+          onChange={() => onToggleSelected(anime.id)}
+          label={content.selectRow({ title: anime.title }).value}
+        />
       </td>
       <td className={cellClass}>
         <div className='flex min-w-0 items-center gap-3 max-sm:gap-2'>
@@ -115,7 +121,12 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
             </Link>
             <div className='mt-0.5 flex flex-wrap gap-x-2 gap-y-1 text-[11px] text-muted-foreground'>
               {season === null ? null : <span>{season}</span>}
-              {anime.nextEpisodeDate === null ? null : <span>次回 {formatDate(anime.nextEpisodeDate)}</span>}
+              {anime.nextEpisodeDate === null ? null : (
+                <span>
+                  {content.nextEpisodePrefix}
+                  {formatDate(anime.nextEpisodeDate)}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -140,7 +151,7 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
             anime.recorded ? 'bg-success text-success-foreground' : 'bg-muted text-muted-foreground'
           }`}
         >
-          {anime.recorded ? '録画済み' : '未録画'}
+          {anime.recorded ? content.recordedBadge.recorded : content.recordedBadge.pending}
         </span>
       </td>
       <td className={`${cellClass}`}>
@@ -159,14 +170,14 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
             >
               {formatDate(anime.expiredAt)}
             </span>
-            <span className='block text-[11px]'>あと {remaining} 日</span>
+            <span className='block text-[11px]'>{content.remainingDays({ days: remaining })}</span>
           </>
         )}
       </td>
       <td className={cellClass}>
         <button
           type='button'
-          aria-label={`${anime.title} の予約を解除`}
+          aria-label={content.unscheduleRow({ title: anime.title }).value}
           disabled={unscheduling}
           onClick={() => onUnschedule(anime)}
           className='inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-status-cancelled hover:text-status-cancelled-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring disabled:cursor-default disabled:opacity-45 max-sm:px-1'
@@ -182,26 +193,29 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
           >
             <path d='M6 6l12 12M18 6 6 18' />
           </svg>
-          <span>解除</span>
+          <span>{content.unschedule}</span>
         </button>
       </td>
     </tr>
   )
 }
 
-const GroupRow = ({ label, count, hint }: { label: string; count: number; hint: string }) => (
-  <tr>
-    <th
-      colSpan={8}
-      scope='colgroup'
-      className='border-b border-border px-2.5 pt-[18px] pb-1.5 pl-[13px] text-left text-xs font-semibold text-muted-foreground'
-    >
-      {label}
-      <span className='ml-1.5 font-medium tabular-nums'>{count} 作品</span>
-      <span className='ml-2.5 text-[11px] font-normal opacity-80'>{hint}</span>
-    </th>
-  </tr>
-)
+const GroupRow = ({ label, count, hint }: { label: string; count: number; hint: string }) => {
+  const content = useIntlayer('recordings-recordings-table')
+  return (
+    <tr>
+      <th
+        colSpan={8}
+        scope='colgroup'
+        className='border-b border-border px-2.5 pt-[18px] pb-1.5 pl-[13px] text-left text-xs font-semibold text-muted-foreground'
+      >
+        {label}
+        <span className='ml-1.5 font-medium tabular-nums'>{content.groupCount({ count })}</span>
+        <span className='ml-2.5 text-[11px] font-normal opacity-80'>{hint}</span>
+      </th>
+    </tr>
+  )
+}
 
 type RecordingsTableProps = {
   items: AnimeSchema[]
@@ -222,11 +236,12 @@ export const RecordingsTable = ({
   sort,
   onSortChange
 }: RecordingsTableProps) => {
+  const content = useIntlayer('recordings-recordings-table')
   const airing = items.filter((anime) => anime.status === 'RELEASING')
   const others = items.filter((anime) => anime.status !== 'RELEASING')
   const groups = [
-    { key: 'airing', label: '放送中', hint: '新しい話が順次追加されます', items: airing },
-    { key: 'others', label: 'その他', hint: '完結・未放送・休止を含みます', items: others }
+    { key: 'airing', label: content.groups.airing.label.value, hint: content.groups.airing.hint.value, items: airing },
+    { key: 'others', label: content.groups.others.label.value, hint: content.groups.others.hint.value, items: others }
   ].filter((group) => group.items.length > 0)
 
   return (
@@ -245,24 +260,29 @@ export const RecordingsTable = ({
         <thead>
           <tr className='border-b border-border'>
             <th scope='col' className={headClass}>
-              <span className='sr-only'>選択</span>
+              <span className='sr-only'>{content.columns.select}</span>
             </th>
-            <SortableHead label='作品' sortKey='title' sort={sort} onSortChange={onSortChange} />
+            <SortableHead label={content.columns.title.value} sortKey='title' sort={sort} onSortChange={onSortChange} />
             <th scope='col' className={headClass}>
-              プロバイダ
-            </th>
-            <th scope='col' className={headClass}>
-              放送
+              {content.columns.provider}
             </th>
             <th scope='col' className={headClass}>
-              録画
-            </th>
-            <SortableHead label='最終更新' sortKey='updatedAt' sort={sort} onSortChange={onSortChange} />
-            <th scope='col' className={headClass}>
-              配信終了
+              {content.columns.airing}
             </th>
             <th scope='col' className={headClass}>
-              <span className='sr-only'>操作</span>
+              {content.columns.recorded}
+            </th>
+            <SortableHead
+              label={content.columns.updatedAt.value}
+              sortKey='updatedAt'
+              sort={sort}
+              onSortChange={onSortChange}
+            />
+            <th scope='col' className={headClass}>
+              {content.columns.expiresAt}
+            </th>
+            <th scope='col' className={headClass}>
+              <span className='sr-only'>{content.columns.actions}</span>
             </th>
           </tr>
         </thead>

@@ -1,11 +1,14 @@
+import { getIntlayer } from 'intlayer'
 import type { RecordStatus } from '@/schemas/recording.dto'
 
+const content = getIntlayer('constants')
+
 export const providerLabel: Record<string, string> = {
-  amazon: 'Prime Video',
-  hulu: 'Hulu',
-  crunchyroll: 'Crunchyroll',
-  abema: 'ABEMA',
-  netflix: 'Netflix'
+  amazon: content.provider.amazon,
+  hulu: content.provider.hulu,
+  crunchyroll: content.provider.crunchyroll,
+  abema: content.provider.abema,
+  netflix: content.provider.netflix
 }
 
 export const providerColor: Record<string, string> = {
@@ -17,11 +20,11 @@ export const providerColor: Record<string, string> = {
 }
 
 export const statusLabel: Record<string, string> = {
-  FINISHED: '完結',
-  RELEASING: '放送中',
-  NOT_YET_RELEASED: '未放送',
-  CANCELLED: '中止',
-  HIATUS: '休止'
+  FINISHED: content.status.FINISHED,
+  RELEASING: content.status.RELEASING,
+  NOT_YET_RELEASED: content.status.NOT_YET_RELEASED,
+  CANCELLED: content.status.CANCELLED,
+  HIATUS: content.status.HIATUS
 }
 
 export const statusColor: Record<string, string> = {
@@ -37,24 +40,24 @@ export const statusColor: Record<string, string> = {
  * 状態を増やしたらここを埋めるまで型が通らない (画面に生の英字が漏れない)。
  */
 export const recordStatusLabel: Record<RecordStatus, string> = {
-  none: '未指示',
-  pending: '待機中',
-  downloading: 'ダウンロード中',
-  completed: '録画済み',
-  failed: '失敗',
-  stale: '見失い',
-  missing: '実体なし'
+  none: content.recordStatusLabel.none,
+  pending: content.recordStatusLabel.pending,
+  downloading: content.recordStatusLabel.downloading,
+  completed: content.recordStatusLabel.completed,
+  failed: content.recordStatusLabel.failed,
+  stale: content.recordStatusLabel.stale,
+  missing: content.recordStatusLabel.missing
 }
 
 /** 各状態が「誰がどう書いたものか」。状態が増えたときの意味を画面に残しておく。 */
 export const recordStatusNote: Record<RecordStatus, string> = {
-  none: '録画を指示していない',
-  pending: '指示は通ったがキューで順番待ち',
-  downloading: 'キューで実行中',
-  completed: '台帳に実体を確認済み',
-  failed: 'キューが失敗として終えた',
-  stale: '30 分キューに現れず見失った (失敗とは限らない)',
-  missing: '台帳から実体が消えた'
+  none: content.recordStatusNote.none,
+  pending: content.recordStatusNote.pending,
+  downloading: content.recordStatusNote.downloading,
+  completed: content.recordStatusNote.completed,
+  failed: content.recordStatusNote.failed,
+  stale: content.recordStatusNote.stale,
+  missing: content.recordStatusNote.missing
 }
 
 /** 状態の内訳表の行頭アクセント。0 件のときは呼び出し側で border-l-border に落とす。 */

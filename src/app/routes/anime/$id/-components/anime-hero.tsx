@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useSetAtom } from 'jotai'
 import { Check, Circle, RefreshCw } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { browseFiltersAtom, browseFiltersDefaults } from '@/app/lib/atoms'
 import { providerColor, providerLabel, statusColor, statusLabel } from '@/app/lib/constants'
 import { type AnimeInfoSchema, QuarterLabel } from '@/schemas/anime.dto'
@@ -38,6 +39,7 @@ export function AnimeHero({
   onToggleRecorded: () => void
   onRefresh: () => void
 }) {
+  const content = useIntlayer('anime-id-anime-hero')
   const setFilters = useSetAtom(browseFiltersAtom)
   const recordedCount = anime.seasons.reduce(
     (sum, season) => sum + season.episodes.filter((episode) => episode.recorded).length,
@@ -64,7 +66,7 @@ export function AnimeHero({
             {statusLabel[anime.status]}
           </span>
           {anime.entityType === 'movie' && (
-            <span className={`${badgeClass} bg-secondary text-secondary-foreground`}>映画</span>
+            <span className={`${badgeClass} bg-secondary text-secondary-foreground`}>{content.movieBadge}</span>
           )}
         </div>
 
@@ -80,13 +82,32 @@ export function AnimeHero({
 
         <div className='mt-[22px]'>
           <dl className='m-0 flex flex-wrap gap-[22px] max-sm:gap-4'>
-            <Fact label='放送' value={anime.year > 0 ? `${anime.year}年 ${QuarterLabel[anime.quarter]}` : '不明'} />
-            <Fact label='話数' value={`${totalEpisodes}話`} />
             <Fact
-              label='1話あたり'
-              value={totalEpisodes > 0 ? `約${formatRuntime(Math.round(totalDuration / totalEpisodes))}` : '—'}
+              label={content.facts.broadcast.value}
+              value={
+                anime.year > 0
+                  ? content.facts.broadcastYear({ year: anime.year, quarter: QuarterLabel[anime.quarter] }).value
+                  : content.facts.unknown.value
+              }
             />
-            <Fact label='総再生時間' value={totalDuration > 0 ? formatRuntime(totalDuration) : '—'} />
+            <Fact
+              label={content.facts.episodeCount.value}
+              value={content.facts.episodeCountValue({ count: totalEpisodes }).value}
+            />
+            <Fact
+              label={content.facts.perEpisode.value}
+              value={
+                totalEpisodes > 0
+                  ? content.facts.perEpisodeValue({
+                      duration: formatRuntime(Math.round(totalDuration / totalEpisodes))
+                    }).value
+                  : '—'
+              }
+            />
+            <Fact
+              label={content.facts.totalDuration.value}
+              value={totalDuration > 0 ? formatRuntime(totalDuration) : '—'}
+            />
           </dl>
 
           {anime.description && (
@@ -102,7 +123,7 @@ export function AnimeHero({
               className={`${btnClass} ${anime.scheduled ? 'border-transparent bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
             >
               {anime.scheduled ? <Check className='size-[15px]' /> : <Circle className='size-[15px]' />}
-              {anime.scheduled ? '録画予約中' : '録画を予約'}
+              {anime.scheduled ? content.scheduleButton.scheduled : content.scheduleButton.schedule}
             </button>
             {/* 録画を取り消す API がないので、録画済みになったら押せない。位置と見た目は保ったまま意味だけ変える。 */}
             <button
@@ -110,15 +131,17 @@ export function AnimeHero({
               onClick={onToggleRecorded}
               disabled={updating || anime.recorded}
               aria-pressed={anime.recorded}
-              title={anime.recorded ? '録画済みの取り消しには対応していない' : undefined}
+              title={anime.recorded ? content.recordButton.recordedTitle.value : undefined}
               className={`${btnClass} ${anime.recorded ? 'border-transparent bg-success text-success-foreground' : ''}`}
             >
               {anime.recorded ? <Check className='size-[15px]' /> : <Circle className='size-[15px]' />}
-              {anime.recorded ? `録画済み (${recordedCount}話)` : '今すぐ録画'}
+              {anime.recorded
+                ? content.recordButton.recorded({ count: recordedCount })
+                : content.recordButton.recordNow}
             </button>
             <button type='button' onClick={onRefresh} disabled={updating} className={btnClass}>
               <RefreshCw className={`size-[15px] ${refreshing ? 'animate-spin' : ''}`} />
-              再取得
+              {content.refreshButton}
             </button>
           </div>
         </div>

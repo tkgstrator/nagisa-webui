@@ -1,5 +1,6 @@
 import { Check, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { Button } from '@/app/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover'
 
@@ -14,6 +15,7 @@ export function FilterPopover<T extends string | number | boolean | undefined>({
   options: { value: T; label: string }[]
   onSelect: (value: T) => void
 }) {
+  const content = useIntlayer('browse-filter-popover')
   const [open, setOpen] = useState(false)
   const selected = options.find((o) => o.value === value)
   const isActive = value != null
@@ -29,7 +31,7 @@ export function FilterPopover<T extends string | number | boolean | undefined>({
           />
         }
       >
-        <span>{isActive ? (selected?.label ?? 'すべて') : label}</span>
+        <span>{isActive ? (selected?.label ?? content.allLabel.value) : label}</span>
         <ChevronDown data-icon='inline-end' className='opacity-60' />
       </PopoverTrigger>
       <PopoverContent align='start' className='w-44 p-1.5'>

@@ -1,10 +1,14 @@
 import dayjs from 'dayjs'
+import { getIntlayer } from 'intlayer'
+import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 import { formatDate } from './format'
 
+const moduleContent = getIntlayer('recordings-weekly-schedule')
+
 /** モックに合わせて月曜始まり。`dayjs().day()` は日曜=0 なので +6 して回す。 */
-const DAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
+const DAY_NAMES = moduleContent.dayNames
 const dayIndex = (date: string) => (dayjs(date).day() + 6) % 7
 
 type Slot = { anime: AnimeSchema; time: string; note: string | null; tone: 'hiatus' | 'upcoming' | null }
@@ -23,9 +27,16 @@ const toSlot = (anime: AnimeSchema): Slot | null => {
   if (anime.nextEpisodeDate === null) return null
   const next = dayjs(anime.nextEpisodeDate)
   if (!next.isValid()) return null
-  if (anime.status === 'HIATUS') return { anime, time: next.format('HH:mm'), note: '休止中', tone: 'hiatus' }
+  if (anime.status === 'HIATUS') {
+    return { anime, time: next.format('HH:mm'), note: moduleContent.hiatusNote, tone: 'hiatus' }
+  }
   if (anime.status === 'NOT_YET_RELEASED') {
-    return { anime, time: next.format('HH:mm'), note: `初回 ${formatDate(anime.nextEpisodeDate)}〜`, tone: 'upcoming' }
+    return {
+      anime,
+      time: next.format('HH:mm'),
+      note: moduleContent.upcomingNote({ date: formatDate(anime.nextEpisodeDate) }),
+      tone: 'upcoming'
+    }
   }
   return { anime, time: next.format('HH:mm'), note: null, tone: null }
 }
@@ -52,6 +63,7 @@ const SlotItem = ({ slot }: { slot: Slot }) => (
 )
 
 export const WeeklySchedule = ({ items }: { items: AnimeSchema[] }) => {
+  const content = useIntlayer('recordings-weekly-schedule')
   const byDay: Slot[][] = [[], [], [], [], [], [], []]
   for (const anime of items) {
     const slot = toSlot(anime)
@@ -61,10 +73,8 @@ export const WeeklySchedule = ({ items }: { items: AnimeSchema[] }) => {
   for (const slots of byDay) slots.sort((a, b) => a.time.localeCompare(b.time))
 
   return (
-    <section aria-label='週間スケジュール'>
-      <p className='mb-3 text-xs text-muted-foreground'>
-        曜日ごとの配信予定です。録画したい作品の管理は「一覧」から行ってください。
-      </p>
+    <section aria-label={content.ariaLabel.value}>
+      <p className='mb-3 text-xs text-muted-foreground'>{content.description}</p>
       {/* 曜日は左端の固定列。右側はその日の作品を折り返して並べる。 */}
       <div className='border-y border-border'>
         {byDay.map((slots, day) => {
@@ -81,7 +91,7 @@ export const WeeklySchedule = ({ items }: { items: AnimeSchema[] }) => {
                 <span className='text-[11px] text-muted-foreground opacity-70 tabular-nums'>{slots.length}</span>
               </div>
               {slots.length === 0 ? (
-                <p className='py-1.5 text-[11px] text-muted-foreground opacity-65'>予定なし</p>
+                <p className='py-1.5 text-[11px] text-muted-foreground opacity-65'>{content.empty}</p>
               ) : (
                 <div className='grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-3.5 gap-y-2 max-sm:grid-cols-1'>
                   {slots.map((slot) => (
