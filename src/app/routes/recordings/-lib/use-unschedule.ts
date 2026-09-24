@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import api from '@/app/lib/api'
 import { queryKeys } from '@/app/lib/query-keys'
@@ -11,6 +12,7 @@ type UseUnscheduleParams = {
 /** 単発・一括の予約解除をまとめたフック。確認ダイアログを挟むかどうかは呼び出し側の責務。 */
 export const useUnschedule = ({ onBulkDone }: UseUnscheduleParams) => {
   const queryClient = useQueryClient()
+  const content = useIntlayer('recordings-use-unschedule')
 
   const unscheduleMutation = useMutation({
     mutationFn: (id: string) => api.updateAnime({ scheduled: false }, { params: { id } }),
@@ -22,9 +24,9 @@ export const useUnschedule = ({ onBulkDone }: UseUnscheduleParams) => {
   const onUnschedule = async (id: string) => {
     try {
       await unscheduleMutation.mutateAsync(id)
-      toast.success('予約を解除しました')
+      toast.success(content.unscheduled.value)
     } catch {
-      toast.error('予約解除に失敗しました')
+      toast.error(content.unscheduleFailed.value)
     }
   }
 
@@ -40,10 +42,10 @@ export const useUnschedule = ({ onBulkDone }: UseUnscheduleParams) => {
     onSuccess: ({ succeeded, failed }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
       onBulkDone()
-      if (failed === 0) toast.success(`${succeeded} 件の予約を解除しました`)
-      else toast.warning(`${succeeded} 件解除、${failed} 件失敗`)
+      if (failed === 0) toast.success(content.bulkUnscheduled({ count: succeeded }).value)
+      else toast.warning(content.bulkPartial({ succeeded, failed }).value)
     },
-    onError: () => toast.error('一括解除に失敗しました')
+    onError: () => toast.error(content.bulkFailed.value)
   })
 
   return { unscheduleMutation, onUnschedule, bulkUnscheduleMutation }

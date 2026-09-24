@@ -286,3 +286,6 @@ playwright-mcp.config.json
 
 # gitignore.io の Node テンプレートの `logs` がソースのディレクトリまで巻き込むので戻す
 !src/app/routes/admin/logs/
+
+# intlayer
+.intlayer

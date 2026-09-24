@@ -1,23 +1,31 @@
+import { getIntlayer } from 'intlayer'
 import type { BrowseFilters } from '@/app/lib/atoms'
 import { providerLabel } from '@/app/lib/constants'
 
+const content = getIntlayer('browse-filters')
+
 const PAGE_SIZE = 24
 
-const QUARTER_LABEL = ['冬', '春', '夏', '秋'] as const
+const QUARTER_LABEL = [
+  content.quarters.winter,
+  content.quarters.spring,
+  content.quarters.summer,
+  content.quarters.autumn
+] as const
 
 const STATUS_LABEL: Record<string, string> = {
-  RELEASING: '放送中',
-  FINISHED: '完結',
-  NOT_YET_RELEASED: '未放送',
-  CANCELLED: '中止',
-  HIATUS: '休止'
+  RELEASING: content.status.releasing,
+  FINISHED: content.status.finished,
+  NOT_YET_RELEASED: content.status.notYetReleased,
+  CANCELLED: content.status.cancelled,
+  HIATUS: content.status.hiatus
 }
 
 const BADGE_LABEL: Record<string, string> = {
-  NEW_EPISODE: '新着エピソード',
-  RECENTLY_ADDED: '新着追加',
-  COMING_SOON: '配信予定',
-  EXPIRING: '配信終了予定'
+  NEW_EPISODE: content.badge.newEpisode,
+  RECENTLY_ADDED: content.badge.recentlyAdded,
+  COMING_SOON: content.badge.comingSoon,
+  EXPIRING: content.badge.expiring
 }
 
 /** チップのドット色。配信元のチップだけブランド色を点で示す。 */
@@ -30,10 +38,10 @@ const PROVIDER_DOT: Record<string, string> = {
 }
 
 export const SORT_OPTIONS = [
-  { value: 'title-asc', label: 'タイトル 昇順', sort: 'title' as const, order: 'asc' as const },
-  { value: 'title-desc', label: 'タイトル 降順', sort: 'title' as const, order: 'desc' as const },
-  { value: 'year-desc', label: 'リリース年 新しい順', sort: 'year' as const, order: 'desc' as const },
-  { value: 'year-asc', label: 'リリース年 古い順', sort: 'year' as const, order: 'asc' as const }
+  { value: 'title-asc', label: content.sort.titleAsc, sort: 'title' as const, order: 'asc' as const },
+  { value: 'title-desc', label: content.sort.titleDesc, sort: 'title' as const, order: 'desc' as const },
+  { value: 'year-desc', label: content.sort.yearDesc, sort: 'year' as const, order: 'desc' as const },
+  { value: 'year-asc', label: content.sort.yearAsc, sort: 'year' as const, order: 'asc' as const }
 ] as const
 
 export type SortValue = (typeof SORT_OPTIONS)[number]['value']
@@ -78,7 +86,7 @@ export function buildActiveChips({
     provider != null
       ? {
           key: 'provider',
-          label: '配信元',
+          label: content.chips.provider,
           value: providerLabel[provider] ? providerLabel[provider] : provider,
           dot: PROVIDER_DOT[provider],
           onClear: () => setFilter('provider')(undefined)
@@ -87,7 +95,7 @@ export function buildActiveChips({
     year != null
       ? {
           key: 'year',
-          label: '年',
+          label: content.chips.year,
           value: `${year}`,
           onClear: () => setFilter('year')(undefined)
         }
@@ -95,7 +103,7 @@ export function buildActiveChips({
     quarter != null
       ? {
           key: 'quarter',
-          label: 'クール',
+          label: content.chips.quarter,
           value: QUARTER_LABEL[quarter] ? QUARTER_LABEL[quarter] : '',
           onClear: () => setFilter('quarter')(undefined)
         }
@@ -103,7 +111,7 @@ export function buildActiveChips({
     status != null
       ? {
           key: 'status',
-          label: 'ステータス',
+          label: content.chips.status,
           value: STATUS_LABEL[status] ? STATUS_LABEL[status] : status,
           onClear: () => setFilter('status')(undefined)
         }
@@ -111,7 +119,7 @@ export function buildActiveChips({
     badge != null
       ? {
           key: 'badge',
-          label: 'バッジ',
+          label: content.chips.badge,
           value: BADGE_LABEL[badge] ? BADGE_LABEL[badge] : badge,
           onClear: () => setFilter('badge')(undefined)
         }
@@ -119,7 +127,7 @@ export function buildActiveChips({
     aniListId != null
       ? {
           key: 'aniListId',
-          label: '関連シリーズ',
+          label: content.chips.relatedSeries,
           value: `${aniListId}`,
           onClear: () => setFilter('aniListId')(undefined)
         }
@@ -127,7 +135,7 @@ export function buildActiveChips({
     search !== ''
       ? {
           key: 'search',
-          label: '検索',
+          label: content.chips.search,
           value: search,
           query: true,
           onClear: () => setFilter('search')('')

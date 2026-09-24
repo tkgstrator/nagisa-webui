@@ -1,19 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import { animeRecordingStatusQueryOptions } from '@/app/lib/query-options'
 import type { AnimeInfoSchema, AnimeRecordingTitle } from '@/schemas/anime.dto'
 import type { NagisaJobState } from '@/schemas/nagisa.dto'
 
 const pvClass = 'inline-flex h-[18px] shrink-0 items-center rounded px-[7px] text-[11px] font-semibold'
-
-const jobStateLabel: Record<NagisaJobState, string> = {
-  active: '録画中',
-  wait: '待機中',
-  delayed: '再試行待ち',
-  completed: '完了',
-  failed: '失敗'
-}
 
 /** 1 作品ぶんの録画なので GB で十分。1 GB 未満だけ MB に落とす。 */
 const formatSize = (bytes: number): string => {
@@ -53,6 +46,14 @@ function episodeRanges(title: AnimeRecordingTitle): string | null {
 }
 
 function TitleRow({ title, current }: { title: AnimeRecordingTitle; current: boolean }) {
+  const content = useIntlayer('anime-id-recording-status')
+  const jobStateLabel: Record<NagisaJobState, string> = {
+    active: content.jobState.active.value,
+    wait: content.jobState.wait.value,
+    delayed: content.jobState.delayed.value,
+    completed: content.jobState.completed.value,
+    failed: content.jobState.failed.value
+  }
   const size = title.recordings.reduce((sum, rec) => sum + rec.size, 0)
   const ranges = episodeRanges(title)
   const rowClass = `flex flex-col gap-1.5 border-b border-b-border/60 px-2.5 py-2 pl-[13px] ${current ? 'bg-accent/60' : title.animeId !== null ? 'transition-colors hover:bg-muted' : ''}`
@@ -64,13 +65,14 @@ function TitleRow({ title, current }: { title: AnimeRecordingTitle; current: boo
           {providerLabel[title.provider] ?? title.provider}
         </span>
         <span className='whitespace-nowrap text-[13px] text-muted-foreground tabular-nums'>
-          <b className='font-semibold text-foreground'>{title.recordings.length}</b> 本
+          <b className='font-semibold text-foreground'>{title.recordings.length}</b>
+          {content.recordingsUnit}
           {size > 0 && ` · ${formatSize(size)}`}
         </span>
       </span>
       {ranges !== null && <span className='text-[11.5px] text-muted-foreground tabular-nums'>{ranges}</span>}
       {title.jobs === null ? (
-        <span className='text-[11.5px] text-muted-foreground'>キューを読めませんでした</span>
+        <span className='text-[11.5px] text-muted-foreground'>{content.queueUnavailable}</span>
       ) : (
         title.jobs.map((job) => (
           <span key={job.job_id} className='flex items-center justify-between gap-2 text-[11.5px] tabular-nums'>
@@ -105,6 +107,7 @@ function TitleRow({ title, current }: { title: AnimeRecordingTitle; current: boo
  * 各話グリッドの「録画済み」は D1 の控えで、こちらはディスクに実際にあるもの。
  */
 export function RecordingStatus({ anime }: { anime: AnimeInfoSchema }) {
+  const content = useIntlayer('anime-id-recording-status')
   const { data, isPending, isError } = useQuery({
     ...animeRecordingStatusQueryOptions(anime.id),
     enabled: anime.aniListId > 0
@@ -112,24 +115,24 @@ export function RecordingStatus({ anime }: { anime: AnimeInfoSchema }) {
 
   if (anime.aniListId <= 0) return null
 
-  let content: React.ReactNode
+  let sectionContent: React.ReactNode
   if (isPending) {
-    content = <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>読み込み中</p>
+    sectionContent = (
+      <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>{content.loading}</p>
+    )
   } else if (isError || data.error !== null) {
-    content = (
+    sectionContent = (
       <p className='border-l-[3px] border-l-destructive px-3 py-3.5 text-[12.5px] text-muted-foreground'>
-        録画サーバーに問い合わせできませんでした
+        {content.fetchError}
         {data?.error && <span className='mt-1 block break-all text-[11px]'>{data.error}</span>}
       </p>
     )
   } else if (data.titles.length === 0) {
-    content = (
-      <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>
-        録画サーバーにはまだ何もありません
-      </p>
+    sectionContent = (
+      <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>{content.empty}</p>
     )
   } else {
-    content = (
+    sectionContent = (
       <div className='border-l-[3px] border-l-primary py-0.5'>
         {data.titles.map((title) => (
           <TitleRow key={`${title.provider}/${title.contentId}`} title={title} current={title.animeId === anime.id} />
@@ -141,9 +144,9 @@ export function RecordingStatus({ anime }: { anime: AnimeInfoSchema }) {
   return (
     <section aria-labelledby='rec-status-heading'>
       <h3 id='rec-status-heading' className='mb-2 text-xs leading-[18px] text-muted-foreground'>
-        録画サーバー
+        {content.heading}
       </h3>
-      {content}
+      {sectionContent}
     </section>
   )
 }

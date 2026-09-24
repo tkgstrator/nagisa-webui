@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { useAtom } from 'jotai'
 import { ChevronDown, RotateCcw } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { z } from 'zod'
 import { AnimeDrawer } from '@/app/components/anime-drawer'
 import { SidebarSlot } from '@/app/components/app-sidebar'
@@ -41,6 +42,7 @@ export const Route = createFileRoute('/browse/')({
 })
 
 function AnimeListPage() {
+  const content = useIntlayer('browse')
   const { provider: searchProvider, badge: searchBadge, q: searchQuery } = Route.useSearch()
   const [filters, setFilters] = useAtom(browseFiltersAtom)
   const { settings } = useSettings()
@@ -155,16 +157,18 @@ function AnimeListPage() {
       <PageContainer className='gap-10 max-sm:gap-[30px]'>
         <div className='flex flex-wrap items-end justify-between gap-5'>
           <div>
-            <h1 className='mt-1 text-2xl leading-[1.2] font-bold tracking-[-0.02em] max-sm:text-xl'>アニメ一覧</h1>
+            <h1 className='mt-1 text-2xl leading-[1.2] font-bold tracking-[-0.02em] max-sm:text-xl'>{content.title}</h1>
             <p className='mt-1 text-xs leading-[18px] text-muted-foreground tabular-nums'>
               {hasFilters ? (
                 <>
-                  <b className='font-semibold text-foreground'>{grandTotal}</b> 件中{' '}
-                  <b className='font-semibold text-foreground'>{total}</b> 件に絞り込み中
+                  <b className='font-semibold text-foreground'>{grandTotal}</b>
+                  {content.filtered.of} <b className='font-semibold text-foreground'>{total}</b>
+                  {content.filtered.matching}
                 </>
               ) : (
                 <>
-                  <b className='font-semibold text-foreground'>{total}</b> 件のアニメを管理中
+                  <b className='font-semibold text-foreground'>{total}</b>
+                  {content.filtered.managing}
                 </>
               )}
             </p>
@@ -173,7 +177,7 @@ function AnimeListPage() {
             <SearchBar value={filters.search} onChange={setFilter('search')} />
             <div className='relative'>
               <select
-                aria-label='並び替え'
+                aria-label={content.sortAriaLabel.value}
                 value={sortValue}
                 onChange={(e) => onSortChange(e.target.value)}
                 className='h-[34px] appearance-none rounded-full border border-input bg-background pr-[26px] pl-3 text-[12.5px] text-foreground focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none'
@@ -198,7 +202,7 @@ function AnimeListPage() {
 
         {animeList.length === 0 ? (
           <div className='py-20 text-center'>
-            <p className='text-xs text-muted-foreground'>条件に合うアニメが見つかりません</p>
+            <p className='text-xs text-muted-foreground'>{content.noResults}</p>
             {hasFilters && (
               <button
                 type='button'
@@ -206,7 +210,7 @@ function AnimeListPage() {
                 className='mt-3 inline-flex h-[30px] items-center gap-1.5 rounded-lg border border-dashed border-border px-3 text-xs text-muted-foreground hover:bg-muted hover:text-foreground'
               >
                 <RotateCcw className='size-[13px]' aria-hidden='true' />
-                フィルタをリセット
+                {content.resetFilters}
               </button>
             )}
           </div>
@@ -242,7 +246,7 @@ function AnimeListPage() {
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side='bottom' className='max-h-[76vh] overflow-y-auto rounded-t-[14px] bg-sidebar px-2 pb-[18px]'>
           <SheetHeader className='sticky top-0 z-1 -mx-2 border-b border-border bg-sidebar px-4 pt-3 pb-2.5'>
-            <SheetTitle className='text-[13px] font-bold'>絞り込み</SheetTitle>
+            <SheetTitle className='text-[13px] font-bold'>{content.filterSheetTitle}</SheetTitle>
           </SheetHeader>
           {panel}
         </SheetContent>

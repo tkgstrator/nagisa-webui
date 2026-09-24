@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import { Button } from '@/app/components/ui/button'
 import {
@@ -43,16 +44,17 @@ export const DataSection = () => {
   const { settings, reset, replace } = useSettings()
   const { usage, measure } = useCacheUsage()
   const fileInput = useRef<HTMLInputElement>(null)
+  const content = useIntlayer('settings-data-section')
 
   const clearCache = async () => {
     if (typeof caches === 'undefined') {
-      toast.error('このブラウザではキャッシュを操作できない')
+      toast.error(content.cache.unavailableError.value)
       return
     }
     const keys = await caches.keys()
     await Promise.all(keys.map((key) => caches.delete(key)))
     await measure()
-    toast.success('画像キャッシュを削除した')
+    toast.success(content.cache.deletedToast.value)
   }
 
   const exportSettings = () => {
@@ -63,40 +65,35 @@ export const DataSection = () => {
     anchor.download = 'nagisa-settings.json'
     anchor.click()
     URL.revokeObjectURL(url)
-    toast.success('設定を書き出した')
+    toast.success(content.transfer.exportedToast.value)
   }
 
   const importSettings = async (file: File) => {
     try {
       const parsed = JSON.parse(await file.text()) as Partial<Settings>
       replace({ ...DEFAULT_SETTINGS, ...parsed })
-      toast.success('設定を読み込んだ')
+      toast.success(content.transfer.importedToast.value)
     } catch {
-      toast.error('設定ファイルを読み取れなかった')
+      toast.error(content.transfer.importFailedToast.value)
     }
   }
 
   return (
-    <PgSec id='s-data' title='データ' count='このブラウザに残っているもの'>
+    <PgSec id='s-data' title={content.title.value} count={content.count}>
       <StPanel>
-        <StRow
-          index={0}
-          icon={<ImageIcon />}
-          label='画像キャッシュ'
-          description='ポスターの WebP を端末に保持している分。消しても作品データは残る。'
-        >
+        <StRow index={0} icon={<ImageIcon />} label={content.cache.label.value} description={content.cache.description}>
           <StNote>{usage === null ? '—' : formatBytes(usage)}</StNote>
-          <StButton onClick={() => void clearCache()}>削除</StButton>
+          <StButton onClick={() => void clearCache()}>{content.cache.deleteButton}</StButton>
         </StRow>
 
         <StRow
           index={1}
           icon={<TransferIcon />}
-          label='設定の書き出しと読み込み'
-          description='この画面の内容を JSON で保存し、別の端末に持ち込める。'
+          label={content.transfer.label.value}
+          description={content.transfer.description}
         >
-          <StButton onClick={exportSettings}>書き出す</StButton>
-          <StButton onClick={() => fileInput.current?.click()}>読み込む</StButton>
+          <StButton onClick={exportSettings}>{content.transfer.exportButton}</StButton>
+          <StButton onClick={() => fileInput.current?.click()}>{content.transfer.importButton}</StButton>
           <input
             ref={fileInput}
             type='file'
@@ -114,36 +111,34 @@ export const DataSection = () => {
           index={2}
           danger
           icon={<ResetIcon />}
-          label='すべての設定を初期化する'
-          description='この画面の内容だけが既定に戻る。録画予約と作品データには触れない。'
+          label={content.reset.label.value}
+          description={content.reset.description}
         >
           <Dialog>
             <DialogTrigger
               render={
                 <button type='button' className={stButtonClass(true)}>
-                  初期化
+                  {content.reset.triggerButton}
                 </button>
               }
             />
             <DialogContent className='sm:max-w-md'>
               <DialogHeader>
-                <DialogTitle>設定を初期化する</DialogTitle>
-                <DialogDescription>
-                  この画面の内容だけが既定に戻る。録画予約と作品データには触れない。
-                </DialogDescription>
+                <DialogTitle>{content.reset.dialogTitle}</DialogTitle>
+                <DialogDescription>{content.reset.description}</DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <DialogClose render={<Button variant='outline'>やめる</Button>} />
+                <DialogClose render={<Button variant='outline'>{content.reset.cancelButton}</Button>} />
                 <DialogClose
                   render={
                     <Button
                       variant='destructive'
                       onClick={() => {
                         reset()
-                        toast.success('設定を初期化した')
+                        toast.success(content.reset.resetToast.value)
                       }}
                     >
-                      初期化する
+                      {content.reset.confirmButton}
                     </Button>
                   }
                 />

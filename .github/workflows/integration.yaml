@@ -73,6 +73,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate Prisma client
         run: bunx prisma generate
+      - name: Build intlayer dictionaries
+        run: bunx intlayer build
       - name: Type check (app / worker / scripts)
         run: bunx tsc -b --noEmit
       - name: Type check (lambda)

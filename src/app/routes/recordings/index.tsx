@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useAtom } from 'jotai'
 import { useCallback, useMemo, useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
 import { SmartPagination } from '@/app/components/smart-pagination'
@@ -29,6 +30,7 @@ export const Route = createFileRoute('/recordings/')({
 })
 
 function RecordingsPage() {
+  const content = useIntlayer('recordings')
   const [filters, setFilters] = useAtom(recordingsFiltersAtom)
   const { search, recorded: recordedFilter, expiringOnly, provider, sort, view, page } = filters
 
@@ -202,23 +204,23 @@ function RecordingsPage() {
               />
 
               <div className='mt-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 text-xs text-muted-foreground'>
-                <ul className='inline-flex flex-wrap gap-x-3.5 gap-y-1' aria-label='行頭の色の凡例'>
+                <ul className='inline-flex flex-wrap gap-x-3.5 gap-y-1' aria-label={content.legend.ariaLabel.value}>
                   <li className='inline-flex items-center gap-1.5'>
                     <i className='h-2 w-3 rounded-sm bg-success' />
-                    録画済み
+                    {content.legend.recorded}
                   </li>
                   <li className='inline-flex items-center gap-1.5'>
                     <i className='h-2 w-3 rounded-sm bg-warning' />
-                    配信終了予定
+                    {content.legend.expiring}
                   </li>
                   <li className='inline-flex items-center gap-1.5'>
                     <i className='h-2 w-3 rounded-sm bg-border' />
-                    未録画
+                    {content.legend.pending}
                   </li>
                 </ul>
                 <div className='flex items-center gap-2'>
                   <span className='tabular-nums'>
-                    {rangeStart}–{rangeEnd} / {total} 件
+                    {content.rangeText({ start: rangeStart, end: rangeEnd, total }).value}
                   </span>
                   <SmartPagination page={page} totalPages={totalPages} onPageChange={setPage} />
                 </div>
