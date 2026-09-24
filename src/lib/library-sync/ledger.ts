@@ -49,6 +49,58 @@ export type MatchKey = string
 export const matchKey = (provider: string, contentId: string, episodeId: string): MatchKey =>
   `${provider}\u0000${contentId}\u0000${episodeId}`
 
+/**
+ * episode_id を持たない台帳行のためのキー。`matchKey` とは先頭の印で区別する
+ * (provider 名に NUL は入らないので衝突しない)。
+ */
+export const tmdbKey = (provider: string, tmdbId: number, season: number, episode: number): MatchKey =>
+  `\u0000tmdb\u0000${provider}\u0000${tmdbId}\u0000${season}\u0000${episode}`
+
+/** nagisa が provider を決められなかった行の値。TMDb 経由でも引き当てない。 */
+const UNKNOWN_PROVIDER = 'unknown'
+
+/**
+ * 台帳の 1 行を引き当てるキー。引き当てようが無ければ null。
+ *
+ * id が揃っていればそれが正。揃っていない行 (TMDb 名のフォルダに入った
+ * Hulu / ABEMA / Crunchyroll の旧録画など — content_id はディスクに残らない) は、
+ * フォルダ名に残った tmdb_id とファイル名の SxxEyy で引く。
+ */
+export function rowKey(item: NagisaLibraryItem): MatchKey | null {
+  const { provider, content_id, episode_id, tmdb_id, season_number, episode_number } = item
+  if (content_id && episode_id) return matchKey(provider, content_id, episode_id)
+  if (provider === UNKNOWN_PROVIDER || tmdb_id == null || season_number == null || episode_number == null) return null
+  return tmdbKey(provider, tmdb_id, season_number, episode_number)
+}
+
+/** TMDb 経由の候補 1 件。`indexTmdbEpisodes` の入力。 */
+export interface TmdbCandidate {
+  id: string
+  provider: string
+  tmdbId: number
+  seasonNumber: number
+  episodeNumber: number
+}
+
+/**
+ * TMDb 経由の候補をキーで束ねる。**1 つのキーに 2 件以上当たったら捨てる**。
+ *
+ * 1 つの tmdbId には複数の作品が載りうる (Amazon のシーズン別 ASIN、同じ作品の
+ * 重複登録)。シーズン番号と話数まで揃えても割れるなら、どれが録画なのかは
+ * 台帳の側にも分からない。当て推量で `completed` を書くより unmatched に残す。
+ */
+export function indexTmdbEpisodes(found: TmdbCandidate[]): Map<MatchKey, string[]> {
+  const byKey = new Map<MatchKey, string[]>()
+  for (const e of found) {
+    const key = tmdbKey(e.provider, e.tmdbId, e.seasonNumber, e.episodeNumber)
+    const list = byKey.get(key)
+    if (list) list.push(e.id)
+    else byKey.set(key, [e.id])
+  }
+  for (const [key, ids] of byKey) if (ids.length > 1) byKey.delete(key)
+  return byKey
+}
+
 export interface LedgerRow {
   recordingId: string
   item: NagisaLibraryItem
@@ -82,9 +134,23 @@ export function beatsCurrent(candidate: LedgerRow, held: LedgerRow): boolean {
  * `episode_id` は indexed なので IN 1 本で引き、provider / content_id の一致は
  * JS 側で確かめる。relation filter を `updateMany` の where に書くと
  * Prisma が暗黙の SELECT を挟み、`$transaction([...])` の原子性が崩れる。
+ * (ここは読むだけなので relation filter を使ってよい。)
  */
 export async function resolveEpisodes(prisma: Prisma, rows: LedgerRow[]): Promise<Map<MatchKey, string[]>> {
-  const episodeIds = [...new Set(rows.map((r) => r.item.episode_id).filter((v): v is string => !!v))]
+  const [byId, byTmdb] = await Promise.all([resolveById(prisma, rows), resolveByTmdb(prisma, rows)])
+  for (const [key, ids] of byTmdb) byId.set(key, ids)
+  return byId
+}
+
+async function resolveById(prisma: Prisma, rows: LedgerRow[]): Promise<Map<MatchKey, string[]>> {
+  const episodeIds = [
+    ...new Set(
+      rows
+        .filter((r) => r.item.content_id)
+        .map((r) => r.item.episode_id)
+        .filter((v): v is string => !!v)
+    )
+  ]
   if (episodeIds.length === 0) return new Map()
 
   const pages = await Promise.all(
@@ -111,4 +177,85 @@ export async function resolveEpisodes(prisma: Prisma, rows: LedgerRow[]): Promis
     else byKey.set(key, [e.id])
   }
   return byKey
+}
+
+/**
+ * `rowKey` が TMDb 経由のキーを返した行を引く。作品の `tmdbId` は
+ * `learnTmdbIds` が台帳から覚えたものなので、学ぶ前の作品には当たらない。
+ */
+async function resolveByTmdb(prisma: Prisma, rows: LedgerRow[]): Promise<Map<MatchKey, string[]>> {
+  const tmdbIds = new Set<number>()
+  for (const { item } of rows) {
+    if (item.tmdb_id != null && rowKey(item)?.startsWith('\u0000tmdb')) tmdbIds.add(item.tmdb_id)
+  }
+  if (tmdbIds.size === 0) return new Map()
+
+  const pages = await Promise.all(
+    chunk([...tmdbIds], IN_CHUNK).map((part) =>
+      prisma.episode.findMany({
+        where: { season: { anime: { tmdbId: { in: part } } } },
+        select: {
+          id: true,
+          episodeNumber: true,
+          season: { select: { seasonNumber: true, anime: { select: { provider: true, tmdbId: true } } } }
+        }
+      })
+    )
+  )
+  const found: TmdbCandidate[] = []
+  for (const e of pages.flat()) {
+    const anime = e.season?.anime
+    if (anime?.tmdbId == null) continue
+    found.push({
+      id: e.id,
+      provider: anime.provider,
+      tmdbId: anime.tmdbId,
+      seasonNumber: e.season.seasonNumber,
+      episodeNumber: e.episodeNumber
+    })
+  }
+  return indexTmdbEpisodes(found)
+}
+
+/**
+ * 台帳が `(provider, content_id)` と `tmdb_id` を **両方** 持っている行から、
+ * 作品の `tmdbId` を覚える。
+ *
+ * どちらも pipeline が選んだ値 (content_id は登録時、tmdb_id は出力先フォルダ) なので
+ * タイトル検索の推測より確か。食い違っていれば台帳で上書きする。同じフォルダの
+ * id を持たない旧録画は、ここで覚えた tmdbId を足場に `resolveByTmdb` で当たる。
+ *
+ * 書くのは作品のメタデータだけで録画状態には触れないので、lease の外で先に
+ * 流してよい (二重に走っても同じ値を書くだけ)。ページを跨いだ足場は
+ * 次の bootstrap で拾われる。
+ */
+export async function learnTmdbIds(prisma: Prisma, rows: LedgerRow[]): Promise<number> {
+  const wanted = new Map<string, { provider: string; contentId: string; tmdbId: number }>()
+  for (const { item } of rows) {
+    if (item.provider === UNKNOWN_PROVIDER || !item.content_id || item.tmdb_id == null) continue
+    wanted.set(`${item.provider}\u0000${item.content_id}`, {
+      provider: item.provider,
+      contentId: item.content_id,
+      tmdbId: item.tmdb_id
+    })
+  }
+  if (wanted.size === 0) return 0
+
+  const contentIds = [...new Set([...wanted.values()].map((w) => w.contentId))]
+  const pages = await Promise.all(
+    chunk(contentIds, IN_CHUNK).map((part) =>
+      prisma.anime.findMany({
+        where: { contentId: { in: part } },
+        select: { id: true, provider: true, contentId: true, tmdbId: true }
+      })
+    )
+  )
+  const stale = pages.flat().flatMap((a) => {
+    const w = wanted.get(`${a.provider}\u0000${a.contentId}`)
+    return w && w.tmdbId !== a.tmdbId ? [{ id: a.id, tmdbId: w.tmdbId }] : []
+  })
+  if (stale.length === 0) return 0
+
+  await prisma.$transaction(stale.map((a) => prisma.anime.update({ where: { id: a.id }, data: { tmdbId: a.tmdbId } })))
+  return stale.length
 }

@@ -18,6 +18,8 @@ export interface LibrarySyncResult {
   deletes: number
   /** 該当するエピソードが D1 に無かったイベント数 (§7-5) */
   unmatched: number
+  /** 台帳から覚え直した作品の tmdbId の数 (`learnTmdbIds`) */
+  tmdbLearned: number
   aborted: string | null
   error: string | null
 }
@@ -29,6 +31,7 @@ export const emptyResult = (): LibrarySyncResult => ({
   upserts: 0,
   deletes: 0,
   unmatched: 0,
+  tmdbLearned: 0,
   aborted: null,
   error: null
 })

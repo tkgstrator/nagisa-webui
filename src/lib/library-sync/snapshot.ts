@@ -2,7 +2,7 @@ import { NagisaLibrarySnapshotSchema } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
 import { getAppLogger } from '../logger'
 import { fetchNagisaRaw, type NagisaEnv } from '../nagisa-client'
-import { type LedgerRow, resolveEpisodes, stamp } from './ledger'
+import { type LedgerRow, learnTmdbIds, resolveEpisodes, stamp } from './ledger'
 import { MAX_SNAPSHOT_PAGES_PER_RUN, MAX_WRITES_PER_PAGE, MAX_WRITES_PER_RUN, SNAPSHOT_LIMIT, SYNC_KEY } from './limits'
 import { applyBatched, fenced, holdsLease, type LibrarySyncResult, leaseWhere, readErrorCode, writesSoFar } from './run'
 import { buildSweep, buildUpsertWrites } from './writes'
@@ -77,6 +77,8 @@ export async function bootstrapLibrary(
     // 「触れていない」と数えられてしまう (境界が等号込みのため)。
     const now = stamp(sweepFrom)
     const rows: LedgerRow[] = body.items.map((i) => ({ recordingId: i.recording_id, item: i }))
+    // 作品の tmdbId を先に覚えておくと、同じページの id を持たない行がそれで当たる。
+    result.tmdbLearned += await learnTmdbIds(prisma, rows)
     const resolved = await resolveEpisodes(prisma, rows)
     const { writes, unmatched } = buildUpsertWrites(prisma, rows, resolved, now, owner, true)
     cursor = body.next_cursor
