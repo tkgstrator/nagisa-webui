@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
+import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import { animeDetailQueryOptions, animeListQueryOptions } from '@/app/lib/query-options'
 import { type AnimeInfoSchema, QuarterLabel } from '@/schemas/anime.dto'
@@ -14,6 +15,7 @@ const pvClass = 'inline-flex h-[18px] shrink-0 items-center rounded px-[7px] tex
 const tagClass = 'inline-flex h-4 items-center rounded px-[5px] text-[10.5px] leading-none'
 
 export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
+  const content = useIntlayer('anime-id-related-providers')
   const { data, isPending } = useQuery({
     ...animeListQueryOptions({ aniListId: anime.aniListId, limit: 20, sort: 'title', order: 'asc' }),
     enabled: anime.aniListId > 0
@@ -38,16 +40,18 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
         id='rel-heading'
         className='mb-2 flex items-center gap-2 text-xs leading-[18px] text-muted-foreground tabular-nums'
       >
-        他の配信元
+        {content.heading}
       </h3>
       {isPending ? (
-        <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>読み込み中</p>
+        <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>
+          {content.loading}
+        </p>
       ) : (
         // 左バーはこの箱が 1 本だけ持つ。行にも持たせるとホバーで 2 本に見える。
         <div className='border-l-[3px] border-l-primary py-0.5'>
           <div className={`${colClass} px-2.5 py-1.5 pl-[13px] text-[11px] text-muted-foreground`}>
-            <span>配信元</span>
-            <span className='text-right'>録画</span>
+            <span>{content.headers.provider}</span>
+            <span className='text-right'>{content.headers.recorded}</span>
           </div>
           <div className='flex flex-col'>
             {items.map((item, index) => {
@@ -69,13 +73,15 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
                         {providerLabel[item.provider]}
                       </span>
                       {item.year > 0 && (
-                        <span className='whitespace-nowrap'>{`${item.year}年 ${QuarterLabel[item.quarter]}`}</span>
+                        <span className='whitespace-nowrap'>
+                          {content.yearWithQuarter({ year: item.year, quarter: QuarterLabel[item.quarter] })}
+                        </span>
                       )}
                       {expiring && item.expiredAt !== null && (
                         <span
                           className={`${tagClass} shrink-0 whitespace-nowrap border border-warning/45 bg-warning/20 text-warning-foreground`}
                         >
-                          {dayjs(item.expiredAt).format('M/D')} 終了
+                          {content.expiring({ date: dayjs(item.expiredAt).format('M/D') })}
                         </span>
                       )}
                     </span>
@@ -106,9 +112,7 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
               )
             })}
           </div>
-          {!hasOthers && (
-            <p className='px-[13px] py-3.5 text-[12.5px] text-muted-foreground'>他の配信元は見つかりませんでした</p>
-          )}
+          {!hasOthers && <p className='px-[13px] py-3.5 text-[12.5px] text-muted-foreground'>{content.empty}</p>}
         </div>
       )}
     </section>
