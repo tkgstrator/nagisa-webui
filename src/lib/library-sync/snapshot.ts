@@ -1,10 +1,20 @@
+import { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
 import { NagisaLibrarySnapshotSchema } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
 import { getAppLogger } from '../logger'
 import { fetchNagisaRaw, type NagisaEnv } from '../nagisa-client'
-import { type LedgerRow, learnTmdbIds, resolveEpisodes, stamp } from './ledger'
+import { type LedgerRow, learnTmdbIds, resolveEpisodes, sqlDate, stamp } from './ledger'
 import { MAX_SNAPSHOT_PAGES_PER_RUN, MAX_WRITES_PER_PAGE, MAX_WRITES_PER_RUN, SNAPSHOT_LIMIT, SYNC_KEY } from './limits'
-import { applyBatched, fenced, holdsLease, type LibrarySyncResult, leaseWhere, readErrorCode, writesSoFar } from './run'
+import {
+  applyBatched,
+  fenced,
+  holdsLease,
+  type LibrarySyncResult,
+  leaseWhere,
+  readErrorCode,
+  stateWrite,
+  writesSoFar
+} from './run'
 import { buildSweep, buildUpsertWrites } from './writes'
 
 const logger = getAppLogger('library-sync')
@@ -21,6 +31,7 @@ type Prisma = ReturnType<typeof createPrismaClient>
  */
 export async function bootstrapLibrary(
   prisma: Prisma,
+  db: D1Database,
   env: NagisaEnv,
   owner: string,
   reason: string,
@@ -78,9 +89,9 @@ export async function bootstrapLibrary(
     const now = stamp(sweepFrom)
     const rows: LedgerRow[] = body.items.map((i) => ({ recordingId: i.recording_id, item: i }))
     // 作品の tmdbId を先に覚えておくと、同じページの id を持たない行がそれで当たる。
-    result.tmdbLearned += await learnTmdbIds(prisma, rows)
+    result.tmdbLearned += await learnTmdbIds(prisma, db, rows)
     const resolved = await resolveEpisodes(prisma, rows)
-    const { writes, unmatched } = buildUpsertWrites(prisma, rows, resolved, now, owner, true)
+    const { writes, unmatched } = buildUpsertWrites(rows, resolved, now, owner, true)
     cursor = body.next_cursor
     const done = !cursor
 
@@ -103,8 +114,8 @@ export async function bootstrapLibrary(
 
     // 途中のページ。適用とカーソルを同じバッチに入れる (間で落ちると取りこぼす)。
     if (!done) {
-      const applied = await applyBatched(prisma, writes, [
-        prisma.syncState.updateMany({ where: leaseWhere(owner, now), data: { snapshotCursor: cursor } })
+      const applied = await applyBatched(db, writes, [
+        stateWrite(owner, now, PrismaSql.sql`snapshot_cursor = ${cursor}`)
       ])
       if (fenced(applied, result, 'snapshot')) return
       // 集計は適用できた回だけ進める (中断した run の数字を混ぜない)。
@@ -126,7 +137,7 @@ export async function bootstrapLibrary(
     // 「台帳に居なかった」に見え、比率ガードが誤爆する) が、D1 には同一バッチの
     // 途中結果を読む手段が無い。カーソルを確定するのは後のバッチなので、
     // ここで落ちても次 run が同じページを読み直すだけで済む (適用は冪等)。
-    if (writes.length > 0) await applyBatched(prisma, writes, [])
+    if (writes.length > 0) await applyBatched(db, writes, [])
     result.unmatched += unmatched
     result.upserts += writes.length
     result.pages++
@@ -150,17 +161,14 @@ export async function bootstrapLibrary(
       return
     }
 
-    const applied = await applyBatched(prisma, sweepWrites, [
+    const applied = await applyBatched(db, sweepWrites, [
       // 完走した回だけ libraryCursor を置く。それまでは snapshotCursor だけ動かす。
-      prisma.syncState.updateMany({
-        where: leaseWhere(owner, now),
-        data: {
-          snapshotCursor: null,
-          snapshotStartedAt: null,
-          libraryCursor: body.changes_cursor,
-          lastSucceededAt: now
-        }
-      })
+      stateWrite(
+        owner,
+        now,
+        PrismaSql.sql`snapshot_cursor = NULL, snapshot_started_at = NULL,
+          library_cursor = ${body.changes_cursor}, last_succeeded_at = ${sqlDate(now)}`
+      )
     ])
     if (fenced(applied, result, 'sweep')) return
     logger.info({ action: 'library-bootstrap-done', reason, items: result.upserts, pages: result.pages })

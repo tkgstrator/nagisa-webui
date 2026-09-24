@@ -1,9 +1,10 @@
+import { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
 import type { NagisaLibraryChange } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
 import { getAppLogger } from '../logger'
-import { chunk, type LedgerRow, learnTmdbIds, resolveEpisodes } from './ledger'
+import { chunk, type LedgerRow, learnTmdbIds, resolveEpisodes, sqlDate } from './ledger'
 import { IN_CHUNK, MASS_DELETE_MIN, MASS_DELETE_RATIO, MAX_WRITES_PER_PAGE } from './limits'
-import { applyBatched, fenced, holdsLease, type LibrarySyncResult, leaseWhere } from './run'
+import { applyBatched, fenced, holdsLease, type LibrarySyncResult, stateWrite } from './run'
 import { buildDeleteWrite, buildUpsertWrites } from './writes'
 
 const logger = getAppLogger('library-sync')
@@ -13,6 +14,7 @@ type Prisma = ReturnType<typeof createPrismaClient>
 /** 変更ログを 1 ページ適用する。返り値は「この run を続けてよいか」。 */
 export async function applyChangesPage(
   prisma: Prisma,
+  db: D1Database,
   body: { changes: NagisaLibraryChange[]; next_cursor: string },
   owner: string,
   result: LibrarySyncResult
@@ -58,10 +60,10 @@ export async function applyChangesPage(
   }
 
   // 作品の tmdbId を先に覚えておくと、同じページの id を持たない行がそれで当たる。
-  result.tmdbLearned += await learnTmdbIds(prisma, upsertRows)
+  result.tmdbLearned += await learnTmdbIds(prisma, db, upsertRows)
   const resolved = await resolveEpisodes(prisma, upsertRows)
-  const { writes, unmatched } = buildUpsertWrites(prisma, upsertRows, resolved, now, owner, false)
-  const deleteWrites = deleteIds.map((id) => buildDeleteWrite(prisma, id, now, owner))
+  const { writes, unmatched } = buildUpsertWrites(upsertRows, resolved, now, owner, false)
+  const deleteWrites = deleteIds.map((id) => buildDeleteWrite(id, now, owner))
 
   // 1 ページの文数の上限 (bootstrap と同じ理由)。変更ログ 100 件でも、1 件が
   // 数千エピソードに解決されればこのページだけで D1 の上限を超える。
@@ -87,16 +89,13 @@ export async function applyChangesPage(
   // 同居したときは A が残るのが正しい (B を消して A を録り直した)。バッチに割れても
   // この並びは崩れない。
   const applied = await applyBatched(
-    prisma,
+    db,
     [...writes, ...deleteWrites],
     [
       // fencing: lease を失った run はここで 0 件更新になり、カーソルを進められない。
       // 同じ条件を上の各文にも `leaseGuard` として載せてあるので、エピソード側も
       // 同時に 0 行になる。「書かないなら進めない」が 1 バッチの中で揃う。
-      prisma.syncState.updateMany({
-        where: leaseWhere(owner, now),
-        data: { libraryCursor: body.next_cursor, lastSucceededAt: now }
-      })
+      stateWrite(owner, now, PrismaSql.sql`library_cursor = ${body.next_cursor}, last_succeeded_at = ${sqlDate(now)}`)
     ]
   )
   if (fenced(applied, result, 'changes')) return false
