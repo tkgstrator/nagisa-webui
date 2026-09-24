@@ -49,7 +49,7 @@ const progressOf = (episode: Episode): Progress => {
 }
 
 /**
- * 1話ぶんの録画ボタン。`POST /api/anime/:id/record` に話を 1 つだけ渡して nagisa に送る。
+ * 1話ぶんの録画ボタン。`POST /api/anime/:id/recording-jobs` に話を 1 つだけ渡して nagisa に送る。
  * 録画済みの回も押せる (nagisa 側が既にあるファイルを飛ばすので重複しても害はない)。
  * 押せないのは未配信の回と送信中だけ。押せない場合もボタン自体は同じ位置に残し、意味だけ変える。
  */
@@ -249,7 +249,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
     // 失敗したときもサーバー側は録画イベントと失敗状態を書いているので、どちらでも読み直す
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
-      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
     }
   })
 

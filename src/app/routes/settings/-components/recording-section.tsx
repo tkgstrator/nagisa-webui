@@ -85,7 +85,7 @@ export const RecordingSection = () => {
           />
         </StRow>
 
-        {/* admin/nagisa のジョブ投入フォームが language の初期値にこれを使う。 */}
+        {/* admin/recorder のジョブ投入フォームが language の初期値にこれを使う。 */}
         <StRow
           index={4}
           icon={<LanguageIcon />}

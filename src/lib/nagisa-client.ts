@@ -11,6 +11,10 @@
  * 「繋がらなかった」と「カーソルが古い」を区別できなくなる。
  */
 
+import { getAppLogger } from './logger'
+
+const logger = getAppLogger('nagisa-client')
+
 const NAGISA_CONFIG_KEYS = ['BACKEND_URL', 'CF_ACCESS_CLIENT_ID', 'CF_ACCESS_CLIENT_SECRET'] as const
 
 export interface NagisaEnv {
@@ -55,4 +59,37 @@ export async function fetchNagisaRaw(env: Partial<NagisaEnv>, path: string, init
       'CF-Access-Client-Secret': env.CF_ACCESS_CLIENT_SECRET as string
     }
   })
+}
+
+/** 上流の JSON を素通しする GET プロキシの結果。失敗時は呼び出し側で 502 に畳む。 */
+export type NagisaProxyResult = { ok: true; data: unknown } | { ok: false; error: string; status?: number }
+
+/**
+ * GET プロキシの共通部分。Nagisa の JSON をそのまま返すだけの経路が複数あり、
+ * どれも「設定が無い」「繋がらない」「上流が 2xx 以外」で 502 に畳む挙動は同じ。
+ * 差分を潰す先は本文の形だけなので、呼び出し側で型を当てる。
+ *
+ * *action* はログの識別子。経路ごとに `-error` / `-config-missing` / `-fetch-error` を付けて出す。
+ */
+export async function proxyNagisaGet(
+  env: Partial<NagisaEnv>,
+  path: string,
+  action: string
+): Promise<NagisaProxyResult> {
+  try {
+    const res = await fetchNagisaRaw(env, path)
+    if (!res.ok) {
+      const body = await res.text()
+      logger.error({ action: `${action}-error`, status: res.status, body })
+      return { ok: false, error: body || `Nagisa returned ${res.status}`, status: res.status }
+    }
+    return { ok: true, data: await res.json() }
+  } catch (e) {
+    if (e instanceof NagisaConfigError) {
+      logger.error({ action: `${action}-config-missing`, missing: e.missing })
+      return { ok: false, error: e.message }
+    }
+    logger.error({ action: `${action}-fetch-error`, error: e instanceof Error ? e.message : String(e) })
+    return { ok: false, error: 'Failed to connect to Nagisa' }
+  }
 }

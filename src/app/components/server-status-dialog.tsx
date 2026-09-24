@@ -18,7 +18,7 @@ import {
 import type { ReactElement } from 'react'
 import type { NagisaStatusJob } from '@/schemas/nagisa.dto'
 import { Badge } from '../lib/../components/ui/badge'
-import { nagisaStatusAtom } from '../lib/atoms'
+import { recorderStatusAtom } from '../lib/atoms'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 
 const formatUptime = (seconds: number): string => {
@@ -71,7 +71,7 @@ const JobItem = ({ job }: { job: NagisaStatusJob }) => {
 
 /** 開くための要素は呼び出し側が渡す。サイドバー最下段のステータス行がそれを兼ねる。 */
 export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
-  const { data: status, isPending, isError } = useAtomValue(nagisaStatusAtom)
+  const { data: status, isPending, isError } = useAtomValue(recorderStatusAtom)
 
   return (
     <Dialog>

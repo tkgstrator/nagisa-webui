@@ -8,6 +8,7 @@ const settingsAsideContent = {
         view: '表示',
         provider: '配信プロバイダ',
         rec: '録画',
+        sync: '台帳同期',
         admin: '管理',
         data: 'データ',
         about: 'アプリ情報'

@@ -114,6 +114,15 @@ export const ResetIcon = () => (
   </RowIcon>
 )
 
+export const SyncIcon = () => (
+  <RowIcon>
+    <path d='M3 12a9 9 0 0 1 15-6.7L21 8' />
+    <path d='M21 3v5h-5' />
+    <path d='M21 12a9 9 0 0 1-15 6.7L3 16' />
+    <path d='M3 21v-5h5' />
+  </RowIcon>
+)
+
 /** 管理カードのアイコン。モックの .pg-link svg と同じ 20px。 */
 const LinkIcon = ({ children }: { children: ReactNode }) => (
   <svg

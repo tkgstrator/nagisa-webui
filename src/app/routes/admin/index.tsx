@@ -8,12 +8,12 @@ export const Route = createFileRoute('/admin/')({
 })
 
 const ADMIN_ITEMS: {
-  to: '/admin/unidentified' | '/admin/nagisa' | '/admin/abema' | '/admin/logs' | '/admin/status'
+  to: '/admin/unidentified' | '/admin/recorder' | '/admin/abema' | '/admin/logs' | '/admin/status'
   key: 'unidentified' | 'nagisa' | 'abema' | 'logs' | 'status'
   icon: typeof FileQuestion
 }[] = [
   { to: '/admin/unidentified', key: 'unidentified', icon: FileQuestion },
-  { to: '/admin/nagisa', key: 'nagisa', icon: Send },
+  { to: '/admin/recorder', key: 'nagisa', icon: Send },
   { to: '/admin/abema', key: 'abema', icon: KeyRound },
   { to: '/admin/logs', key: 'logs', icon: ScrollText },
   { to: '/admin/status', key: 'status', icon: Activity }

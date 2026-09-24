@@ -1,16 +1,17 @@
 import { z } from 'zod'
 
-export const UpdateRecordingSchema = z.object({
-  episodeId: z.string(),
+/** `PATCH /episodes/{id}` の body。対象は path の `Episode.id` (UUID) で指定する */
+export const UpdateEpisodeSchema = z.object({
   recorded: z.boolean()
 })
-export type UpdateRecordingSchema = z.infer<typeof UpdateRecordingSchema>
+export type UpdateEpisodeSchema = z.infer<typeof UpdateEpisodeSchema>
 
-export const BulkUpdateRecordingSchema = z.object({
-  episodeIds: z.array(z.string()).min(1),
+/** `PATCH /episodes` の body。`ids` は `Episode.id` (UUID) の配列 */
+export const BulkUpdateEpisodeSchema = z.object({
+  ids: z.array(z.string()).min(1),
   recorded: z.boolean()
 })
-export type BulkUpdateRecordingSchema = z.infer<typeof BulkUpdateRecordingSchema>
+export type BulkUpdateEpisodeSchema = z.infer<typeof BulkUpdateEpisodeSchema>
 
 /**
  * `episodes.record_status` が取りうる値。文字列カラムなので DB 側に制約は無く、
@@ -47,3 +48,23 @@ export const RecordingSyncStateSchema = z.object({
   tracked: z.number().int()
 })
 export type RecordingSyncState = z.infer<typeof RecordingSyncStateSchema>
+
+/**
+ * `POST /recording-library/sync` (手動フル同期) のレスポンス。
+ * `LibrarySyncResult` (src/lib/library-sync/run.ts) のうち WebUI に見せる分だけを写す。
+ */
+export const LibraryManualSyncResponseSchema = z.object({
+  /** この実行の SyncRun ID。SyncRun の保存に失敗したときだけ null (同期自体は走る) */
+  runId: z.string().nullable(),
+  skipped: z.boolean(),
+  bootstrap: z.string().nullable(),
+  pages: z.number().int(),
+  upserts: z.number().int(),
+  deletes: z.number().int(),
+  unmatched: z.number().int(),
+  aborted: z.string().nullable(),
+  error: z.string().nullable(),
+  /** 実行後もなお bootstrap 継続中 (次の tick / 手動実行で続きを読む) */
+  bootstrapInProgress: z.boolean()
+})
+export type LibraryManualSyncResponse = z.infer<typeof LibraryManualSyncResponseSchema>

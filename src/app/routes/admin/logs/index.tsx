@@ -14,8 +14,8 @@ import { Input } from '@/app/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs'
 import {
   logEntriesQueryOptions,
-  logStatsQueryOptions,
   recordingEventsQueryOptions,
+  syncRunStatsQueryOptions,
   syncRunsQueryOptions
 } from '@/app/lib/query-options'
 import { FilterPopover } from '@/app/routes/browse/-components/filter-popover'
@@ -151,7 +151,7 @@ export const Route = createFileRoute('/admin/logs/')({
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ context: { queryClient }, deps }) =>
-    Promise.all([queryClient.ensureQueryData(logStatsQueryOptions()), ensureTabData(queryClient, deps)]),
+    Promise.all([queryClient.ensureQueryData(syncRunStatsQueryOptions()), ensureTabData(queryClient, deps)]),
   pendingComponent: LoadingSpinner,
   component: LogsAdminPage
 })
@@ -206,7 +206,7 @@ function LogsAdminPage() {
   const { settings } = useSettings()
 
   const runHours = Math.min(search.hours, RUN_MAX_HOURS)
-  const { data: stats } = useQuery(logStatsQueryOptions())
+  const { data: stats } = useQuery(syncRunStatsQueryOptions())
   const { data } = useQuery({
     ...syncRunsQueryOptions({
       page,

@@ -124,7 +124,7 @@ const adminLogs = new OpenAPIHono<{ Bindings: Bindings }>()
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/runs',
+    path: '/sync-runs',
     tags: ['Admin'],
     summary: '同期ジョブの実行履歴 (cron / Queue バッチ / 手動)',
     request: { query: SyncRunListQuerySchema },
@@ -169,10 +169,71 @@ adminLogs.openapi(
   }
 )
 
+// `/sync-runs/{id}` より前に登録する。Hono は静的セグメントを優先するが、登録順に依存しない形にしておく
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/runs/{id}',
+    path: '/sync-runs/stats',
+    tags: ['Admin'],
+    summary: 'cron 式ごとの最終実行 (wrangler.toml の定義と突き合わせる)',
+    responses: {
+      200: {
+        description: 'cron の稼働状況',
+        content: { 'application/json': { schema: LogStatsSchema } }
+      }
+    }
+  }),
+  async (c) => {
+    const prisma = createPrismaClient(c.env.DB)
+    try {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      const [lastRuns, counts] = await Promise.all([
+        Promise.all(
+          CRON_DEFINITIONS.map((d) =>
+            prisma.syncRun.findFirst({
+              where: { kind: 'cron', trigger: 'trigger' in d ? d.trigger : d.cron },
+              orderBy: { startedAt: 'desc' }
+            })
+          )
+        ),
+        prisma.syncRun.groupBy({
+          by: ['status'],
+          where: { startedAt: { gte: since } },
+          _count: { _all: true }
+        })
+      ])
+      const countOf = (status: string) => counts.find((x) => x.status === status)?._count._all ?? 0
+      return c.json(
+        {
+          crons: CRON_DEFINITIONS.map((d, i) => {
+            const last = lastRuns[i]
+            return {
+              cron: d.cron,
+              label: d.label,
+              everRan: last !== null,
+              lastRun: last === null ? null : serializeRun(last)
+            }
+          }),
+          recent: {
+            total: counts.reduce((acc, x) => acc + x._count._all, 0),
+            success: countOf('success'),
+            partial: countOf('partial'),
+            failed: countOf('failed'),
+            running: countOf('running')
+          }
+        },
+        200
+      )
+    } finally {
+      await prisma.$disconnect()
+    }
+  }
+)
+
+adminLogs.openapi(
+  createRoute({
+    method: 'get',
+    path: '/sync-runs/{id}',
     tags: ['Admin'],
     summary: '実行 1 件の詳細 (cron run なら子の Queue バッチも返す)',
     request: { params: z.object({ id: z.string().nonempty() }) },
@@ -224,7 +285,7 @@ adminLogs.openapi(
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/entries',
+    path: '/logs/entries',
     tags: ['Admin'],
     summary: '生ログ (level は「以上」/ カーソルページング)',
     request: { query: LogEntryListQuerySchema },
@@ -266,11 +327,11 @@ adminLogs.openapi(
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/recordings',
+    path: '/recording-events',
     tags: ['Admin'],
     summary: '録画リクエストとその結末の時系列',
     description:
-      '生ログ (/entries) と違い 180 日残り、animeId で引ける。作品ページの「この作品の録画履歴」もここを見る。',
+      '生ログ (/logs/entries) と違い 180 日残り、animeId で引ける。作品ページの「この作品の録画履歴」もここを見る。',
     request: { query: RecordingEventListQuerySchema },
     responses: {
       200: {
@@ -305,66 +366,6 @@ adminLogs.openapi(
           page,
           limit,
           totalPages: Math.max(1, Math.ceil(total / limit))
-        },
-        200
-      )
-    } finally {
-      await prisma.$disconnect()
-    }
-  }
-)
-
-adminLogs.openapi(
-  createRoute({
-    method: 'get',
-    path: '/stats',
-    tags: ['Admin'],
-    summary: 'cron 式ごとの最終実行 (wrangler.toml の定義と突き合わせる)',
-    responses: {
-      200: {
-        description: 'cron の稼働状況',
-        content: { 'application/json': { schema: LogStatsSchema } }
-      }
-    }
-  }),
-  async (c) => {
-    const prisma = createPrismaClient(c.env.DB)
-    try {
-      const since = new Date(Date.now() - 24 * 60 * 60 * 1000)
-      const [lastRuns, counts] = await Promise.all([
-        Promise.all(
-          CRON_DEFINITIONS.map((d) =>
-            prisma.syncRun.findFirst({
-              where: { kind: 'cron', trigger: 'trigger' in d ? d.trigger : d.cron },
-              orderBy: { startedAt: 'desc' }
-            })
-          )
-        ),
-        prisma.syncRun.groupBy({
-          by: ['status'],
-          where: { startedAt: { gte: since } },
-          _count: { _all: true }
-        })
-      ])
-      const countOf = (status: string) => counts.find((x) => x.status === status)?._count._all ?? 0
-      return c.json(
-        {
-          crons: CRON_DEFINITIONS.map((d, i) => {
-            const last = lastRuns[i]
-            return {
-              cron: d.cron,
-              label: d.label,
-              everRan: last !== null,
-              lastRun: last === null ? null : serializeRun(last)
-            }
-          }),
-          recent: {
-            total: counts.reduce((acc, x) => acc + x._count._all, 0),
-            success: countOf('success'),
-            partial: countOf('partial'),
-            failed: countOf('failed'),
-            running: countOf('running')
-          }
         },
         200
       )

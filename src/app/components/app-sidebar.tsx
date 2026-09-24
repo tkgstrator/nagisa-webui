@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom'
 import { useIntlayer } from 'react-intlayer'
 import { GlobalSearchHotkey } from '@/app/components/global-search-bar'
 import { ServerStatusDialog } from '@/app/components/server-status-dialog'
-import { nagisaStatusAtom } from '@/app/lib/atoms'
+import { recorderStatusAtom } from '@/app/lib/atoms'
 import { scheduledCountQueryOptions } from '@/app/lib/query-options'
 
 const SIDEBAR_SLOT_ID = 'app-sidebar-slot'
@@ -75,7 +75,7 @@ const RecordingsCount = () => {
 /** サイドバー最下段の疎通表示。行そのものが詳細ダイアログのトリガーを兼ねる。 */
 const ServerStatusLine = () => {
   const content = useIntlayer('app-sidebar')
-  const { data: status, isPending, isError } = useAtomValue(nagisaStatusAtom)
+  const { data: status, isPending, isError } = useAtomValue(recorderStatusAtom)
   const isDown = isError || !status
 
   const dotClass = isPending ? 'animate-pulse bg-warning' : isDown ? 'bg-destructive' : 'animate-pulse bg-success'
