@@ -5,14 +5,15 @@
  * 直近の LogTape 行を数件引き、source のトップレベルのキーと properties のキーを出す。
  * あわせて KEYS の各フィルタを 1 本ずつ掛け、0 件になるキーを知らせる。
  *
- *   source .env && bun scripts/observability/check-keys.ts [worker-name] [hours]
+ *   CF_ACCOUNT_ID=... CF_OBSERVABILITY_TOKEN=... bun scripts/observability/check-keys.ts [worker-name] [hours]
  */
 import { KEYS } from '../../src/lib/observability'
 
-const accountTag = process.env.CLOUDFLARE_ACCOUNT_ID
-const token = process.env.CLOUDFLARE_API_TOKEN
+// Worker と同じ読み取り用トークンを優先する。デプロイ用の CLOUDFLARE_* は予備
+const accountTag = process.env.CF_ACCOUNT_ID ?? process.env.CLOUDFLARE_ACCOUNT_ID
+const token = process.env.CF_OBSERVABILITY_TOKEN ?? process.env.CLOUDFLARE_API_TOKEN
 if (!accountTag || !token) {
-  console.error('CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN not set. source .env first.')
+  console.error('CF_ACCOUNT_ID / CF_OBSERVABILITY_TOKEN (または CLOUDFLARE_*) が未設定')
   process.exit(1)
 }
 const service = process.argv[2] ?? 'anime-tracker-staging'
