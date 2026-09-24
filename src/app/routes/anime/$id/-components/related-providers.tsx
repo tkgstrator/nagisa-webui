@@ -2,8 +2,12 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { providerColor, providerLabel } from '@/app/lib/constants'
-import { animeDetailQueryOptions, animeListQueryOptions } from '@/app/lib/query-options'
-import { type AnimeInfoSchema, QuarterLabel } from '@/schemas/anime.dto'
+import {
+  animeDetailQueryOptions,
+  animeListQueryOptions,
+  animeRecordingStatusQueryOptions
+} from '@/app/lib/query-options'
+import { type AnimeInfoSchema, type AnimeRecordingTitle, QuarterLabel } from '@/schemas/anime.dto'
 
 // 「録画」「全話」を別々の列にすると 280px のサイドバーでは配信元の欄が潰れて
 // バッジや年が折り返すので、"0/12" の 1 列にまとめて左へ幅を返す。
@@ -12,6 +16,30 @@ const colClass = 'grid grid-cols-[minmax(0,1fr)_auto] gap-2.5'
 const pvClass = 'inline-flex h-[18px] shrink-0 items-center rounded px-[7px] text-[11px] font-semibold'
 
 const tagClass = 'inline-flex h-4 items-center rounded px-[5px] text-[10.5px] leading-none'
+
+type Episode = AnimeInfoSchema['seasons'][number]['episodes'][number]
+
+/**
+ * 録れている話数。D1 の `recorded` は library-sync が台帳を追いかけて書く控えで、
+ * 台帳の初回取り込みの間は何時間も遅れる。脇の「録画サーバー」は台帳を直接読んでいるので、
+ * 台帳に載っている回は D1 が追いついていなくても録画済みとして数え、両者の数字を揃える。
+ */
+const countRecorded = (seasons: AnimeInfoSchema['seasons'], title: AnimeRecordingTitle | undefined): number => {
+  const ids = new Set<string>()
+  const numbers = new Set<string>()
+  for (const rec of title?.recordings ?? []) {
+    if (rec.episode_id !== null) ids.add(rec.episode_id)
+    if (rec.season_number !== null && rec.episode_number !== null)
+      numbers.add(`${rec.season_number}:${rec.episode_number}`)
+  }
+  const onDisk = (seasonNumber: number, episode: Episode) =>
+    ids.has(episode.episodeId) || numbers.has(`${seasonNumber}:${episode.episodeNumber}`)
+  return seasons.reduce(
+    (sum, season) =>
+      sum + season.episodes.filter((episode) => episode.recorded || onDisk(season.seasonNumber, episode)).length,
+    0
+  )
+}
 
 export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
   const { data, isPending } = useQuery({
@@ -27,6 +55,17 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
   const details = useQueries({
     queries: items.map((item) => ({ ...animeDetailQueryOptions(item.id), staleTime: 5 * 60 * 1000 }))
   })
+
+  // 「録画サーバー」と同じクエリ (キーも同じなのでキャッシュを共有する)。
+  // nagisa が落ちているときは titles が空で返るので、D1 の控えだけで数える。
+  const { data: recording } = useQuery({
+    ...animeRecordingStatusQueryOptions(anime.id),
+    enabled: anime.aniListId > 0
+  })
+  const recordingTitle = (item: { id: string; provider: string; contentId: string }) =>
+    recording?.titles.find(
+      (title) => title.animeId === item.id || (title.provider === item.provider && title.contentId === item.contentId)
+    )
 
   if (anime.aniListId <= 0) return null
 
@@ -86,7 +125,7 @@ export function RelatedProviders({ anime }: { anime: AnimeInfoSchema }) {
                     ) : (
                       <>
                         <b className='font-semibold text-foreground'>
-                          {episodes.filter((episode) => episode.recorded).length}
+                          {countRecorded(detail.seasons, recordingTitle(item))}
                         </b>
                         {`/${episodes.length}`}
                       </>

@@ -1,8 +1,8 @@
 /**
  * 録画リクエストとその結末を `recording_events` に 1 行ずつ残す。
  *
- * 生ログ (`log_entries`) との住み分け:
- *   - 保持期間が違う (録画 180 日 / 生ログ 14 日)
+ * 生ログ (Workers Logs) との住み分け:
+ *   - 保持期間が違う (録画 180 日 / 生ログ 7 日)
  *   - `animeId` で引きたい (作品ページから「この作品の録画履歴」を出す)
  *   - 送信 (画面/自動録画) と結果 (台帳同期) を 1 本の時系列にまとめたい
  *
@@ -11,8 +11,8 @@
  */
 
 import type { createPrismaClient } from './db'
-import { currentStore } from './log-capture'
 import { getAppLogger } from './logger'
+import { currentRunId } from './run-context'
 
 const logger = getAppLogger('recording-event')
 
@@ -77,7 +77,7 @@ export async function recordEvent(prisma: Prisma, input: RecordingEventInput): P
 /** まとめて記録する。1 件でも書けなければ warn に落として握り潰す。 */
 export async function recordEvents(prisma: Prisma, inputs: RecordingEventInput[]): Promise<void> {
   if (inputs.length === 0) return
-  const runId = currentStore()?.runId ?? null
+  const runId = currentRunId()
   const rows = inputs.slice(0, MAX_EVENTS_PER_CALL).map((i) => toRow(i, runId))
   try {
     await prisma.recordingEvent.createMany({ data: rows })

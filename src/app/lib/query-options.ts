@@ -81,13 +81,14 @@ export const syncRunQueryOptions = (id: string) =>
     refetchInterval: 30_000
   })
 
-// 生ログは書き込みの最中に行がずれるので、ページ番号ではなく id の降順カーソルで継ぎ足す。
+// 生ログは Workers Logs から引く。書き込みの最中に行がずれるので、ページ番号ではなく
+// 前ページ最後の行の id (Telemetry API の offset) で継ぎ足す。
 export const logEntriesQueryOptions = (filters: Record<string, unknown>) =>
   infiniteQueryOptions({
     queryKey: queryKeys.admin.logEntries(filters),
     queryFn: ({ pageParam }) =>
       api.getLogEntries({ queries: { ...filters, ...(pageParam === undefined ? {} : { cursor: pageParam }) } }),
-    initialPageParam: undefined as number | undefined,
+    initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
     refetchInterval: 30_000
   })

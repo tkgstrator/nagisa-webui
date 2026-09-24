@@ -209,12 +209,12 @@ const api = new Zodios('/api', [
     alias: 'getLogEntries',
     parameters: [
       { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(200).optional() },
-      { name: 'cursor', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'cursor', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'level', type: 'Query', schema: z.enum(['debug', 'info', 'warning', 'error', 'fatal']).optional() },
       { name: 'category', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'action', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'runId', type: 'Query', schema: z.string().nonempty().optional() },
-      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(336).optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(168).optional() },
       { name: 'q', type: 'Query', schema: z.string().nonempty().optional() }
     ],
     response: CursoredLogEntrySchema

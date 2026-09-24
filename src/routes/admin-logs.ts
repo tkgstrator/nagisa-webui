@@ -2,13 +2,17 @@ import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { z } from 'zod'
 import { createPrismaClient } from '../lib/db'
 import {
+  type ObservabilityEnv,
+  ObservabilityNotConfiguredError,
+  ObservabilityUpstreamError,
+  queryLogEntries
+} from '../lib/observability'
+import {
   CatalogEventFieldEnum,
   CatalogEventListQuerySchema,
   type CatalogEventSchema,
   CursoredLogEntrySchema,
-  LEVELS_AT_OR_ABOVE,
   LogEntryListQuerySchema,
-  type LogEntrySchema,
   LogStatsSchema,
   PaginatedCatalogEventSchema,
   PaginatedRecordingEventSchema,
@@ -22,7 +26,7 @@ import {
 
 type Bindings = {
   DB: D1Database
-}
+} & ObservabilityEnv
 
 /**
  * wrangler.toml の [triggers] crons と 1:1 で対応させること。
@@ -59,7 +63,6 @@ type RunRow = {
   retried: number
   animeCreated: number
   animeUpdated: number
-  droppedLogs: number
   errorMessage: string | null
   meta: string | null
 }
@@ -71,25 +74,6 @@ function serializeRun(r: RunRow): SyncRunSchema {
     status: r.status as SyncRunSchema['status'],
     startedAt: r.startedAt.toISOString(),
     finishedAt: r.finishedAt === null ? null : r.finishedAt.toISOString()
-  }
-}
-
-type EntryRow = {
-  id: number
-  runId: string | null
-  ts: Date
-  level: string
-  category: string
-  action: string | null
-  summary: string | null
-  props: string | null
-}
-
-function serializeEntry(e: EntryRow): LogEntrySchema {
-  return {
-    ...e,
-    level: e.level as LogEntrySchema['level'],
-    ts: e.ts.toISOString()
   }
 }
 
@@ -157,6 +141,15 @@ function serializeCatalog(r: CatalogRow): CatalogEventSchema {
 
 /** run 詳細に載せる生ログの上限。1 バッチで数百行出るので全部は返さない */
 const RUN_DETAIL_ENTRY_LIMIT = 200
+
+/** Workers Logs の保持期間。run 詳細はこの範囲でだけ生ログを探す */
+const LOG_RETENTION_HOURS = 168
+
+function describeObservabilityError(e: unknown): string {
+  if (e instanceof ObservabilityNotConfiguredError) return 'Workers Logs の読み取り設定が無い'
+  if (e instanceof ObservabilityUpstreamError) return `Workers Logs の取得に失敗: ${e.message}`
+  throw e
+}
 
 const adminLogs = new OpenAPIHono<{ Bindings: Bindings }>()
 
@@ -234,23 +227,28 @@ adminLogs.openapi(
       if (run === null) {
         return c.json({ message: 'run not found' }, 404)
       }
-      const [children, entries] = await Promise.all([
+      // 生ログは Workers Logs 側。取れなくても実行記録そのものは返す
+      const [children, logs] = await Promise.all([
         prisma.syncRun.findMany({
           where: { parentId: id },
           orderBy: { startedAt: 'asc' },
           take: 100
         }),
-        prisma.logEntry.findMany({
-          where: { runId: id },
-          orderBy: { id: 'desc' },
-          take: RUN_DETAIL_ENTRY_LIMIT
-        })
+        queryLogEntries(c.env, {
+          limit: RUN_DETAIL_ENTRY_LIMIT,
+          level: 'debug',
+          runId: id,
+          hours: LOG_RETENTION_HOURS
+        }).then(
+          (r) => ({ entries: r.data, entriesError: null }),
+          (e: unknown) => ({ entries: [], entriesError: describeObservabilityError(e) })
+        )
       ])
       return c.json(
         {
           run: serializeRun(run),
           children: children.map(serializeRun),
-          entries: entries.map(serializeEntry)
+          ...logs
         },
         200
       )
@@ -266,38 +264,30 @@ adminLogs.openapi(
     path: '/entries',
     tags: ['Admin'],
     summary: '生ログ (level は「以上」/ カーソルページング)',
+    description: 'Workers Logs (Telemetry API) から引く。保持は 7 日。',
     request: { query: LogEntryListQuerySchema },
     responses: {
       200: {
         description: 'ログ一覧 (新しい順)',
         content: { 'application/json': { schema: CursoredLogEntrySchema } }
+      },
+      502: {
+        description: 'Telemetry API の呼び出しに失敗',
+        content: { 'application/json': { schema: z.object({ message: z.string() }) } }
+      },
+      503: {
+        description: 'Workers Logs を読む設定 (secret / var) が無い',
+        content: { 'application/json': { schema: z.object({ message: z.string() }) } }
       }
     }
   }),
   async (c) => {
-    const { limit, cursor, level, category, action, runId, hours, q } = c.req.valid('query')
-    const prisma = createPrismaClient(c.env.DB)
     try {
-      const where = {
-        ts: { gte: new Date(Date.now() - hours * 60 * 60 * 1000) },
-        level: { in: LEVELS_AT_OR_ABOVE[level] },
-        ...(cursor ? { id: { lt: cursor } } : {}),
-        ...(category ? { category } : {}),
-        ...(action ? { action } : {}),
-        ...(runId ? { runId } : {}),
-        ...(q ? { summary: { contains: q } } : {})
-      }
-      // 次ページの有無を知るため 1 件多く取り、返す前に切り落とす
-      const rows = await prisma.logEntry.findMany({
-        where,
-        orderBy: { id: 'desc' },
-        take: limit + 1
-      })
-      const hasNext = rows.length > limit
-      const data = (hasNext ? rows.slice(0, limit) : rows).map(serializeEntry)
-      return c.json({ data, nextCursor: hasNext ? (data.at(-1)?.id ?? null) : null }, 200)
-    } finally {
-      await prisma.$disconnect()
+      return c.json(await queryLogEntries(c.env, c.req.valid('query')), 200)
+    } catch (e) {
+      if (e instanceof ObservabilityNotConfiguredError) return c.json({ message: e.message }, 503)
+      if (e instanceof ObservabilityUpstreamError) return c.json({ message: e.message }, 502)
+      throw e
     }
   }
 )
@@ -309,7 +299,7 @@ adminLogs.openapi(
     tags: ['Admin'],
     summary: '録画リクエストとその結末の時系列',
     description:
-      '生ログ (/entries) と違い 180 日残り、animeId で引ける。作品ページの「この作品の録画履歴」もここを見る。',
+      '生ログ (/entries, 7 日) と違い 180 日残り、animeId で引ける。作品ページの「この作品の録画履歴」もここを見る。',
     request: { query: RecordingEventListQuerySchema },
     responses: {
       200: {

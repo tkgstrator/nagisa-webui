@@ -11,16 +11,18 @@ UI モック作成時にドメイン機能を理解するために参照する�
 | `/browse` | アニメ一覧 | `src/app/routes/browse/index.tsx` |
 | `/anime/:id` | アニメ詳細 | `src/app/routes/anime/$id/index.tsx` |
 | `/recordings` | 録画一覧 | `src/app/routes/recordings/index.tsx` |
-| `/settings` | 設定 | (未実装 — `docs/mock-diff/mocks/settings-*.html` が先行) |
+| `/settings` | 設定 | `src/app/routes/settings/index.tsx` |
 | `/changelog` | 変更履歴 | `src/app/routes/changelog/index.tsx` |
 | `/admin` | 管理ハブ | `src/app/routes/admin/index.tsx` |
+| `/admin/logs` | 同期ログ | `src/app/routes/admin/logs/index.tsx` |
 | `/admin/unidentified` | 未識別タイトル一覧 | `src/app/routes/admin/unidentified/index.tsx` |
 | `/admin/nagisa` | Nagisaジョブ投入 | `src/app/routes/admin/nagisa/index.tsx` |
 | `/_errors/:statusCode` | エラー画面 (404等) | `src/app/routes/_errors/$statusCode/index.tsx` |
 
 mock-diff-viewer (`docs/mock-diff/mock-diff.yaml`) でモック比較対象になっているのは
-`browse` / `anime-detail` / `recordings` / `home` / `settings` の5画面 (screen-id) 。
-このうち `settings` だけは実装が存在しないため、実装との比較 (Checking) は行わず案の選定のみを行う。
+`browse` / `anime-detail` / `recordings` / `home` / `settings` / `not-found` と、同期ログのタブごとの
+`logs` / `logs-entries` / `logs-recordings` / `logs-catalog` の10画面 (screen-id) で、
+いずれも実装との比較 (Checking) まで行う。
 
 ## 画面ごとの機能
 
@@ -47,10 +49,15 @@ mock-diff-viewer (`docs/mock-diff/mock-diff.yaml`) でモック比較対象に�
 ### アニメ詳細 (`/anime/:id`)
 
 - ヒーロー領域: ポスター、タイトル、放送情報、総話数・総再生時間、あらすじ
-- アクション: 録画予約トグル (scheduled on/off)、録画済みトグル (recorded on/off、ONにする際は
-  録画リクエストAPIも同時に呼ぶ)、タイトル情報の再取得 (refresh、AniList/プロバイダから再同期)
-- エピソード一覧: シーズン/話ごとに話数・サブタイトル・録画状態を表示 (全話分)
+- アクション: 録画予約トグル (「録画予約」/「録画予約中」、予約中に押すと解除)、今すぐ録画 (未録画の
+  話をまとめて録画リクエストAPIへ送る手動の録画開始、常に押せる)、タイトル情報の再取得 (refresh、
+  AniList/プロバイダから再同期)
+- エピソード一覧: シーズン/話ごとに話数・サブタイトル・録画状態 (録画済み / 録画中 / 未録画) を表示
+  (全話分)。録画状態は表示のみで、1 話単位の録画ボタンは持たない
 - 同一作品を配信している他プロバイダの一覧 (AniList IDで関連付け)
+- この作品のログ: 録画ログ (recording_events) とカタログ変化 (catalog_events) を animeId で
+  絞った直近 7 日分。表示のみで、「同期ログで開く」で `/admin/logs` に animeId 付きで遷移する。
+  一般ログ (Workers Logs) は作品で絞れないため載せない
 - 戻る導線 (ブラウザ履歴 or ホームへ)
 
 ### 録画一覧 (`/recordings`)
@@ -65,6 +72,18 @@ mock-diff-viewer (`docs/mock-diff/mock-diff.yaml`) でモック比較対象に�
 ### 変更履歴 (`/changelog`)
 
 - Gitコミット履歴を日付でグループ化して一覧表示 (コミットハッシュ+メッセージ)
+
+### 同期ログ (`/admin/logs`)
+
+- 直近 24 時間の実行件数 (実行 / 成功 / 一部失敗 / 失敗) の集計タイル
+- タブ (`?tab=`) で以下を切り替え:
+  - 実行履歴: cron ごとの稼働状況 (最終実行・結果・所要、一度も動いていない cron は赤) と、
+    cron / Queue / 手動実行の履歴 (期間・種別・状態で絞り込み、ページネーション、詳細へ)
+  - 生ログ: Worker の一般ログ (Workers Logs を Telemetry API で引く。保持 7 日)。本文検索、期間・レベルで絞り込み、props 展開、
+    該当する実行へのリンク、「さらに読み込む」
+  - 録画: 録画リクエストの結果 (recording_events)。期間・種別・結果で絞り込み
+  - カタログ: カタログに入った変化 (catalog_events)。期間・種別・配信元で絞り込み
+- `animeId` クエリで作品を絞れる (アニメ詳細の「同期ログで開く」から遷移)
 
 ### 管理ハブ (`/admin`)
 

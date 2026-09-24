@@ -71,23 +71,36 @@ const RecordingsCount = () => {
   )
 }
 
-/** サイドバー最下段の疎通表示。行そのものが詳細ダイアログのトリガーを兼ねる。 */
+/**
+ * サイドバー最下段の疎通表示。行そのものが詳細ダイアログのトリガーを兼ねる。
+ * 行の位置と幅は状態によらず固定で、ドットの色と右端の文言だけが変わる。
+ */
 const ServerStatusLine = () => {
   const { data: status, isPending, isError } = useAtomValue(nagisaStatusAtom)
-  const isDown = isError || !status
+  const isDown = !isPending && (isError || !status)
+  const failed = status?.queue?.failed.count ?? 0
+  const active = status?.queue?.active.count ?? 0
 
-  const dotClass = isPending ? 'animate-pulse bg-warning' : isDown ? 'bg-destructive' : 'animate-pulse bg-success'
-  const label = isPending ? '接続を確認中' : isDown ? 'サーバー停止中' : 'サーバー稼働中'
+  const [dotClass, right] = isPending
+    ? ['animate-pulse bg-muted-foreground', '接続中']
+    : isDown
+      ? ['bg-destructive', 'オフライン']
+      : failed > 0
+        ? ['bg-destructive', `${failed} 件 失敗`]
+        : active > 0
+          ? ['animate-pulse bg-info', `${active} 件 実行中`]
+          : ['bg-success', `v${status?.version}`]
 
   return (
     <ServerStatusDialog
       trigger={
         <button
           type='button'
-          className={`mt-auto flex items-center gap-1.5 rounded-md px-2.5 text-left text-[11px] transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none max-sm:hidden ${isDown ? 'text-destructive' : 'text-muted-foreground'}`}
+          className='-mx-3.5 -mb-4 mt-auto flex items-center gap-[9px] border-t border-border bg-sidebar px-3 py-2.5 text-left text-xs transition-colors hover:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none max-sm:hidden'
         >
           <span aria-hidden='true' className={`size-[7px] shrink-0 rounded-full ${dotClass}`} />
-          {label}
+          <span className='font-semibold'>Nagisa</span>
+          <span className='ml-auto text-[11px] text-muted-foreground tabular-nums'>{right}</span>
         </button>
       }
     />

@@ -18,7 +18,6 @@ export const SyncRunSchema = z.object({
   retried: z.number().int(),
   animeCreated: z.number().int(),
   animeUpdated: z.number().int(),
-  droppedLogs: z.number().int(),
   errorMessage: z.string().nullable(),
   meta: z.string().nullable()
 })
@@ -43,7 +42,7 @@ export const PaginatedSyncRunSchema = z.object({
 })
 export type PaginatedSyncRunSchema = z.infer<typeof PaginatedSyncRunSchema>
 
-/** LogTape の重大度。D1 に入るのは info 以上だけ (src/lib/log-capture.ts) */
+/** LogTape の重大度 */
 export const LogLevelEnum = z.enum(['debug', 'info', 'warning', 'error', 'fatal'])
 export type LogLevelEnum = z.infer<typeof LogLevelEnum>
 
@@ -56,9 +55,16 @@ export const LEVELS_AT_OR_ABOVE: Record<LogLevelEnum, LogLevelEnum[]> = {
   fatal: ['fatal']
 }
 
+/**
+ * 生ログ 1 行。D1 ではなく Workers Logs (Telemetry API) から引く (src/lib/observability.ts)。
+ * id は Workers Logs の $metadata.id で、次ページのカーソルにも使う。
+ */
 export const LogEntrySchema = z.object({
-  id: z.number().int(),
+  id: z.string().nonempty(),
+  /** run の中で出た行なら runId (LogTape の implicit context で付く) */
   runId: z.string().nullable(),
+  /** Workers のリクエスト id。同じ呼び出しの行を束ねるのに使う */
+  requestId: z.string().nullable(),
   ts: z.coerce.string().nonempty(),
   level: LogLevelEnum,
   category: z.string().nonempty(),
@@ -70,16 +76,16 @@ export type LogEntrySchema = z.infer<typeof LogEntrySchema>
 
 export const LogEntryListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
-  // ページ番号だと書き込みの最中に行がずれるので、id の降順カーソルで送る (id < cursor)。
-  cursor: z.coerce.number().int().min(1).optional(),
+  // 前ページ最後の行の id。Telemetry API の offset にそのまま渡す。
+  cursor: z.string().optional(),
   // 指定した重大度「以上」を返す。'error' が UI の「エラーだけ」プリセット。
   level: LogLevelEnum.default('info'),
   category: z.string().optional(),
   action: z.string().optional(),
   runId: z.string().optional(),
-  // 期間は「直近 N 時間」。既定 24h、最大 14 日 (log_entries の保持期間)。
-  hours: z.coerce.number().int().min(1).max(336).default(24),
-  /** summary の部分一致 */
+  // 期間は「直近 N 時間」。既定 24h、最大 7 日 (Workers Logs の保持期間)。
+  hours: z.coerce.number().int().min(1).max(168).default(24),
+  /** 本文の全文検索 (Telemetry API の needle) */
   q: z.string().optional()
 })
 export type LogEntryListQuerySchema = z.infer<typeof LogEntryListQuerySchema>
@@ -87,7 +93,7 @@ export type LogEntryListQuerySchema = z.infer<typeof LogEntryListQuerySchema>
 export const CursoredLogEntrySchema = z.object({
   data: z.array(LogEntrySchema),
   /** 次ページに渡す cursor。これ以上無ければ null */
-  nextCursor: z.number().int().nullable()
+  nextCursor: z.string().nullable()
 })
 export type CursoredLogEntrySchema = z.infer<typeof CursoredLogEntrySchema>
 
@@ -188,8 +194,10 @@ export type PaginatedCatalogEventSchema = z.infer<typeof PaginatedCatalogEventSc
 export const SyncRunDetailSchema = z.object({
   run: SyncRunSchema,
   children: z.array(SyncRunSchema),
-  /** この run の中で出たログ (新しい順・上限あり) */
-  entries: z.array(LogEntrySchema)
+  /** この run の中で出たログ (新しい順・上限あり)。Workers Logs に残っている 7 日分だけ */
+  entries: z.array(LogEntrySchema),
+  /** entries を取れなかった理由 (未設定 / API 失敗)。取れたら null */
+  entriesError: z.string().nullable()
 })
 export type SyncRunDetailSchema = z.infer<typeof SyncRunDetailSchema>
 

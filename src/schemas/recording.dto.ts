@@ -38,6 +38,11 @@ export const RecordingSyncStateSchema = z.object({
   snapshotStartedAt: z.string().nullable(),
   /** 最後に「エラー無しで終わった」時刻。ここが古いと同期が止まっている */
   lastSucceededAt: z.string().nullable(),
+  /**
+   * ジョブ追従 (毎分 cron) が最後にエラー無しで終わった時刻。
+   * 追跡対象が無い tick は SyncRun を残さないので、tracked が 0 の間は古いままでよい
+   */
+  lastJobSyncAt: z.string().nullable(),
   /** 実行中ロックの期限。現在時刻より先なら誰かが走っている */
   leaseUntil: z.string().nullable(),
   leaseOwner: z.string().nullable(),

@@ -15,7 +15,12 @@ mock-diff-viewer 上で複数案を並べて比較・選定するための共通
 | `anime-detail` | アニメ詳細 | `src/app/routes/anime/$id/index.tsx` + `-components/` |
 | `recordings` | 録画一覧 | `src/app/routes/recordings/index.tsx` |
 | `home` | トップ | `src/app/routes/index.tsx` |
-| `settings` | 設定 | (未実装 — このモックが先行する) |
+| `settings` | 設定 | `src/app/routes/settings/index.tsx` + `-components/` |
+| `logs` / `logs-entries` / `logs-recordings` / `logs-catalog` | 同期ログ (実行履歴 / 生ログ / 録画 / カタログ の各タブ) | `src/app/routes/admin/logs/index.tsx` + `-components/` |
+
+同期ログはタブごとに中身が別物なので、タブ単位で screen-id を分ける。ファイル名だけは
+`logs-<tab>-final.html` (tab = `runs` / `entries` / `recordings` / `catalog`)。録画・カタログの
+行は採用済み部品 `recording-events` / `catalog-events` の見た目をそのまま使う。
 
 `<author>` は `fable` / `astra` / `final`。`final` は fable と astra から画面・部品ごとに採用案を
 選んで 1 枚に合成した決定稿で、どちらを採ったかの唯一の正は
@@ -196,8 +201,10 @@ mock-diff-viewer 上で複数案を並べて比較・選定するための共通
 
 ### anime-detail — アニメ詳細
 ヒーロー領域 (ポスター + タイトル + 放送情報 + あらすじ + アクション)、
-エピソードのグリッド/リスト (話数・サブタイトル・録画状態のトグル)、
-同一作品を配信している他プロバイダの一覧。全 24 話程度。
+エピソードのグリッド/リスト (話数・サブタイトル・録画状態の表示。操作は持たない)、
+同一作品を配信している他プロバイダの一覧、この作品のログ (録画ログ / カタログ変化を
+作品で絞った直近分。行の見た目は `recording-events` / `catalog-events` の採用案に揃え、
+「作品」列は落とす。続きは同期ログ画面へ animeId 付きで渡す)。全 24 話程度。
 ヒーロー領域のポスター画像も 16:9 で表現する (縦長ポスターや画像なしの抽象バナーにしない)。
 
 ### recordings — 録画一覧

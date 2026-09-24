@@ -134,8 +134,10 @@ function SyncRunDetailPage() {
 
       <section aria-label='この実行のログ' className='flex flex-col gap-2'>
         <h2 className='text-sm font-semibold'>ログ ({data.entries.length.toLocaleString('ja-JP')} 件)</h2>
-        {data.entries.length === 0 ? (
-          <p className='text-sm text-muted-foreground'>この実行のログは残っていません</p>
+        {data.entriesError !== null ? (
+          <p className='text-sm text-destructive'>Workers Logs から取得できませんでした: {data.entriesError}</p>
+        ) : data.entries.length === 0 ? (
+          <p className='text-sm text-muted-foreground'>この実行のログは残っていません (Workers Logs の保持は 7 日)</p>
         ) : (
           <EntriesTable entries={data.entries} />
         )}

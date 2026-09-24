@@ -10,8 +10,8 @@
  */
 
 import type { createPrismaClient } from './db'
-import { currentStore } from './log-capture'
 import { getAppLogger } from './logger'
+import { currentRunId } from './run-context'
 
 const logger = getAppLogger('catalog-event')
 
@@ -52,7 +52,7 @@ function toRow(input: CatalogEventInput, runId: string | null) {
 /** まとめて記録する。書けなければ warn に落として握り潰す。 */
 export async function recordCatalogEvents(prisma: Prisma, inputs: CatalogEventInput[]): Promise<void> {
   if (inputs.length === 0) return
-  const runId = currentStore()?.runId ?? null
+  const runId = currentRunId()
   const rows = inputs.slice(0, MAX_EVENTS_PER_CALL).map((i) => toRow(i, runId))
   try {
     await prisma.catalogEvent.createMany({ data: rows })

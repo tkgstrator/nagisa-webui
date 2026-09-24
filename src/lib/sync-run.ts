@@ -18,7 +18,6 @@ export interface RunCounters {
   retried?: number
   animeCreated?: number
   animeUpdated?: number
-  droppedLogs?: number
   errorMessage?: string
   meta?: Record<string, unknown>
 }
@@ -89,7 +88,6 @@ export async function finishRun(
         retried: counters.retried ?? 0,
         animeCreated: counters.animeCreated ?? 0,
         animeUpdated: counters.animeUpdated ?? 0,
-        droppedLogs: counters.droppedLogs ?? 0,
         errorMessage: counters.errorMessage ?? null,
         meta: serializeMeta(counters.meta)
       }

@@ -123,8 +123,7 @@ const RUN_HOURS_OPTIONS: { value: number; label: string }[] = [
 const ENTRY_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 24, label: '直近 24 時間' },
   { value: 72, label: '直近 3 日' },
-  { value: 168, label: '直近 7 日' },
-  { value: 336, label: '直近 14 日' }
+  { value: 168, label: '直近 7 日' }
 ]
 
 const RECORDING_HOURS_OPTIONS: { value: number; label: string }[] = [
@@ -135,8 +134,8 @@ const RECORDING_HOURS_OPTIONS: { value: number; label: string }[] = [
   { value: 4320, label: '直近 180 日' }
 ]
 
-/** log_entries は 14 日しか持たないので、実行履歴側の広い期間をそのまま投げない。 */
-const ENTRY_MAX_HOURS = 336
+/** 生ログは Workers Logs (保持 7 日) から引くので、実行履歴側の広い期間をそのまま投げない。 */
+const ENTRY_MAX_HOURS = 168
 
 /** sync_runs の保持期間は 90 日。録画タブから戻ってきた 180 日をそのまま投げない。 */
 const RUN_MAX_HOURS = 2160
@@ -277,6 +276,7 @@ function LogsAdminPage() {
   const entryHours = Math.min(search.hours, ENTRY_MAX_HOURS)
   const {
     data: entryPages,
+    isError: entriesFailed,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage
@@ -294,10 +294,8 @@ function LogsAdminPage() {
   const total = data?.total ?? 0
   const totalPages = data?.totalPages ?? 0
   const entries = entryPages?.pages.flatMap((p) => p.data) ?? []
-  const recordings = recordingData?.data ?? []
   const recordingTotal = recordingData?.total ?? 0
   const recordingTotalPages = recordingData?.totalPages ?? 0
-  const catalog = catalogData?.data ?? []
   const catalogTotal = catalogData?.total ?? 0
   const catalogTotalPages = catalogData?.totalPages ?? 0
 
@@ -428,7 +426,11 @@ function LogsAdminPage() {
             />
           </div>
 
-          {entries.length === 0 ? (
+          {entriesFailed && entries.length === 0 ? (
+            <div className='py-20 text-center text-sm text-destructive'>
+              Workers Logs から取得できませんでした (読み取り用の secret が未設定か、API が失敗しています)
+            </div>
+          ) : entries.length === 0 ? (
             <div className='py-20 text-center text-sm text-muted-foreground'>該当するログはありません</div>
           ) : (
             <EntriesTable entries={entries} />
@@ -471,11 +473,7 @@ function LogsAdminPage() {
             />
           </div>
 
-          {recordings.length === 0 ? (
-            <div className='py-20 text-center text-sm text-muted-foreground'>この期間の録画イベントはありません</div>
-          ) : (
-            <RecordingsTable events={recordings} />
-          )}
+          <RecordingsTable events={recordingData?.data} />
 
           {recordingTotalPages > 1 && (
             <SmartPagination page={page} totalPages={recordingTotalPages} onPageChange={setPage} />
@@ -505,11 +503,7 @@ function LogsAdminPage() {
             />
           </div>
 
-          {catalog.length === 0 ? (
-            <div className='py-20 text-center text-sm text-muted-foreground'>この期間のカタログ変化はありません</div>
-          ) : (
-            <CatalogTable events={catalog} />
-          )}
+          <CatalogTable events={catalogData?.data} />
 
           {catalogTotalPages > 1 && (
             <SmartPagination page={page} totalPages={catalogTotalPages} onPageChange={setPage} />

@@ -121,16 +121,17 @@ function AnimeDetailPage() {
     <PageContainer className='gap-10 max-sm:gap-[30px]'>
       <BroadcastSchedule anime={anime} />
 
-      <nav className='flex items-center gap-1.5 text-[12.5px] text-muted-foreground' aria-label='パス'>
+      <nav className='flex items-start gap-1.5 text-[12.5px] text-muted-foreground' aria-label='パス'>
         <Link
           to='/browse'
-          className='inline-flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
+          className='inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
         >
           <ChevronLeft className='size-3' />
           アニメ一覧
         </Link>
-        <span>/</span>
-        <span className='truncate font-semibold text-foreground'>{anime.title}</span>
+        <span className='py-[3px]'>/</span>
+        {/* 採用案 (breadcrumbs-astra) は省略記号を付けず、幅が足りなければ折り返す */}
+        <span className='min-w-0 py-[3px] font-semibold text-foreground'>{anime.title}</span>
       </nav>
 
       <AnimeHero
