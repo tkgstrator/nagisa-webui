@@ -54,6 +54,12 @@ export default defineConfig(({ mode }) => ({
       },
       '/assets': { target: MOCK_DIFF_TARGET, changeOrigin: true },
     },
+    // vite の既定の除外は .git / node_modules / test-results だけで .gitignore は見ない。
+    // .cache (原本 ~100 万ファイル) を chokidar が舐めると inotify 90 万件・RSS 4GB で
+    // CPU 100% に張り付くので、ソースを置かない巨大ディレクトリは明示的に外す。
+    watch: {
+      ignored: ['**/.cache/**', '**/.wrangler/**', '**/.claude/**', '**/dist/**', '**/screenshots/**'],
+    },
   },
   plugins: [
     // viewer の /api/* をアプリ側 Worker より手前で横流しする。enforce: 'pre' が無いと

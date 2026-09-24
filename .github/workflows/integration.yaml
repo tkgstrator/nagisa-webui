@@ -54,6 +54,8 @@ jobs:
         run: bun install --frozen-lockfile --ignore-scripts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate Prisma client
+        run: bunx prisma generate
       - name: Run tests
         run: bunx bun test --ignore '*.fetch.test.ts' __tests__/
   typecheck:
