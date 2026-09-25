@@ -14,6 +14,8 @@
  *   決定稿:      <id>-final.html は部品ごとに mock-diff.adopted.yaml の採用案を取り込み、
  *                骨格は SKELETON: (astra | fable) に対応する page-final-<skeleton>.css、
  *                最後に still.css (撮影用にアニメーションを止める) を重ねる。
+ *   @part:       ページもカタログも <!-- @part <id>:<name> --> でカタログの断片を取り込む
+ *                (src/part.ts)。ページが取り込めるのは USES に挙げた部品だけ。
  *
  * 使い方:
  *     bun run src/build.ts                 # 全部
@@ -23,6 +25,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { basename, dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { authorFor, components, parseUses, skeletonOf } from './dependencies'
+import { expandParts } from './part'
 import { mark } from './story'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
@@ -151,8 +154,16 @@ ${body}
 </html>
 `
 
+/** 部品 id → その作者のカタログ本文。 */
+const catalog = (author: (id: string) => string) => (id: string) =>
+  metaSplit(readFileSync(join(COMP, `${id}-${author(id)}.html`), 'utf-8')).body
+
+/** 断片を取り込んだ後に残る目印の属性を落とす。 */
+const unmark = (html: string) => html.replace(/\sdata-part="[\w-]+"/g, '')
+
 function buildComp(cid: string, author: string): [string, string] {
-  const { meta, body } = metaSplit(readFileSync(join(COMP, `${cid}-${author}.html`), 'utf-8'))
+  const { meta, body: raw } = metaSplit(readFileSync(join(COMP, `${cid}-${author}.html`), 'utf-8'))
+  const body = unmark(expandParts(raw, catalog(() => author)))
   const css = [read(join(PARTS, 'tokens.css')), read(join(PARTS, 'base.css')), read(join(PARTS, 'harness.css'))]
   const stage = join(COMP, `${cid}-${author}.stage.css`)
   if (existsSync(stage)) css.push(`/* ---------- catalog stage: ${cid} ---------- */\n${read(stage)}`)
@@ -174,7 +185,7 @@ function buildComp(cid: string, author: string): [string, string] {
 }
 
 function buildPage(pid: string, author: string): [string, string] {
-  const { meta, body } = metaSplit(readFileSync(join(PAGES, `${pid}-${author}.html`), 'utf-8'))
+  const { meta, body: raw } = metaSplit(readFileSync(join(PAGES, `${pid}-${author}.html`), 'utf-8'))
   const final = author === 'final'
   const css = [
     read(join(PARTS, 'tokens.css')),
@@ -182,7 +193,12 @@ function buildPage(pid: string, author: string): [string, string] {
     read(join(PARTS, `${skeletonOf(author, meta.SKELETON)}.css`))
   ]
   const { ids, pinned } = parseUses(meta.USES ?? '')
-  for (const c of components(COMP, authorFor(author, ADOPTED, pinned), ids)) {
+  const partAuthor = authorFor(author, ADOPTED, pinned)
+  const used = new Set<string>()
+  const body = unmark(expandParts(raw, catalog(partAuthor), used))
+  const stray = [...used].filter((id) => !ids.includes(id))
+  if (stray.length) throw new Error(`${pid}-${author}: USES に無い部品を @part で取り込んでいます: ${stray.join(' ')}`)
+  for (const c of components(COMP, partAuthor, ids)) {
     css.push(`/* ---------- component: ${c.id} ---------- */\n${read(join(COMP, `${c.id}-${c.author}.css`))}`)
   }
   if (final) css.push(read(join(PARTS, 'still.css')))
