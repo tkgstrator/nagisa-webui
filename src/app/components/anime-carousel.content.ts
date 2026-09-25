@@ -15,6 +15,19 @@ const animeCarouselContent = {
         recorded: '録画済み',
         scheduled: '予約中'
       }
+    },
+    en: {
+      viewAll: 'View all',
+      dateBadge: {
+        until: insert('Until {{date}}'),
+        today: insert('Today at {{time}}'),
+        tomorrow: insert('Tomorrow at {{time}}')
+      },
+      season: insert('{{quarter}} {{year}}'),
+      recordingState: {
+        recorded: 'Recorded',
+        scheduled: 'Scheduled'
+      }
     }
   })
 } satisfies Dictionary

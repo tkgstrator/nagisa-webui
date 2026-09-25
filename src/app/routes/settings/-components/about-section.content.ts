@@ -12,6 +12,16 @@ const aboutSectionContent = {
         animeCount: '登録作品',
         scheduledCount: '録画予約'
       }
+    },
+    en: {
+      title: 'About',
+      changelogLabel: 'Changelog',
+      meta: {
+        version: 'Version',
+        build: 'Build',
+        animeCount: 'Catalog titles',
+        scheduledCount: 'Recording schedules'
+      }
     }
   })
 } satisfies Dictionary

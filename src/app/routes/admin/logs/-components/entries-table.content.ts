@@ -12,6 +12,16 @@ const adminLogsEntriesTableContent = {
         content: '内容'
       },
       run: '実行'
+    },
+    en: {
+      headers: {
+        time: 'Time',
+        level: 'Level',
+        category: 'Category',
+        action: 'Action',
+        content: 'Content'
+      },
+      run: 'Run'
     }
   })
 } satisfies Dictionary

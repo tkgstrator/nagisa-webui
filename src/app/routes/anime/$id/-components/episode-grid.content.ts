@@ -13,17 +13,17 @@ const episodeGridContent = {
         retry: '再試行',
         record: '録画する',
         failedTitle: '録画に失敗しました',
-        doneTitle: '押すと録画をもう一度送る (nagisa 側で既存ファイルは飛ばされる)'
+        doneTitle: '録画リクエストを再送信します（Nagisa 側で既存のファイルはスキップされます）'
       },
       episodeLabel: insert('第{{number}}話'),
       selectEpisodeLabel: insert('第{{number}}話を選択'),
       freeBadge: '無料',
       subtitlesBadge: '字幕',
-      dubBadge: '吹替',
+      dubBadge: '吹き替え',
       releaseOn: insert('{{date}} 配信'),
       recordToast: {
-        success: insert('{{count}} 話の録画を送信しました'),
-        acceptedCount: insert('nagisa が受け付けたのは {{count}} 件'),
+        success: insert('{{count}} 話分の録画リクエストを送信しました'),
+        acceptedCount: insert('Nagisa が {{count}} 件のリクエストを受け付けました'),
         error: '録画リクエストに失敗しました'
       },
       heading: 'エピソード',
@@ -38,16 +38,62 @@ const episodeGridContent = {
         future: '配信予定'
       },
       filterFieldsetLabel: '絞り込み',
-      selectAllLabel: '表示中の話をすべて選択',
+      selectAllLabel: '表示中のエピソードをすべて選択',
       filterChips: {
         all: 'すべて',
         todo: '未録画',
         free: '無料'
       },
-      recordSelected: '選択した話を録画',
+      recordSelected: '選択したエピソードを録画',
       orderButton: '話数順',
       footerRecorded: insert('録画済み {{count}} 話'),
       openRecordings: '録画一覧で開く'
+    },
+    en: {
+      recordButton: {
+        sending: 'Sending',
+        pending: 'Scheduled',
+        downloading: 'Recording',
+        future: 'Upcoming',
+        done: 'Recorded',
+        retry: 'Retry',
+        record: 'Record',
+        failedTitle: 'Recording failed',
+        doneTitle: 'Send the recording request again (Nagisa skips existing files)'
+      },
+      episodeLabel: insert('Episode {{number}}'),
+      selectEpisodeLabel: insert('Select episode {{number}}'),
+      freeBadge: 'Free',
+      subtitlesBadge: 'Subtitled',
+      dubBadge: 'Dubbed',
+      releaseOn: insert('Available on {{date}}'),
+      recordToast: {
+        success: insert('Recording requests sent for {{count}} ep.'),
+        acceptedCount: insert('Requests accepted by Nagisa: {{count}}'),
+        error: 'Failed to request recording'
+      },
+      heading: 'Episodes',
+      noEpisodes: 'No episode information yet',
+      seasonTabsLabel: 'Seasons',
+      autoRecordOn: 'Automatically record new episodes',
+      autoRecordOff: 'Automatic recording is off',
+      recordingStatusLabel: 'Recording status',
+      stats: {
+        done: 'Recorded',
+        todo: 'Not recorded',
+        future: 'Upcoming'
+      },
+      filterFieldsetLabel: 'Filters',
+      selectAllLabel: 'Select all visible episodes',
+      filterChips: {
+        all: 'All',
+        todo: 'Not recorded',
+        free: 'Free'
+      },
+      recordSelected: 'Record selected episodes',
+      orderButton: 'Episode order',
+      footerRecorded: insert('Recorded: {{count}} ep.'),
+      openRecordings: 'Open in recordings'
     }
   })
 } satisfies Dictionary

@@ -8,6 +8,12 @@ const recordingsHeaderContent = {
       scheduledSuffix: ' 作品を予約中',
       searchLabel: 'タイトル検索',
       searchPlaceholder: 'タイトルで絞り込み'
+    },
+    en: {
+      title: 'Recordings',
+      scheduledSuffix: ' titles scheduled',
+      searchLabel: 'Search by title',
+      searchPlaceholder: 'Filter by title'
     }
   })
 } satisfies Dictionary

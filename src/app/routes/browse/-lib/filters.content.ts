@@ -19,15 +19,15 @@ const browseFiltersLibContent = {
       },
       badge: {
         newEpisode: '新着エピソード',
-        recentlyAdded: '新着追加',
+        recentlyAdded: '新規追加',
         comingSoon: '配信予定',
         expiring: '配信終了予定'
       },
       sort: {
-        titleAsc: 'タイトル 昇順',
-        titleDesc: 'タイトル 降順',
-        yearDesc: 'リリース年 新しい順',
-        yearAsc: 'リリース年 古い順'
+        titleAsc: 'タイトル (昇順)',
+        titleDesc: 'タイトル (降順)',
+        yearDesc: '放送年 (新しい順)',
+        yearAsc: '放送年 (古い順)'
       },
       chips: {
         provider: '配信元',
@@ -37,6 +37,42 @@ const browseFiltersLibContent = {
         badge: 'バッジ',
         relatedSeries: '関連シリーズ',
         search: '検索'
+      }
+    },
+    en: {
+      quarters: {
+        winter: 'Winter',
+        spring: 'Spring',
+        summer: 'Summer',
+        autumn: 'Fall'
+      },
+      status: {
+        releasing: 'Airing',
+        finished: 'Finished',
+        notYetReleased: 'Not yet aired',
+        cancelled: 'Cancelled',
+        hiatus: 'On hiatus'
+      },
+      badge: {
+        newEpisode: 'New episodes',
+        recentlyAdded: 'Recently added',
+        comingSoon: 'Upcoming',
+        expiring: 'Leaving soon'
+      },
+      sort: {
+        titleAsc: 'Title (ascending)',
+        titleDesc: 'Title (descending)',
+        yearDesc: 'Release year (newest first)',
+        yearAsc: 'Release year (oldest first)'
+      },
+      chips: {
+        provider: 'Provider',
+        year: 'Year',
+        quarter: 'Season',
+        status: 'Status',
+        badge: 'Badge',
+        relatedSeries: 'Related series',
+        search: 'Search'
       }
     }
   })

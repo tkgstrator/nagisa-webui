@@ -23,10 +23,10 @@ const adminLogsFormatContent = {
         fatal: 'FATAL'
       },
       recordingKindLabel: {
-        request: '予約送信',
+        request: '録画リクエスト',
         status: '状態照会',
         recorded: '録画完了',
-        notFound: '見つからない'
+        notFound: '見つかりません'
       },
       recordingSourceLabel: {
         ui: '画面',
@@ -38,8 +38,8 @@ const adminLogsFormatContent = {
         error: '失敗'
       },
       cronLabels: {
-        jobSync: '録画ジョブ追従',
-        librarySync: '録画台帳の差分',
+        jobSync: '録画ジョブ同期',
+        librarySync: '録画台帳の差分同期',
         hourly: '新着 / 配信予定',
         endingSoon: '配信終了間近',
         catalogFull: 'カタログ全件',
@@ -53,6 +53,58 @@ const adminLogsFormatContent = {
       duration: {
         seconds: insert('{{value}} 秒'),
         minutesSeconds: insert('{{minutes}} 分 {{seconds}} 秒')
+      }
+    },
+    en: {
+      runStatusLabel: {
+        running: 'Running',
+        success: 'Succeeded',
+        partial: 'Partially failed',
+        failed: 'Failed'
+      },
+      runKindLabel: {
+        cron: 'Scheduled',
+        queue: 'Queue',
+        manual: 'Manual'
+      },
+      logLevelLabel: {
+        debug: 'DEBUG',
+        info: 'INFO',
+        warning: 'WARN',
+        error: 'ERROR',
+        fatal: 'FATAL'
+      },
+      recordingKindLabel: {
+        request: 'Recording request',
+        status: 'Status check',
+        recorded: 'Recording completed',
+        notFound: 'Not found'
+      },
+      recordingSourceLabel: {
+        ui: 'UI',
+        webhook: 'webhook',
+        cron: 'cron'
+      },
+      recordingStatusLabel: {
+        ok: 'Succeeded',
+        error: 'Failed'
+      },
+      cronLabels: {
+        jobSync: 'Recording job sync',
+        librarySync: 'Recording library delta sync',
+        hourly: 'New / Upcoming',
+        endingSoon: 'Leaving soon',
+        catalogFull: 'Full catalog',
+        abemaKeyArchive: 'ABEMA key archive',
+        aniListSync: 'AniList sync'
+      },
+      day: {
+        today: 'Today',
+        yesterday: 'Yesterday'
+      },
+      duration: {
+        seconds: insert('{{value}} sec'),
+        minutesSeconds: insert('{{minutes}} min {{seconds}} sec')
       }
     }
   })
