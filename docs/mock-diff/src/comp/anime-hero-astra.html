@@ -27,9 +27,9 @@ TITLE: 作品ヒーロー
           <button class="btn" type="button">全話を録画済みにする</button>
           <button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button>
         </div>
-        <div class="progress-row">
+        <div class="hero-progress">
           <span class="lbl">録画</span>
-          <span class="strip"><span class="rec" style="width:33%"></span><span class="busy" style="width:8%"></span></span>
+          <span class="hero-strip"><span class="rec" style="width:33%"></span><span class="busy" style="width:8%"></span></span>
           <span class="val num">8 / 24</span>
         </div>
       </div>
@@ -54,7 +54,7 @@ TITLE: 作品ヒーロー
           </dl>
           <p class="id-syn is-clamp">沈んだ観測都市を舞台に、三度目の夏がめぐってきたとき少女は最初の記録を読み返す。</p>
           <div class="id-actions"><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全話録画済み</button><button class="btn" type="button">予約を解除</button></div>
-          <div class="progress-row"><span class="lbl">録画</span><span class="strip"><span class="rec" style="width:100%"></span></span><span class="val num">13 / 13</span></div>
+          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"><span class="rec" style="width:100%"></span></span><span class="val num">13 / 13</span></div>
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@ TITLE: 作品ヒーロー
           </dl>
           <p class="id-syn is-clamp">あらすじは配信開始後に取得されます。</p>
           <div class="id-actions"><button class="btn btn-primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>配信開始時に録画</button><button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
-          <div class="progress-row"><span class="lbl">録画</span><span class="strip"></span><span class="val num">0 / —</span></div>
+          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"></span><span class="val num">0 / —</span></div>
         </div>
       </div>
     </div>
@@ -90,7 +90,7 @@ TITLE: 作品ヒーロー
           </dl>
           <p class="id-syn is-clamp">落雷のたびに一度だけ時計が戻る町で、修理屋の主人は同じ朝を数えつづけている。</p>
           <div class="id-actions"><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>録画予約中</button><button class="btn btn-busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>再取得中</button></div>
-          <div class="progress-row"><span class="lbl">録画</span><span class="strip"><span class="rec" style="width:50%"></span><span class="fail" style="width:8.3%"></span></span><span class="val num">6 / 12</span></div>
+          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"><span class="rec" style="width:50%"></span><span class="fail" style="width:8.3%"></span></span><span class="val num">6 / 12</span></div>
         </div>
       </div>
     </div>
@@ -151,4 +151,27 @@ TITLE: 作品ヒーロー
     <div class="cat-item cat-full"><span class="cat-label is-key">3 行で畳む (既定)</span><p class="id-syn is-clamp">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録であり、同時に終わりの記録でもある物語。第 1 話は観測所の屋上から始まる。</p></div>
     <div class="cat-item cat-full"><span class="cat-label">展開後</span><p class="id-syn">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録であり、同時に終わりの記録でもある物語。第 1 話は観測所の屋上から始まる。</p></div>
   </div>
+</section>
+
+<section class="cat-sec">
+  <h2>詰めた操作列 <span class="cat-hint">.id-actions.is-compact</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">.id-actions.is-compact</span>
+<div class="id-actions is-compact">
+              <button class="btn" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                録画を予約
+              </button>
+              <button class="btn" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                今すぐ録画
+              </button>
+              <button class="btn btn-refresh" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+                再取得
+              </button>
+            </div>
+    </div>
+  </div>
+  <p class="cat-note">作品詳細 (決定稿) で使う、操作ボタンの列を詰める修飾。</p>
 </section>

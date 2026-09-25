@@ -266,6 +266,8 @@ svg { display: block; flex: none; }
 
 /* アニメカード (anime-card の .tile) をレールに載せるとき */.car-rail > .tile { flex: 0 0 176px; scroll-snap-align: start; }
 @media (max-width: 640px) { .car-rail > .tile { flex: 0 0 44%; }}
+
+/* レールの左右の逃げ (2px) を持たない版。親の端とタイルの端を揃えたいときに付ける。 */.car-wrap.is-flush .car-rail { padding: 4px 0 12px; margin: -4px 0 -8px; }
 </style>
 </head>
 <body>
@@ -376,9 +378,9 @@ svg { display: block; flex: none; }
         <div class="car-meta"><span class="no">第 7 話</span><span class="ttl">掃除機と禁呪</span><span class="time">21:00</span></div>
       </a>
     </div>
-    <div class="cat-item cat-w260" data-story="タイルの状態 / 新着追加"><span class="cat-label">新着追加</span>
+    <div class="cat-item cat-w260" data-story="タイルの状態 / 新規追加"><span class="cat-label">新規追加</span>
       <a class="car-tile is-solo" href="#">
-        <div class="car-thumb" style="--h:95"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg><span class="kana">放</span><span class="flag car-badge b-add">新着追加</span><span class="prov car-badge b-abema">ABEMA</span><span class="state">全 12 話</span></div>
+        <div class="car-thumb" style="--h:95"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg><span class="kana">放</span><span class="flag car-badge b-add">新規追加</span><span class="prov car-badge b-abema">ABEMA</span><span class="state">全 12 話</span></div>
         <p class="car-title">放課後クロノスタシス</p>
         <div class="car-meta"><span class="no">第 1 話</span><span class="ttl">停まった 3 秒</span><span class="time">本日</span></div>
       </a>
@@ -488,6 +490,49 @@ svg { display: block; flex: none; }
       </div>
     </div>
   </div>
+</section>
+
+<section class="cat-sec">
+  <h2>余白なし版 <span class="cat-hint">.car-wrap.is-flush</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="余白なし版 / .car-wrap.is-flush"><span class="cat-label">.car-wrap.is-flush</span>
+<div class="car-wrap is-flush">
+        <div class="car-rail">
+          <a class="car-tile" href="#">
+            <div class="car-thumb" style="--h:265"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">星</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">録画済み</span></div>
+            <p class="car-title">星降る夜のアストロノーツ</p>
+            <div class="car-meta"><span class="no">第 11 話</span><span class="ttl">軌道上の再会</span><span class="time">22:30</span></div>
+          </a>
+          <a class="car-tile" href="#">
+            <div class="car-thumb" style="--h:30"><svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3zM5 4v19"/></svg><span class="kana">魔</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-amazon">Prime Video</span><span class="state rec"><i></i>録画中</span></div>
+            <p class="car-title">転生したら魔王城の家政婦でした</p>
+            <div class="car-meta"><span class="no">第 7 話</span><span class="ttl">掃除機と禁呪</span><span class="time">21:00</span></div>
+          </a>
+          <a class="car-tile" href="#">
+            <div class="car-thumb" style="--h:210"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg><span class="kana">蒼</span><span class="flag car-badge b-new"><i></i>新着エピソード</span><span class="prov car-badge b-crunchyroll">Crunchyroll</span><span class="state">未録画</span></div>
+            <p class="car-title">蒼海のリヴァイアサン</p>
+            <div class="car-meta"><span class="no">第 12 話</span><span class="ttl">最終潜航</span><span class="time">20:00</span></div>
+          </a>
+          <a class="car-tile" href="#">
+            <div class="car-thumb" style="--h:340"><svg viewBox="0 0 24 24"><path d="M4 20V8h5v12M9 20v-6h6v6M15 20V4h5v16"/></svg><span class="kana">喫</span><span class="prov car-badge b-abema">ABEMA</span><span class="state">録画済み</span></div>
+            <p class="car-title">ぼっち喫茶のラテアート</p>
+            <div class="car-meta"><span class="no">第 9 話</span><span class="ttl">常連さんの正体</span><span class="time">12:00</span></div>
+          </a>
+          <a class="car-tile" href="#">
+            <div class="car-thumb" style="--h:150"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg><span class="kana">鋼</span><span class="prov car-badge b-hulu">Hulu</span><span class="state">未録画</span></div>
+            <p class="car-title">鋼鉄の花嫁と機械仕掛けの王国</p>
+            <div class="car-meta"><span class="no">第 4 話</span><span class="ttl">歯車の婚礼</span><span class="time">0:00</span></div>
+          </a>
+          <a class="car-tile" href="#">
+            <div class="car-thumb" style="--h:290"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg><span class="kana">月</span><span class="prov car-badge b-netflix">Netflix</span><span class="state">録画済み</span></div>
+            <p class="car-title">月光カルテット</p>
+            <div class="car-meta"><span class="no">第 8 話</span><span class="ttl">第二ヴァイオリン</span><span class="time">昨日</span></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タブの中など、外側が既に余白を持つ場所で使う。レールの上下余白を詰める。</p>
 </section>
 </main>
 </body>

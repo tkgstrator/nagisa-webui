@@ -242,6 +242,9 @@ svg { display: block; flex: none; }
 /* 実際の並び (6 カラム) */.grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px 16px; }
 @media (max-width: 640px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }}
+
+/* ステータスを一回り大きく (ドロワーの .drawer-status と同寸) 。一覧とドロワーで粒を揃えたいとき、親に付ける。 */.is-lg-status .status { height: 21px; padding: 0 8px; font-size: 11px; }
+.is-lg-status .status::before { width: 5px; height: 5px; }
 </style>
 </head>
 <body>
@@ -296,8 +299,8 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>バッジ別 <span class="cat-hint">右上・角を落とした帯</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w220" data-story="バッジ別 / 新着エピソード"><span class="cat-label">新着エピソード</span><a class="tile p-amazon" href="#" style="--h: 265"><div class="poster"><div class="art"><span class="kana">星降</span></div><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="prov">Prime Video</span><span class="ep">第 8 話</span></div><p class="title">星降る夜のアストロノーツ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a></div>
-    <div class="cat-item cat-w220" data-story="バッジ別 / 新着追加"><span class="cat-label">新着追加</span><a class="tile p-hulu" href="#" style="--h: 152"><div class="poster"><div class="art"><span class="kana">深海</span></div><span class="tag tag-added">追加</span><span class="prov">Hulu</span><span class="ep">全 12 話</span></div><p class="title">深海図書館のひととき</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div></a></div>
+    <div class="cat-item cat-w220" data-story="バッジ別 / 新着エピソード"><span class="cat-label">新着エピソード</span><a class="tile p-amazon" href="#" style="--h: 265"><div class="poster"><div class="art"><span class="kana">星降</span></div><span class="tag tag-new"><span class="pulse"></span>新着エピソード</span><span class="prov">Prime Video</span><span class="ep">第 8 話</span></div><p class="title">星降る夜のアストロノーツ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a></div>
+    <div class="cat-item cat-w220" data-story="バッジ別 / 新規追加"><span class="cat-label">新規追加</span><a class="tile p-hulu" href="#" style="--h: 152"><div class="poster"><div class="art"><span class="kana">深海</span></div><span class="tag tag-added">追加</span><span class="prov">Hulu</span><span class="ep">全 12 話</span></div><p class="title">深海図書館のひととき</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div></a></div>
     <div class="cat-item cat-w220" data-story="バッジ別 / 配信予定"><span class="cat-label">配信予定</span><a class="tile p-crunchyroll" href="#" style="--h: 95"><div class="poster"><div class="art"><span class="kana">白夜</span></div><span class="tag tag-soon">予定</span><span class="prov">Crunchyroll</span><span class="ep">7/10 配信</span></div><p class="title">白夜のカフェテラス</p><div class="meta"><span class="status s-not-yet">未放送</span><span class="season">2026 夏</span></div></a></div>
     <div class="cat-item cat-w220" data-story="バッジ別 / 配信終了予定"><span class="cat-label">配信終了予定</span><a class="tile p-netflix" href="#" style="--h: 20"><div class="poster"><div class="art"><span class="kana">紅蓮</span></div><span class="tag tag-exp">終了間近</span><span class="prov">Netflix</span><span class="ep">全 24 話</span></div><p class="title">紅蓮のヴァルキュリア 第2期</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a></div>
     <div class="cat-item cat-w220" data-story="バッジ別 / バッジなし"><span class="cat-label">バッジなし</span><a class="tile p-abema" href="#" style="--h: 130"><div class="poster"><div class="art"><span class="kana">空庭</span></div><span class="prov">ABEMA</span><span class="ep">第 7 話</span></div><p class="title">ぼくらの空中庭園</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a></div>
@@ -316,13 +319,30 @@ svg { display: block; flex: none; }
 <section class="cat-sec" data-story="グリッドに並べた状態">
   <h2>グリッドに並べた状態 <span class="cat-hint">desktop 6 カラム / mobile 2 カラム</span></h2>
   <div class="grid">
-    <a class="tile p-amazon" href="#" style="--h: 265"><div class="poster"><div class="art"><span class="kana">星降</span></div><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="prov">Prime Video</span><span class="ep">第 8 話</span></div><p class="title">星降る夜のアストロノーツ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+    <a class="tile p-amazon" href="#" style="--h: 265"><div class="poster"><div class="art"><span class="kana">星降</span></div><span class="tag tag-new"><span class="pulse"></span>新着エピソード</span><span class="prov">Prime Video</span><span class="ep">第 8 話</span></div><p class="title">星降る夜のアストロノーツ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
     <a class="tile p-crunchyroll" href="#" style="--h: 40"><div class="poster"><div class="art"><span class="kana">蒼剣</span></div><span class="prov">Crunchyroll</span><span class="ep">第 7 話</span></div><p class="title">蒼き剣と忘れられた王国</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
-    <a class="tile p-netflix" href="#" style="--h: 340"><div class="poster"><div class="art"><span class="kana">魔女</span></div><span class="tag tag-new"><span class="pulse"></span>新着</span><span class="prov">Netflix</span><span class="ep">第 8 話</span></div><p class="title">魔法少女は残業しない</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+    <a class="tile p-netflix" href="#" style="--h: 340"><div class="poster"><div class="art"><span class="kana">魔女</span></div><span class="tag tag-new"><span class="pulse"></span>新着エピソード</span><span class="prov">Netflix</span><span class="ep">第 8 話</span></div><p class="title">魔法少女は残業しない</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
     <a class="tile p-abema" href="#" style="--h: 130"><div class="poster"><div class="art"><span class="kana">空庭</span></div><span class="prov">ABEMA</span><span class="ep">第 7 話</span></div><p class="title">ぼくらの空中庭園</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
     <a class="tile p-hulu" href="#" style="--h: 152"><div class="poster"><div class="art"><span class="kana">深海</span></div><span class="tag tag-added">追加</span><span class="prov">Hulu</span><span class="ep">全 12 話</span></div><p class="title">深海図書館のひととき</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div></a>
     <a class="tile p-netflix" href="#" style="--h: 20"><div class="poster"><div class="art"><span class="kana">紅蓮</span></div><span class="tag tag-exp">終了間近</span><span class="prov">Netflix</span><span class="ep">全 24 話</span></div><p class="title">紅蓮のヴァルキュリア 第2期</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a>
   </div>
+</section>
+
+<section class="cat-sec">
+  <h2>大きめの状態バッジ <span class="cat-hint">.is-lg-status</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="大きめの状態バッジ / .grid.is-lg-status"><span class="cat-label">.grid.is-lg-status</span>
+<div class="grid is-lg-status">
+    <a class="tile p-amazon" href="#" style="--h: 265"><div class="poster"><div class="art"><span class="kana">星降</span></div><span class="tag tag-new"><span class="pulse"></span>新着エピソード</span><span class="prov">Prime Video</span><span class="ep">第 8 話</span></div><p class="title">星降る夜のアストロノーツ</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+    <a class="tile p-crunchyroll" href="#" style="--h: 40"><div class="poster"><div class="art"><span class="kana">蒼剣</span></div><span class="prov">Crunchyroll</span><span class="ep">第 7 話</span></div><p class="title">蒼き剣と忘れられた王国</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+    <a class="tile p-netflix" href="#" style="--h: 340"><div class="poster"><div class="art"><span class="kana">魔女</span></div><span class="tag tag-new"><span class="pulse"></span>新着エピソード</span><span class="prov">Netflix</span><span class="ep">第 8 話</span></div><p class="title">魔法少女は残業しない</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+    <a class="tile p-abema" href="#" style="--h: 130"><div class="poster"><div class="art"><span class="kana">空庭</span></div><span class="prov">ABEMA</span><span class="ep">第 7 話</span></div><p class="title">ぼくらの空中庭園</p><div class="meta"><span class="status s-releasing">放送中</span><span class="season">2026 春</span></div></a>
+    <a class="tile p-hulu" href="#" style="--h: 152"><div class="poster"><div class="art"><span class="kana">深海</span></div><span class="tag tag-added">追加</span><span class="prov">Hulu</span><span class="ep">全 12 話</span></div><p class="title">深海図書館のひととき</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 冬</span></div></a>
+    <a class="tile p-netflix" href="#" style="--h: 20"><div class="poster"><div class="art"><span class="kana">紅蓮</span></div><span class="tag tag-exp">終了間近</span><span class="prov">Netflix</span><span class="ep">全 24 話</span></div><p class="title">紅蓮のヴァルキュリア 第2期</p><div class="meta"><span class="status s-finished">完結</span><span class="season">2025 秋</span></div></a>
+  </div>
+    </div>
+  </div>
+  <p class="cat-note">一覧 (fable 案) で使う、状態バッジを一段大きくする修飾。</p>
 </section>
 </main>
 </body>

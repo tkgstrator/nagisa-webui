@@ -271,19 +271,20 @@ td.upd .abs { display: block; font-size: 11px; color: var(--muted-foreground); f
 .legend i.f { background: var(--destructive); }
 .legend i.p { box-shadow: inset 0 0 0 1px var(--border); }
 
-@media (max-width: 640px) {
-  .tbl th, .tbl td { padding: 9px 5px; }
-  .tbl .m-hide { display: none; }
-  .tbl col.c-chk { width: 30px; }
-  .tbl col.c-prov, .tbl col.c-stat, .tbl col.c-tot, .tbl col.c-upd { width: 0; }
-  .tbl col.c-rec { width: 40px; }
-  .tbl col.c-prog { width: 74px; }
-  .tbl col.c-act { width: 34px; }
-  .poster { width: 60px; }
-  .title-cell { gap: 8px; }
-  .pct { display: none; }
-  .unsch { padding: 0 6px; }
-  .unsch span { display: none; }}
+/* 列を畳む版。横スクロール版 (.tbl-wrap の中) には効かせない。
+   :where() で包んで特異度は素の .tbl / .poster のままにする。 */@media (max-width: 640px) {
+  .tbl:where(:not(.tbl-wrap *)) th, .tbl:where(:not(.tbl-wrap *)) td { padding: 9px 5px; }
+  .tbl:where(:not(.tbl-wrap *)) .m-hide { display: none; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-chk { width: 30px; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-prov, .tbl:where(:not(.tbl-wrap *)) col.c-stat, .tbl:where(:not(.tbl-wrap *)) col.c-tot, .tbl:where(:not(.tbl-wrap *)) col.c-upd { width: 0; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-rec { width: 40px; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-prog { width: 74px; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-act { width: 34px; }
+  .poster:where(:not(.tbl-wrap *)) { width: 60px; }
+  .title-cell:where(:not(.tbl-wrap *)) { gap: 8px; }
+  .pct:where(:not(.tbl-wrap *)) { display: none; }
+  .unsch:where(:not(.tbl-wrap *)) { padding: 0 6px; }
+  .unsch:where(:not(.tbl-wrap *)) span { display: none; }}
 
 /* ---------- 列の意味クラス ---------- *//* 幅は col.c-* が持つ。td 側は中身の見せ方だけを決める。 */.tbl col.c-title { width: auto; }
 .tbl col.c-exp { width: 96px; }
@@ -309,6 +310,26 @@ td.exp .days { display: block; font-size: 11px; }
 
 /* 狭い画面でだけ出す話数の内訳 */td.upd .m-num { display: none; }
 td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
+
+/* ポスター画像がある行。プレースホルダの模様とアイコンを消す。 */.poster.photo { background: var(--muted); background-size: cover; background-position: center; }
+.poster.photo::before, .poster.photo svg { display: none; }
+/* 画像が無い行。題名の頭文字を置く。 */.poster.na { background: var(--muted); }
+.poster.na::before { content: none; }
+.poster.na .init { font-size: 20px; font-weight: 600; line-height: 1; color: var(--muted-foreground); }
+
+.badge.done { background: var(--success); color: var(--success-foreground); }
+.badge.pending { background: var(--muted); color: var(--muted-foreground); }
+
+.legend i.w { background: var(--warning); }
+/* 未録画を罫線ではなく塗りで示す版。 */.legend.is-flat i.p { box-shadow: none; background: var(--border); }
+
+/* 横スクロール版。列を詰めずに desktop の並びのまま、表だけを横に流す。
+   通常版の 640px の列畳みは .tbl-wrap の中では打ち消す。 */.tbl-wrap { min-width: 0; }
+.tbl-wrap .tbl col.c-rec { width: 88px; }
+.tbl-wrap .tbl col.c-tot, .tbl-wrap .tbl col.c-prog { width: auto; }
+@media (max-width: 640px) {
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl-wrap .tbl { min-width: 860px; }}
 </style>
 </head>
 <body>
@@ -327,7 +348,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
           <tr>
             <th><span class="sr">選択</span></th>
             <th>作品</th>
-            <th class="m-hide">プロバイダ</th>
+            <th class="m-hide">配信元</th>
             <th class="m-hide">放送</th>
             <th class="r">録画</th>
             <th class="r m-hide">全話</th>
@@ -349,7 +370,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="a"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">67%</span></div></td>
               <td class="upd m-hide"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
             <tr class="row bad">
               <td><input type="checkbox" class="cb" aria-label="魔法少女は二度目の朝を迎える を選択"></td>
@@ -363,7 +384,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">13</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i></div><span class="pct">77%</span></div></td>
               <td class="upd m-hide"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
             <tr class="row done">
               <td><input type="checkbox" class="cb" aria-label="転生したら図書館の司書だった件 を選択"></td>
@@ -377,7 +398,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot m-hide">24</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct full">完了</span></div></td>
               <td class="upd m-hide"><span class="rel">昨日</span><span class="abs">9/17 02:12</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
             <tr class="row warn">
               <td><input type="checkbox" class="cb" aria-label="海辺のカフェテラス を選択"></td>
@@ -391,7 +412,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">58%</span></div></td>
               <td class="upd m-hide"><span class="rel">3 時間前</span><span class="abs">9/18 11:10</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
             <tr class="row idle">
               <td><input type="checkbox" class="cb" aria-label="銀河鉄道の車掌さん を選択"></td>
@@ -405,7 +426,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">0%</span></div></td>
               <td class="upd m-hide"><span class="rel">3 日前</span><span class="abs">9/15 10:02</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
     </table>
@@ -431,7 +452,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">0%</span></div></td>
               <td class="upd m-hide"><span class="rel">3 日前</span><span class="abs">9/15 10:02</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -451,7 +472,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="a"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">67%</span></div></td>
               <td class="upd m-hide"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -471,7 +492,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot m-hide">24</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct full">完了</span></div></td>
               <td class="upd m-hide"><span class="rel">昨日</span><span class="abs">9/17 02:12</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -491,7 +512,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">13</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i></div><span class="pct">77%</span></div></td>
               <td class="upd m-hide"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -511,7 +532,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">58%</span></div></td>
               <td class="upd m-hide"><span class="rel">3 時間前</span><span class="abs">9/18 11:10</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -531,7 +552,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">12</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="a"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">67%</span></div></td>
               <td class="upd m-hide"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -551,7 +572,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot open m-hide">13</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i></div><span class="pct">77%</span></div></td>
               <td class="upd m-hide"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -571,7 +592,7 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
               <td class="r tot m-hide">24</td>
               <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct full">完了</span></div></td>
               <td class="upd m-hide"><span class="rel">昨日</span><span class="abs">9/17 02:12</span></td>
-              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
             </tr>
         </tbody>
       </table>
@@ -581,13 +602,13 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
 </section>
 
 <section class="cat-sec">
-  <h2>プロバイダ</h2>
+  <h2>配信元</h2>
   <div class="cat-row">
-    <div class="cat-item is-key" data-story="プロバイダ / amazon"><span class="cat-label">amazon</span><span class="badge amazon">Prime Video</span></div>
-    <div class="cat-item" data-story="プロバイダ / hulu"><span class="cat-label">hulu</span><span class="badge hulu">Hulu</span></div>
-    <div class="cat-item" data-story="プロバイダ / crunchyroll"><span class="cat-label">crunchyroll</span><span class="badge crunchyroll">Crunchyroll</span></div>
-    <div class="cat-item" data-story="プロバイダ / abema"><span class="cat-label">abema</span><span class="badge abema">ABEMA</span></div>
-    <div class="cat-item" data-story="プロバイダ / netflix"><span class="cat-label">netflix</span><span class="badge netflix">Netflix</span></div>
+    <div class="cat-item is-key" data-story="配信元 / amazon"><span class="cat-label">amazon</span><span class="badge amazon">Prime Video</span></div>
+    <div class="cat-item" data-story="配信元 / hulu"><span class="cat-label">hulu</span><span class="badge hulu">Hulu</span></div>
+    <div class="cat-item" data-story="配信元 / crunchyroll"><span class="cat-label">crunchyroll</span><span class="badge crunchyroll">Crunchyroll</span></div>
+    <div class="cat-item" data-story="配信元 / abema"><span class="cat-label">abema</span><span class="badge abema">ABEMA</span></div>
+    <div class="cat-item" data-story="配信元 / netflix"><span class="cat-label">netflix</span><span class="badge netflix">Netflix</span></div>
   </div>
 </section>
 
@@ -626,6 +647,109 @@ td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
     </div>
   </div>
   <p class="cat-note">帯の色だけでは意味が伝わらないため、表の下に必ず凡例を置く。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>ページ用の修飾 <span class="cat-hint">.tbl-wrap / .legend.is-flat</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="ページ用の修飾 / .tbl-wrap (640px 以下で横スクロール)"><span class="cat-label">.tbl-wrap (640px 以下で横スクロール)</span>
+<div class="tbl-wrap" style="position:relative"><table class="tbl"><colgroup><col class="c-chk"><col><col class="c-prov"><col class="c-stat"><col class="c-rec"><col class="c-tot"><col class="c-prog"><col class="c-upd"><col class="c-act"></colgroup>
+        <thead>
+          <tr>
+            <th><span class="sr">選択</span></th>
+            <th>作品</th>
+            <th class="m-hide">配信元</th>
+            <th class="m-hide">放送</th>
+            <th class="r">録画</th>
+            <th class="r m-hide">全話</th>
+            <th>進捗</th>
+            <th class="m-hide" aria-sort="descending">最終更新<span class="arrow">↓</span></th>
+            <th><span class="sr">操作</span></th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr class="row busy">
+              <td><input type="checkbox" class="cb" aria-label="星降る夜のアストロノーツ を選択"></td>
+              <td><div class="title-cell">
+                <div class="poster" style="--hue:265" data-initial="星"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="ttl"><a class="name" href="#">星降る夜のアストロノーツ</a><div class="meta"><span class="sched">毎週木曜 25:00</span><span>2026年 夏</span><span class="fetch">第9話 取得中</span></div></div>
+              </div></td>
+              <td class="m-hide"><span class="badge crunchyroll">Crunchyroll</span></td>
+              <td class="m-hide"><span class="badge releasing">放送中</span></td>
+              <td class="r rec">8</td>
+              <td class="r tot open m-hide">12</td>
+              <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="a"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">67%</span></div></td>
+              <td class="upd m-hide"><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
+            </tr>
+            <tr class="row bad">
+              <td><input type="checkbox" class="cb" aria-label="魔法少女は二度目の朝を迎える を選択"></td>
+              <td><div class="title-cell">
+                <div class="poster" style="--hue:330" data-initial="魔"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="ttl"><a class="name" href="#">魔法少女は二度目の朝を迎える</a><div class="meta"><span class="sched">毎週金曜 24:00</span><span>2026年 夏</span><span class="fail">第7話 失敗 · DRM エラー</span></div></div>
+              </div></td>
+              <td class="m-hide"><span class="badge amazon">Prime Video</span></td>
+              <td class="m-hide"><span class="badge releasing">放送中</span></td>
+              <td class="r rec">10</td>
+              <td class="r tot open m-hide">13</td>
+              <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="f"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i></div><span class="pct">77%</span></div></td>
+              <td class="upd m-hide"><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
+            </tr>
+            <tr class="row done">
+              <td><input type="checkbox" class="cb" aria-label="転生したら図書館の司書だった件 を選択"></td>
+              <td><div class="title-cell">
+                <div class="poster" style="--hue:100" data-initial="転"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="ttl"><a class="name" href="#">転生したら図書館の司書だった件</a><div class="meta"><span>2026年 春</span><span>2クール</span></div></div>
+              </div></td>
+              <td class="m-hide"><span class="badge netflix">Netflix</span></td>
+              <td class="m-hide"><span class="badge finished">完結</span></td>
+              <td class="r rec">24</td>
+              <td class="r tot m-hide">24</td>
+              <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></div><span class="pct full">完了</span></div></td>
+              <td class="upd m-hide"><span class="rel">昨日</span><span class="abs">9/17 02:12</span></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
+            </tr>
+            <tr class="row warn">
+              <td><input type="checkbox" class="cb" aria-label="海辺のカフェテラス を選択"></td>
+              <td><div class="title-cell">
+                <div class="poster" style="--hue:180" data-initial="海"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="ttl"><a class="name" href="#">海辺のカフェテラス</a><div class="meta"><span class="sched">毎週水曜 22:00</span><span>2026年 夏</span><span class="badge expiring">9/30 配信終了</span></div></div>
+              </div></td>
+              <td class="m-hide"><span class="badge abema">ABEMA</span></td>
+              <td class="m-hide"><span class="badge releasing">放送中</span></td>
+              <td class="r rec">7</td>
+              <td class="r tot open m-hide">12</td>
+              <td><div class="strip"><div class="eps"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">58%</span></div></td>
+              <td class="upd m-hide"><span class="rel">3 時間前</span><span class="abs">9/18 11:10</span></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
+            </tr>
+            <tr class="row idle">
+              <td><input type="checkbox" class="cb" aria-label="銀河鉄道の車掌さん を選択"></td>
+              <td><div class="title-cell">
+                <div class="poster" style="--hue:290" data-initial="銀"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="ttl"><a class="name" href="#">銀河鉄道の車掌さん</a><div class="meta"><span class="sched">毎週日曜 23:00</span><span>2026年 秋</span><span>初回 9/20 配信</span></div></div>
+              </div></td>
+              <td class="m-hide"><span class="badge crunchyroll">Crunchyroll</span></td>
+              <td class="m-hide"><span class="badge not-yet">未放送</span></td>
+              <td class="r rec">0</td>
+              <td class="r tot open m-hide">12</td>
+              <td><div class="strip"><div class="eps"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div><span class="pct">0%</span></div></td>
+              <td class="upd m-hide"><span class="rel">3 日前</span><span class="abs">9/15 10:02</span></td>
+              <td><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
+            </tr>
+        </tbody>
+    </table></div>
+    </div>
+    <div class="cat-item cat-full is-key" data-story="ページ用の修飾 / .legend.is-flat"><span class="cat-label">.legend.is-flat</span>
+<div class="legend is-flat" aria-label="行頭の色の凡例">
+          <span><i class="r"></i>録画済み</span>
+          <span><i class="w"></i>配信終了予定</span>
+          <span><i class="p"></i>未録画</span>
+        </div>
+    </div>
+  </div>
+  <p class="cat-note"><code>.tbl-wrap</code> の中では 640px 以下の列畳みを打ち消し、代わりに表ごと横スクロールさせる。</p>
 </section>
 </main>
 </body>

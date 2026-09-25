@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>実行詳細（同期ログ） — astra 案 | Nagisa WebUI モック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- page skeleton (astra) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   astra はサイドバー (app-header の .side) と本文の 2 ペイン構成。 */
+
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  flex: 1;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 26px 36px 46px;
+}
+.pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .06s; }
+.pg > *:nth-child(3) { animation-delay: .12s; }
+.pg > *:nth-child(4) { animation-delay: .18s; }
+.pg > *:nth-child(5) { animation-delay: .24s; }
+.pg > *:nth-child(6) { animation-delay: .3s; }
+.pg > *:nth-child(7) { animation-delay: .36s; }
+.pg-narrow { max-width: 1060px; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 600; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- page body ---------- */
+/* ヒーローの直下から始まる本文。セクションより詰める。 */
+.pg-body { margin-top: 22px; }
+
+/* ---------- section ---------- */
+.pg-sec { margin-top: 36px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.pg-sec-title { font-size: 16px; font-weight: 700; }
+.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ---------- sidebar filter slot ---------- */
+/* astra はフィルタをサイドバー内に差す。中身は browse-filters が持つ。 */
+.pg-side-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 32px; }
+  .pg-title { font-size: 20px; }
+  .pg-sec { margin-top: 28px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- stat / field グリッド ---------- */
+/* admin-logs のサマリ / admin-abema / admin-status で共用する数値タイル列。
+   列数を固定せず、幅で自動的に折り返す (2〜4 枚のどれでも使い回せる)。 */
+.pg-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+@media (max-width: 640px) {
+  .pg-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+}
+
+/* ---------- notice ---------- */
+/* 1 行の状態メッセージ (pending / error / stale 警告)。tone-palette と組み合わせる。 */
+.pg-notice { padding: 10px 14px; border-left: 3px solid var(--tone-dot, var(--border)); border-radius: 0 8px 8px 0; font-size: 12.5px; color: var(--foreground); background: var(--background); }
+
+/* ---------- form ---------- */
+/* admin-recorder のジョブ投入フォーム。 */
+.pg-form { display: flex; flex-direction: column; gap: 18px; max-width: 580px; }
+.pg-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pg-form-hint { font-size: 11.5px; color: var(--muted-foreground); }
+.pg-form-check { display: flex; align-items: flex-start; gap: 8px; }
+.pg-form-check .pg-form-hint { margin-top: 2px; }
+.pg-form-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* 素の <select> を a-field と同じ見た目に揃える (原子には select 版が無いため)。 */
+.pg-select { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); }
+.pg-select:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
+.pg-select select { flex: 1; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; font: inherit; color: inherit; appearance: none; }
+.pg-select svg { flex: none; width: 16px; height: 16px; color: var(--muted-foreground); }
+
+/* JSON プレビュー / レスポンス表示。 */
+.pg-pre { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; line-height: 1.6; overflow-x: auto; color: var(--foreground); white-space: pre-wrap; word-break: break-all; }
+.pg-pre.pg-pre-err { background: color-mix(in oklch, var(--destructive) 8%, transparent); color: var(--destructive); }
+
+/* ジョブ投入結果の 1 件分プレビュー。 */
+.pg-result { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-left: 3px solid var(--success); border-radius: 0 8px 8px 0; background: var(--background); }
+.pg-result .pg-result-title { font-size: 13px; font-weight: 700; }
+.pg-result .pg-result-sub { font-size: 11.5px; color: var(--muted-foreground); }
+
+@media (max-width: 640px) {
+  .pg-form-row { grid-template-columns: 1fr; }
+}
+
+/* ---------- table ---------- */
+/* admin-logs / admin-log-detail / admin-status の表。既存の原子には表が無いため
+   ページ骨格側に足す。数値は base.css の .num、トーン付け用の左罫は tone-palette
+   の --tone-dot を tr から子の td へ継承させて出す。 */
+.pg-tbl-wrap { width: 100%; }
+.pg-tbl { width: 100%; border-collapse: collapse; }
+.pg-tbl th { text-align: left; padding: 8px 10px; font-size: 11px; font-weight: 700; color: var(--muted-foreground); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.pg-tbl td { padding: 10px; border-bottom: 1px solid var(--border); font-size: 12.5px; vertical-align: top; }
+.pg-tbl th:first-child, .pg-tbl td:first-child { padding-left: 14px; }
+.pg-tbl tbody tr:last-child td { border-bottom: 0; }
+.pg-tbl tbody tr:hover td { background: var(--muted); }
+.pg-tbl .pg-r { text-align: right; }
+.pg-tbl tr.pg-tone td:first-child { box-shadow: inset 3px 0 0 0 var(--tone-dot); }
+.pg-tbl-sub { display: block; margin-top: 2px; font-size: 11px; color: var(--muted-foreground); }
+.pg-tbl-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+.pg-tbl details > summary { cursor: pointer; font-size: 11px; color: var(--muted-foreground); list-style: none; }
+.pg-tbl details > summary::-webkit-details-marker { display: none; }
+.pg-tbl details[open] > summary { color: var(--foreground); }
+@media (max-width: 640px) {
+  .pg-tbl th, .pg-tbl td { padding: 8px 6px; font-size: 11.5px; }
+  .pg-tbl th:first-child, .pg-tbl td:first-child { padding-left: 10px; }
+  .pg-hide-sm { display: none; }
+}
+
+/* ---------- 汎用リンク / 空状態 / 見出し補助 ---------- */
+.pg-link { color: var(--primary); font-weight: 600; }
+.pg-link:hover { text-decoration: underline; }
+.pg-back { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted-foreground); font-weight: 500; margin-bottom: 14px; }
+.pg-back:hover { color: var(--foreground); }
+.pg-back svg { width: 14px; height: 14px; }
+.pg-empty { padding: 40px 0; text-align: center; font-size: 13px; color: var(--muted-foreground); border: 1px dashed var(--border); border-radius: 12px; }
+
+/* label + value の 1 行 (run 詳細のメタ情報など)。 */
+.pg-row { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.pg-row:last-child { border-bottom: 0; }
+.pg-row-label { font-size: 12px; color: var(--muted-foreground); flex: none; }
+.pg-row-value { font-size: 13px; }
+@media (min-width: 640px) {
+  .pg-row { flex-direction: row; align-items: baseline; gap: 16px; }
+  .pg-row-label { width: 130px; }
+  .pg-row-value { flex: 1; min-width: 0; }
+}
+
+/* ---------- changelog ---------- */
+.pg-cl-group + .pg-cl-group { margin-top: 30px; }
+.pg-cl-date { font-size: 13px; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.pg-cl-list { display: flex; flex-direction: column; }
+.pg-cl-item { display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.pg-cl-item:last-child { border-bottom: 0; }
+.pg-cl-hash { flex: none; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--muted-foreground); background: var(--muted); padding: 2px 6px; border-radius: 4px; }
+.pg-cl-msg { min-width: 0; }
+
+/* ---------- unidentified: 絞り込みバー + ポスターグリッド ---------- */
+.pg-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.pg-toolbar-l, .pg-toolbar-r { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pg-poster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.pg-poster { display: flex; flex-direction: column; gap: 6px; }
+.pg-poster-thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: var(--muted); display: flex; align-items: center; justify-content: center; color: var(--muted-foreground); }
+.pg-poster-thumb svg { width: 22px; height: 22px; }
+.pg-poster-title { font-size: 12.5px; font-weight: 600; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pg-poster-meta { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--muted-foreground); flex-wrap: wrap; }
+.pg-poster-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+@media (max-width: 640px) {
+  .pg-poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- abema: 下部アクションバー ---------- */
+.pg-bottombar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); }
+.pg-bottombar-note { font-size: 11.5px; color: var(--muted-foreground); }
+/* ---------- component: app-header ---------- */
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.6); } }
+
+.side {
+  width: 236px; flex: 0 0 236px;
+  background: var(--sidebar); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 18px 14px 16px;
+}
+.side.is-tall { min-height: 420px; }
+.side-top { display: flex; align-items: center; gap: 2px; }
+.side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
+/* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
+.side-top .side-brand { min-width: 0; flex: 1; }
+.side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
+.side-logo svg { width: 13px; height: 13px; }
+
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 0 8px 8px 0; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
+.side-nav a svg { width: 16px; height: 16px; }
+.side-nav a:hover { background: var(--muted); color: var(--foreground); }
+.side-nav a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-left-color: var(--primary); font-weight: 600; }
+.side-count { margin-left: auto; font-size: 10px; background: var(--secondary); color: var(--secondary-foreground); border-radius: 999px; padding: 1px 6px; }
+.side-count.is-alert { background: color-mix(in oklch, var(--primary) 20%, transparent); color: var(--accent-foreground); }
+.side-nav.is-solo { width: 208px; }
+
+.side-widget { border-top: 1px solid var(--border); padding-top: 14px; }
+.side-widget h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 8px; font-weight: 600; }
+.side-stat { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
+.side-stat:hover { background: var(--muted); }
+.side-stat .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.side-stat .v { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.side-stat.d-new .dot { background: var(--info); }
+.side-stat.d-rec .dot { background: var(--warning); }
+.side-stat.d-err .dot { background: var(--destructive); }
+.side-stat.d-watch .dot { background: var(--success); }
+
+.side-search { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin: 0 2px; border-radius: 8px; border: 1px solid var(--input); background: var(--background); color: var(--muted-foreground); font-size: 12.5px; transition: border-color .15s, box-shadow .15s; }
+.side-search svg { width: 13px; height: 13px; flex: none; }
+.side-search:hover { border-color: var(--ring); }
+.side-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
+.side-search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+
+.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.side-status.is-checking i { background: var(--warning); }
+.side-status.is-down { color: var(--destructive); }
+.side-status.is-down i { background: var(--destructive); animation: none; }
+
+/* mobile: サイドバーを畳んで上端の横並びバーにする */
+.side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
+.side.is-mobile .side-brand { padding: 0; font-size: 14px; }
+.side.is-mobile .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+.side.is-mobile .side-nav a { padding: 7px; border-left: 0; border-radius: 8px; }
+.side.is-mobile .side-nav a span, .side.is-mobile .side-nav a { font-size: 0; }
+.side.is-mobile .side-nav a svg { width: 18px; height: 18px; }
+.side.is-mobile .side-nav a[aria-current="page"] { background: var(--accent); }
+
+@media (max-width: 640px) {
+  .side, .side.is-tall { width: 100%; flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-brand { padding: 0; font-size: 14px; }
+  .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+  .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
+  .side-nav a svg { width: 18px; height: 18px; }
+  .side-count, .side-widget, .side-status, .side-search { display: none; }
+  .side.is-mobile { width: 100%; }
+}
+
+/* ---------- sidebar: 放送スケジュール ---------- */
+/* side-widget の中に敷く行。放送中の回だけ左罫と背景が付く。 */
+.side-sched-row { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px; border-left: 3px solid transparent; border-radius: 0 7px 7px 0; }
+.side-sched-row.now { border-left-color: var(--primary); background: var(--accent); }
+.side-sched-row .k { font-size: 11.5px; color: var(--muted-foreground); }
+.side-sched-row .v { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 数値の性質で左罫と値の見え方を変える (成功 / 失敗) */
+.side-stat.ok { border-left-color: var(--success); }
+.side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
+.side-stat.err { border-left-color: var(--destructive); }
+.side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
+
+/* ---------- 常設版 (.side.is-sticky) ---------- */
+/* 常にブラウザの縦幅ぴったりで表示する。align-self がないと .pg-shell の
+   stretch でメイン側と同じ高さまで伸びてしまい、height: 100vh + sticky が効かない。
+   左罫を持つ行 (ナビ / 件数 / 放送予定) は角丸を右側だけに揃える。 */
+.side.is-sticky {
+  transition: width .18s ease, flex-basis .18s ease;
+  position: sticky; top: 0; align-self: flex-start;
+  height: 100vh; overflow-y: auto;
+}
+.side.is-sticky .side-stat, .side.is-sticky .side-sched-row { border-radius: 0 8px 8px 0; }
+.side.is-sticky .side-stat { border-left: 3px solid transparent; }
+@media (max-width: 640px) {
+  .side.is-sticky { height: auto; overflow-y: visible; }
+  .side.is-sticky .side-nav a { border-radius: 8px; }
+}
+/* ---------- component: tone-palette ---------- */
+.tone-success { --tone-bg: var(--success); --tone-fg: var(--success-foreground); --tone-border: color-mix(in oklch, var(--success) 45%, var(--border)); --tone-dot: var(--success); --tone-soft: color-mix(in oklch, var(--success) 14%, var(--background)); --tone-ink: color-mix(in oklch, var(--success) 35%, var(--foreground)); }
+.tone-info { --tone-bg: var(--info); --tone-fg: var(--info-foreground); --tone-border: color-mix(in oklch, var(--info) 45%, var(--border)); --tone-dot: var(--info); --tone-soft: color-mix(in oklch, var(--info) 14%, var(--background)); --tone-ink: color-mix(in oklch, var(--info) 35%, var(--foreground)); }
+.tone-warning { --tone-bg: var(--warning); --tone-fg: var(--warning-foreground); --tone-border: color-mix(in oklch, var(--warning) 45%, var(--border)); --tone-dot: var(--warning); --tone-soft: color-mix(in oklch, var(--warning) 14%, var(--background)); --tone-ink: color-mix(in oklch, var(--warning) 35%, var(--foreground)); }
+.tone-destructive { --tone-bg: var(--destructive); --tone-fg: var(--destructive-foreground); --tone-border: color-mix(in oklch, var(--destructive) 45%, var(--border)); --tone-dot: var(--destructive); --tone-soft: color-mix(in oklch, var(--destructive) 14%, var(--background)); --tone-ink: color-mix(in oklch, var(--destructive) 35%, var(--foreground)); }
+.tone-muted { --tone-bg: var(--muted); --tone-fg: var(--muted-foreground); --tone-border: color-mix(in oklch, var(--muted-foreground) 45%, var(--border)); --tone-dot: var(--muted-foreground); --tone-soft: color-mix(in oklch, var(--muted) 14%, var(--background)); --tone-ink: color-mix(in oklch, var(--muted-foreground) 35%, var(--foreground)); }
+.tone-primary { --tone-bg: var(--primary); --tone-fg: var(--primary-foreground); --tone-border: color-mix(in oklch, var(--primary) 45%, var(--border)); --tone-dot: var(--primary); --tone-soft: color-mix(in oklch, var(--primary) 14%, var(--background)); --tone-ink: color-mix(in oklch, var(--primary) 35%, var(--foreground)); }
+.tone-primary { --tone-soft: var(--accent); --tone-ink: var(--accent-foreground); }
+.tone-muted { --tone-border: var(--border); --tone-soft: var(--muted); --tone-ink: var(--muted-foreground); }
+/* ---------- component: stat-tile ---------- */
+.a-stat { width: 100%; min-width: 0; background: var(--background); display: flex; flex-direction: column; gap: 2px; padding: 2px 8px 2px 14px; border-left: 3px solid var(--tone-dot); border-radius: 0 8px 8px 0; }
+.a-stat:hover, .a-stat.is-hover { background: var(--muted); }
+.a-stat .a-label, .a-stat .a-note { font-size: 12px; color: var(--muted-foreground); }
+.a-stat .a-value { font-size: 28px; line-height: 1.1; letter-spacing: -.02em; font-weight: 700; }
+.a-stat small { font-size: 13px; font-weight: 500; color: var(--muted-foreground); margin-left: 4px; }
+.a-stat.a-zero { border-left-color: var(--border); } .a-stat.a-zero .a-value { color: var(--muted-foreground); font-weight: 600; }
+@media (max-width: 639px) { .a-stat .a-value { font-size: 24px; } }
+
+:where(.a-stat) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-stat):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+/* ---------- component: status-dot ---------- */
+.a-dot { display: inline-block; flex: none; width: 7px; height: 7px; border-radius: 999px; background: var(--tone-dot); }
+.a-dot.a-sm { width: 5px; height: 5px; } .a-dot.a-lg { width: 10px; height: 10px; }
+.a-dot.a-pulse { animation: astraAtomPulse 1.6s ease-in-out infinite; }
+
+:where(.a-dot) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-dot):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+@keyframes astraAtomPulse { 50% { opacity: .35; transform: scale(.8); } }
+@media (prefers-reduced-motion: reduce) { .a-dot.a-pulse { animation: none; } }
+/* ---------- component: status-badge ---------- */
+.a-badge { display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; height: 24px; border: 1px solid transparent; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--tone-soft); color: var(--tone-ink); }
+.a-badge.a-sm { height: 20px; padding: 0 7px; font-size: 11px; } .a-badge.a-lg { height: 28px; padding: 0 11px; font-size: 13px; }
+.a-badge.a-solid { background: var(--tone-bg); color: var(--tone-fg); } .a-badge.a-outline { background: transparent; border-color: var(--tone-border); color: var(--tone-ink); }
+
+:where(.a-badge) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-badge):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+/* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
+.ftr {
+  padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted-foreground);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.ftr .r { display: inline-flex; align-items: center; gap: 14px; }
+.ftr a { transition: color .12s; }
+.ftr a:hover { color: var(--foreground); }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
+.ftr .dot.is-down { background: var(--destructive); }
+/* 画面下端に常時固定する版。左端は常設サイドバー (236px) の右から。
+   高さ 44px は決定稿骨格の .pg の下余白 90px (= 46 + 44) と対になっている。 */
+.ftr.is-fixed {
+  position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
+  padding: 0 36px; background: var(--background); flex-wrap: nowrap;
+}
+@media (max-width: 640px) {
+  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr .r { gap: 12px; }
+  .ftr.is-fixed { left: 0; padding: 0 16px; gap: 10px; flex-direction: row; align-items: center; }
+}
+</style>
+</head>
+<body>
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg pg-narrow">
+      <a class="pg-back" href="#admin-logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>同期ログ</a>
+
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">管理 · 同期ログ · <b>実行詳細</b></p>
+          <h1 class="pg-title">録画ジョブ同期 <span class="a-badge tone-success a-sm">成功</span></h1>
+          <p class="pg-sub">Schedule · 2026-09-25 14:17:32 (3 分前)</p>
+        </div>
+      </div>
+
+      <div class="pg-body">
+        <section class="pg-stat-grid" aria-label="件数">
+          <div class="a-stat tone-primary">
+            <span class="a-label">対象</span>
+            <span class="a-value num">12<small>件</small></span>
+            <span class="a-note">この実行が扱った件数</span>
+          </div>
+          <div class="a-stat tone-success">
+            <span class="a-label">成功</span>
+            <span class="a-value num">12<small>件</small></span>
+            <span class="a-note">正常に処理できた件数</span>
+          </div>
+          <div class="a-stat tone-destructive">
+            <span class="a-label">失敗</span>
+            <span class="a-value num">0<small>件</small></span>
+            <span class="a-note">エラーで処理に失敗した件数</span>
+          </div>
+          <div class="a-stat tone-warning">
+            <span class="a-label">再試行</span>
+            <span class="a-value num">1<small>件</small></span>
+            <span class="a-note">キューへ戻した件数</span>
+          </div>
+        </section>
+
+        <div class="pg-sec" aria-label="実行の詳細">
+          <div class="pg-row">
+            <span class="pg-row-label">ID</span>
+            <span class="pg-row-value pg-tbl-mono">job_run_9c21f7a4e8b0</span>
+          </div>
+          <div class="pg-row">
+            <span class="pg-row-label">トリガー</span>
+            <span class="pg-row-value pg-tbl-mono">job-sync</span>
+          </div>
+          <div class="pg-row">
+            <span class="pg-row-label">所要時間</span>
+            <span class="pg-row-value num">1.4 秒</span>
+          </div>
+          <div class="pg-row">
+            <span class="pg-row-label">終了</span>
+            <span class="pg-row-value">2026-09-25 14:17:33</span>
+          </div>
+          <div class="pg-row">
+            <span class="pg-row-label">作品</span>
+            <span class="pg-row-value num">新規 2 件 · 更新 10 件</span>
+          </div>
+          <div class="pg-row">
+            <span class="pg-row-label">メタデータ</span>
+            <span class="pg-row-value"><pre class="pg-pre">{
+  "seasons_checked": 42,
+  "queue_batches": 3
+}</pre></span>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title num">子実行 (2 件)</p></div>
+          <div class="pg-tbl-wrap">
+            <table class="pg-tbl">
+              <thead>
+                <tr>
+                  <th scope="col">開始</th>
+                  <th scope="col">種別</th>
+                  <th scope="col">トリガー</th>
+                  <th scope="col">状態</th>
+                  <th scope="col" class="pg-r">対象</th>
+                  <th scope="col" class="pg-r">成功</th>
+                  <th scope="col" class="pg-r">失敗</th>
+                  <th scope="col" class="pg-r">所要時間</th>
+                  <th scope="col" class="pg-r">詳細</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="pg-tone tone-success">
+                  <td><div>2 分前</div><span class="pg-tbl-sub">2026-09-25 14:17:34</span></td>
+                  <td>Queue</td>
+                  <td>queue:recording-jobs:1</td>
+                  <td><span class="a-badge tone-success a-sm">成功</span></td>
+                  <td class="pg-r num">6</td>
+                  <td class="pg-r num">6</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num">640 ms</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><div>1 分前</div><span class="pg-tbl-sub">2026-09-25 14:18:05</span></td>
+                  <td>Queue</td>
+                  <td>queue:recording-jobs:2</td>
+                  <td><span class="a-badge tone-success a-sm">成功</span></td>
+                  <td class="pg-r num">6</td>
+                  <td class="pg-r num">6</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num">710 ms</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title num">ログ (4 件)</p></div>
+          <div class="pg-tbl-wrap">
+            <table class="pg-tbl">
+              <thead>
+                <tr>
+                  <th scope="col">時刻</th>
+                  <th scope="col">レベル</th>
+                  <th scope="col">カテゴリ</th>
+                  <th scope="col">アクション</th>
+                  <th scope="col">内容</th>
+                  <th scope="col">実行</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div>14:17:32</div><span class="pg-tbl-sub">今日</span></td>
+                  <td><span class="a-badge tone-muted a-sm">INFO</span></td>
+                  <td class="pg-tbl-mono">sync</td>
+                  <td class="pg-tbl-mono">job-sync.start</td>
+                  <td>録画ジョブ同期を開始しました (対象 12 件)</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><div>14:17:33</div><span class="pg-tbl-sub">今日</span></td>
+                  <td><span class="a-badge tone-muted a-sm">INFO</span></td>
+                  <td class="pg-tbl-mono">queue</td>
+                  <td class="pg-tbl-mono">enqueue</td>
+                  <td>3 件のキューバッチを投入しました</td>
+                  <td>—</td>
+                </tr>
+                <tr class="pg-tone tone-warning">
+                  <td><div>14:18:02</div><span class="pg-tbl-sub">今日</span></td>
+                  <td><span class="a-badge tone-warning a-sm">WARN</span></td>
+                  <td class="pg-tbl-mono">provider</td>
+                  <td class="pg-tbl-mono">fetch.retry</td>
+                  <td>
+                    Crunchyroll への問い合わせを再試行しました (1 回目)
+                    <details><summary>props</summary><pre class="pg-pre">{
+  "attempt": 1,
+  "provider": "crunchyroll"
+}</pre></details>
+                  </td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><div>14:18:41</div><span class="pg-tbl-sub">今日</span></td>
+                  <td><span class="a-badge tone-muted a-sm">INFO</span></td>
+                  <td class="pg-tbl-mono">sync</td>
+                  <td class="pg-tbl-mono">job-sync.finish</td>
+                  <td>録画ジョブ同期が完了しました (成功 12 / 失敗 0)</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.9.1<span class="sha">062b7a7</span>2026/09/25 14:20</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a href="#admin">管理</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

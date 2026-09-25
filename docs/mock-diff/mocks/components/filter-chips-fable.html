@@ -166,6 +166,7 @@ svg { display: block; flex: none; }
 /* ---------- active filter chips ---------- */.active { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
 .active .lbl { color: var(--muted-foreground); }
 .active .hits { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+/* 実装の sm:hidden 相当。絞り込み無しのときはデスクトップ幅で行ごと消え、モバイルでは開き口だけ残る。 */.active.is-mobile-only { display: none; }
 
 .achip {
   display: inline-flex; align-items: center; gap: 4px;
@@ -196,6 +197,68 @@ svg { display: block; flex: none; }
 
 @media (max-width: 640px) {
   .active .hits { margin-left: 0; width: 100%; }}
+
+/* ---------- モバイルの絞り込みシート ---------- *//* 開閉は #fsheet チェックボックスで持つ。パネル側 (.fsheet) はページのサイドバーの絞り込み枠に併記する。
+   デスクトップではサイドバーに絞り込みが常設されているので、開き口も閉じるボタンも要らない。 */.filter-btn {
+  display: none; align-items: center; gap: 5px;
+  height: 24px; padding: 0 9px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--background); color: var(--foreground);
+  font-size: 12px; cursor: pointer;
+}
+.filter-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.filter-btn .n {
+  font-size: 11px; font-variant-numeric: tabular-nums;
+  color: var(--primary-foreground); background: var(--primary);
+  border-radius: 999px; padding: 0 5px;
+}
+body:has(#fsheet:focus-visible) .filter-btn, body:has(#fsheet.is-focus) .filter-btn { box-shadow: 0 0 0 2px var(--ring); }
+.fsheet-scrim, .fsheet-head { display: none; }
+
+@media (max-width: 640px) {
+  /* 開き口は「絞り込み」ボタンひとつ。適用中の行 (.achip) は引き続き「外す」だけを担う。 */.filter-btn { display: inline-flex; }
+  .active.is-mobile-only { display: flex; }
+  .fsheet-head { display: flex; }
+  .fsheet {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    max-height: 76vh; overflow-y: auto;
+    border-top: 1px solid var(--border);
+    border-radius: 14px 14px 0 0;
+    background: var(--sidebar);
+    box-shadow: 0 -12px 32px -12px var(--overlay);
+    padding: 0 8px 18px;
+    gap: 14px;
+    transform: translateY(101%);
+    visibility: hidden;
+    transition: transform .22s cubic-bezier(.16, 1, .3, 1), visibility 0s .22s;
+  }
+  body:has(#fsheet:checked) .fsheet {
+    transform: none;
+    visibility: visible;
+    transition: transform .22s cubic-bezier(.16, 1, .3, 1), visibility 0s;
+  }
+  .fsheet-head {
+    position: sticky; top: 0; z-index: 1;
+    align-items: center; gap: 8px;
+    margin: 0 -8px; padding: 12px 18px 10px;
+    background: var(--sidebar);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 700;
+  }
+  .fsheet-x {
+    margin-left: auto; width: 26px; height: 26px;
+    display: grid; place-items: center; border-radius: 7px;
+    color: var(--muted-foreground); cursor: pointer;
+  }
+  .fsheet-x:hover, .fsheet-x.is-hover { background: var(--muted); color: var(--foreground); }
+  .fsheet-x svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .fsheet-scrim {
+    display: block; position: fixed; inset: 0; z-index: 39;
+    background: var(--overlay);
+    opacity: 0; pointer-events: none;
+    transition: opacity .22s;
+  }
+  body:has(#fsheet:checked) .fsheet-scrim { opacity: 1; pointer-events: auto; }}
 </style>
 </head>
 <body>

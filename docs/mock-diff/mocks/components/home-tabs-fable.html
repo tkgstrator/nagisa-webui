@@ -230,6 +230,17 @@ svg { display: block; flex: none; }
   .tabs { gap: 0; }
   .tab { padding: 0 10px; font-size: 13.5px; }
   .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+
+/* ---------- radio で切り替える版 (.tabs-wrap.is-radio) ---------- *//* .tab の中に input.sr[type=radio] を入れ、選ばれた n 番目のタブに対応する n 番目の .panel だけを出す。
+   .tabs-wrap の子は .tabs, .panel, .panel ... の順なので、パネルは nth-child(n + 1)。実装側は state で出し分けてよい。 */.tabs-wrap.is-radio .tab:has(.sr:checked) { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+.tabs-wrap.is-radio .tab:has(.sr:checked):hover, .tabs-wrap.is-radio .tab:has(.sr:checked).is-hover { background: none; }
+.tabs-wrap.is-radio .tab:has(.sr:checked) .c { color: var(--primary); font-weight: 600; }
+.tabs-wrap.is-radio > .panel { display: none; }
+.tabs-wrap.is-radio:has(.tab:nth-child(1) .sr:checked) > .panel:nth-child(2), .tabs-wrap.is-radio:has(.tab:nth-child(2) .sr:checked) > .panel:nth-child(3), .tabs-wrap.is-radio:has(.tab:nth-child(3) .sr:checked) > .panel:nth-child(4), .tabs-wrap.is-radio:has(.tab:nth-child(4) .sr:checked) > .panel:nth-child(5), .tabs-wrap.is-radio:has(.tab:nth-child(5) .sr:checked) > .panel:nth-child(6), .tabs-wrap.is-radio:has(.tab:nth-child(6) .sr:checked) > .panel:nth-child(7) { display: block; }
+
+/* 下罫をタブ列の内側の影で引く版。スクロールする .tabs と一緒に罫が動き、下にはみ出さない。 */.tabs-wrap.is-inset { border-bottom: 0; }
+.tabs-wrap.is-inset .tabs { box-shadow: inset 0 -1px 0 var(--border); }
+.tabs-wrap.is-inset .tab { margin-bottom: 0; }
 </style>
 </head>
 <body>
@@ -246,7 +257,7 @@ svg { display: block; flex: none; }
     <div class="tabs-wrap">
       <div class="tabs" role="tablist" aria-label="カタログの絞り込み">
         <button class="tab" role="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
-        <button class="tab" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">新規追加<span class="c">12</span></button>
         <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
         <button class="tab" role="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
         <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
@@ -260,16 +271,16 @@ svg { display: block; flex: none; }
   <h2>タブ 1 個の状態</h2>
   <div class="cat-row">
     <div class="cat-item" data-story="タブ 1 個の状態 / 通常"><span class="cat-label is-key">通常</span>
-      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false">新着追加<span class="c">12</span></button></div></div>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false">新規追加<span class="c">12</span></button></div></div>
     </div>
     <div class="cat-item" data-story="タブ 1 個の状態 / hover"><span class="cat-label">hover</span>
-      <div class="tabs-wrap"><div class="tabs"><button class="tab is-hover" aria-selected="false">新着追加<span class="c">12</span></button></div></div>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab is-hover" aria-selected="false">新規追加<span class="c">12</span></button></div></div>
     </div>
     <div class="cat-item" data-story="タブ 1 個の状態 / 選択中"><span class="cat-label">選択中</span>
-      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="true">新着追加<span class="c">12</span></button></div></div>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="true">新規追加<span class="c">12</span></button></div></div>
     </div>
     <div class="cat-item" data-story="タブ 1 個の状態 / フォーカス"><span class="cat-label">フォーカス</span>
-      <div class="tabs-wrap"><div class="tabs"><button class="tab is-focus" aria-selected="false">新着追加<span class="c">12</span></button></div></div>
+      <div class="tabs-wrap"><div class="tabs"><button class="tab is-focus" aria-selected="false">新規追加<span class="c">12</span></button></div></div>
     </div>
     <div class="cat-item" data-story="タブ 1 個の状態 / 件数 0"><span class="cat-label">件数 0 <small>薄く出して押せる</small></span>
       <div class="tabs-wrap"><div class="tabs"><button class="tab" aria-selected="false">配信終了予定<span class="c is-zero">0</span></button></div></div>
@@ -289,7 +300,7 @@ svg { display: block; flex: none; }
     <div class="cat-item cat-full is-key" data-story="件数バッジの有無 / 件数あり"><span class="cat-label">件数あり <small>母数が決まっている 4 タブ</small></span>
       <div class="tabs-wrap"><div class="tabs">
         <button class="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
-        <button class="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" aria-selected="false">新規追加<span class="c">12</span></button>
         <button class="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
         <button class="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
       </div></div>
@@ -303,7 +314,7 @@ svg { display: block; flex: none; }
     <div class="cat-item cat-full" data-story="件数バッジの有無 / 件数を読み込み中"><span class="cat-label">件数を読み込み中 <small>数が決まるまでは — を置いて幅を保つ</small></span>
       <div class="tabs-wrap"><div class="tabs">
         <button class="tab" aria-selected="true">今期アニメ<span class="c is-zero">—</span></button>
-        <button class="tab" aria-selected="false">新着追加<span class="c is-zero">—</span></button>
+        <button class="tab" aria-selected="false">新規追加<span class="c is-zero">—</span></button>
         <button class="tab" aria-selected="false">もうすぐ配信<span class="c is-zero">—</span></button>
       </div></div>
     </div>
@@ -317,7 +328,7 @@ svg { display: block; flex: none; }
     <div class="tabs-wrap is-over">
       <div class="tabs" role="tablist">
         <button class="tab" role="tab" aria-selected="true">今期アニメ<span class="c">48</span></button>
-        <button class="tab" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">新規追加<span class="c">12</span></button>
         <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
         <button class="tab" role="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
         <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
@@ -333,14 +344,14 @@ svg { display: block; flex: none; }
     <div class="tabs-wrap">
       <div class="tabs" role="tablist">
         <button class="tab" role="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
-        <button class="tab" role="tab" aria-selected="true">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="true">新規追加<span class="c">12</span></button>
         <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
         <button class="tab" role="tab" aria-selected="false">配信終了予定<span class="c">2</span></button>
         <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
       </div>
     </div>
     <div class="panel" role="tabpanel">
-      <div class="panel-head"><h4>新着追加<span class="n">12 作品</span></h4><a class="more" href="#">一覧で見る</a></div>
+      <div class="panel-head"><h4>新規追加<span class="n">12 作品</span></h4><a class="more" href="#">一覧で見る</a></div>
       <div class="p-grid">
         <a class="p-cell" href="#"><span class="p-thumb" style="--h:265" aria-hidden="true">星</span><span class="p-title">星降る夜のアストロノーツ</span><span class="p-sub"><span class="pv pv-netflix">Netflix</span>2026年 秋</span></a>
         <a class="p-cell" href="#"><span class="p-thumb" style="--h:30" aria-hidden="true">魔</span><span class="p-title">転生したら魔王城の家政婦でした</span><span class="p-sub"><span class="pv pv-amazon">Prime Video</span>2026年 秋</span></a>
@@ -358,7 +369,7 @@ svg { display: block; flex: none; }
     <div class="tabs-wrap">
       <div class="tabs" role="tablist">
         <button class="tab" role="tab" aria-selected="false">今期アニメ<span class="c">48</span></button>
-        <button class="tab" role="tab" aria-selected="false">新着追加<span class="c">12</span></button>
+        <button class="tab" role="tab" aria-selected="false">新規追加<span class="c">12</span></button>
         <button class="tab" role="tab" aria-selected="false">もうすぐ配信<span class="c">6</span></button>
         <button class="tab" role="tab" aria-selected="true">配信終了予定<span class="c is-zero">0</span></button>
         <button class="tab" role="tab" aria-selected="false">配信元から探す</button>
@@ -370,6 +381,25 @@ svg { display: block; flex: none; }
     </div>
   </div>
   <p class="cat-note">件数が 0 でもタブは消さず押せるままにする。数が動く指標なので、消えると「無くなった」のか「取れていない」のか分からなくなる。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>radio で切り替える版 <span class="cat-hint">.tabs-wrap.is-radio / .is-inset</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="radio で切り替える版 / .tabs-wrap.is-radio.is-inset"><span class="cat-label">.tabs-wrap.is-radio.is-inset</span>
+<div class="tabs-wrap is-radio is-inset">
+  <div class="tabs" role="tablist" aria-label="カタログの絞り込み">
+    <label class="tab"><input type="radio" name="cat-ht" class="sr" checked>今期アニメ<span class="c">164</span></label>
+    <label class="tab"><input type="radio" name="cat-ht" class="sr">新規追加<span class="c">233</span></label>
+    <label class="tab"><input type="radio" name="cat-ht" class="sr">もうすぐ配信<span class="c">6</span></label>
+  </div>
+  <div class="panel"><p class="cat-note">今期アニメのパネル</p></div>
+  <div class="panel"><p class="cat-note">新規追加のパネル</p></div>
+  <div class="panel"><p class="cat-note">もうすぐ配信のパネル</p></div>
+</div>
+    </div>
+  </div>
+  <p class="cat-note">JS を使わず、選ばれた n 番目のタブに対応する n 番目の <code>.panel</code> だけを出す。<code>.is-inset</code> は下罫をタブ列の内側に引く。</p>
 </section>
 </main>
 </body>

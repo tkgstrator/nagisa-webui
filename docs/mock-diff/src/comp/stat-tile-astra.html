@@ -1,0 +1,47 @@
+TITLE: 数値タイル — astra 案 | Nagisa WebUI 原子カタログ
+USES: tone-palette
+---
+<main class="cat">
+<header class="cat-head">
+<h1>数値タイル <span class="cat-id">stat-tile</span></h1>
+<p>実装 StatTone の primary / ok / warn / err を primary / success / warning / destructive に対応。情報数値と非強調値用に info / muted も提案する。</p>
+<div class="cat-meta"><span>astra / 共通 (原子)</span><span>6 トーン × 2 値 × 2 状態 = 24 見本</span><span>tone-palette 共通契約 / OS テーマ追従</span><span>全状態を固定表示</span></div>
+</header>
+<section class="cat-sec"><h2>基本 / success</h2><div class="matrix">
+<div class="cat-item is-key"><div class="cat-label">success / 12件 / default</div><div class="sample"><div class="a-stat tone-success is-default"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">success / 12件 / hover</div><div class="sample"><div class="a-stat tone-success is-hover"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">success / 0件 / default</div><div class="sample"><div class="a-stat tone-success a-zero is-default"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+<div class="cat-item"><div class="cat-label">success / 0件 / hover</div><div class="sample"><div class="a-stat tone-success a-zero is-hover"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+</div></section>
+<section class="cat-sec"><h2>info</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">info / 12件 / default</div><div class="sample"><div class="a-stat tone-info is-default"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">info / 12件 / hover</div><div class="sample"><div class="a-stat tone-info is-hover"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">info / 0件 / default</div><div class="sample"><div class="a-stat tone-info a-zero is-default"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+<div class="cat-item"><div class="cat-label">info / 0件 / hover</div><div class="sample"><div class="a-stat tone-info a-zero is-hover"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+</div></section>
+<section class="cat-sec"><h2>warning</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">warning / 12件 / default</div><div class="sample"><div class="a-stat tone-warning is-default"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">warning / 12件 / hover</div><div class="sample"><div class="a-stat tone-warning is-hover"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">warning / 0件 / default</div><div class="sample"><div class="a-stat tone-warning a-zero is-default"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+<div class="cat-item"><div class="cat-label">warning / 0件 / hover</div><div class="sample"><div class="a-stat tone-warning a-zero is-hover"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+</div></section>
+<section class="cat-sec"><h2>destructive</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">destructive / 12件 / default</div><div class="sample"><div class="a-stat tone-destructive is-default"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">destructive / 12件 / hover</div><div class="sample"><div class="a-stat tone-destructive is-hover"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">destructive / 0件 / default</div><div class="sample"><div class="a-stat tone-destructive a-zero is-default"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+<div class="cat-item"><div class="cat-label">destructive / 0件 / hover</div><div class="sample"><div class="a-stat tone-destructive a-zero is-hover"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+</div></section>
+<section class="cat-sec"><h2>muted</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">muted / 12件 / default</div><div class="sample"><div class="a-stat tone-muted is-default"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">muted / 12件 / hover</div><div class="sample"><div class="a-stat tone-muted is-hover"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">muted / 0件 / default</div><div class="sample"><div class="a-stat tone-muted a-zero is-default"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+<div class="cat-item"><div class="cat-label">muted / 0件 / hover</div><div class="sample"><div class="a-stat tone-muted a-zero is-hover"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+</div></section>
+<section class="cat-sec"><h2>primary</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">primary / 12件 / default</div><div class="sample"><div class="a-stat tone-primary is-default"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">primary / 12件 / hover</div><div class="sample"><div class="a-stat tone-primary is-hover"><span class="a-label">録画作品</span><span class="a-value num">12<small>件</small></span><span class="a-note">ライブラリ全体</span></div></div></div>
+<div class="cat-item"><div class="cat-label">primary / 0件 / default</div><div class="sample"><div class="a-stat tone-primary a-zero is-default"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+<div class="cat-item"><div class="cat-label">primary / 0件 / hover</div><div class="sample"><div class="a-stat tone-primary a-zero is-hover"><span class="a-label">録画作品</span><span class="a-value num">0<small>件</small></span><span class="a-note">対象なし</span></div></div></div>
+</div></section>
+<p class="cat-note">全トーンで値 0 の左罫は --border、数値は --muted-foreground。数値は等幅・右寄せ。info / muted は原子案の拡張であり現在の StatTone 実装には存在しない。</p>
+</main>

@@ -36,13 +36,13 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
   <section class="toolbar" aria-label="絞り込みと並び替え">
     <div class="toolbar-row">
       <div class="sort">
-        <span class="sort-lbl">並び替え</span>
+        <span class="sort-lbl">並べ替え</span>
         <div class="sel">
-          <select aria-label="並び替え">
-            <option>タイトル 昇順</option>
-            <option>タイトル 降順</option>
-            <option selected>リリース年 新しい順</option>
-            <option>リリース年 古い順</option>
+          <select aria-label="並べ替え">
+            <option>タイトル (昇順)</option>
+            <option>タイトル (降順)</option>
+            <option selected>放送年 (新しい順)</option>
+            <option>放送年 (古い順)</option>
           </select>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </div>
@@ -96,7 +96,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
           <span class="flabel">バッジ</span>
           <button class="chip" aria-pressed="true">すべて</button>
           <button class="chip" aria-pressed="false">新着エピソード</button>
-          <button class="chip" aria-pressed="false">新着追加</button>
+          <button class="chip" aria-pressed="false">新規追加</button>
           <button class="chip" aria-pressed="false">配信予定</button>
           <button class="chip" aria-pressed="false">配信終了予定</button>
         </div>
@@ -111,12 +111,12 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <button class="reset">すべて解除</button>
   </div>
 
-  <div class="grid">
+  <div class="grid is-lg-status">
 
     <a class="tile p-amazon" href="#drawer-1" style="--h: 265">
       <div class="poster">
         <div class="art"><span class="kana">星降</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 6 6.6.5-5 4.3 1.6 6.4L12 16.8 6.4 20.2 8 13.8 3 9.5l6.6-.5z"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">Prime Video</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -137,7 +137,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <a class="tile p-netflix" href="#" style="--h: 340">
       <div class="poster">
         <div class="art"><span class="kana">魔女</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">Netflix</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -158,7 +158,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <a class="tile p-crunchyroll" href="#" style="--h: 60">
       <div class="poster">
         <div class="art"><span class="kana">猫魔</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11zM9 14h.01M15 14h.01"/></svg></div>
-        <span class="tag tag-added">新着追加</span>
+        <span class="tag tag-added">新規追加</span>
         <span class="prov">Crunchyroll</span>
         <span class="ep">第 3 話</span>
       </div>
@@ -169,7 +169,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <a class="tile p-hulu" href="#" style="--h: 200">
       <div class="poster">
         <div class="art"><span class="kana">静音</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">Hulu</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -190,7 +190,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <a class="tile p-abema" href="#" style="--h: 110">
       <div class="poster">
         <div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2zM10 11h.01M14 11h.01"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">ABEMA</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -211,7 +211,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <a class="tile p-hulu" href="#" style="--h: 15">
       <div class="poster">
         <div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M15 15l3 3M6 18l3-3M15 9l3-3"/></svg></div>
-        <span class="tag tag-added">新着追加</span>
+        <span class="tag tag-added">新規追加</span>
         <span class="prov">Hulu</span>
         <span class="ep">第 2 話</span>
       </div>
@@ -222,7 +222,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
     <a class="tile p-abema" href="#" style="--h: 290">
       <div class="poster">
         <div class="art"><span class="kana">月面</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3a8 8 0 1 0 7 11 6 6 0 0 1-7-11z"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">ABEMA</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -376,7 +376,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
       <a class="drawer-close" href="#" aria-label="閉じる"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
     </div>
     <div class="drawer-body">
-      <div class="meta"><span class="status s-releasing">放送中</span><span class="prov p-amazon">Prime Video</span></div>
+      <div class="meta is-lg-status"><span class="status s-releasing">放送中</span><span class="prov p-amazon">Prime Video</span></div>
       <h2 id="drawer-1-title">星降る夜のアストロノーツ</h2>
       <p class="drawer-desc">宇宙飛行士訓練校に入学した主人公が、仲間たちと共に未知の軌道ステーションの謎に挑む青春SF。第2クールでは新たな星域が舞台に。</p>
       <dl class="drawer-facts">

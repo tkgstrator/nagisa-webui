@@ -1,0 +1,10 @@
+/* ---------- 決定稿での静止 ---------- */
+/* 静止撮影と差分比較を安定させるため、決定稿ではアニメーションを全部止める。
+   入場 (fadeUp / growX) も infinite なループ (pulse / spin / shimmer) も、
+   keyframes の 100% か 0%/100% が基底状態と一致するので animation: none だけで
+   「見えている」静止状態になる。keyframes 定義は実装側でそのまま使うので部品側に残す。
+   build.ts が決定稿のページにだけ最後に差し込む。 */
+*, *::before, *::after { animation: none !important; }
+
+/* スケルトンは reduced-motion 時と同じ静止形 (フラットな muted) に寄せる。 */
+.sk { background: var(--muted); }

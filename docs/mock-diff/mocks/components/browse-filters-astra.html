@@ -258,12 +258,12 @@ svg { display: block; flex: none; }
         <div class="fgroup"><h3>バッジ</h3>
           <div class="flist">
             <label class="fcheck"><input type="checkbox">新着エピソード<span class="cnt">12</span></label>
-            <label class="fcheck"><input type="checkbox">新着追加<span class="cnt">31</span></label>
+            <label class="fcheck"><input type="checkbox">新規追加<span class="cnt">31</span></label>
             <label class="fcheck"><input type="checkbox">配信予定<span class="cnt">8</span></label>
             <label class="fcheck"><input type="checkbox">配信終了予定<span class="cnt">5</span></label>
           </div>
         </div>
-        <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
+        <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>絞り込みをリセット</button>
       </div>
     </div>
     <div class="cat-item" data-story="基本 / 絞り込み適用後"><span class="cat-label">絞り込み適用後 <small>(件数バッジつき)</small></span>
@@ -281,7 +281,7 @@ svg { display: block; flex: none; }
         <div class="fgroup"><h3>ステータス</h3>
           <div class="fpills"><button class="fpill" type="button" aria-pressed="true">放送中</button><button class="fpill" type="button" aria-pressed="false">完結</button><button class="fpill" type="button" aria-pressed="false">未放送</button><button class="fpill" type="button" aria-pressed="false">休止</button></div>
         </div>
-        <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button>
+        <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>絞り込みをリセット</button>
       </div>
     </div>
   </div>
@@ -325,8 +325,8 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>リセット</h2>
   <div class="cat-row">
-    <div class="cat-item cat-w220" data-story="リセット / 通常"><span class="cat-label">通常</span><button class="reset-btn" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
-    <div class="cat-item cat-w220" data-story="リセット / hover"><span class="cat-label">hover</span><button class="reset-btn is-hover" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>フィルタをリセット</button></div>
+    <div class="cat-item cat-w220" data-story="リセット / 通常"><span class="cat-label">通常</span><button class="reset-btn" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>絞り込みをリセット</button></div>
+    <div class="cat-item cat-w220" data-story="リセット / hover"><span class="cat-label">hover</span><button class="reset-btn is-hover" type="button" style="margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>絞り込みをリセット</button></div>
   </div>
 </section>
 
@@ -335,7 +335,7 @@ svg { display: block; flex: none; }
   <div class="cat-row">
     <div class="cat-item" data-story="検索と並び替え / 検索"><span class="cat-label">検索</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="タイトルで検索" aria-label="タイトルで検索"></div></div>
     <div class="cat-item" data-story="検索と並び替え / 入力あり + フォーカス"><span class="cat-label">入力あり + フォーカス</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="is-focus" type="search" value="アストロ" aria-label="タイトルで検索"></div></div>
-    <div class="cat-item" data-story="検索と並び替え / 並び替え"><span class="cat-label">並び替え</span><div class="sort"><span>並び替え</span><div class="sel"><select aria-label="並び替え"><option selected>リリース年 新しい順</option><option>リリース年 古い順</option><option>タイトル 昇順</option><option>タイトル 降順</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
+    <div class="cat-item" data-story="検索と並び替え / 並べ替え"><span class="cat-label">並べ替え</span><div class="sort"><span>並べ替え</span><div class="sel"><select aria-label="並べ替え"><option selected>放送年 (新しい順)</option><option>放送年 (古い順)</option><option>タイトル (昇順)</option><option>タイトル (降順)</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
   </div>
   <p class="cat-note">パネルが左を占有するぶん、検索窓は一覧の上に残す。両方を左に寄せると本文の横幅が細くなりすぎる。</p>
 </section>

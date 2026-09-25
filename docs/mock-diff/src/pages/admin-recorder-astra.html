@@ -1,0 +1,187 @@
+TITLE: Nagisa ジョブ投入
+USES: app-header input toggle button app-footer
+---
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg pg-narrow">
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">管理 · <b>Nagisa ジョブ投入</b></p>
+          <h1 class="pg-title">Nagisa ジョブ投入</h1>
+          <p class="pg-sub">バックエンド経由で Nagisa の <code class="pg-tbl-mono">/api/queues</code> に録画ジョブを直接送信します。</p>
+        </div>
+      </div>
+
+      <div class="pg-body">
+        <form class="pg-form">
+          <div class="a-field-wrap">
+            <label for="rec-provider">provider</label>
+            <div class="pg-select">
+              <select id="rec-provider">
+                <option>Prime Video</option>
+                <option>Hulu</option>
+                <option selected>Crunchyroll</option>
+                <option>ABEMA</option>
+              </select>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <div class="a-field-wrap">
+            <label for="rec-content-id">content_id</label>
+            <div class="a-field"><input id="rec-content-id" type="text" placeholder="例: B0DXV9MP4Y / lycoris-recoil など" value="GRDN8X003"></div>
+          </div>
+
+          <div class="pg-form-row">
+            <div class="a-field-wrap">
+              <label for="rec-season">season_number（任意・空欄で全シーズン）</label>
+              <div class="a-field"><input id="rec-season" type="text" placeholder="例: 1" value="2"></div>
+            </div>
+            <div class="a-field-wrap">
+              <label for="rec-episodes">episodes（任意・空欄で全話）</label>
+              <div class="a-field"><input id="rec-episodes" type="text" placeholder="例: 1, 2, 3"></div>
+              <p class="pg-form-hint">カンマ・スペース・改行で区切って入力してください。season_number の指定も必要です。</p>
+            </div>
+          </div>
+
+          <div class="pg-form-row">
+            <div class="a-field-wrap">
+              <label for="rec-marketplace">marketplace（任意）</label>
+              <div class="pg-select">
+                <select id="rec-marketplace">
+                  <option>未指定</option>
+                  <option selected>日本 (jp)</option>
+                  <option>米国 (us)</option>
+                </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+            <div class="a-field-wrap">
+              <label for="rec-language">language（任意）</label>
+              <div class="pg-select">
+                <select id="rec-language">
+                  <option>未指定</option>
+                  <option selected>字幕 (sub)</option>
+                  <option>吹き替え (dub)</option>
+                </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <label class="pg-form-check" for="rec-force">
+            <input id="rec-force" class="a-check" type="checkbox">
+            <span class="pg-form-hint"><b>force</b> — 出力ファイルが存在する場合も、スキップせずに再ダウンロードします（Nagisa の <code class="pg-tbl-mono">-F</code> に相当）</span>
+          </label>
+
+          <div class="pg-form-actions">
+            <button type="submit" class="a-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+              投入
+            </button>
+          </div>
+        </form>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">送信内容プレビュー</p></div>
+          <pre class="pg-pre">{
+  "provider": "crunchyroll",
+  "items": [
+    {
+      "content_id": "GRDN8X003",
+      "seasons": [
+        { "season_number": 2 }
+      ]
+    }
+  ],
+  "marketplace": "jp",
+  "language": "sub"
+}</pre>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">2 件のジョブを投入しました</p></div>
+          <div class="pg-form" style="gap:10px">
+            <div class="pg-result">
+              <p class="pg-result-title">crunchyroll:GRDN8X003:s2e05 (queued) — job_8f21ac0d</p>
+              <div class="pg-result-sub">深宵ノ図書館</div>
+              <div class="pg-result-sub">Library of the Deep Night</div>
+              <div class="pg-result-sub num">series ・ 1 / 12 話 ・ jp</div>
+            </div>
+            <div class="pg-result">
+              <p class="pg-result-title">crunchyroll:GRDN8X003:s2e06 (queued) — job_8f21ac0e</p>
+              <div class="pg-result-sub">深宵ノ図書館</div>
+              <div class="pg-result-sub">Library of the Deep Night</div>
+              <div class="pg-result-sub num">series ・ 1 / 12 話 ・ jp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">レスポンス全体</p></div>
+          <pre class="pg-pre">{
+  "count": 2,
+  "jobs": [
+    {
+      "job_id": "job_8f21ac0d",
+      "name": "crunchyroll:GRDN8X003:s2e05",
+      "status": "queued",
+      "preview": {
+        "title": "深宵ノ図書館",
+        "title_en": "Library of the Deep Night",
+        "content_type": "series",
+        "selected_episodes": 1,
+        "total_episodes": 12,
+        "marketplace": "jp"
+      }
+    },
+    {
+      "job_id": "job_8f21ac0e",
+      "name": "crunchyroll:GRDN8X003:s2e06",
+      "status": "queued",
+      "preview": {
+        "title": "深宵ノ図書館",
+        "title_en": "Library of the Deep Night",
+        "content_type": "series",
+        "selected_episodes": 1,
+        "total_episodes": 12,
+        "marketplace": "jp"
+      }
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.9.1<span class="sha">062b7a7</span>2026/09/25 14:20</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a href="#admin">管理</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>

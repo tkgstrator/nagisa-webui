@@ -1,0 +1,355 @@
+TITLE: Nagisa — 設定 (fable 案)
+USES: app-header settings-controls app-footer
+---
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="nav">
+      <a href="#home">ホーム</a>
+      <a href="#browse">一覧</a>
+      <a href="#recordings">録画 <span class="count-pill num">16</span></a>
+      <a class="active gear" href="#settings">
+        <svg viewBox="0 0 24 24"><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/><circle cx="12" cy="12" r="3"/></svg>
+        設定
+      </a>
+    </nav>
+    <div class="search" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span>作品を検索</span>
+      <kbd>/</kbd>
+    </div>
+    <div class="srv" title="サーバー稼働中"><i></i><span>稼働中</span></div>
+  </div>
+</header>
+
+<main class="pg">
+
+  <div class="pg-head">
+    <div>
+      <p class="pg-eyebrow">設定</p>
+      <h1 class="pg-title">表示と録画のふるまい</h1>
+      <p class="pg-sub">変更はこのブラウザにだけ保存され、<b>すぐに反映</b>される。</p>
+    </div>
+    <div class="pg-headctl">
+      <span class="set-saved">
+        <svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>
+        保存済み · <span class="num">13:04</span>
+      </span>
+    </div>
+  </div>
+
+  <nav class="set-tabs" aria-label="設定の節">
+    <a class="on" href="#s-view">表示</a>
+    <a href="#s-provider">配信プロバイダ <span class="n num">4 / 5</span></a>
+    <a href="#s-rec">録画</a>
+    <a href="#s-admin">管理 <span class="n num">38</span></a>
+    <a href="#s-data">データ</a>
+    <a href="#s-about">アプリ情報</a>
+  </nav>
+
+  <section class="pg-sec" id="s-view">
+    <div class="pg-sec-head">
+      <h2 class="pg-sec-title">表示</h2>
+      <span class="pg-sec-count">一覧とカードの見え方</span>
+    </div>
+    <div class="set-list is-stack">
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">テーマ</p>
+          <p class="set-desc">「システム」は OS の外観設定に追従する。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button">ライト</button>
+            <button type="button">ダーク</button>
+            <button type="button" class="on" aria-pressed="true">システム</button>
+          </div>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">1 ページの表示件数</p>
+          <p class="set-desc">アニメ一覧・録画一覧・未識別タイトルに適用される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel"><span class="num">24</span> 件
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">既定の並び順</p>
+          <p class="set-desc">一覧を開いた直後に適用される並び。URL で指定があればそちらが優先される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel">放送年 (新しい順)
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">カードの密度</p>
+          <p class="set-desc">1 行あたりの枚数とサムネイルの大きさが変わる。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button">ゆったり</button>
+            <button type="button" class="on" aria-pressed="true">標準</button>
+            <button type="button">詰める</button>
+          </div>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">アニメーション</p>
+          <p class="set-desc">OS で「視差を減らす」が有効なときは、この設定にかかわらず抑制される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note">有効</span>
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="アニメーション"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-sec" id="s-provider">
+    <div class="pg-sec-head">
+      <h2 class="pg-sec-title">配信プロバイダ</h2>
+      <span class="pg-sec-count"><span class="num">4</span> / <span class="num">5</span> 有効</span>
+    </div>
+    <div class="set-list is-stack">
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label"><span class="set-pv"><span class="chip amazon">Prime Video</span></span></p>
+          <p class="set-desc"><span class="num">1,284</span> 作品 · 最終取得 <span class="num">9/18 12:40</span></p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="Prime Video を表示"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label"><span class="set-pv"><span class="chip hulu">Hulu</span></span></p>
+          <p class="set-desc"><span class="num">612</span> 作品 · 最終取得 <span class="num">9/18 12:40</span></p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="Hulu を表示"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label"><span class="set-pv"><span class="chip crunchyroll">Crunchyroll</span></span></p>
+          <p class="set-desc"><span class="num">948</span> 作品 · 最終取得 <span class="num">9/18 12:41</span></p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="Crunchyroll を表示"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label"><span class="set-pv"><span class="chip abema">ABEMA</span></span></p>
+          <p class="set-desc"><span class="num">431</span> 作品 · 最終取得 <span class="num">9/18 12:38</span></p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="ABEMA を表示"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label"><span class="set-pv"><span class="chip netflix">Netflix</span></span> <span class="set-tag">未連携</span></p>
+          <p class="set-desc">カタログの取得がまだ設定されていない。</p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-sw" role="switch" aria-checked="false" aria-label="Netflix を表示"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">既定のクール</p>
+          <p class="set-desc">ホームの「今期アニメ」と一覧の初期フィルタに使われる。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button" class="on" aria-pressed="true">今期に追従</button>
+            <button type="button">固定 (<span class="num">2026年 夏</span>)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-sec" id="s-rec">
+    <div class="pg-sec-head">
+      <h2 class="pg-sec-title">録画</h2>
+      <span class="pg-sec-count">Nagisa への依頼と予約のふるまい</span>
+    </div>
+    <div class="set-list is-stack">
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">録画済みにしたら録画も依頼する</p>
+          <p class="set-desc">詳細画面で「録画済み」を ON にしたとき、Nagisa へ録画リクエストも送る。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note">依頼する</span>
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="録画済みにしたら録画も依頼する"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">一括解除の前に確認する</p>
+          <p class="set-desc">録画一覧で複数まとめて予約解除するとき、確認を挟む。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note">確認する</span>
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="一括解除の前に確認する"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">配信終了の予告</p>
+          <p class="set-desc">この日数を切った予約作品に「配信終了予定」のバッジを出す。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel"><span class="num">14</span> 日前から
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">新着エピソードを自動で予約する</p>
+          <p class="set-desc">予約中の作品に新しい話数が来たら、確認せずに録画を依頼する。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note">手動</span>
+          <button type="button" class="set-sw" role="switch" aria-checked="false" aria-label="新着エピソードを自動で予約する"></button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">既定の言語</p>
+          <p class="set-desc">ジョブ投入フォームの language に初期値として入る。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel">日本語 (ja-JP)
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-sec" id="s-admin">
+    <div class="pg-sec-head">
+      <h2 class="pg-sec-title">管理</h2>
+      <a class="pg-sec-more" href="#admin">管理ハブを開く
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+    </div>
+    <div class="pg-links">
+      <a class="pg-link pg-warn" href="#admin-unidentified">
+        <span class="pg-lt">未識別タイトル <span class="count-pill num">38</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="pg-ld">AniList で照合できなかった作品を手当てする</span>
+      </a>
+      <a class="pg-link" href="#admin-nagisa">
+        <span class="pg-lt">Nagisa ジョブ投入</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="pg-ld">provider / content_id を指定して直接依頼する</span>
+      </a>
+      <a class="pg-link" href="#server-status">
+        <span class="pg-lt">サーバーステータス</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="pg-ld">API・D1・Nagisa の疎通を確認する</span>
+      </a>
+      <a class="pg-link" href="#abema-keys">
+        <span class="pg-lt">ABEMA 鍵アーカイブ</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="pg-ld">進捗 <span class="num">82%</span> · 手動で取得を走らせる</span>
+      </a>
+      <a class="pg-link" href="#changelog">
+        <span class="pg-lt">変更履歴</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="pg-ld">直近のデプロイとコミットを日付ごとに見る</span>
+      </a>
+      <a class="pg-link" href="#cron">
+        <span class="pg-lt">取得ジョブの履歴</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="pg-ld">最終実行 <span class="num">9/18 12:41</span> · 失敗 <span class="num">0</span> 件</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="pg-sec" id="s-data">
+    <div class="pg-sec-head">
+      <h2 class="pg-sec-title">データ</h2>
+      <span class="pg-sec-count">このブラウザに残っているもの</span>
+    </div>
+    <div class="set-list is-stack">
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">画像キャッシュ</p>
+          <p class="set-desc">ポスターの WebP を端末に保持している分。消しても作品データは残る。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note"><span class="num">128.4</span> MB</span>
+          <button type="button" class="set-btn">削除</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">設定の書き出しと読み込み</p>
+          <p class="set-desc">この画面の内容を JSON で保存し、別の端末に持ち込める。</p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-btn">書き出す</button>
+          <button type="button" class="set-btn">読み込む</button>
+        </div>
+      </div>
+      <div class="set-row is-danger">
+        <div class="set-rt">
+          <p class="set-label">すべての設定を初期化する</p>
+          <p class="set-desc">この画面の内容だけが既定に戻る。録画予約と作品データには触れない。</p>
+        </div>
+        <div class="set-ctl">
+          <button type="button" class="set-btn is-danger">初期化</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-sec" id="s-about">
+    <div class="pg-sec-head">
+      <h2 class="pg-sec-title">アプリ情報</h2>
+    </div>
+    <dl class="set-meta">
+      <div>
+        <dt>バージョン</dt>
+        <dd class="num">v0.4.0</dd>
+      </div>
+      <div>
+        <dt>ビルド</dt>
+        <dd class="mono">319250c</dd>
+      </div>
+      <div>
+        <dt>登録作品</dt>
+        <dd class="num">3,275</dd>
+      </div>
+      <div>
+        <dt>録画予約</dt>
+        <dd class="num">16</dd>
+      </div>
+    </dl>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <a href="#changelog">v0.4.0 (319250c) 2026/09/18 13:04:00</a>
+  <p>&copy; 2026 Nagisa · <a href="#admin">管理</a></p>
+</footer>

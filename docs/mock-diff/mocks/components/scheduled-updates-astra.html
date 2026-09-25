@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>録画予約中の更新 — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<title>録画予約中の作品の更新 — astra 案 | Nagisa WebUI コンポーネントモック</title>
 <style>
 :root {
   --background: oklch(0.99 0.002 247);
@@ -299,7 +299,7 @@ svg { display: block; flex: none; }
 <body>
 <main class="cat">
 <header class="cat-head">
-  <h1>録画予約中の更新 <span class="cat-id">scheduled-updates</span></h1>
+  <h1>録画予約中の作品の更新 <span class="cat-id">scheduled-updates</span></h1>
   <p>ホームに置く「直近で動きのあった録画予約中の作品」。更新日時の新しい順に最大 6 件。左の 3px を状態の色に使い、行が現れるときに段差をつけて流し込む。</p>
   <div class="cat-meta"><span>最大 6 件</span><span>更新日時の降順</span><span>左罫の色 = 状態</span><span>45ms ずつ遅らせて fadeUp</span><span>狭い画面では進捗を 2 段目に折る</span></div>
 </header>
@@ -308,7 +308,7 @@ svg { display: block; flex: none; }
   <h2>基本 <span class="cat-hint">見出し + 6 件</span></h2>
   <div class="cat-item cat-full is-key" data-story="基本">
     <div class="su-head">
-      <div><h3>録画予約中の更新<span class="n">6</span></h3><p class="sub">更新が新しい順・最大 6 件</p></div>
+      <div><h3>録画予約中の作品の更新<span class="n">6</span></h3><p class="sub">更新が新しい順・最大 6 件</p></div>
       <a class="more" href="#">録画一覧へ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
     </div>
     <div class="su-list">
@@ -491,7 +491,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>0 件のとき</h2>
   <div class="cat-item cat-full" data-story="0 件のとき">
-    <div class="su-head"><div><h3>録画予約中の更新<span class="n">0</span></h3><p class="sub">更新が新しい順・最大 6 件</p></div></div>
+    <div class="su-head"><div><h3>録画予約中の作品の更新<span class="n">0</span></h3><p class="sub">更新が新しい順・最大 6 件</p></div></div>
     <div class="su-empty">
       <p>録画予約中の作品はまだありません。一覧から作品を選んで録画予約すると、ここに更新が並びます。</p>
       <a class="cta" href="#">作品を探す <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>

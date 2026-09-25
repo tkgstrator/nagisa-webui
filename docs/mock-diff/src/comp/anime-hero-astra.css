@@ -45,17 +45,26 @@
 .btn-busy svg { animation: spin 1s linear infinite; }
 .btn-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
 .btn-icon { width: 38px; padding: 0; }
+/* 詰めた版 (.id-actions.is-compact)。見出し周りの情報が多い決定稿で使う。 */
+.id-actions.is-compact .btn { height: 34px; padding: 0 15px; }
+.id-actions.is-compact .btn-icon { width: 34px; padding: 0; }
+/* 録画済みは取り消せない (録画を削除する API を持たない)。押せないことを見た目で示す。 */
+.btn[disabled] { pointer-events: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* 録画の進捗を 1 本の帯で示す */
-.progress-row { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
-.progress-row .lbl { font-size: 12px; color: var(--muted-foreground); flex: none; }
-.progress-row .val { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
-.strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
-.strip span { display: block; height: 100%; }
-.strip .rec { background: var(--success); }
-.strip .busy { background: var(--info); }
-.strip .fail { background: var(--destructive); }
+/* 録画の進捗を 1 本の帯で示す。episode-list (fable) の話数ごとの帯 .strip とぶつからないよう hero- を冠する。
+   決定稿は話数ごとの帯に一本化したので使わない。 */
+.hero-progress { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
+.hero-progress .lbl { font-size: 12px; color: var(--muted-foreground); flex: none; }
+.hero-progress .val, .hero-progress .cnt { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
+.hero-strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
+.hero-strip span { display: block; height: 100%; }
+.hero-strip .rec { background: var(--success); }
+.hero-strip .busy { background: var(--info); }
+.hero-strip .pend { background: var(--warning); }
+.hero-strip .fail { background: var(--destructive); }
+/* 未取得ぶんは帯の残り */
+.hero-strip .none { background: var(--border); }
 
 @media (max-width: 640px) {
   .identity { flex-direction: column; gap: 14px; }
@@ -63,11 +72,9 @@
   .hero-title { font-size: 21px; }
   .id-facts { gap: 16px; }
   .id-actions .btn { flex: 1 1 auto; }
-  .progress-row { flex-wrap: wrap; }
+  .hero-progress { flex-wrap: wrap; }
 }
 
-/* 未取得ぶんは帯の残り。progress-row と対で使う。 */
-.strip .none { background: var(--border); }
 /* 情報側だけを縦に詰めたいときの調整 (バナー無し配置) */
 .hero-body { margin-top: 0; }
 /* 再取得ボタン。押している間だけアイコンが 1 回転する。 */

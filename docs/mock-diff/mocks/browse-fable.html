@@ -141,6 +141,7 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(5) { animation-delay: .2s; }
 .pg > *:nth-child(6) { animation-delay: .25s; }
 .pg > *:nth-child(7) { animation-delay: .3s; }
+.pg > *:nth-child(8) { animation-delay: .35s; }
 .pg-narrow { max-width: 1280px; }
 
 /* ---------- page head ---------- */
@@ -221,7 +222,7 @@ svg { display: block; flex: none; }
 .pg-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .pg-link svg { width: 16px; height: 16px; color: var(--muted-foreground); transition: transform .15s ease; }
 .pg-link:hover svg { transform: translateX(2px); }
-.pg-lt { font-size: 13.5px; font-weight: 600; }
+.pg-lt { font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
 .pg-ld { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted-foreground); }
 .pg-link.pg-warn { border-left-color: var(--warning); }
 
@@ -254,6 +255,8 @@ svg { display: block; flex: none; }
 .nav a:hover { color: var(--foreground); }
 .nav a.active { color: var(--foreground); font-weight: 600; }
 .nav a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+/* 設定だけは歯車アイコン付きで出す。 */
+.nav .gear svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .nav-solo { display: inline-flex; padding: 14px 0; }
 .nav-solo a.active::after { bottom: 10px; }
 
@@ -380,6 +383,10 @@ svg { display: block; flex: none; }
 @media (max-width: 640px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
 }
+
+/* ステータスを一回り大きく (ドロワーの .drawer-status と同寸) 。一覧とドロワーで粒を揃えたいとき、親に付ける。 */
+.is-lg-status .status { height: 21px; padding: 0 8px; font-size: 11px; }
+.is-lg-status .status::before { width: 5px; height: 5px; }
 /* ---------- component: browse-filters ---------- */
 /* ---------- toolbar: filters + sort ---------- */
 .toolbar { padding: 10px 0 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -436,6 +443,8 @@ svg { display: block; flex: none; }
 .active { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
 .active .lbl { color: var(--muted-foreground); }
 .active .hits { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+/* 実装の sm:hidden 相当。絞り込み無しのときはデスクトップ幅で行ごと消え、モバイルでは開き口だけ残る。 */
+.active.is-mobile-only { display: none; }
 
 .achip {
   display: inline-flex; align-items: center; gap: 4px;
@@ -468,6 +477,72 @@ svg { display: block; flex: none; }
 @media (max-width: 640px) {
   .active .hits { margin-left: 0; width: 100%; }
 }
+
+/* ---------- モバイルの絞り込みシート ---------- */
+/* 開閉は #fsheet チェックボックスで持つ。パネル側 (.fsheet) はページのサイドバーの絞り込み枠に併記する。
+   デスクトップではサイドバーに絞り込みが常設されているので、開き口も閉じるボタンも要らない。 */
+.filter-btn {
+  display: none; align-items: center; gap: 5px;
+  height: 24px; padding: 0 9px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--background); color: var(--foreground);
+  font-size: 12px; cursor: pointer;
+}
+.filter-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.filter-btn .n {
+  font-size: 11px; font-variant-numeric: tabular-nums;
+  color: var(--primary-foreground); background: var(--primary);
+  border-radius: 999px; padding: 0 5px;
+}
+body:has(#fsheet:focus-visible) .filter-btn { box-shadow: 0 0 0 2px var(--ring); }
+.fsheet-scrim, .fsheet-head { display: none; }
+
+@media (max-width: 640px) {
+  /* 開き口は「絞り込み」ボタンひとつ。適用中の行 (.achip) は引き続き「外す」だけを担う。 */
+  .filter-btn { display: inline-flex; }
+  .active.is-mobile-only { display: flex; }
+  .fsheet-head { display: flex; }
+  .fsheet {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    max-height: 76vh; overflow-y: auto;
+    border-top: 1px solid var(--border);
+    border-radius: 14px 14px 0 0;
+    background: var(--sidebar);
+    box-shadow: 0 -12px 32px -12px var(--overlay);
+    padding: 0 8px 18px;
+    gap: 14px;
+    transform: translateY(101%);
+    visibility: hidden;
+    transition: transform .22s cubic-bezier(.16, 1, .3, 1), visibility 0s .22s;
+  }
+  body:has(#fsheet:checked) .fsheet {
+    transform: none;
+    visibility: visible;
+    transition: transform .22s cubic-bezier(.16, 1, .3, 1), visibility 0s;
+  }
+  .fsheet-head {
+    position: sticky; top: 0; z-index: 1;
+    align-items: center; gap: 8px;
+    margin: 0 -8px; padding: 12px 18px 10px;
+    background: var(--sidebar);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 700;
+  }
+  .fsheet-x {
+    margin-left: auto; width: 26px; height: 26px;
+    display: grid; place-items: center; border-radius: 7px;
+    color: var(--muted-foreground); cursor: pointer;
+  }
+  .fsheet-x:hover { background: var(--muted); color: var(--foreground); }
+  .fsheet-x svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .fsheet-scrim {
+    display: block; position: fixed; inset: 0; z-index: 39;
+    background: var(--overlay);
+    opacity: 0; pointer-events: none;
+    transition: opacity .22s;
+  }
+  body:has(#fsheet:checked) .fsheet-scrim { opacity: 1; pointer-events: auto; }
+}
 /* ---------- component: anime-drawer ---------- */
 
 
@@ -482,6 +557,15 @@ svg { display: block; flex: none; }
   animation: slideIn .28s cubic-bezier(.2,.8,.2,1) both;
 }
 @keyframes slideIn { from { transform: translateX(105%); } to { transform: none; } }
+/* ページに組むドロワーは :target のときだけ前面に出す (単体カタログは .is-standalone を使う) */
+.drawer.is-page {
+  position: fixed; z-index: 91;
+  animation: none;
+  transform: translateX(105%);
+  visibility: hidden;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), visibility .28s;
+}
+.drawer.is-page:target { transform: none; visibility: visible; }
 .drawer.is-standalone { position: static; width: 100%; border-left: 0; box-shadow: none; border: 1px solid var(--border); border-radius: 10px; animation: none; }
 
 .drawer-hero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
@@ -514,13 +598,13 @@ svg { display: block; flex: none; }
 .drawer-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
 .drawer-body h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
 .drawer-status { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
-.s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
-.s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
-.s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
-.s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.drawer-status .status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.drawer-status .status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.drawer-status .s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.drawer-status .s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.drawer-status .s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.drawer-status .s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.drawer-status .s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
 .drawer-status .season { color: var(--muted-foreground); }
 
 .drawer-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; font-size: 12.5px; margin: 0; }
@@ -548,16 +632,13 @@ svg { display: block; flex: none; }
 
 .drawer-eps { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
 .drawer-eps h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); font-weight: 600; margin: 0 0 2px; }
-.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 6px; border-left: 3px solid transparent; }
+.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 6px; }
 .epline:hover { background: var(--muted); }
 .epline .n { color: var(--muted-foreground); font-variant-numeric: tabular-nums; width: 42px; flex: none; }
 .epline .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .epline .rec { margin-left: auto; font-size: 11px; color: var(--muted-foreground); flex: none; }
-.epline.is-done { border-left-color: var(--success); }
 .epline.is-done .rec { color: var(--success); }
-.epline.is-rec { border-left-color: var(--info); }
 .epline.is-rec .rec { color: var(--info); }
-.epline.is-fail { border-left-color: var(--destructive); }
 .epline.is-fail .rec { color: var(--destructive); }
 
 @media (max-width: 640px) {
@@ -576,6 +657,12 @@ svg { display: block; flex: none; }
   transition: opacity .22s ease, visibility .22s ease;
 }
 .drawer:target ~ .drawer-scrim { opacity: 1; visibility: visible; }
+
+/* 左端 3px の色帯で録画状態を示す版。色帯と角丸がぶつからないよう左側の角を立てる。 */
+.drawer-eps.is-flush .epline { border-radius: 0 8px 8px 0; border-left: 3px solid transparent; }
+.drawer-eps.is-flush .epline.is-done { border-left-color: var(--success); }
+.drawer-eps.is-flush .epline.is-rec { border-left-color: var(--info); }
+.drawer-eps.is-flush .epline.is-fail { border-left-color: var(--destructive); }
 /* ---------- component: pagination ---------- */
 /* ---------- chips / segmented ---------- */
 .chip {
@@ -680,13 +767,13 @@ svg { display: block; flex: none; }
   <section class="toolbar" aria-label="絞り込みと並び替え">
     <div class="toolbar-row">
       <div class="sort">
-        <span class="sort-lbl">並び替え</span>
+        <span class="sort-lbl">並べ替え</span>
         <div class="sel">
-          <select aria-label="並び替え">
-            <option>タイトル 昇順</option>
-            <option>タイトル 降順</option>
-            <option selected>リリース年 新しい順</option>
-            <option>リリース年 古い順</option>
+          <select aria-label="並べ替え">
+            <option>タイトル (昇順)</option>
+            <option>タイトル (降順)</option>
+            <option selected>放送年 (新しい順)</option>
+            <option>放送年 (古い順)</option>
           </select>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </div>
@@ -740,7 +827,7 @@ svg { display: block; flex: none; }
           <span class="flabel">バッジ</span>
           <button class="chip" aria-pressed="true">すべて</button>
           <button class="chip" aria-pressed="false">新着エピソード</button>
-          <button class="chip" aria-pressed="false">新着追加</button>
+          <button class="chip" aria-pressed="false">新規追加</button>
           <button class="chip" aria-pressed="false">配信予定</button>
           <button class="chip" aria-pressed="false">配信終了予定</button>
         </div>
@@ -755,12 +842,12 @@ svg { display: block; flex: none; }
     <button class="reset">すべて解除</button>
   </div>
 
-  <div class="grid">
+  <div class="grid is-lg-status">
 
     <a class="tile p-amazon" href="#drawer-1" style="--h: 265">
       <div class="poster">
         <div class="art"><span class="kana">星降</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 6 6.6.5-5 4.3 1.6 6.4L12 16.8 6.4 20.2 8 13.8 3 9.5l6.6-.5z"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">Prime Video</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -781,7 +868,7 @@ svg { display: block; flex: none; }
     <a class="tile p-netflix" href="#" style="--h: 340">
       <div class="poster">
         <div class="art"><span class="kana">魔女</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">Netflix</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -802,7 +889,7 @@ svg { display: block; flex: none; }
     <a class="tile p-crunchyroll" href="#" style="--h: 60">
       <div class="poster">
         <div class="art"><span class="kana">猫魔</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11zM9 14h.01M15 14h.01"/></svg></div>
-        <span class="tag tag-added">新着追加</span>
+        <span class="tag tag-added">新規追加</span>
         <span class="prov">Crunchyroll</span>
         <span class="ep">第 3 話</span>
       </div>
@@ -813,7 +900,7 @@ svg { display: block; flex: none; }
     <a class="tile p-hulu" href="#" style="--h: 200">
       <div class="poster">
         <div class="art"><span class="kana">静音</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">Hulu</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -834,7 +921,7 @@ svg { display: block; flex: none; }
     <a class="tile p-abema" href="#" style="--h: 110">
       <div class="poster">
         <div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2zM10 11h.01M14 11h.01"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">ABEMA</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -855,7 +942,7 @@ svg { display: block; flex: none; }
     <a class="tile p-hulu" href="#" style="--h: 15">
       <div class="poster">
         <div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M15 15l3 3M6 18l3-3M15 9l3-3"/></svg></div>
-        <span class="tag tag-added">新着追加</span>
+        <span class="tag tag-added">新規追加</span>
         <span class="prov">Hulu</span>
         <span class="ep">第 2 話</span>
       </div>
@@ -866,7 +953,7 @@ svg { display: block; flex: none; }
     <a class="tile p-abema" href="#" style="--h: 290">
       <div class="poster">
         <div class="art"><span class="kana">月面</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3a8 8 0 1 0 7 11 6 6 0 0 1-7-11z"/></svg></div>
-        <span class="tag tag-new"><span class="pulse"></span>新着</span>
+        <span class="tag tag-new"><span class="pulse"></span>新着エピソード</span>
         <span class="prov">ABEMA</span>
         <span class="ep">第 8 話</span>
       </div>
@@ -1020,7 +1107,7 @@ svg { display: block; flex: none; }
       <a class="drawer-close" href="#" aria-label="閉じる"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
     </div>
     <div class="drawer-body">
-      <div class="meta"><span class="status s-releasing">放送中</span><span class="prov p-amazon">Prime Video</span></div>
+      <div class="meta is-lg-status"><span class="status s-releasing">放送中</span><span class="prov p-amazon">Prime Video</span></div>
       <h2 id="drawer-1-title">星降る夜のアストロノーツ</h2>
       <p class="drawer-desc">宇宙飛行士訓練校に入学した主人公が、仲間たちと共に未知の軌道ステーションの謎に挑む青春SF。第2クールでは新たな星域が舞台に。</p>
       <dl class="drawer-facts">

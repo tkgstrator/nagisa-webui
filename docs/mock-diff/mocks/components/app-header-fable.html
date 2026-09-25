@@ -180,6 +180,7 @@ svg { display: block; flex: none; }
 .nav a:hover, .nav a.is-hover { color: var(--foreground); }
 .nav a.active { color: var(--foreground); font-weight: 600; }
 .nav a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+/* 設定だけは歯車アイコン付きで出す。 */.nav .gear svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .nav-solo { display: inline-flex; padding: 14px 0; }
 .nav-solo a.active::after { bottom: 10px; }
 

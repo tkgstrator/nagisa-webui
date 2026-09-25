@@ -153,10 +153,8 @@ svg { display: block; flex: none; }
 .cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
 
 /* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
-.cat-frame {
-  /* サンプルは囲まない。セクション見出しの罫線だけで区切る。 */
-  padding: 18px 0 4px;
-}
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
 
 @media (max-width: 640px) {
   .cat { padding: 20px 16px 48px; }
@@ -165,9 +163,6 @@ svg { display: block; flex: none; }
   .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
 }
 /* ---------- component: error-state ---------- */
-
-/* ---------- error state (astra) ---------- */
-/* 中央寄せ + 巨大なステータス数字。生のエラーメッセージは details の中だけに置く。 */
 .err { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .err-code {
   font-size: 84px;
@@ -196,9 +191,9 @@ svg { display: block; flex: none; }
   transition: background .18s ease, filter .18s ease;
 }
 .err-btn svg { width: 16px; height: 16px; }
-.err-btn:hover { background: var(--muted); }
+.err-btn:hover, .err-btn.is-hover { background: var(--muted); }
 .err-btn.is-primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
-.err-btn.is-primary:hover { filter: brightness(1.08); }
+.err-btn.is-primary:hover, .err-btn.is-primary.is-hover { filter: brightness(1.08); }
 
 .err-det { margin-top: 22px; width: 100%; max-width: 520px; text-align: left; }
 .err-det > summary {
@@ -213,7 +208,7 @@ svg { display: block; flex: none; }
   transition: color .18s ease;
 }
 .err-det > summary::-webkit-details-marker { display: none; }
-.err-det > summary:hover { color: var(--foreground); }
+.err-det > summary:hover, .err-det > summary.is-hover { color: var(--foreground); }
 .err-det > summary svg { width: 13px; height: 13px; transition: transform .18s ease; }
 .err-det[open] > summary svg { transform: rotate(180deg); }
 .err-det pre {
@@ -231,12 +226,45 @@ svg { display: block; flex: none; }
 }
 
 @media (max-width: 640px) {
-  .cat-frame { padding: 16px 0 4px; }
   .err-code { font-size: 62px; }
   .err-title { font-size: 17px; }
   .err-acts { width: 100%; flex-direction: column; align-items: stretch; }
-  .err-btn { justify-content: center; }
+  .err-btn { justify-content: center; }}
+
+.err-path {
+  
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  overflow-x: auto;
+  white-space: nowrap;
 }
+.err-path .m {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--destructive);
+}
+
+.err.is-not-found .err-code { font-size: 104px; }
+.err.is-not-found .err-title { margin-top: 20px; font-size: 22px; }
+.err.is-not-found .err-desc { margin-top: 12px; max-width: 420px; }
+.err.is-not-found .err-acts { margin-top: 28px; }
+.err.is-not-found .err-btn.is-primary:hover, .err.is-not-found .err-btn.is-primary.is-hover { background: var(--primary); }
+@media (max-width: 640px) {
+  .err.is-not-found .err-code { font-size: 76px; }
+  .err.is-not-found .err-title { font-size: 19px; }
+  .err-path { font-size: 10.5px; }}
 </style>
 </head>
 <body>
@@ -249,7 +277,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>500 · サーバー内部エラー</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="500 · サーバー内部エラー">
     <div class="cat-frame">
       <div class="err">
         <div class="err-code">500</div>
@@ -271,7 +299,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>503 · 一時的に利用できない</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="503 · 一時的に利用できない">
     <div class="cat-frame">
       <div class="err">
         <div class="err-code">503</div>
@@ -293,7 +321,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>— · ネットワーク到達不能</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="— · ネットワーク到達不能">
     <div class="cat-frame">
       <div class="err">
         <div class="err-code is-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l20 20"/><path d="M4.5 11.5a12 12 0 0 1 4.2-2.6"/><path d="M8 15a7 7 0 0 1 2.6-1.6"/><path d="M12 19h.01"/><path d="M19.8 11.6a12 12 0 0 0-5.6-3"/></svg></div>
@@ -315,7 +343,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>404 · ルート不在</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="404 · ルート不在">
     <div class="cat-frame">
       <div class="err">
         <div class="err-code">404</div>
@@ -332,7 +360,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>open · 技術的な詳細を開いた状態</h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="open · 技術的な詳細を開いた状態">
     <div class="cat-frame">
       <div class="err">
         <div class="err-code">500</div>
@@ -354,6 +382,21 @@ svg { display: block; flex: none; }
   <p class="cat-note">開発者が原因を追える最小限。ここ以外に生の例外文を出さない。</p>
 </section>
 
+<section class="cat-sec">
+  <h2>404 · 作品が見つからない</h2>
+  <div class="cat-item cat-full" data-story="404 · 作品が見つからない">
+<div class="err is-not-found" data-part="not-found">
+        <div class="err-code">404</div>
+        <h1 class="err-title">お探しの作品が見つかりません</h1>
+        <p class="err-desc">削除されたか、URL が間違っている可能性があります。ブックマークから開いた場合は、一覧から探し直してください。</p>
+        <div class="err-path"><span class="m">GET</span>/anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb</div>
+        <div class="err-acts">
+          <a class="err-btn is-primary" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧へ</a>
+          <a class="err-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+      </div>
+  </div>
+</section>
 </main>
 </body>
 </html>

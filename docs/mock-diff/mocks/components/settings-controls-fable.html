@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>設定コントロール — fable 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- catalog stage: settings-controls ---------- */
+/* ---------- stage ---------- */
+/* このカタログはサンプルを囲まず、セクション見出しの罫線だけで区切る。 */
+.cat-frame { border: 0; border-radius: 0; padding: 18px 0 4px; background: none; }
+/* ---------- component: settings-controls ---------- */
+/* ---------- settings: 行 ---------- *//* 1 行 1 設定。枠では囲わず下罫線だけで切る。左はラベルと補足、右に操作を置く。 */.set-list { display: flex; flex-direction: column; }
+.set-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 14px 2px; border-bottom: 1px solid var(--border);
+  transition: background .15s ease;
+}
+.set-row:last-child { border-bottom: 0; }
+.set-row:hover, .set-row.is-hover { background: var(--muted); }
+.set-rt { min-width: 0; }
+.set-label { font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.set-desc { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
+.set-ctl { flex: none; display: flex; align-items: center; gap: 10px; }
+.set-note { font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.set-tag { font-size: 10px; font-weight: 700; letter-spacing: .03em; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: var(--accent-foreground); }
+
+/* ---------- settings: セグメント ---------- *//* 選択中だけ下線 2px と太字。pill や塗りは使わない。 */.set-seg { display: flex; align-items: center; gap: 18px; }
+.set-seg button {
+  position: relative; padding: 4px 0; font-size: 13px; color: var(--muted-foreground);
+  transition: color .15s;
+}
+.set-seg button:hover, .set-seg button.is-hover { color: var(--foreground); }
+.set-seg button.on { color: var(--foreground); font-weight: 600; }
+.set-seg button.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+.set-seg button:focus-visible, .set-seg button.is-focus { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 3px; }
+
+/* ---------- settings: スイッチ ---------- */.set-sw {
+  width: 38px; height: 21px; border-radius: 999px; background: var(--input);
+  position: relative; flex: none; transition: background .18s ease;
+}
+.set-sw::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px;
+  border-radius: 999px; background: var(--background);
+  transition: transform .18s cubic-bezier(.16, 1, .3, 1);
+}
+.set-sw.on { background: var(--primary); }
+.set-sw.on::after { transform: translateX(17px); background: var(--primary-foreground); }
+.set-sw:focus-visible, .set-sw.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* ---------- settings: 下線だけのセレクト ---------- */.set-sel {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 3px 0; border-bottom: 1px solid var(--input);
+  font-size: 13px; font-variant-numeric: tabular-nums;
+  transition: border-color .15s;
+}
+.set-sel:hover, .set-sel.is-hover { border-bottom-color: var(--foreground); }
+.set-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
+
+/* ---------- settings: プロバイダ行 ---------- */.set-pv { display: inline-flex; align-items: center; gap: 8px; }
+.set-pv .chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+.set-pv .chip.amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.set-pv .chip.hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.set-pv .chip.crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.set-pv .chip.netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.set-pv .chip.abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+
+/* ---------- settings: 危険な操作 ---------- *//* 破壊的な操作だけ左罫を destructive にして、他の行と明確に別扱いにする。 */.set-row.is-danger { border-left: 3px solid var(--destructive); padding-left: 12px; }
+.set-row.is-danger .set-label { color: var(--destructive); }
+.set-btn {
+  height: 30px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--input);
+  font-size: 12.5px; font-weight: 600; transition: background .15s, border-color .15s;
+}
+.set-btn:hover, .set-btn.is-hover { background: var(--muted); }
+.set-btn.is-danger { border-color: color-mix(in oklch, var(--destructive) 40%, transparent); color: var(--destructive); }
+.set-btn.is-danger:hover, .set-btn.is-danger.is-hover { background: color-mix(in oklch, var(--destructive) 10%, transparent); }
+.set-btn:focus-visible, .set-btn.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* ---------- settings: アンカータブ ---------- *//* 下線 2px で現在地を示す。ページ内アンカーで節に飛ぶ。囲いは持たず下罫線のみ。 */.set-tabs {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 24px;
+  height: 40px; margin: -8px 0 0;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklch, var(--background) 92%, transparent);
+  backdrop-filter: blur(6px);
+  overflow-x: auto; scrollbar-width: none;
+}
+.set-tabs::-webkit-scrollbar { display: none; }
+.set-tabs a {
+  position: relative; display: inline-flex; align-items: center; gap: 7px;
+  height: 100%; color: var(--muted-foreground); font-size: 13px; white-space: nowrap;
+  transition: color .15s;
+}
+.set-tabs a:hover, .set-tabs a.is-hover { color: var(--foreground); }
+.set-tabs a.on { color: var(--foreground); font-weight: 600; }
+.set-tabs a.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--primary); animation: growX .3s ease both; }
+.set-tabs .n { font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+/* ---------- settings: 保存状態 ---------- *//* 見出しの右で「保存済み」を示す。変更は即時反映なので保存ボタンは持たない。 */.set-saved { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
+.set-saved svg { width: 13px; height: 13px; color: var(--success); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- settings: バージョン表 ---------- *//* 1 セルに 1 値。値は等幅で右寄せ。 */.set-meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.set-meta div { border-left: 3px solid var(--border); padding: 2px 0 2px 12px; }
+.set-meta dt { font-size: 11px; color: var(--muted-foreground); }
+.set-meta dd { margin: 3px 0 0; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.set-meta .mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 13px; }
+
+/* .set-list.is-stack: ページ幅で使うとき、モバイルでは操作を下段に回して全幅に広げる。 */@media (max-width: 640px) {
+  .set-tabs { gap: 18px; margin: -4px -16px 0; padding: 0 16px; }
+  .set-list.is-stack .set-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .set-list.is-stack .set-ctl { width: 100%; justify-content: space-between; }
+  .set-list.is-stack .set-seg { gap: 14px; }
+  .set-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }}
+</style>
+</head>
+<body>
+<main class="cat">
+<header class="cat-head">
+  <h1>設定コントロール <span class="cat-id">settings-controls</span></h1>
+  <p>設定ページ (<code>settings</code>) を組み立てている行コンポーネント群。<code>.set-list</code> の中に <code>.set-row</code> を並べ、行ごとに下罫線だけで区切る (枠は持たない)。選択状態は下線 2px と太字で示し、astra 案のような pill 塗りつぶしは使わない。</p>
+  <div class="cat-meta"><span>fable 案 = 下線方式</span><span>アイコンは持たず、ラベルと補足だけで構成する</span><span>危険な操作は行の左罫だけを destructive に</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>set-row + set-seg <span class="cat-hint">2〜3 値・選択中は下線 2px + 太字</span></h2>
+  <div class="cat-item cat-full" data-story="set-row + set-seg">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">テーマ</p>
+            <p class="set-desc">「システム」は OS の外観設定に追従する。</p>
+          </div>
+          <div class="set-ctl">
+            <div class="set-seg" role="group">
+              <button type="button">ライト</button>
+              <button type="button">ダーク</button>
+              <button type="button" class="on" aria-pressed="true">システム</button>
+            </div>
+          </div>
+        </div>
+        <div class="set-row is-hover">
+          <div class="set-rt">
+            <p class="set-label">カードの密度</p>
+            <p class="set-desc">1 行あたりの枚数とサムネイルの大きさが変わる。</p>
+          </div>
+          <div class="set-ctl">
+            <div class="set-seg" role="group">
+              <button type="button">ゆったり</button>
+              <button type="button" class="on" aria-pressed="true">標準</button>
+              <button type="button" class="is-hover">詰める</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">選択中のボタンだけ <code>.on</code> を付け、下線を <code>::after</code> で描く。色の遷移は <code>.15s</code>。pill の背景塗りは無く、行の hover は <code>.set-row</code> 全体の背景でのみ示す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>set-row + set-sel <span class="cat-hint">下線だけのセレクト</span></h2>
+  <div class="cat-item cat-full" data-story="set-row + set-sel">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">1 ページの表示件数</p>
+            <p class="set-desc">アニメ一覧・録画一覧・未識別タイトルに適用される。</p>
+          </div>
+          <div class="set-ctl">
+            <span class="set-sel is-hover"><span class="num">24</span> 件
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">既定の並び順</p>
+            <p class="set-desc">一覧を開いた直後に適用される並び。URL で指定があればそちらが優先される。</p>
+          </div>
+          <div class="set-ctl">
+            <span class="set-sel">放送年 (新しい順)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">枠は持たず <code>border-bottom</code> のみ。hover / <code>.is-hover</code> で下線を <code>var(--foreground)</code> にする、色の遷移は <code>.15s</code>。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>set-row + set-sw <span class="cat-hint">on / off、プロバイダ行 (set-pv)</span></h2>
+  <div class="cat-item cat-full" data-story="set-row + set-sw">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">アニメーション</p>
+            <p class="set-desc">OS で「視差を減らす」が有効なときは、この設定にかかわらず抑制される。</p>
+          </div>
+          <div class="set-ctl">
+            <span class="set-note">有効</span>
+            <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="アニメーション"></button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label"><span class="set-pv"><span class="chip netflix">Netflix</span></span> <span class="set-tag">未連携</span></p>
+          </div>
+          <div class="set-ctl">
+            <button type="button" class="set-sw" role="switch" aria-checked="false" aria-label="Netflix を表示"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">つまみの移動は <code>.18s cubic-bezier(.16,1,.3,1)</code>、背景色は <code>.18s ease</code>。プロバイダ行では <code>.set-pv .chip</code> がアイコンの代わりにラベル内へ入り、未連携は <code>.set-tag</code> で添える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>set-row + set-btn <span class="cat-hint">通常 / danger</span></h2>
+  <div class="cat-item cat-full" data-story="set-row + set-btn">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">設定の書き出しと読み込み</p>
+            <p class="set-desc">この画面の内容を JSON で保存し、別の端末に持ち込める。</p>
+          </div>
+          <div class="set-ctl">
+            <button type="button" class="set-btn is-hover">書き出す</button>
+            <button type="button" class="set-btn">読み込む</button>
+          </div>
+        </div>
+        <div class="set-row is-danger">
+          <div class="set-rt">
+            <p class="set-label">すべての設定を初期化する</p>
+            <p class="set-desc">この画面の内容だけが既定に戻る。録画予約と作品データには触れない。</p>
+          </div>
+          <div class="set-ctl">
+            <button type="button" class="set-btn is-danger">初期化</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note"><code>.set-btn</code> の角丸は 7px、astra 案の pill 形状 (999px) とは異なる。危険な操作の行は <code>.is-danger</code> を <code>.set-row</code> に付けて左罫だけを destructive にし、ボタンは枠線と文字色だけを destructive にする。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>ページ用の部品 <span class="cat-hint">.set-tabs / .set-saved / .set-list.is-stack / .set-meta</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="ページ用の部品 / .set-tabs"><span class="cat-label">.set-tabs</span>
+<nav class="set-tabs" aria-label="設定の節">
+    <a class="on" href="#s-view">表示</a>
+    <a href="#s-provider">配信プロバイダ <span class="n num">4 / 5</span></a>
+    <a href="#s-rec">録画</a>
+    <a href="#s-admin">管理 <span class="n num">38</span></a>
+    <a href="#s-data">データ</a>
+    <a href="#s-about">アプリ情報</a>
+  </nav>
+    </div>
+    <div class="cat-item cat-full is-key" data-story="ページ用の部品 / .set-saved"><span class="cat-label">.set-saved</span>
+<span class="set-saved">
+        <svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>
+        保存済み · <span class="num">13:04</span>
+      </span>
+    </div>
+    <div class="cat-item cat-full is-key" data-story="ページ用の部品 / .set-list.is-stack"><span class="cat-label">.set-list.is-stack</span>
+<div class="set-list is-stack">
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">テーマ</p>
+          <p class="set-desc">「システム」は OS の外観設定に追従する。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button">ライト</button>
+            <button type="button">ダーク</button>
+            <button type="button" class="on" aria-pressed="true">システム</button>
+          </div>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">1 ページの表示件数</p>
+          <p class="set-desc">アニメ一覧・録画一覧・未識別タイトルに適用される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel"><span class="num">24</span> 件
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">既定の並び順</p>
+          <p class="set-desc">一覧を開いた直後に適用される並び。URL で指定があればそちらが優先される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel">放送年 (新しい順)
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">カードの密度</p>
+          <p class="set-desc">1 行あたりの枚数とサムネイルの大きさが変わる。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button">ゆったり</button>
+            <button type="button" class="on" aria-pressed="true">標準</button>
+            <button type="button">詰める</button>
+          </div>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">アニメーション</p>
+          <p class="set-desc">OS で「視差を減らす」が有効なときは、この設定にかかわらず抑制される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note">有効</span>
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="アニメーション"></button>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="cat-item cat-full is-key" data-story="ページ用の部品 / .set-meta"><span class="cat-label">.set-meta</span>
+<dl class="set-meta">
+      <div>
+        <dt>バージョン</dt>
+        <dd class="num">v0.4.0</dd>
+      </div>
+      <div>
+        <dt>ビルド</dt>
+        <dd class="mono">319250c</dd>
+      </div>
+      <div>
+        <dt>登録作品</dt>
+        <dd class="num">3,275</dd>
+      </div>
+      <div>
+        <dt>録画予約</dt>
+        <dd class="num">16</dd>
+      </div>
+    </dl>
+    </div>
+  </div>
+  <p class="cat-note">設定ページで使う節タブ・保存表示・縦積みの設定行・版情報。</p>
+</section>
+</main>
+</body>
+</html>

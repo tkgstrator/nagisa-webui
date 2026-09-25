@@ -11,6 +11,15 @@
   animation: slideIn .28s cubic-bezier(.2,.8,.2,1) both;
 }
 @keyframes slideIn { from { transform: translateX(105%); } to { transform: none; } }
+/* ページに組むドロワーは :target のときだけ前面に出す (単体カタログは .is-standalone を使う) */
+.drawer.is-page {
+  position: fixed; z-index: 91;
+  animation: none;
+  transform: translateX(105%);
+  visibility: hidden;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), visibility .28s;
+}
+.drawer.is-page:target { transform: none; visibility: visible; }
 .drawer.is-standalone { position: static; width: 100%; border-left: 0; box-shadow: none; border: 1px solid var(--border); border-radius: 10px; animation: none; }
 
 .drawer-hero { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
@@ -43,13 +52,13 @@
 .drawer-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
 .drawer-body h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
 .drawer-status { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
-.s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
-.s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
-.s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
-.s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
+.drawer-status .status { display: inline-flex; align-items: center; gap: 5px; height: 21px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.drawer-status .status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.drawer-status .s-releasing { background: var(--status-releasing); color: var(--status-releasing-foreground); }
+.drawer-status .s-finished { background: var(--status-finished); color: var(--status-finished-foreground); }
+.drawer-status .s-not-yet { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.drawer-status .s-cancelled { background: var(--status-cancelled); color: var(--status-cancelled-foreground); }
+.drawer-status .s-hiatus { background: var(--status-hiatus); color: var(--status-hiatus-foreground); }
 .drawer-status .season { color: var(--muted-foreground); }
 
 .drawer-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; font-size: 12.5px; margin: 0; }
@@ -77,16 +86,13 @@
 
 .drawer-eps { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
 .drawer-eps h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); font-weight: 600; margin: 0 0 2px; }
-.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 6px; border-left: 3px solid transparent; }
+.epline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 6px; border-radius: 6px; }
 .epline:hover { background: var(--muted); }
 .epline .n { color: var(--muted-foreground); font-variant-numeric: tabular-nums; width: 42px; flex: none; }
 .epline .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .epline .rec { margin-left: auto; font-size: 11px; color: var(--muted-foreground); flex: none; }
-.epline.is-done { border-left-color: var(--success); }
 .epline.is-done .rec { color: var(--success); }
-.epline.is-rec { border-left-color: var(--info); }
 .epline.is-rec .rec { color: var(--info); }
-.epline.is-fail { border-left-color: var(--destructive); }
 .epline.is-fail .rec { color: var(--destructive); }
 
 @media (max-width: 640px) {
@@ -105,3 +111,9 @@
   transition: opacity .22s ease, visibility .22s ease;
 }
 .drawer:target ~ .drawer-scrim { opacity: 1; visibility: visible; }
+
+/* 左端 3px の色帯で録画状態を示す版。色帯と角丸がぶつからないよう左側の角を立てる。 */
+.drawer-eps.is-flush .epline { border-radius: 0 8px 8px 0; border-left: 3px solid transparent; }
+.drawer-eps.is-flush .epline.is-done { border-left-color: var(--success); }
+.drawer-eps.is-flush .epline.is-rec { border-left-color: var(--info); }
+.drawer-eps.is-flush .epline.is-fail { border-left-color: var(--destructive); }

@@ -122,7 +122,7 @@ svg { display: block; flex: none; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* ---------- page skeleton (fable) ---------- */
-/* ページ骨格だけを持つ。部品のクラスは一切定義しない。
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
    衝突を避けるため骨格クラスは pg- 名前空間に統一する。 */
 
 .pg {
@@ -145,25 +145,71 @@ svg { display: block; flex: none; }
 .pg-narrow { max-width: 1280px; }
 
 /* ---------- page head ---------- */
-.pg-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 .pg-eyebrow {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted-foreground); display: flex; align-items: center; gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .pg-eyebrow b { color: var(--foreground); font-weight: 700; }
-.pg-title { margin-top: 4px; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
 .pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
 .pg-sub b { color: var(--foreground); font-weight: 600; }
 .pg-headctl { display: flex; align-items: center; gap: 10px; }
 
 /* ---------- section ---------- */
 .pg-sec { display: flex; flex-direction: column; gap: 14px; }
-.pg-sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 .pg-sec-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
 .pg-sec-count { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
-.pg-sec-more { font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 3px; }
-.pg-sec-more:hover, .pg-sec-more.is-hover { color: var(--foreground); }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
 .pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 40px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 68px;
+}
 
 /* ---------- quick links ---------- */
 .pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
@@ -172,15 +218,17 @@ svg { display: block; flex: none; }
   border-left: 3px solid var(--primary); padding: 12px 14px;
   transition: background .15s ease;
 }
-.pg-link:hover, .pg-link.is-hover { background: var(--muted); }
-.pg-link:focus-visible, .pg-link.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+.pg-link:hover { background: var(--muted); }
+.pg-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .pg-link svg { width: 16px; height: 16px; color: var(--muted-foreground); transition: transform .15s ease; }
-.pg-link:hover svg, .pg-link.is-hover svg { transform: translateX(2px); }
+.pg-link:hover svg { transform: translateX(2px); }
 .pg-lt { font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
 .pg-ld { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted-foreground); }
 .pg-link.pg-warn { border-left-color: var(--warning); }
 
 @media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .pg-aside { position: static; }
   .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
@@ -189,7 +237,6 @@ svg { display: block; flex: none; }
   .pg-links { grid-template-columns: minmax(0, 1fr); }
   .pg-headctl { width: 100%; flex-wrap: wrap; }
 }
-
 /* ---------- component: app-header ---------- */
 @keyframes pulseDot { 50% { opacity: .25; } }
 
@@ -205,10 +252,13 @@ svg { display: block; flex: none; }
 
 .nav { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
 .nav a { color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; position: relative; padding: 4px 0; transition: color .15s; }
-.nav a:hover, .nav a.is-hover { color: var(--foreground); }
+.nav a:hover { color: var(--foreground); }
 .nav a.active { color: var(--foreground); font-weight: 600; }
 .nav a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+/* 設定だけは歯車アイコン付きで出す。 */
 .nav .gear svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-solo { display: inline-flex; padding: 14px 0; }
+.nav-solo a.active::after { bottom: 10px; }
 
 .count-pill {
   display: inline-flex; align-items: center; justify-content: center;
@@ -216,6 +266,7 @@ svg { display: block; flex: none; }
   background: var(--secondary); color: var(--secondary-foreground);
   font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums;
 }
+.count-pill.is-alert { background: color-mix(in oklch, var(--primary) 18%, transparent); color: var(--accent-foreground); }
 
 .search {
   flex: 1; min-width: 0; max-width: 420px; margin-left: auto;
@@ -225,22 +276,105 @@ svg { display: block; flex: none; }
   color: var(--muted-foreground); font-size: 13px;
   transition: border-color .15s, box-shadow .15s;
 }
-.search:hover, .search.is-hover { border-color: var(--ring); }
-.search:focus-within, .search.is-focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
+.search:hover { border-color: var(--ring); }
+.search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
 .search svg { width: 14px; height: 14px; flex-shrink: 0; }
 .search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); color: var(--muted-foreground); }
+.search.has-value { color: var(--foreground); border-color: var(--input); }
+.search .clear { margin-left: auto; width: 16px; height: 16px; border-radius: 999px; background: var(--muted); color: var(--muted-foreground); display: grid; place-items: center; }
+.search .clear svg { width: 9px; height: 9px; }
+.search-solo { max-width: 320px; margin-left: 0; }
 
 .srv { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); font-size: 12px; flex-shrink: 0; }
 .srv i { width: 8px; height: 8px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.srv.is-checking i { background: var(--warning); }
+.srv.is-down i { background: var(--destructive); animation: none; }
+.srv.is-down { color: var(--destructive); }
 
 @media (max-width: 640px) {
-  .hdr-in { height: auto; gap: 12px; padding: 10px 14px 0; flex-wrap: wrap; }
+  .hdr-in { height: 52px; gap: 12px; padding: 0 14px; flex-wrap: wrap; }
   .brand { font-size: 16px; }
   .nav { gap: 14px; font-size: 13px; order: 3; width: 100%; padding-bottom: 8px; }
   .nav a.active::after { bottom: -8px; }
+  .hdr-in { height: auto; padding-top: 10px; }
   .search { margin-left: auto; max-width: none; flex: 1 1 100%; order: 2; }
   .srv span { display: none; }
 }
+/* ---------- component: settings-controls ---------- */
+/* ---------- settings: 行 ---------- */
+/* 1 行 1 設定。枠では囲わず下罫線だけで切る。左はラベルと補足、右に操作を置く。 */
+.set-list { display: flex; flex-direction: column; }
+.set-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 14px 2px; border-bottom: 1px solid var(--border);
+  transition: background .15s ease;
+}
+.set-row:last-child { border-bottom: 0; }
+.set-row:hover { background: var(--muted); }
+.set-rt { min-width: 0; }
+.set-label { font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.set-desc { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
+.set-ctl { flex: none; display: flex; align-items: center; gap: 10px; }
+.set-note { font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.set-tag { font-size: 10px; font-weight: 700; letter-spacing: .03em; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: var(--accent-foreground); }
+
+/* ---------- settings: セグメント ---------- */
+/* 選択中だけ下線 2px と太字。pill や塗りは使わない。 */
+.set-seg { display: flex; align-items: center; gap: 18px; }
+.set-seg button {
+  position: relative; padding: 4px 0; font-size: 13px; color: var(--muted-foreground);
+  transition: color .15s;
+}
+.set-seg button:hover { color: var(--foreground); }
+.set-seg button.on { color: var(--foreground); font-weight: 600; }
+.set-seg button.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+.set-seg button:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 3px; }
+
+/* ---------- settings: スイッチ ---------- */
+.set-sw {
+  width: 38px; height: 21px; border-radius: 999px; background: var(--input);
+  position: relative; flex: none; transition: background .18s ease;
+}
+.set-sw::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px;
+  border-radius: 999px; background: var(--background);
+  transition: transform .18s cubic-bezier(.16, 1, .3, 1);
+}
+.set-sw.on { background: var(--primary); }
+.set-sw.on::after { transform: translateX(17px); background: var(--primary-foreground); }
+.set-sw:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* ---------- settings: 下線だけのセレクト ---------- */
+.set-sel {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 3px 0; border-bottom: 1px solid var(--input);
+  font-size: 13px; font-variant-numeric: tabular-nums;
+  transition: border-color .15s;
+}
+.set-sel:hover { border-bottom-color: var(--foreground); }
+.set-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
+
+/* ---------- settings: プロバイダ行 ---------- */
+.set-pv { display: inline-flex; align-items: center; gap: 8px; }
+.set-pv .chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+.set-pv .chip.amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.set-pv .chip.hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.set-pv .chip.crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.set-pv .chip.netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+.set-pv .chip.abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+
+/* ---------- settings: 危険な操作 ---------- */
+/* 破壊的な操作だけ左罫を destructive にして、他の行と明確に別扱いにする。 */
+.set-row.is-danger { border-left: 3px solid var(--destructive); padding-left: 12px; }
+.set-row.is-danger .set-label { color: var(--destructive); }
+.set-btn {
+  height: 30px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--input);
+  font-size: 12.5px; font-weight: 600; transition: background .15s, border-color .15s;
+}
+.set-btn:hover { background: var(--muted); }
+.set-btn.is-danger { border-color: color-mix(in oklch, var(--destructive) 40%, transparent); color: var(--destructive); }
+.set-btn.is-danger:hover { background: color-mix(in oklch, var(--destructive) 10%, transparent); }
+.set-btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 
 /* ---------- settings: アンカータブ ---------- */
 /* 下線 2px で現在地を示す。ページ内アンカーで節に飛ぶ。囲いは持たず下罫線のみ。 */
@@ -259,85 +393,10 @@ svg { display: block; flex: none; }
   height: 100%; color: var(--muted-foreground); font-size: 13px; white-space: nowrap;
   transition: color .15s;
 }
-.set-tabs a:hover, .set-tabs a.is-hover { color: var(--foreground); }
+.set-tabs a:hover { color: var(--foreground); }
 .set-tabs a.on { color: var(--foreground); font-weight: 600; }
 .set-tabs a.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--primary); animation: growX .3s ease both; }
 .set-tabs .n { font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
-
-/* ---------- settings: 行 ---------- */
-/* 1 行 1 設定。枠では囲わず下罫線だけで切る。左はラベルと補足、右に操作を置く。 */
-.set-list { display: flex; flex-direction: column; }
-.set-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding: 14px 2px; border-bottom: 1px solid var(--border);
-  transition: background .15s ease;
-}
-.set-row:last-child { border-bottom: 0; }
-.set-row:hover, .set-row.is-hover { background: var(--muted); }
-.set-rt { min-width: 0; }
-.set-label { font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.set-desc { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
-.set-ctl { flex: none; display: flex; align-items: center; gap: 10px; }
-.set-note { font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
-.set-tag { font-size: 10px; font-weight: 700; letter-spacing: .03em; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: var(--accent-foreground); }
-
-/* ---------- settings: セグメント ---------- */
-/* 選択中だけ下線 2px と太字。pill や塗りは使わない。 */
-.set-seg { display: flex; align-items: center; gap: 18px; }
-.set-seg button {
-  position: relative; padding: 4px 0; font-size: 13px; color: var(--muted-foreground);
-  transition: color .15s;
-}
-.set-seg button:hover, .set-seg button.is-hover { color: var(--foreground); }
-.set-seg button.on { color: var(--foreground); font-weight: 600; }
-.set-seg button.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--primary); border-radius: 2px; }
-.set-seg button:focus-visible, .set-seg button.is-focus { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 3px; }
-
-/* ---------- settings: スイッチ ---------- */
-.set-sw {
-  width: 38px; height: 21px; border-radius: 999px; background: var(--input);
-  position: relative; flex: none; transition: background .18s ease;
-}
-.set-sw::after {
-  content: ""; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px;
-  border-radius: 999px; background: var(--background);
-  transition: transform .18s cubic-bezier(.16, 1, .3, 1);
-}
-.set-sw.on { background: var(--primary); }
-.set-sw.on::after { transform: translateX(17px); background: var(--primary-foreground); }
-.set-sw:focus-visible, .set-sw.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
-
-/* ---------- settings: 下線だけのセレクト ---------- */
-.set-sel {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 3px 0; border-bottom: 1px solid var(--input);
-  font-size: 13px; font-variant-numeric: tabular-nums;
-  transition: border-color .15s;
-}
-.set-sel:hover, .set-sel.is-hover { border-bottom-color: var(--foreground); }
-.set-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
-
-/* ---------- settings: プロバイダ行 ---------- */
-.set-pv { display: inline-flex; align-items: center; gap: 8px; }
-.set-pv .chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
-.set-pv .chip.amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
-.set-pv .chip.hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
-.set-pv .chip.crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
-.set-pv .chip.abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
-.set-pv .chip.netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
-
-/* ---------- settings: 危険な操作 ---------- */
-/* 破壊的な操作だけ左罫を destructive にして、他の行と明確に別扱いにする。 */
-.set-row.is-danger { border-left: 3px solid var(--destructive); padding-left: 12px; }
-.set-row.is-danger .set-label { color: var(--destructive); }
-.set-btn {
-  height: 30px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--input);
-  font-size: 12.5px; font-weight: 600; transition: background .15s, border-color .15s;
-}
-.set-btn:hover, .set-btn.is-hover { background: var(--muted); }
-.set-btn.is-danger { border-color: color-mix(in oklch, var(--destructive) 40%, transparent); color: var(--destructive); }
-.set-btn.is-danger:hover, .set-btn.is-danger.is-hover { background: color-mix(in oklch, var(--destructive) 10%, transparent); }
-.set-btn:focus-visible, .set-btn.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
 
 /* ---------- settings: 保存状態 ---------- */
 /* 見出しの右で「保存済み」を示す。変更は即時反映なので保存ボタンは持たない。 */
@@ -352,28 +411,40 @@ svg { display: block; flex: none; }
 .set-meta dd { margin: 3px 0 0; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .set-meta .mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 13px; }
 
+/* .set-list.is-stack: ページ幅で使うとき、モバイルでは操作を下段に回して全幅に広げる。 */
 @media (max-width: 640px) {
   .set-tabs { gap: 18px; margin: -4px -16px 0; padding: 0 16px; }
-  .set-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .set-ctl { width: 100%; justify-content: space-between; }
-  .set-seg { gap: 14px; }
+  .set-list.is-stack .set-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .set-list.is-stack .set-ctl { width: 100%; justify-content: space-between; }
+  .set-list.is-stack .set-seg { gap: 14px; }
   .set-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 }
-
 /* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
 .ftr {
   padding: 20px 16px; text-align: center;
   font-size: 11px; color: var(--muted-foreground);
   border-top: 1px solid var(--border);
 }
 .ftr a { transition: color .12s; }
-.ftr a:hover, .ftr a.is-hover { color: var(--foreground); }
+.ftr a:hover { color: var(--foreground); }
+.ftr .build { display: inline-flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums; }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
 .ftr p { margin-top: 2px; }
-@media (max-width: 640px) { .ftr { padding: 16px 12px; } }
+.ftr .sep { opacity: .5; margin: 0 6px; }
+.ftr .links { margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 640px) {
+  .ftr { padding: 16px 12px; }
+  .ftr .build { flex-wrap: wrap; justify-content: center; }
+}
 </style>
 </head>
 <body>
-
 <header class="hdr">
   <div class="hdr-in">
     <a class="brand" href="#">
@@ -428,7 +499,7 @@ svg { display: block; flex: none; }
       <h2 class="pg-sec-title">表示</h2>
       <span class="pg-sec-count">一覧とカードの見え方</span>
     </div>
-    <div class="set-list">
+    <div class="set-list is-stack">
       <div class="set-row">
         <div class="set-rt">
           <p class="set-label">テーマ</p>
@@ -495,7 +566,7 @@ svg { display: block; flex: none; }
       <h2 class="pg-sec-title">配信プロバイダ</h2>
       <span class="pg-sec-count"><span class="num">4</span> / <span class="num">5</span> 有効</span>
     </div>
-    <div class="set-list">
+    <div class="set-list is-stack">
       <div class="set-row">
         <div class="set-rt">
           <p class="set-label"><span class="set-pv"><span class="chip amazon">Prime Video</span></span></p>
@@ -561,7 +632,7 @@ svg { display: block; flex: none; }
       <h2 class="pg-sec-title">録画</h2>
       <span class="pg-sec-count">Nagisa への依頼と予約のふるまい</span>
     </div>
-    <div class="set-list">
+    <div class="set-list is-stack">
       <div class="set-row">
         <div class="set-rt">
           <p class="set-label">録画済みにしたら録画も依頼する</p>
@@ -663,7 +734,7 @@ svg { display: block; flex: none; }
       <h2 class="pg-sec-title">データ</h2>
       <span class="pg-sec-count">このブラウザに残っているもの</span>
     </div>
-    <div class="set-list">
+    <div class="set-list is-stack">
       <div class="set-row">
         <div class="set-rt">
           <p class="set-label">画像キャッシュ</p>
@@ -726,6 +797,5 @@ svg { display: block; flex: none; }
   <a href="#changelog">v0.4.0 (319250c) 2026/09/18 13:04:00</a>
   <p>&copy; 2026 Nagisa · <a href="#admin">管理</a></p>
 </footer>
-
 </body>
 </html>

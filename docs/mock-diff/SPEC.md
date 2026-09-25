@@ -16,6 +16,14 @@ mock-diff-viewer 上で複数案を並べて比較・選定するための共通
 | `recordings` | 録画一覧 | `src/app/routes/recordings/index.tsx` |
 | `home` | トップ | `src/app/routes/index.tsx` |
 | `settings` | 設定 | (未実装 — このモックが先行する) |
+| `changelog` | 変更履歴 | `src/app/routes/changelog/index.tsx` |
+| `admin` | 管理 | `src/app/routes/admin/index.tsx` |
+| `admin-unidentified` | 「管理」未解決の録画 | `src/app/routes/admin/unidentified/index.tsx` |
+| `admin-recorder` | 「管理」Nagisa ジョブ投入 | `src/app/routes/admin/recorder/index.tsx` |
+| `admin-abema` | 「管理」ABEMA 鍵アーカイブ | `src/app/routes/admin/abema/index.tsx` |
+| `admin-logs` | 「管理」同期ログ | `src/app/routes/admin/logs/index.tsx` + `-components/` |
+| `admin-log-detail` | 「管理」実行詳細（同期ログ） | `src/app/routes/admin/logs/$runId/index.tsx` |
+| `admin-status` | 「管理」サーバーステータス | `src/app/routes/admin/status/index.tsx` |
 
 `<author>` は `fable` / `astra` / `final`。`final` は fable と astra から画面・部品ごとに採用案を
 選んで 1 枚に合成した決定稿で、どちらを採ったかの唯一の正は
@@ -49,6 +57,17 @@ mock-diff-viewer 上で複数案を並べて比較・選定するための共通
 | `anime-carousel` | 作品カルーセル | home |
 | `scheduled-updates` | 直近更新リスト | home |
 | `home-tabs` | ホームタブ | home |
+| `tone-palette` | トーンパレット | 共通 (原子) |
+| `status-badge` | 状態バッジ | 共通 (原子) |
+| `status-dot` | 状態ドット | 共通 (原子) |
+| `button` | ボタン | 共通 (原子) |
+| `nav-item` | ナビゲーション項目 | 共通 (原子) |
+| `stat-tile` | 数値タイル | 共通 (原子) |
+| `chip` | チップ・タグ | 共通 (原子) |
+| `input` | 入力・検索欄 | 共通 (原子) |
+| `toggle` | 選択コントロール | 共通 (原子) |
+| `section-heading` | セクション見出し | 共通 (原子) |
+| `kbd` | キーボード表記 | 共通 (原子) |
 
 画面モックは実装との差分検証 (`actual: {type: url}`) に使うので残す。コンポーネントモックは
 実装側に単体ページが存在しないため `actual` を持たず、案の選定 (Deciding) 専用。
@@ -310,4 +329,3 @@ mock-diff の viewer で状態を選ぶと、それ以外が隠れて 1 状態�
   .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
 }
 ```
-

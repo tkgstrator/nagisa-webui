@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>入力・検索欄 — astra 案 | Nagisa WebUI 原子カタログ — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<style>
+:root {
+  --background: oklch(0.99 0.002 247);
+  --foreground: oklch(0.18 0.005 250);
+  --card: oklch(0.99 0.002 247);
+  --card-foreground: oklch(0.18 0.005 250);
+  --popover: oklch(0.99 0.002 247);
+  --popover-foreground: oklch(0.18 0.005 250);
+  --primary: oklch(0.55 0.18 265);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.005 250);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.52 0.01 250);
+  --accent: oklch(0.95 0.01 265);
+  --accent-foreground: oklch(0.32 0.12 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.62 0.16 152);
+  --success-foreground: oklch(0.98 0.005 250);
+  --info: oklch(0.6 0.16 245);
+  --info-foreground: oklch(0.98 0.005 250);
+  --warning: oklch(0.72 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 75);
+  --overlay: oklch(0.18 0.005 250 / 70%);
+  --overlay-foreground: oklch(0.98 0.005 250);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.9 0.005 250);
+  --ring: oklch(0.6 0.13 265 / 50%);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.002 247);
+  --brand-amazon: oklch(0.6 0.12 245 / 16%);
+  --brand-amazon-foreground: oklch(0.42 0.16 245);
+  --brand-hulu: oklch(0.62 0.16 152 / 16%);
+  --brand-hulu-foreground: oklch(0.4 0.16 152);
+  --brand-crunchyroll: oklch(0.7 0.18 50 / 18%);
+  --brand-crunchyroll-foreground: oklch(0.45 0.18 50);
+  --brand-abema: oklch(0.78 0.18 130 / 22%);
+  --brand-abema-foreground: oklch(0.4 0.16 130);
+  --brand-netflix: oklch(0.62 0.22 27 / 16%);
+  --brand-netflix-foreground: oklch(0.45 0.2 27);
+  --status-releasing: oklch(0.65 0.16 145 / 18%);
+  --status-releasing-foreground: oklch(0.4 0.14 145);
+  --status-finished: oklch(0.6 0.005 250 / 18%);
+  --status-finished-foreground: oklch(0.42 0.005 250);
+  --status-not-yet: oklch(0.78 0.15 80 / 22%);
+  --status-not-yet-foreground: oklch(0.4 0.12 75);
+  --status-cancelled: oklch(0.62 0.22 27 / 16%);
+  --status-cancelled-foreground: oklch(0.45 0.2 27);
+  --status-hiatus: oklch(0.7 0.18 50 / 18%);
+  --status-hiatus-foreground: oklch(0.45 0.18 50);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 250);
+    --foreground: oklch(0.96 0.003 250);
+    --card: oklch(0.21 0.005 250);
+    --card-foreground: oklch(0.96 0.003 250);
+    --popover: oklch(0.21 0.005 250);
+    --popover-foreground: oklch(0.96 0.003 250);
+    --primary: oklch(0.55 0.22 265);
+    --primary-foreground: oklch(0.98 0.005 250);
+    --secondary: oklch(0.27 0.005 250);
+    --secondary-foreground: oklch(0.96 0.003 250);
+    --muted: oklch(0.27 0.005 250);
+    --muted-foreground: oklch(0.7 0.005 250);
+    --accent: oklch(0.32 0.04 265);
+    --accent-foreground: oklch(0.9 0.05 265);
+    --border: oklch(0.32 0.005 250);
+    --input: oklch(0.32 0.005 250);
+    --sidebar: oklch(0.18 0.005 250);
+    --brand-amazon: oklch(0.55 0.16 245 / 28%);
+    --brand-amazon-foreground: oklch(0.82 0.12 245);
+    --brand-hulu: oklch(0.6 0.16 152 / 28%);
+    --brand-hulu-foreground: oklch(0.82 0.13 152);
+    --brand-crunchyroll: oklch(0.7 0.18 50 / 28%);
+    --brand-crunchyroll-foreground: oklch(0.82 0.14 50);
+    --brand-abema: oklch(0.78 0.18 130 / 28%);
+    --brand-abema-foreground: oklch(0.85 0.16 130);
+    --brand-netflix: oklch(0.62 0.22 27 / 28%);
+    --brand-netflix-foreground: oklch(0.82 0.16 27);
+    --status-releasing: oklch(0.65 0.16 145 / 26%);
+    --status-releasing-foreground: oklch(0.82 0.14 145);
+    --status-finished: oklch(0.6 0.005 250 / 26%);
+    --status-finished-foreground: oklch(0.78 0.005 250);
+    --status-not-yet: oklch(0.78 0.15 80 / 26%);
+    --status-not-yet-foreground: oklch(0.85 0.13 75);
+    --status-cancelled: oklch(0.62 0.22 27 / 26%);
+    --status-cancelled-foreground: oklch(0.82 0.16 27);
+    --status-hiatus: oklch(0.7 0.18 50 / 26%);
+    --status-hiatus-foreground: oklch(0.82 0.14 50);
+  }
+}
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+svg { display: block; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
+.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
+.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
+.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
+.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
+.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+
+.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.cat-sec > h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding-bottom: 7px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+
+.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
+.cat-stack { display: flex; flex-direction: column; gap: 18px; }
+.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.cat-item > .cat-label { order: -1; }
+.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
+.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
+.cat-item.is-key > .cat-label::before { background: var(--primary); }
+.cat-label small { font-weight: 500; opacity: .8; }
+.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
+.cat-full { width: 100%; }
+.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+
+/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
+
+@media (max-width: 640px) {
+  .cat { padding: 20px 16px 48px; }
+  .cat-head h1 { font-size: 17px; }
+  .cat-row { gap: 18px 14px; }
+  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+}
+/* ---------- catalog stage: input ---------- */
+code { overflow-wrap: anywhere; }
+.matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 22px 24px; }
+.sample { min-height: 52px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.sample > * { max-width: 100%; }
+.cat svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cat .num { text-align: right; }
+.cat .is-disabled { opacity: .45; }
+.cat .is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+/* ---------- component: kbd ---------- */
+.a-key { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; background: var(--muted); color: var(--muted-foreground); font: 12px ui-monospace, monospace; }
+.a-key.a-sm { min-width: 20px; height: 20px; font-size: 10px; } .a-key.a-lg { min-width: 28px; height: 28px; font-size: 14px; }
+.a-key.is-active { background: var(--accent); color: var(--accent-foreground); border-color: var(--primary); }
+
+:where(.a-key) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-key):focus-visible, :where(.a-key).is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+/* ---------- component: input ---------- */
+.a-field { display: flex; align-items: center; gap: 8px; width: 280px; max-width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); }
+.a-field.a-pill { border-radius: 999px; } .a-field input { width: 100%; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; }
+.a-field input::placeholder { color: var(--muted-foreground); }
+.a-field:focus-within, .a-field.is-focus, .a-field.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
+.a-field.a-error { border-color: var(--destructive); } .a-field.a-disabled { background: var(--muted); opacity: .45; }
+.a-field .a-key { flex: none; } .a-field svg { color: var(--muted-foreground); }
+.a-field-wrap { display: flex; flex-direction: column; gap: 6px; width: 280px; max-width: 100%; } .a-field-wrap > label { font-size: 12px; font-weight: 600; }
+.a-error-text { color: var(--destructive); font-size: 12px; }
+
+:where(.a-field) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-field):focus-visible, :where(.a-field).is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+.a-field.a-search { width: 260px; min-height: 34px; }
+.a-field.a-search input { height: 32px; }
+.a-field.a-search svg { width: 15px; height: 15px; }
+@media (max-width: 640px) { .a-field.a-search { width: 100%; }}
+</style>
+</head>
+<body>
+<main class="cat">
+<main class="cat">
+<header class="cat-head">
+<h1>入力・検索欄 <span class="cat-id">input</span></h1>
+<p>pill と角型それぞれにテキスト入力・検索入力を用意。入力ラベル、ショートカット、エラーの関連付けまで含める。</p>
+<div class="cat-meta"><span>astra / 共通 (原子)</span><span>2 形状 × 2 用途 × 4 状態 = 16 見本</span><span>tone-palette 共通契約 / OS テーマ追従</span><span>全状態を固定表示</span></div>
+</header>
+<section class="cat-sec" data-story="基本 / pill"><h2>基本 / pill</h2><div class="matrix">
+<div class="cat-item is-key"><div class="cat-label">pill / text / 通常</div><div class="sample"><div class="a-field-wrap"><label for="pill-text-default">作品名</label><div class="a-field a-pill default is-default"><input id="pill-text-default" type="text" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / text / focus</div><div class="sample"><div class="a-field-wrap"><label for="pill-text-focus">作品名</label><div class="a-field a-pill focus is-focus"><input id="pill-text-focus" type="text" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / text / エラー</div><div class="sample"><div class="a-field-wrap"><label for="pill-text-error">作品名</label><div class="a-field a-pill a-error is-error"><input id="pill-text-error" type="text" placeholder="星降る夜のアストロノーツ" aria-invalid="true" aria-describedby="pill-text-error-error"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div><p class="a-error-text" id="pill-text-error-error">100文字以内で入力してください。</p></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / text / 無効</div><div class="sample"><div class="a-field-wrap"><label for="pill-text-disabled">作品名</label><div class="a-field a-pill a-disabled is-disabled"><input id="pill-text-disabled" type="text" placeholder="星降る夜のアストロノーツ" disabled><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / search / 通常</div><div class="sample"><div class="a-field-wrap"><label for="pill-search-default">タイトル検索</label><div class="a-field a-pill default is-default"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="pill-search-default" type="search" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / search / focus</div><div class="sample"><div class="a-field-wrap"><label for="pill-search-focus">タイトル検索</label><div class="a-field a-pill focus is-focus"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="pill-search-focus" type="search" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / search / エラー</div><div class="sample"><div class="a-field-wrap"><label for="pill-search-error">タイトル検索</label><div class="a-field a-pill a-error is-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="pill-search-error" type="search" placeholder="星降る夜のアストロノーツ" aria-invalid="true" aria-describedby="pill-search-error-error"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div><p class="a-error-text" id="pill-search-error-error">100文字以内で入力してください。</p></div></div></div>
+<div class="cat-item"><div class="cat-label">pill / search / 無効</div><div class="sample"><div class="a-field-wrap"><label for="pill-search-disabled">タイトル検索</label><div class="a-field a-pill a-disabled is-disabled"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="pill-search-disabled" type="search" placeholder="星降る夜のアストロノーツ" disabled><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+</div></section>
+<section class="cat-sec" data-story="square"><h2>square</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">square / text / 通常</div><div class="sample"><div class="a-field-wrap"><label for="square-text-default">作品名</label><div class="a-field square default is-default"><input id="square-text-default" type="text" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">square / text / focus</div><div class="sample"><div class="a-field-wrap"><label for="square-text-focus">作品名</label><div class="a-field square focus is-focus"><input id="square-text-focus" type="text" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">square / text / エラー</div><div class="sample"><div class="a-field-wrap"><label for="square-text-error">作品名</label><div class="a-field square a-error is-error"><input id="square-text-error" type="text" placeholder="星降る夜のアストロノーツ" aria-invalid="true" aria-describedby="square-text-error-error"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div><p class="a-error-text" id="square-text-error-error">100文字以内で入力してください。</p></div></div></div>
+<div class="cat-item"><div class="cat-label">square / text / 無効</div><div class="sample"><div class="a-field-wrap"><label for="square-text-disabled">作品名</label><div class="a-field square a-disabled is-disabled"><input id="square-text-disabled" type="text" placeholder="星降る夜のアストロノーツ" disabled><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">square / search / 通常</div><div class="sample"><div class="a-field-wrap"><label for="square-search-default">タイトル検索</label><div class="a-field square default is-default"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="square-search-default" type="search" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">square / search / focus</div><div class="sample"><div class="a-field-wrap"><label for="square-search-focus">タイトル検索</label><div class="a-field square focus is-focus"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="square-search-focus" type="search" placeholder="星降る夜のアストロノーツ"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+<div class="cat-item"><div class="cat-label">square / search / エラー</div><div class="sample"><div class="a-field-wrap"><label for="square-search-error">タイトル検索</label><div class="a-field square a-error is-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="square-search-error" type="search" placeholder="星降る夜のアストロノーツ" aria-invalid="true" aria-describedby="square-search-error-error"><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div><p class="a-error-text" id="square-search-error-error">100文字以内で入力してください。</p></div></div></div>
+<div class="cat-item"><div class="cat-label">square / search / 無効</div><div class="sample"><div class="a-field-wrap"><label for="square-search-disabled">タイトル検索</label><div class="a-field square a-disabled is-disabled"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="square-search-disabled" type="search" placeholder="星降る夜のアストロノーツ" disabled><kbd class="a-key a-sm" aria-label="スラッシュ">/</kbd></div></div></div></div>
+</div></section>
+<p class="cat-note">高さ 36px。入力内 kbd は sm 20px。ショートカットは表記のみでキーの横取りはしない。</p>
+<section class="cat-sec" data-story="ページ検索"><h2>ページ検索</h2><label class="a-field a-pill a-search"><span class="sr">アニメを検索</span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" placeholder="アニメを検索"></label></section>
+</main>
+</main>
+</body>
+</html>

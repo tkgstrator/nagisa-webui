@@ -31,7 +31,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
         </label>
       </header>
 
-      <div class="view-switch" role="group" aria-label="表示切替">
+      <div class="view-switch" role="group" aria-label="表示切り替え">
         <div class="seg">
           <button type="button" id="view-list-btn" aria-pressed="true">一覧</button>
           <button type="button" id="view-schedule-btn" aria-pressed="false">週間スケジュール</button>
@@ -40,7 +40,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
 
       <div id="view-list">
 
-      <section class="ss-grid" aria-label="録画状況のサマリ">
+      <section class="ss-grid" aria-label="録画状況の概要">
         <div class="ss ok">
           <div class="lab">録画済み話数</div>
           <div class="val">183 <small>/ 244 話</small></div>
@@ -68,7 +68,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
           <button type="button" aria-pressed="false">失敗あり <span class="n">3</span></button>
           <button type="button" aria-pressed="false">未録画 <span class="n">1</span></button>
         </div>
-        <div class="chips" role="group" aria-label="プロバイダ">
+        <div class="chips" role="group" aria-label="配信元">
           <button type="button" class="chip amazon" aria-pressed="false"><i class="dot"></i>Prime Video</button>
           <button type="button" class="chip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button>
           <button type="button" class="chip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button>
@@ -89,11 +89,11 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
       </div>
 
       <div class="selbar">
-        <label><input type="checkbox" class="cb" id="all"> 表示中をすべて選択</label>
+        <label><input type="checkbox" class="cb" id="all"> 表示中の作品をすべて選択</label>
         <span><span class="num">2</span> 件選択中</span>
         <div class="actions">
           <button type="button" class="btn-outline">選択分を再試行</button>
-          <button type="button" class="btn-outline danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg>選択分を解除</button>
+          <button type="button" class="btn-outline danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg>選択した予約を解除</button>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
           <tr>
             <th><span class="sr">選択</span></th>
             <th class="sortable">作品<span class="arrow">↑</span></th>
-            <th>プロバイダ</th>
+            <th>配信元</th>
             <th>放送</th>
             <th class="r sortable">録画<span class="arrow">↓</span></th>
             <th class="r">全話</th>
@@ -133,7 +133,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRAPPP"></div><span class="pct num">67%</span></div></td>
             <td class="upd num"><span class="m-num"><b>8</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">12 分前</span><span class="abs">9/18 14:20</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row bad">
@@ -149,7 +149,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRFRRRRPP"></div><span class="pct num">77%</span></div></td>
             <td class="upd num"><span class="m-num"><b>10</b><span class="k">録画</span></span><span class="m-num"><b>13</b><span class="k">全話</span></span><span class="rel">1 時間前</span><span class="abs">9/18 13:05</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row busy">
@@ -165,7 +165,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRAPP"></div><span class="pct num">75%</span></div></td>
             <td class="upd num"><span class="m-num"><b>9</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">2 時間前</span><span class="abs">9/18 12:31</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row">
@@ -181,7 +181,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRPPPPP"></div><span class="pct num">58%</span></div></td>
             <td class="upd num"><span class="m-num"><b>7</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">3 時間前</span><span class="abs">9/18 11:10</span></td>
             <td class="exp"><span class="soon">9/30</span><span class="days">あと 12 日</span></td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row">
@@ -197,7 +197,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRPPPPPPPPPPPPP"></div><span class="pct num">46%</span></div></td>
             <td class="upd num"><span class="m-num"><b>11</b><span class="k">録画</span></span><span class="m-num"><b>24</b><span class="k">全話</span></span><span class="rel">昨日</span><span class="abs">9/17 23:42</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row">
@@ -213,7 +213,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRPPP"></div><span class="pct num">75%</span></div></td>
             <td class="upd num"><span class="m-num"><b>9</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">昨日</span><span class="abs">9/17 19:05</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row">
@@ -229,7 +229,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRPPPPPPPPP"></div><span class="pct num">25%</span></div></td>
             <td class="upd num"><span class="m-num"><b>3</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">2 日前</span><span class="abs">9/16 21:30</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row idle">
@@ -245,7 +245,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="PPPPPPPPPPPP"></div><span class="pct num">0%</span></div></td>
             <td class="upd num"><span class="m-num"><b>0</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">3 日前</span><span class="abs">9/15 10:02</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row">
@@ -261,7 +261,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRPPPPPP"></div><span class="pct num">50%</span></div></td>
             <td class="upd num"><span class="m-num"><b>6</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">6 週間前</span><span class="abs">8/04 22:15</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="group"><th colspan="10">完結<span class="n num">7 作品</span><span class="hint">全話数が確定しています</span></th></tr>
@@ -279,7 +279,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRRRRRRRRRRRRRR"></div><span class="pct num full">完了</span></div></td>
             <td class="upd num"><span class="m-num"><b>24</b><span class="k">録画</span></span><span class="m-num"><b>24</b><span class="k">全話</span></span><span class="rel">昨日</span><span class="abs">9/17 02:12</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row bad">
@@ -295,7 +295,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRFRRRRRRRRRRRRFRRRRRR"></div><span class="pct num">92%</span></div></td>
             <td class="upd num"><span class="m-num"><b>22</b><span class="k">録画</span></span><span class="m-num"><b>24</b><span class="k">全話</span></span><span class="rel">2 日前</span><span class="abs">9/16 04:40</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row done">
@@ -311,7 +311,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRR"></div><span class="pct num full">完了</span></div></td>
             <td class="upd num"><span class="m-num"><b>12</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">2 日前</span><span class="abs">9/16 01:20</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row bad">
@@ -327,7 +327,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRF"></div><span class="pct num">92%</span></div></td>
             <td class="upd num"><span class="m-num"><b>11</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">5 日前</span><span class="abs">9/13 23:58</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row done">
@@ -343,7 +343,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRRRRRRRRRRRRRRRR"></div><span class="pct num full">完了</span></div></td>
             <td class="upd num"><span class="m-num"><b>26</b><span class="k">録画</span></span><span class="m-num"><b>26</b><span class="k">全話</span></span><span class="rel">1 週間前</span><span class="abs">9/11 03:14</span></td>
             <td class="exp"><span>10/31</span><span class="days">あと 43 日</span></td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row done">
@@ -359,7 +359,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRRR"></div><span class="pct num full">完了</span></div></td>
             <td class="upd num"><span class="m-num"><b>13</b><span class="k">録画</span></span><span class="m-num"><b>13</b><span class="k">全話</span></span><span class="rel">2 週間前</span><span class="abs">9/04 12:00</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
 
           <tr class="row done">
@@ -375,7 +375,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <td class="prog"><div class="strip"><div class="eps" data-ep="RRRRRRRRRRRR"></div><span class="pct num full">完了</span></div></td>
             <td class="upd num"><span class="m-num"><b>12</b><span class="k">録画</span></span><span class="m-num"><b>12</b><span class="k">全話</span></span><span class="rel">3 週間前</span><span class="abs">8/28 00:31</span></td>
             <td class="exp">—</td>
-            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>解除</span></button></td>
+            <td class="act"><button type="button" class="unsch" aria-label="予約を解除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg><span>予約解除</span></button></td>
           </tr>
         </tbody>
       </table>
@@ -459,7 +459,7 @@ USES: app-header recordings-toolbar recording-row recordings-calendar empty-stat
             <div class="slot upcoming">
               <span class="stime num">23:00</span>
               <span class="sname">銀河鉄道の車掌さん</span>
-              <span class="snote">初回 9/20〜</span>
+              <span class="snote">初回 9/20</span>
               <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
             </div>
             <div class="slot">

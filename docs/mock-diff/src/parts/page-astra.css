@@ -111,7 +111,7 @@
   .pg-aside { position: static; }
   .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 860px) {
+@media (max-width: 640px) {
   .pg-shell { flex-direction: column; }
 }
 @media (max-width: 640px) {
@@ -122,23 +122,112 @@
   .pg-headctl { width: 100%; flex-wrap: wrap; }
 }
 
-/* ---------- quick link ---------- */
-/* pg-links の中に並ぶ 1 枚。左罫の色で注意を促す。 */
-.pg-link {
-  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
-  border-left: 3px solid var(--primary); border-radius: 0 10px 10px 0;
-  transition: background .18s ease, transform .18s ease;
+/* ---------- stat / field グリッド ---------- */
+/* admin-logs のサマリ / admin-abema / admin-status で共用する数値タイル列。
+   列数を固定せず、幅で自動的に折り返す (2〜4 枚のどれでも使い回せる)。 */
+.pg-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+@media (max-width: 640px) {
+  .pg-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 }
-.pg-link:hover { background: var(--muted); transform: translateX(3px); }
-.pg-link.pg-warn { border-left-color: var(--destructive); }
-.pg-link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
-.pg-link.pg-warn svg { color: var(--destructive); }
-.pg-link .t { font-size: 13px; font-weight: 700; }
-.pg-link .s { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); }
 
-/* ---------- header search ---------- */
-/* ページ見出しの右に置く検索欄。部品側のフィルタとは別物。 */
-.pg-search { position: relative; width: 260px; }
-.pg-search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
-.pg-search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
-.pg-search input:focus-visible { outline: 2px solid var(--ring); }
+/* ---------- notice ---------- */
+/* 1 行の状態メッセージ (pending / error / stale 警告)。tone-palette と組み合わせる。 */
+.pg-notice { padding: 10px 14px; border-left: 3px solid var(--tone-dot, var(--border)); border-radius: 0 8px 8px 0; font-size: 12.5px; color: var(--foreground); background: var(--background); }
+
+/* ---------- form ---------- */
+/* admin-recorder のジョブ投入フォーム。 */
+.pg-form { display: flex; flex-direction: column; gap: 18px; max-width: 580px; }
+.pg-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pg-form-hint { font-size: 11.5px; color: var(--muted-foreground); }
+.pg-form-check { display: flex; align-items: flex-start; gap: 8px; }
+.pg-form-check .pg-form-hint { margin-top: 2px; }
+.pg-form-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* 素の <select> を a-field と同じ見た目に揃える (原子には select 版が無いため)。 */
+.pg-select { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); }
+.pg-select:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
+.pg-select select { flex: 1; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; font: inherit; color: inherit; appearance: none; }
+.pg-select svg { flex: none; width: 16px; height: 16px; color: var(--muted-foreground); }
+
+/* JSON プレビュー / レスポンス表示。 */
+.pg-pre { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; line-height: 1.6; overflow-x: auto; color: var(--foreground); white-space: pre-wrap; word-break: break-all; }
+.pg-pre.pg-pre-err { background: color-mix(in oklch, var(--destructive) 8%, transparent); color: var(--destructive); }
+
+/* ジョブ投入結果の 1 件分プレビュー。 */
+.pg-result { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-left: 3px solid var(--success); border-radius: 0 8px 8px 0; background: var(--background); }
+.pg-result .pg-result-title { font-size: 13px; font-weight: 700; }
+.pg-result .pg-result-sub { font-size: 11.5px; color: var(--muted-foreground); }
+
+@media (max-width: 640px) {
+  .pg-form-row { grid-template-columns: 1fr; }
+}
+
+/* ---------- table ---------- */
+/* admin-logs / admin-log-detail / admin-status の表。既存の原子には表が無いため
+   ページ骨格側に足す。数値は base.css の .num、トーン付け用の左罫は tone-palette
+   の --tone-dot を tr から子の td へ継承させて出す。 */
+.pg-tbl-wrap { width: 100%; }
+.pg-tbl { width: 100%; border-collapse: collapse; }
+.pg-tbl th { text-align: left; padding: 8px 10px; font-size: 11px; font-weight: 700; color: var(--muted-foreground); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.pg-tbl td { padding: 10px; border-bottom: 1px solid var(--border); font-size: 12.5px; vertical-align: top; }
+.pg-tbl th:first-child, .pg-tbl td:first-child { padding-left: 14px; }
+.pg-tbl tbody tr:last-child td { border-bottom: 0; }
+.pg-tbl tbody tr:hover td { background: var(--muted); }
+.pg-tbl .pg-r { text-align: right; }
+.pg-tbl tr.pg-tone td:first-child { box-shadow: inset 3px 0 0 0 var(--tone-dot); }
+.pg-tbl-sub { display: block; margin-top: 2px; font-size: 11px; color: var(--muted-foreground); }
+.pg-tbl-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+.pg-tbl details > summary { cursor: pointer; font-size: 11px; color: var(--muted-foreground); list-style: none; }
+.pg-tbl details > summary::-webkit-details-marker { display: none; }
+.pg-tbl details[open] > summary { color: var(--foreground); }
+@media (max-width: 640px) {
+  .pg-tbl th, .pg-tbl td { padding: 8px 6px; font-size: 11.5px; }
+  .pg-tbl th:first-child, .pg-tbl td:first-child { padding-left: 10px; }
+  .pg-hide-sm { display: none; }
+}
+
+/* ---------- 汎用リンク / 空状態 / 見出し補助 ---------- */
+.pg-link { color: var(--primary); font-weight: 600; }
+.pg-link:hover { text-decoration: underline; }
+.pg-back { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted-foreground); font-weight: 500; margin-bottom: 14px; }
+.pg-back:hover { color: var(--foreground); }
+.pg-back svg { width: 14px; height: 14px; }
+.pg-empty { padding: 40px 0; text-align: center; font-size: 13px; color: var(--muted-foreground); border: 1px dashed var(--border); border-radius: 12px; }
+
+/* label + value の 1 行 (run 詳細のメタ情報など)。 */
+.pg-row { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.pg-row:last-child { border-bottom: 0; }
+.pg-row-label { font-size: 12px; color: var(--muted-foreground); flex: none; }
+.pg-row-value { font-size: 13px; }
+@media (min-width: 640px) {
+  .pg-row { flex-direction: row; align-items: baseline; gap: 16px; }
+  .pg-row-label { width: 130px; }
+  .pg-row-value { flex: 1; min-width: 0; }
+}
+
+/* ---------- changelog ---------- */
+.pg-cl-group + .pg-cl-group { margin-top: 30px; }
+.pg-cl-date { font-size: 13px; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.pg-cl-list { display: flex; flex-direction: column; }
+.pg-cl-item { display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.pg-cl-item:last-child { border-bottom: 0; }
+.pg-cl-hash { flex: none; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--muted-foreground); background: var(--muted); padding: 2px 6px; border-radius: 4px; }
+.pg-cl-msg { min-width: 0; }
+
+/* ---------- unidentified: 絞り込みバー + ポスターグリッド ---------- */
+.pg-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.pg-toolbar-l, .pg-toolbar-r { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pg-poster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.pg-poster { display: flex; flex-direction: column; gap: 6px; }
+.pg-poster-thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: var(--muted); display: flex; align-items: center; justify-content: center; color: var(--muted-foreground); }
+.pg-poster-thumb svg { width: 22px; height: 22px; }
+.pg-poster-title { font-size: 12.5px; font-weight: 600; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pg-poster-meta { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--muted-foreground); flex-wrap: wrap; }
+.pg-poster-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+@media (max-width: 640px) {
+  .pg-poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- abema: 下部アクションバー ---------- */
+.pg-bottombar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); }
+.pg-bottombar-note { font-size: 11.5px; color: var(--muted-foreground); }

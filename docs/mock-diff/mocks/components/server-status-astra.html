@@ -153,10 +153,8 @@ svg { display: block; flex: none; }
 .cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
 
 /* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
-.cat-frame {
-  /* サンプルは囲まない。セクション見出しの罫線だけで区切る。 */
-  padding: 18px 0 4px;
-}
+.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
+.cat-frame.is-plain { background: var(--background); }
 
 @media (max-width: 640px) {
   .cat { padding: 20px 16px 48px; }
@@ -164,10 +162,13 @@ svg { display: block; flex: none; }
   .cat-row { gap: 18px 14px; }
   .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
 }
-/* ---------- server status (astra) ---------- */
-/* いちばん上に「いま何が起きているか」を1行で言い切り、数えるべき数字だけを
-   やわらかい面に置く。Redis やシステム値は持たず、最下段の導線で詳細ページに送る。 */
-.srv-dlg {
+/* ---------- catalog stage: server-status ---------- */
+/* ---------- stage ---------- */
+/* このカタログはサンプルを囲まず、セクション見出しの罫線だけで区切る。 */
+.cat-frame { border: 0; border-radius: 0; padding: 18px 0 4px; background: none; }
+/* ---------- component: server-status ---------- */
+/* ---------- server status (astra) ---------- *//* いちばん上に「いま何が起きているか」を1行で言い切り、数えるべき数字だけを
+   やわらかい面に置く。Redis やシステム値は持たず、最下段の導線で詳細ページに送る。 */.srv-dlg {
   width: 512px;
   max-width: 100%;
   margin-inline: auto;
@@ -180,8 +181,7 @@ svg { display: block; flex: none; }
   text-align: center;
   box-shadow: 0 18px 44px -26px oklch(0.18 0.005 250 / 40%);
 }
-/* 上から淡い光を差して面を起こす */
-.srv-dlg::before {
+/* 上から淡い光を差して面を起こす */.srv-dlg::before {
   content: '';
   position: absolute; inset: 0 0 auto; height: 120px;
   background: linear-gradient(to bottom, oklch(1 0 0 / 55%), transparent);
@@ -189,13 +189,11 @@ svg { display: block; flex: none; }
 }
 @media (prefers-color-scheme: dark) {
   .srv-dlg::before { background: linear-gradient(to bottom, oklch(1 0 0 / 7%), transparent); }
-  .srv-dlg { box-shadow: 0 18px 44px -26px oklch(0 0 0 / 60%); }
-}
+  .srv-dlg { box-shadow: 0 18px 44px -26px oklch(0 0 0 / 60%); }}
 .srv-dlg > * { position: relative; }
 .srv-dlg + .srv-dlg { margin-top: 18px; }
 
-/* 56px の円章 */
-.srv-mark {
+/* 56px の円章 */.srv-mark {
   width: 56px; height: 56px; margin: 0 auto;
   border-radius: 999px;
   display: grid; place-items: center;
@@ -217,8 +215,7 @@ svg { display: block; flex: none; }
 .srv-lede code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11.5px; color: var(--foreground); }
 
 /* キューの 5 つ。fable 案と同じ並び (待機・実行中・完了・失敗・遅延) を
-   横 1 列に置く。1 枠 85px まで縮むが、出るのは 3 桁までの件数なので収まる。 */
-.srv-counts {
+   横 1 列に置く。1 枠 85px まで縮むが、出るのは 3 桁までの件数なので収まる。 */.srv-counts {
   margin-top: 20px;
   display: flex; gap: 10px;
 }
@@ -235,8 +232,7 @@ svg { display: block; flex: none; }
 .srv-count.is-bad .n { color: var(--destructive); }
 .srv-count.is-zero .n { color: var(--muted-foreground); }
 
-/* ジョブ: やわらかい面に 1 件ずつ。罫線は引かない */
-.srv-jobs { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+/* ジョブ: やわらかい面に 1 件ずつ。罫線は引かない */.srv-jobs { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
 .srv-job {
   background: var(--muted);
   border-radius: 14px;
@@ -255,8 +251,7 @@ svg { display: block; flex: none; }
 .srv-fail { margin-top: 8px; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; line-height: 1.6; color: var(--destructive); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* 録画同期: Workers 側の cron がどこまで追いつけているか。
-   載せる項目は fable 案と同じで、面に包むか罫線で割るかだけが違う。 */
-.srv-sync {
+   載せる項目は fable 案と同じで、面に包むか罫線で割るかだけが違う。 */.srv-sync {
   margin-top: 16px;
   background: var(--muted);
   border-radius: 14px;
@@ -273,15 +268,13 @@ svg { display: block; flex: none; }
 .srv-kv-row .v.is-warn { color: var(--status-not-yet-foreground); font-family: inherit; font-size: 12px; font-weight: 700; }
 .srv-kv-row .v.is-mute { color: var(--muted-foreground); font-family: inherit; font-size: 12px; }
 /* 取り込み進捗のメーター。幅は縮める側に倒しておかないと、
-   ラベルと件数が伸びたときに面からはみ出す。 */
-.srv-kv-row .m { flex: 0 1 84px; min-width: 28px; margin-left: auto; height: 4px; border-radius: 999px; background: var(--background); overflow: hidden; }
+   ラベルと件数が伸びたときに面からはみ出す。 */.srv-kv-row .m { flex: 0 1 84px; min-width: 28px; margin-left: auto; height: 4px; border-radius: 999px; background: var(--background); overflow: hidden; }
 .srv-kv-row .m > span { display: block; height: 100%; border-radius: 999px; background: var(--status-not-yet-foreground); }
 .srv-kv-row .m + .v { margin-left: 0; flex: none; }
 
 /* 詳細ページ (/admin/status) への導線。最下段に状態によらず同じ位置で置く。
    Redis・CPU・メモリ・空き容量・台帳・カーソルはこの先にあり、ダイアログには持たせない。
-   畳んで抱えるより、開いた先に置いたほうがダイアログの丈が状態で伸び縮みしない。 */
-.srv-link {
+   畳んで抱えるより、開いた先に置いたほうがダイアログの丈が状態で伸び縮みしない。 */.srv-link {
   margin-top: 14px;
   background: var(--muted);
   border-radius: 14px;
@@ -294,10 +287,9 @@ svg { display: block; flex: none; }
 .srv-link .t { flex: none; font-weight: 600; }
 .srv-link .d { min-width: 0; font-size: 11.5px; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .srv-link svg { width: 15px; height: 15px; margin-left: auto; color: var(--muted-foreground); transition: color .15s, transform .15s; }
-.srv-link:hover svg { color: var(--foreground); transform: translateX(2px); }
+.srv-link:hover svg, .srv-link.is-hover svg { color: var(--foreground); transform: translateX(2px); }
 
-/* 操作は 2 つまで。36px の丸ボタン */
-.srv-acts { margin-top: 18px; display: flex; justify-content: center; gap: 10px; }
+/* 操作は 2 つまで。36px の丸ボタン */.srv-acts { margin-top: 18px; display: flex; justify-content: center; gap: 10px; }
 .srv-btn {
   height: 36px; padding: 0 18px;
   border-radius: 999px;
@@ -313,8 +305,7 @@ svg { display: block; flex: none; }
 .srv-skel > i:nth-child(1) { width: 56%; }
 .srv-skel > i:nth-child(2) { width: 38%; }
 
-/* 起動導線 */
-.srv-trigger {
+/* 起動導線 */.srv-trigger {
   width: 248px; max-width: 100%;
   background: var(--sidebar);
   padding: 10px 12px;
@@ -342,8 +333,7 @@ svg { display: block; flex: none; }
   .srv-count .n { font-size: 18px; }
   .srv-link .d { display: none; }
   .srv-acts { flex-direction: column; }
-  .srv-btn { justify-content: center; }
-}
+  .srv-btn { justify-content: center; }}
 </style>
 </head>
 <body>
@@ -356,7 +346,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>オンライン · 待機中 <span class="cat-hint">既定の状態。何も起きていないことを1行で言い切る</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="オンライン · 待機中 / /api/nagisa/status が 200、queue.active が 0 件">
     <span class="cat-label">/api/nagisa/status が 200、queue.active が 0 件</span>
     <div class="cat-frame">
       <div class="srv-dlg">
@@ -393,7 +383,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>稼働中 · ダウンロード実行中 <span class="cat-hint">進捗は話数 (current/total)。秒やバイトではない</span></h2>
-  <div class="cat-item cat-full is-key">
+  <div class="cat-item cat-full is-key" data-story="稼働中 · ダウンロード実行中 / queue.active に 2 件、うち 1 件は進捗不明">
     <span class="cat-label">queue.active に 2 件、うち 1 件は進捗不明</span>
     <div class="cat-frame">
       <div class="srv-dlg">
@@ -445,7 +435,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>失敗あり <span class="cat-hint">失敗件数が 0 でないときだけ理由を出す</span></h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="失敗あり / queue.failed に 2 件、操作は 2 つまで">
     <span class="cat-label">queue.failed に 2 件、操作は 2 つまで</span>
     <div class="cat-frame">
       <div class="srv-dlg">
@@ -495,7 +485,7 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>接続中 / 到達不能 <span class="cat-hint">応答が無いときにダイアログを空にしない</span></h2>
   <div class="cat-row">
-    <div class="cat-item cat-w320">
+    <div class="cat-item cat-w320" data-story="接続中 / 到達不能 / 読み込み中">
       <span class="cat-label">読み込み中</span>
       <div class="cat-frame">
         <div class="srv-dlg">
@@ -512,7 +502,7 @@ svg { display: block; flex: none; }
         </div>
       </div>
     </div>
-    <div class="cat-item cat-w320">
+    <div class="cat-item cat-w320" data-story="接続中 / 到達不能 / 到達不能">
       <span class="cat-label">到達不能</span>
       <div class="cat-frame">
         <div class="srv-dlg">
@@ -538,7 +528,7 @@ svg { display: block; flex: none; }
 
 <section class="cat-sec">
   <h2>録画同期が遅れている <span class="cat-hint">サーバーは生きているが Workers 側が追いつけていない場合</span></h2>
-  <div class="cat-item cat-full">
+  <div class="cat-item cat-full" data-story="録画同期が遅れている / 全件スナップショット取り込み中 / ライブラリ同期の停滞">
     <span class="cat-label">全件スナップショット取り込み中 / ライブラリ同期の停滞</span>
     <div class="cat-frame">
       <div class="srv-dlg">
@@ -571,19 +561,19 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>起動導線 <span class="cat-hint">サイドバー最下段の行。ここを押すとダイアログが開く</span></h2>
   <div class="cat-row">
-    <div class="cat-item">
+    <div class="cat-item" data-story="起動導線 / オンライン">
       <span class="cat-label">オンライン</span>
       <div class="cat-frame">
         <div class="srv-trigger"><span class="pill"><span class="dot"></span>ONLINE</span><span class="r">v1.6.0</span></div>
       </div>
     </div>
-    <div class="cat-item">
+    <div class="cat-item" data-story="起動導線 / 実行中">
       <span class="cat-label">実行中</span>
       <div class="cat-frame">
         <div class="srv-trigger is-busy"><span class="pill"><span class="dot"></span>録画中</span><span class="r">2 件</span></div>
       </div>
     </div>
-    <div class="cat-item">
+    <div class="cat-item" data-story="起動導線 / オフライン">
       <span class="cat-label">オフライン</span>
       <div class="cat-frame">
         <div class="srv-trigger is-bad"><span class="pill"><span class="dot"></span>OFFLINE</span><span class="r">1h 38m</span></div>

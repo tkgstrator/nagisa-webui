@@ -1,0 +1,68 @@
+TITLE: 変更履歴
+USES: app-header app-footer
+---
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg pg-narrow">
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">管理 · <b>Changelog</b></p>
+          <h1 class="pg-title">Changelog</h1>
+        </div>
+      </div>
+
+      <div class="pg-body">
+        <div class="pg-cl-group">
+          <h2 class="pg-cl-date">2026-09-25</h2>
+          <ul class="pg-cl-list">
+            <li class="pg-cl-item"><code class="pg-cl-hash">062b7a7</code><span class="pg-cl-msg">refactor(api)!: replace product-specific routes with resource endpoints</span></li>
+          </ul>
+        </div>
+        <div class="pg-cl-group">
+          <h2 class="pg-cl-date">2026-09-24</h2>
+          <ul class="pg-cl-list">
+            <li class="pg-cl-item"><code class="pg-cl-hash">1b43b64</code><span class="pg-cl-msg">Merge pull request #132 from tkgstrator/develop</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">f92e3b5</code><span class="pg-cl-msg">chore: bump version to 0.9.1 (#131)</span></li>
+          </ul>
+        </div>
+        <div class="pg-cl-group">
+          <h2 class="pg-cl-date">2026-09-20</h2>
+          <ul class="pg-cl-list">
+            <li class="pg-cl-item"><code class="pg-cl-hash">4a47e33</code><span class="pg-cl-msg">fix(nagisa): accept reindex jobs and all-episode seasons in the queue snapshot (#130)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">435a7a1</code><span class="pg-cl-msg">fix(library): apply ledger writes with D1 batch() instead of $transaction (#129)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.9.1<span class="sha">062b7a7</span>2026/09/25 14:20</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a href="#admin">管理</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>

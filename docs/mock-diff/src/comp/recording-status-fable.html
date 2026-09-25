@@ -1,0 +1,19 @@
+TITLE: 録画サーバー状態
+---
+<header class="cat-head">
+  <h1>録画サーバー状態 <span class="cat-id">recording-status</span></h1>
+  <p>作品詳細のサイドに置く、録画サーバーへの問い合わせ結果。取得できなかったときは原因の文言を省略せずに出す。</p>
+  <div class="cat-meta"><span>fable 案 = 左端 3px のアクセント</span><span>囲み枠と影は使わない</span><span>原因は 11px で折り返す</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>問い合わせ失敗</h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">設定不足</span>
+      <p class="recstat-err">録画サーバーに問い合わせできませんでした<span class="msg">Nagisa config missing: CF_ACCESS_CLIENT_SECRET</span></p>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">長い原因 (折り返し)</span>
+      <p class="recstat-err">録画サーバーに問い合わせできませんでした<span class="msg">fetch failed: connect ECONNREFUSED https://nagisa.example.internal/api/v1/recordings?anilistId=116589&amp;include=episodes</span></p>
+    </div>
+  </div>
+</section>

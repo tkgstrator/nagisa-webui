@@ -1,0 +1,74 @@
+TITLE: ABEMA 鍵アーカイブ
+USES: app-header stat-tile button app-footer
+---
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg pg-narrow">
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">管理 · <b>ABEMA 鍵アーカイブ</b></p>
+          <h1 class="pg-title">ABEMA 鍵アーカイブ</h1>
+          <p class="pg-sub">復号鍵が未取得の ABEMA 作品を確認し、取得ジョブをキューに追加します。</p>
+        </div>
+      </div>
+
+      <div class="pg-body">
+        <div class="pg-stat-grid" aria-label="アーカイブ状況">
+          <div class="a-stat tone-primary">
+            <span class="a-label">ABEMA 作品</span>
+            <span class="a-value num">128<small>作品</small></span>
+            <span class="a-note num">うち 96 作品が取得済み</span>
+          </div>
+          <div class="a-stat tone-warning">
+            <span class="a-label">鍵が未取得の作品</span>
+            <span class="a-value num">32<small>作品</small></span>
+            <span class="a-note">1 作品につき 1 件のジョブを追加します</span>
+          </div>
+          <div class="a-stat tone-success">
+            <span class="a-label">エピソード総数</span>
+            <span class="a-value num">1,540<small>話</small></span>
+            <span class="a-note num">取得済み 1,180 話 · 未取得 360 話</span>
+          </div>
+        </div>
+
+        <div class="pg-bottombar">
+          <button type="button" class="a-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8 2 2-2 2 2 2-3 3-2-2-2 2"/></svg>
+            鍵取得ジョブを投入
+          </button>
+          <span class="pg-bottombar-note">鍵が未取得の ABEMA 作品をすべてキューに追加します。ジョブは順次処理されます。</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.9.1<span class="sha">062b7a7</span>2026/09/25 14:20</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a href="#admin">管理</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>

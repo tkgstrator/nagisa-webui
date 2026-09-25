@@ -141,6 +141,7 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(5) { animation-delay: .2s; }
 .pg > *:nth-child(6) { animation-delay: .25s; }
 .pg > *:nth-child(7) { animation-delay: .3s; }
+.pg > *:nth-child(8) { animation-delay: .35s; }
 .pg-narrow { max-width: 1280px; }
 
 /* ---------- page head ---------- */
@@ -221,7 +222,7 @@ svg { display: block; flex: none; }
 .pg-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .pg-link svg { width: 16px; height: 16px; color: var(--muted-foreground); transition: transform .15s ease; }
 .pg-link:hover svg { transform: translateX(2px); }
-.pg-lt { font-size: 13.5px; font-weight: 600; }
+.pg-lt { font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
 .pg-ld { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted-foreground); }
 .pg-link.pg-warn { border-left-color: var(--warning); }
 
@@ -254,6 +255,8 @@ svg { display: block; flex: none; }
 .nav a:hover { color: var(--foreground); }
 .nav a.active { color: var(--foreground); font-weight: 600; }
 .nav a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+/* 設定だけは歯車アイコン付きで出す。 */
+.nav .gear svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .nav-solo { display: inline-flex; padding: 14px 0; }
 .nav-solo a.active::after { bottom: 10px; }
 
@@ -308,14 +311,15 @@ svg { display: block; flex: none; }
 
 .ss {
   display: flex; flex-direction: column; gap: 2px; min-width: 0;
-  border-left: 3px solid var(--primary); border-radius: 2px;
-  padding: 2px 8px 2px 14px;
+  border-radius: 8px;
+  padding: 4px 10px;
   transition: background .15s ease;
 }
-.ss.ok { border-left-color: var(--success); }
-.ss.warn { border-left-color: var(--warning); }
-.ss.err { border-left-color: var(--destructive); }
-.ss.mute { border-left-color: var(--border); }
+/* 状態色は値に載せる。左罫は角丸と喧嘩するので使わない。 */
+.ss.ok .val { color: var(--success); }
+.ss.warn .val { color: var(--warning-foreground); }
+.ss.err .val { color: var(--destructive); }
+.ss.mute .val { color: var(--muted-foreground); }
 
 a.ss:hover { background: var(--muted); }
 a.ss:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
@@ -333,11 +337,10 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 .ss .note { font-size: 12px; color: var(--muted-foreground); }
 .ss.err .note { color: var(--destructive); }
 
-.ss.is-zero { border-left-color: var(--border); }
 .ss.is-zero .val { color: var(--muted-foreground); font-weight: 600; }
 
 /* 読み込み中 */
-.ss.is-load { border-left-color: var(--border); gap: 6px; padding-top: 4px; padding-bottom: 4px; }
+.ss.is-load { gap: 6px; padding-top: 4px; padding-bottom: 4px; }
 .ss-bar {
   border-radius: 3px; background-color: var(--muted);
   background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--foreground) 9%, transparent) 50%, transparent 100%);
@@ -355,12 +358,26 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
   .ss .lab { font-size: 11.5px; }
 }
 
-/* 取得中を示す変種。info 色で左罫を引く。 */
-.ss.busy { border-left-color: var(--info); }
+/* 取得中を示す変種。info 色で値を塗る。 */
+.ss.busy .val { color: var(--info); }
 
 /* 達成率を添える細いバー。値の下に置く。 */
 .ss .bar { margin-top: 6px; height: 4px; border-radius: 2px; background: var(--muted); overflow: hidden; }
 .ss .bar > span { display: block; height: 100%; background: var(--success); }
+
+/* ---------- 左罫版 (.ss-grid.is-rule) ---------- */
+/* 状態色を値ではなく左罫に載せる。角丸は右側だけに残す。 */
+.is-rule .ss { border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0; padding: 2px 8px 2px 14px; }
+.is-rule .ss:where(.ok, .warn, .err, .mute, .busy):not(.is-zero) .val { color: inherit; }
+.is-rule .ss.ok { border-left-color: var(--success); }
+.is-rule .ss.warn { border-left-color: var(--warning); }
+.is-rule .ss.err { border-left-color: var(--destructive); }
+.is-rule .ss.mute { border-left-color: var(--border); }
+.is-rule .ss.is-zero { border-left-color: var(--border); }
+.is-rule .ss.is-load { border-left-color: var(--border); }
+.is-rule .ss.busy { border-left-color: var(--info); }
+/* 空の note でも高さを確保してタイルの底を揃える。 */
+.is-rule .ss .note { line-height: 1.5; min-height: 18px; }
 /* ---------- component: anime-carousel ---------- */
 /* ---------- anime carousel (fable) ---------- */
 @keyframes pulseDot { 50% { opacity: .25; } }
@@ -476,6 +493,9 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 /* アニメカード (anime-card の .tile) をレールに載せるとき */
 .car-rail > .tile { flex: 0 0 176px; scroll-snap-align: start; }
 @media (max-width: 640px) { .car-rail > .tile { flex: 0 0 44%; } }
+
+/* レールの左右の逃げ (2px) を持たない版。親の端とタイルの端を揃えたいときに付ける。 */
+.car-wrap.is-flush .car-rail { padding: 4px 0 12px; margin: -4px 0 -8px; }
 /* ---------- component: anime-card ---------- */
 /* ---------- anime card (tile) ---------- */
 .tile {
@@ -559,6 +579,10 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 @media (max-width: 640px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
 }
+
+/* ステータスを一回り大きく (ドロワーの .drawer-status と同寸) 。一覧とドロワーで粒を揃えたいとき、親に付ける。 */
+.is-lg-status .status { height: 21px; padding: 0 8px; font-size: 11px; }
+.is-lg-status .status::before { width: 5px; height: 5px; }
 /* ---------- component: scheduled-updates ---------- */
 /* ---------- scheduled updates (ruled list) ---------- */
 .su-box { border-left: 3px solid var(--primary); }
@@ -570,6 +594,9 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 .su-head .more svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .su-cols, .su-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 84px 42px 42px 84px; gap: 12px; align-items: center; }
+/* 進捗バーと件数を持たない 3 列の行 (サムネ / 本文 / 更新日時)。 */
+.su-row-3 { grid-template-columns: 76px minmax(0, 1fr) 84px; }
+.su-row-3 .su-title { display: block; }
 .su-cols { padding: 0 10px 6px 13px; font-size: 11px; color: var(--muted-foreground); border-bottom: 1px solid var(--border); }
 .su-cols .num { text-align: right; }
 .su-cols .upd { text-align: right; }
@@ -649,6 +676,7 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 
 @media (max-width: 640px) {
   .su-cols, .su-row { grid-template-columns: 56px minmax(0, 1fr) 38px 60px; gap: 10px; }
+  .su-row-3 { grid-template-columns: 56px minmax(0, 1fr) 60px; }
   .su-cols .bar, .su-cols .all, .su-row .su-bar, .su-row .su-n.all { display: none; }
   .su-upd .abs { display: none; }
   .su-head h3 .sub { display: block; margin-left: 0; }
@@ -727,6 +755,25 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
   .tab { padding: 0 10px; font-size: 13.5px; }
   .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- radio で切り替える版 (.tabs-wrap.is-radio) ---------- */
+/* .tab の中に input.sr[type=radio] を入れ、選ばれた n 番目のタブに対応する n 番目の .panel だけを出す。
+   .tabs-wrap の子は .tabs, .panel, .panel ... の順なので、パネルは nth-child(n + 1)。実装側は state で出し分けてよい。 */
+.tabs-wrap.is-radio .tab:has(.sr:checked) { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+.tabs-wrap.is-radio .tab:has(.sr:checked):hover { background: none; }
+.tabs-wrap.is-radio .tab:has(.sr:checked) .c { color: var(--primary); font-weight: 600; }
+.tabs-wrap.is-radio > .panel { display: none; }
+.tabs-wrap.is-radio:has(.tab:nth-child(1) .sr:checked) > .panel:nth-child(2),
+.tabs-wrap.is-radio:has(.tab:nth-child(2) .sr:checked) > .panel:nth-child(3),
+.tabs-wrap.is-radio:has(.tab:nth-child(3) .sr:checked) > .panel:nth-child(4),
+.tabs-wrap.is-radio:has(.tab:nth-child(4) .sr:checked) > .panel:nth-child(5),
+.tabs-wrap.is-radio:has(.tab:nth-child(5) .sr:checked) > .panel:nth-child(6),
+.tabs-wrap.is-radio:has(.tab:nth-child(6) .sr:checked) > .panel:nth-child(7) { display: block; }
+
+/* 下罫をタブ列の内側の影で引く版。スクロールする .tabs と一緒に罫が動き、下にはみ出さない。 */
+.tabs-wrap.is-inset { border-bottom: 0; }
+.tabs-wrap.is-inset .tabs { box-shadow: inset 0 -1px 0 var(--border); }
+.tabs-wrap.is-inset .tab { margin-bottom: 0; }
 /* ---------- component: app-footer ---------- */
 /* ---------- footer ---------- */
 .ftr {
@@ -778,7 +825,7 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 
   <!-- ===== ページヘッド + サマリ ===== -->
   <section class="pg-head" aria-labelledby="h-summary">
-    <p class="pg-eyebrow"><b>2026年 夏クール</b><span>·</span><span>9月18日 (金)</span></p>
+    <p class="pg-eyebrow"><b>2026年 夏</b><span>·</span><span>9月18日 (金)</span></p>
     <h1 id="h-summary">今日の録画状況</h1>
 
     <div class="ss-grid">
@@ -847,11 +894,11 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
     </div>
   </section>
 
-  <!-- ===== 直近更新の録画予約中作品 (最大6件) ===== -->
+  <!-- ===== 直近更新の録画予約中作品 (最大 6 件) ===== -->
   <section aria-labelledby="h-recent">
     <div class="su-box">
       <div class="su-head">
-        <h3 id="h-recent">録画予約中の更新<span class="sub">更新日時が新しい順・最大6件</span></h3>
+        <h3 id="h-recent">録画予約中の作品の更新<span class="sub">更新日時が新しい順・最大 6 件</span></h3>
         <a class="more" href="#recordings">録画一覧へ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
       </div>
       <div class="su-cols"><span></span><span>作品</span><span class="bar">進捗</span><span class="num">録画</span><span class="num all">全話</span><span class="upd">更新</span></div>
@@ -932,7 +979,7 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
     <div class="tabs-wrap" id="hometabs">
       <div class="tabs" role="tablist" aria-label="カタログの絞り込み">
         <label class="tab"><input type="radio" name="ht" id="ht-season" class="sr" checked>今期アニメ<span class="c">48</span></label>
-        <label class="tab"><input type="radio" name="ht" id="ht-added" class="sr">新着追加<span class="c">12</span></label>
+        <label class="tab"><input type="radio" name="ht" id="ht-added" class="sr">新規追加<span class="c">12</span></label>
         <label class="tab"><input type="radio" name="ht" id="ht-soon" class="sr">もうすぐ配信<span class="c">6</span></label>
         <label class="tab"><input type="radio" name="ht" id="ht-exp" class="sr">配信終了予定<span class="c">2</span></label>
         <label class="tab"><input type="radio" name="ht" id="ht-provider" class="sr">配信元から探す</label>
@@ -958,11 +1005,11 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
       <div class="panel" data-p="added">
         <div class="car-wrap">
           <div class="car-rail">
-            <a class="tile p-crunchyroll" href="#anime" style="--h:60"><div class="poster"><div class="art"><span class="kana">猫と</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11z"/></svg></div><span class="prov">Crunchyroll</span><span class="tag tag-new">新着追加</span></div><p class="title">猫と魔王とカフェラテ</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
-            <a class="tile p-hulu" href="#anime" style="--h:15"><div class="poster"><div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg></div><span class="prov">Hulu</span><span class="tag tag-new">新着追加</span></div><p class="title">花咲く季節に君を待つ</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
-            <a class="tile p-abema" href="#anime" style="--h:110"><div class="poster"><div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2z"/></svg></div><span class="prov">ABEMA</span><span class="tag tag-new">新着追加</span></div><p class="title">幽霊部員は今日も部活中</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
-            <a class="tile p-hulu" href="#anime" style="--h:225"><div class="poster"><div class="art"><span class="kana">終末</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M6 16V7h12v9"/></svg></div><span class="prov">Hulu</span><span class="tag tag-new">新着追加</span></div><p class="title">終末列車の乗客たち</p><div class="meta"><span class="status s-finished">完結</span></div></a>
-            <a class="tile p-netflix" href="#anime" style="--h:0"><div class="poster"><div class="art"><span class="kana">鉄血</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></div><span class="prov">Netflix</span><span class="tag tag-new">新着追加</span></div><p class="title">鉄血のヴァルキュリア</p><div class="meta"><span class="status s-finished">完結</span></div></a>
+            <a class="tile p-crunchyroll" href="#anime" style="--h:60"><div class="poster"><div class="art"><span class="kana">猫と</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9l3-4 2 3h4l2-3 3 4v11z"/></svg></div><span class="prov">Crunchyroll</span><span class="tag tag-new">新規追加</span></div><p class="title">猫と魔王とカフェラテ</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:15"><div class="poster"><div class="art"><span class="kana">花咲</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg></div><span class="prov">Hulu</span><span class="tag tag-new">新規追加</span></div><p class="title">花咲く季節に君を待つ</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
+            <a class="tile p-abema" href="#anime" style="--h:110"><div class="poster"><div class="art"><span class="kana">幽霊</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10a6 6 0 0 1 12 0v10l-2-2-2 2-2-2-2 2-2-2z"/></svg></div><span class="prov">ABEMA</span><span class="tag tag-new">新規追加</span></div><p class="title">幽霊部員は今日も部活中</p><div class="meta"><span class="status s-releasing">放送中</span></div></a>
+            <a class="tile p-hulu" href="#anime" style="--h:225"><div class="poster"><div class="art"><span class="kana">終末</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16h16M6 16V7h12v9"/></svg></div><span class="prov">Hulu</span><span class="tag tag-new">新規追加</span></div><p class="title">終末列車の乗客たち</p><div class="meta"><span class="status s-finished">完結</span></div></a>
+            <a class="tile p-netflix" href="#anime" style="--h:0"><div class="poster"><div class="art"><span class="kana">鉄血</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></div><span class="prov">Netflix</span><span class="tag tag-new">新規追加</span></div><p class="title">鉄血のヴァルキュリア</p><div class="meta"><span class="status s-finished">完結</span></div></a>
           </div>
         </div>
       </div>
@@ -1055,7 +1102,7 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
       <a class="pg-link" href="#browse">
         <span class="pg-lt">アニメ一覧</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-        <span class="pg-ld">今クール <span class="num">48</span> 作品 · 全 <span class="num">1,204</span> 作品</span>
+        <span class="pg-ld">今期 <span class="num">48</span> 作品 · 全 <span class="num">1,204</span> 作品</span>
       </a>
       <a class="pg-link" href="#recordings">
         <span class="pg-lt">録画一覧</span>

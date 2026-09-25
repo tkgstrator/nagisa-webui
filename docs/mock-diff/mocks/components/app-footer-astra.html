@@ -180,9 +180,15 @@ svg { display: block; flex: none; }
 .ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
 .ftr .dot.is-down { background: var(--destructive); }
+/* 画面下端に常時固定する版。左端は常設サイドバー (236px) の右から。
+   高さ 44px は決定稿骨格の .pg の下余白 90px (= 46 + 44) と対になっている。 */.ftr.is-fixed {
+  position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
+  padding: 0 36px; background: var(--background); flex-wrap: nowrap;
+}
 @media (max-width: 640px) {
   .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .ftr .r { gap: 12px; }}
+  .ftr .r { gap: 12px; }
+  .ftr.is-fixed { left: 0; padding: 0 16px; gap: 10px; flex-direction: row; align-items: center; }}
 </style>
 </head>
 <body>
@@ -227,6 +233,19 @@ svg { display: block; flex: none; }
     <div class="cat-item" data-story="リンク / hover"><span class="cat-label">hover</span><div class="cat-frame is-plain"><footer class="ftr"><span class="r"><a class="is-hover" href="#">変更履歴</a><a href="#">管理</a><a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></span></footer></div></div>
   </div>
   <p class="cat-note">サイドバーのナビと重複しない項目 (変更履歴 / 管理 / GitHub) だけを置く。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>画面下端固定版 <span class="cat-hint">.ftr.is-fixed</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="画面下端固定版 / .ftr.is-fixed"><span class="cat-label">.ftr.is-fixed</span>
+<div class="cat-frame" style="position:relative;height:96px;overflow:hidden;transform:translateZ(0)"><footer class="ftr is-fixed">
+        <span class="l"><span>Nagisa WebUI</span><span>v0.9.0</span><span class="sha">5abf743</span></span>
+        <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></span>
+      </footer></div>
+    </div>
+  </div>
+  <p class="cat-note">ページでは <code>position: fixed</code> で画面下端に置き、左端は常設サイドバー (236px) の右から始まる。ここでは枠に <code>transform</code> を掛けて fixed を枠内に閉じ込めている。</p>
 </section>
 </main>
 </body>

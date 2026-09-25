@@ -1,0 +1,9 @@
+.a-dot { display: inline-block; flex: none; width: 7px; height: 7px; border-radius: 999px; background: var(--tone-dot); }
+.a-dot.a-sm { width: 5px; height: 5px; } .a-dot.a-lg { width: 10px; height: 10px; }
+.a-dot.a-pulse { animation: astraAtomPulse 1.6s ease-in-out infinite; }
+
+:where(.a-dot) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-dot):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+@keyframes astraAtomPulse { 50% { opacity: .35; transform: scale(.8); } }
+@media (prefers-reduced-motion: reduce) { .a-dot.a-pulse { animation: none; } }

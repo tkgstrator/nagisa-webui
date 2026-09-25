@@ -208,16 +208,22 @@ svg { display: block; flex: none; }
 .btn-busy svg { animation: spin 1s linear infinite; }
 .btn-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
 .btn-icon { width: 38px; padding: 0; }
+/* 詰めた版 (.id-actions.is-compact)。見出し周りの情報が多い決定稿で使う。 */.id-actions.is-compact .btn { height: 34px; padding: 0 15px; }
+.id-actions.is-compact .btn-icon { width: 34px; padding: 0; }
+/* 録画済みは取り消せない (録画を削除する API を持たない)。押せないことを見た目で示す。 */.btn[disabled] { pointer-events: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* 録画の進捗を 1 本の帯で示す */.progress-row { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
-.progress-row .lbl { font-size: 12px; color: var(--muted-foreground); flex: none; }
-.progress-row .val { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
-.strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
-.strip span { display: block; height: 100%; }
-.strip .rec { background: var(--success); }
-.strip .busy { background: var(--info); }
-.strip .fail { background: var(--destructive); }
+/* 録画の進捗を 1 本の帯で示す。episode-list (fable) の話数ごとの帯 .strip とぶつからないよう hero- を冠する。
+   決定稿は話数ごとの帯に一本化したので使わない。 */.hero-progress { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
+.hero-progress .lbl { font-size: 12px; color: var(--muted-foreground); flex: none; }
+.hero-progress .val, .hero-progress .cnt { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
+.hero-strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
+.hero-strip span { display: block; height: 100%; }
+.hero-strip .rec { background: var(--success); }
+.hero-strip .busy { background: var(--info); }
+.hero-strip .pend { background: var(--warning); }
+.hero-strip .fail { background: var(--destructive); }
+/* 未取得ぶんは帯の残り */.hero-strip .none { background: var(--border); }
 
 @media (max-width: 640px) {
   .identity { flex-direction: column; gap: 14px; }
@@ -225,9 +231,8 @@ svg { display: block; flex: none; }
   .hero-title { font-size: 21px; }
   .id-facts { gap: 16px; }
   .id-actions .btn { flex: 1 1 auto; }
-  .progress-row { flex-wrap: wrap; }}
+  .hero-progress { flex-wrap: wrap; }}
 
-/* 未取得ぶんは帯の残り。progress-row と対で使う。 */.strip .none { background: var(--border); }
 /* 情報側だけを縦に詰めたいときの調整 (バナー無し配置) */.hero-body { margin-top: 0; }
 /* 再取得ボタン。押している間だけアイコンが 1 回転する。 */.btn-refresh:active svg { animation: spin .5s linear; }
 </style>
@@ -261,9 +266,9 @@ svg { display: block; flex: none; }
           <button class="btn" type="button">全話を録画済みにする</button>
           <button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button>
         </div>
-        <div class="progress-row">
+        <div class="hero-progress">
           <span class="lbl">録画</span>
-          <span class="strip"><span class="rec" style="width:33%"></span><span class="busy" style="width:8%"></span></span>
+          <span class="hero-strip"><span class="rec" style="width:33%"></span><span class="busy" style="width:8%"></span></span>
           <span class="val num">8 / 24</span>
         </div>
       </div>
@@ -288,7 +293,7 @@ svg { display: block; flex: none; }
           </dl>
           <p class="id-syn is-clamp">沈んだ観測都市を舞台に、三度目の夏がめぐってきたとき少女は最初の記録を読み返す。</p>
           <div class="id-actions"><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全話録画済み</button><button class="btn" type="button">予約を解除</button></div>
-          <div class="progress-row"><span class="lbl">録画</span><span class="strip"><span class="rec" style="width:100%"></span></span><span class="val num">13 / 13</span></div>
+          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"><span class="rec" style="width:100%"></span></span><span class="val num">13 / 13</span></div>
         </div>
       </div>
     </div>
@@ -306,7 +311,7 @@ svg { display: block; flex: none; }
           </dl>
           <p class="id-syn is-clamp">あらすじは配信開始後に取得されます。</p>
           <div class="id-actions"><button class="btn btn-primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>配信開始時に録画</button><button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
-          <div class="progress-row"><span class="lbl">録画</span><span class="strip"></span><span class="val num">0 / —</span></div>
+          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"></span><span class="val num">0 / —</span></div>
         </div>
       </div>
     </div>
@@ -324,7 +329,7 @@ svg { display: block; flex: none; }
           </dl>
           <p class="id-syn is-clamp">落雷のたびに一度だけ時計が戻る町で、修理屋の主人は同じ朝を数えつづけている。</p>
           <div class="id-actions"><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>録画予約中</button><button class="btn btn-busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>再取得中</button></div>
-          <div class="progress-row"><span class="lbl">録画</span><span class="strip"><span class="rec" style="width:50%"></span><span class="fail" style="width:8.3%"></span></span><span class="val num">6 / 12</span></div>
+          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"><span class="rec" style="width:50%"></span><span class="fail" style="width:8.3%"></span></span><span class="val num">6 / 12</span></div>
         </div>
       </div>
     </div>
@@ -385,6 +390,29 @@ svg { display: block; flex: none; }
     <div class="cat-item cat-full" data-story="あらすじの畳み方 / 3 行で畳む (既定)"><span class="cat-label is-key">3 行で畳む (既定)</span><p class="id-syn is-clamp">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録であり、同時に終わりの記録でもある物語。第 1 話は観測所の屋上から始まる。</p></div>
     <div class="cat-item cat-full" data-story="あらすじの畳み方 / 展開後"><span class="cat-label">展開後</span><p class="id-syn">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録であり、同時に終わりの記録でもある物語。第 1 話は観測所の屋上から始まる。</p></div>
   </div>
+</section>
+
+<section class="cat-sec">
+  <h2>詰めた操作列 <span class="cat-hint">.id-actions.is-compact</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key" data-story="詰めた操作列 / .id-actions.is-compact"><span class="cat-label">.id-actions.is-compact</span>
+<div class="id-actions is-compact">
+              <button class="btn" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                録画を予約
+              </button>
+              <button class="btn" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                今すぐ録画
+              </button>
+              <button class="btn btn-refresh" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+                再取得
+              </button>
+            </div>
+    </div>
+  </div>
+  <p class="cat-note">作品詳細 (決定稿) で使う、操作ボタンの列を詰める修飾。</p>
 </section>
 </main>
 </body>

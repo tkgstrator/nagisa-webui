@@ -204,6 +204,13 @@ svg { display: block; flex: none; }
 @media (max-width: 640px) {
   .rel, .rel-head { grid-template-columns: minmax(0, 1fr) 46px 14px; }
   .rel .rel-eps.all, .rel-head .all { display: none; }}
+
+/* ---------- 録画数だけを出す版 (.rel-box.is-rec) ---------- *//* 列は「配信元 / 録画」の 2 つ。左バーは .rel-box が 1 本持つので、行にも持たせると
+   ホバーで 2 本に見える。行は持たず padding だけ .rel-head と揃える。 */.rel-box.is-rec .rel-head, .rel-box.is-rec .rel { grid-template-columns: minmax(0, 1fr) 52px 14px; }
+.rel-box.is-rec .rel-head { padding-top: 6px; }
+.rel-box.is-rec .rel { padding-left: 13px; border-left: 0; transition: background .12s; }
+@media (max-width: 640px) {
+  .rel-box.is-rec .rel-head, .rel-box.is-rec .rel { grid-template-columns: minmax(0, 1fr) 46px 14px; }}
 </style>
 </head>
 <body>

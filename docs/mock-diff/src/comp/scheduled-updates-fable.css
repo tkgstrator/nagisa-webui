@@ -8,6 +8,9 @@
 .su-head .more svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .su-cols, .su-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 84px 42px 42px 84px; gap: 12px; align-items: center; }
+/* 進捗バーと件数を持たない 3 列の行 (サムネ / 本文 / 更新日時)。 */
+.su-row-3 { grid-template-columns: 76px minmax(0, 1fr) 84px; }
+.su-row-3 .su-title { display: block; }
 .su-cols { padding: 0 10px 6px 13px; font-size: 11px; color: var(--muted-foreground); border-bottom: 1px solid var(--border); }
 .su-cols .num { text-align: right; }
 .su-cols .upd { text-align: right; }
@@ -87,6 +90,7 @@
 
 @media (max-width: 640px) {
   .su-cols, .su-row { grid-template-columns: 56px minmax(0, 1fr) 38px 60px; gap: 10px; }
+  .su-row-3 { grid-template-columns: 56px minmax(0, 1fr) 60px; }
   .su-cols .bar, .su-cols .all, .su-row .su-bar, .su-row .su-n.all { display: none; }
   .su-upd .abs { display: none; }
   .su-head h3 .sub { display: block; margin-left: 0; }
