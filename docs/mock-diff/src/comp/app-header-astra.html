@@ -2,9 +2,9 @@ TITLE: アプリヘッダー (サイドバー)
 ---
 <header class="cat-head">
   <h1>アプリヘッダー <span class="cat-id">app-header</span></h1>
-  <p>astra 案はトップバーではなく幅 236px の常設サイドバーにナビを置く。ブランド・主要ナビ・グローバル検索に加えて「今日のサマリ」(新着 / 録画中 / 失敗 / 継続視聴中) を常時表示し、最下段にサーバー稼働状態を置く。mobile では畳んでアイコンだけの横並びバーになる。</p>
+  <p>astra 案はトップバーではなく幅 236px の常設サイドバーにナビを置く。ブランド・主要ナビに加えて「今日のサマリ」(新着 / 録画中 / 失敗 / 継続視聴中) を常時表示し、最下段にサーバー稼働状態を置く。mobile では畳んでアイコンだけの横並びバーになる。</p>
   <div class="cat-meta">
-    <span>関連実装 <code>global-search-bar.tsx</code> / <code>server-status-dialog.tsx</code></span>
+    <span>関連実装 <code>server-status-dialog.tsx</code></span>
     <span>幅 <code>236px</code> / <code>position: sticky</code></span>
     <span>背景は <code>--sidebar</code></span>
   </div>
@@ -17,7 +17,6 @@ TITLE: アプリヘッダー (サイドバー)
       <span class="cat-label">通常 (ホームを表示中)</span>
       <aside class="side is-tall">
         <a class="side-brand" href="#"><span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>Nagisa</a>
-        <div class="side-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
         <nav class="side-nav" aria-label="メインナビゲーション">
           <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
           <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
@@ -38,7 +37,6 @@ TITLE: アプリヘッダー (サイドバー)
       <span class="cat-label">録画一覧を表示中</span>
       <aside class="side is-tall">
         <a class="side-brand" href="#"><span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>Nagisa</a>
-        <div class="side-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
         <nav class="side-nav" aria-label="メインナビゲーション">
           <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
           <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
@@ -80,14 +78,6 @@ TITLE: アプリヘッダー (サイドバー)
   </div>
 </section>
 
-<section class="cat-sec">
-  <h2>グローバル検索</h2>
-  <div class="cat-row">
-    <div class="cat-item cat-w220"><span class="cat-label">通常</span><div class="side-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div></div>
-    <div class="cat-item cat-w220"><span class="cat-label">hover</span><div class="side-search is-hover" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div></div>
-    <div class="cat-item cat-w220"><span class="cat-label">フォーカス</span><div class="side-search is-focus" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>ソラリス</span><kbd>/</kbd></div></div>
-  </div>
-</section>
 
 <section class="cat-sec">
   <h2>サーバーステータス</h2>
@@ -108,7 +98,6 @@ TITLE: アプリヘッダー (サイドバー)
         <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
         <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
         <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧</a>
-        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>検索</a>
       </nav>
     </aside>
   </div>

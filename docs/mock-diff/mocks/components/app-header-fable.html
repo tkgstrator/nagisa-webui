@@ -204,12 +204,8 @@ svg { display: block; flex: none; }
 .search:focus-within, .search.is-focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
 .search svg { width: 14px; height: 14px; flex-shrink: 0; }
 .search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); color: var(--muted-foreground); }
-.search.has-value { color: var(--foreground); border-color: var(--input); }
-.search .clear { margin-left: auto; width: 16px; height: 16px; border-radius: 999px; background: var(--muted); color: var(--muted-foreground); display: grid; place-items: center; }
-.search .clear svg { width: 9px; height: 9px; }
-.search-solo { max-width: 320px; margin-left: 0; }
 
-.srv { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); font-size: 12px; flex-shrink: 0; }
+.srv { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); font-size: 12px; flex-shrink: 0; }
 .srv i { width: 8px; height: 8px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
 .srv.is-checking i { background: var(--warning); }
 .srv.is-down i { background: var(--destructive); animation: none; }
@@ -229,9 +225,9 @@ svg { display: block; flex: none; }
 <main class="cat">
 <header class="cat-head">
   <h1>アプリヘッダー <span class="cat-id">app-header</span></h1>
-  <p>全画面の最上部に常時表示されるグローバルヘッダー。fable 案は画面幅いっぱいの sticky トップバーで、ブランド・主要ナビ・グローバル検索・サーバー稼働状態を高さ 56px の 1 行に収める。ナビの「録画」には録画予約件数のバッジが付く。</p>
+  <p>全画面の最上部に常時表示されるグローバルヘッダー。fable 案は画面幅いっぱいの sticky トップバーで、ブランド・主要ナビ・サーバー稼働状態を高さ 56px の 1 行に収める。ナビの「録画」には録画予約件数のバッジが付く。</p>
   <div class="cat-meta">
-    <span>関連実装 <code>global-search-bar.tsx</code> / <code>server-status-dialog.tsx</code></span>
+    <span>関連実装 <code>server-status-dialog.tsx</code></span>
     <span>高さ <code>56px</code> (mobile は折返し)</span>
     <span>背景は <code>backdrop-filter: blur(8px)</code></span>
   </div>
@@ -249,10 +245,6 @@ svg { display: block; flex: none; }
           <a href="#">一覧</a>
           <a href="#">録画 <span class="count-pill num">16</span></a>
         </nav>
-        <div class="search" role="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <span>作品を検索</span><kbd>/</kbd>
-        </div>
         <div class="srv" title="サーバー稼働中"><i></i><span>稼働中</span></div>
       </div>
     </header>
@@ -267,7 +259,6 @@ svg { display: block; flex: none; }
       <header class="hdr"><div class="hdr-in">
         <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>Nagisa</a>
         <nav class="nav"><a href="#">ホーム</a><a class="active" href="#">一覧</a><a href="#">録画 <span class="count-pill num">16</span></a></nav>
-        <div class="search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
         <div class="srv"><i></i><span>稼働中</span></div>
       </div></header>
     </div>
@@ -276,7 +267,6 @@ svg { display: block; flex: none; }
       <header class="hdr"><div class="hdr-in">
         <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>Nagisa</a>
         <nav class="nav"><a href="#">ホーム</a><a href="#">一覧</a><a class="active" href="#">録画 <span class="count-pill num">16</span></a></nav>
-        <div class="search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
         <div class="srv"><i></i><span>稼働中</span></div>
       </div></header>
     </div>
@@ -305,23 +295,6 @@ svg { display: block; flex: none; }
   </div>
 </section>
 
-<section class="cat-sec">
-  <h2>グローバル検索 <span class="cat-hint">/ キーでフォーカス</span></h2>
-  <div class="cat-row">
-    <div class="cat-item cat-w320" data-story="グローバル検索 / 通常"><span class="cat-label">通常</span>
-      <div class="search search-solo" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
-    </div>
-    <div class="cat-item cat-w320" data-story="グローバル検索 / hover"><span class="cat-label">hover</span>
-      <div class="search search-solo is-hover" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
-    </div>
-    <div class="cat-item cat-w320" data-story="グローバル検索 / フォーカス"><span class="cat-label">フォーカス</span>
-      <div class="search search-solo is-focus" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>作品を検索</span><kbd>/</kbd></div>
-    </div>
-    <div class="cat-item cat-w320" data-story="グローバル検索 / 入力あり"><span class="cat-label">入力あり</span>
-      <div class="search search-solo has-value is-focus" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>ソラリス</span><button class="clear" aria-label="消去"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div>
-    </div>
-  </div>
-</section>
 
 <section class="cat-sec">
   <h2>サーバーステータス <span class="cat-hint">クリックで詳細ダイアログ</span></h2>
