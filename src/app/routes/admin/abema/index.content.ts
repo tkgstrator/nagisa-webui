@@ -9,6 +9,7 @@ const adminAbemaContent = {
         enqueued: insert('{{enqueued}} 作品をキューに投入しました'),
         enqueueFailed: 'キューへの投入に失敗しました'
       },
+      eyebrow: '管理',
       title: 'ABEMA 鍵アーカイブ',
       description: '復号鍵が未取得の ABEMA 作品を確認し、取得ジョブをキューに追加します。',
       loading: '集計を読み込んでいます…',
@@ -43,6 +44,7 @@ const adminAbemaContent = {
         enqueued: insert('Queued {{enqueued}} titles'),
         enqueueFailed: 'Failed to add jobs to the queue'
       },
+      eyebrow: 'Admin',
       title: 'ABEMA key archive',
       description: 'Find ABEMA titles with missing decryption keys and queue retrieval jobs.',
       loading: 'Loading statistics…',

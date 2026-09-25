@@ -1,8 +1,9 @@
 import { getIntlayer } from 'intlayer'
 import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 
-const moduleContent = getIntlayer('recordings-recordings-toolbar')
+const moduleContent = getIntlayer('recordings-recordings-toolbar', appLocale)
 
 export type RecordedFilter = 'all' | 'recorded' | 'pending'
 
@@ -29,6 +30,11 @@ const segButtonClass =
   'inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground focus-visible:-outline-offset-1 focus-visible:outline-2 focus-visible:outline-ring'
 const segPressedClass = 'bg-accent font-semibold text-accent-foreground'
 
+const toggleClass =
+  'inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
+const togglePressedClass = 'bg-warning font-semibold text-warning-foreground'
+const toggleIdleClass = 'text-muted-foreground hover:bg-muted hover:text-foreground'
+
 const chipClass =
   'inline-flex h-7 items-center gap-1.5 rounded-full border border-border bg-background px-2.5 text-xs font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
 
@@ -39,6 +45,8 @@ type RecordingsToolbarProps = {
   onProviderChange: (value: string | undefined) => void
   expiringOnly: boolean
   onExpiringOnlyChange: (value: boolean) => void
+  showFinished: boolean
+  onShowFinishedChange: (value: boolean) => void
   sort: SortValue
   onSortChange: (value: SortValue) => void
   hasActiveFilters: boolean
@@ -52,6 +60,8 @@ export const RecordingsToolbar = ({
   onProviderChange,
   expiringOnly,
   onExpiringOnlyChange,
+  showFinished,
+  onShowFinishedChange,
   sort,
   onSortChange,
   hasActiveFilters,
@@ -102,13 +112,18 @@ export const RecordingsToolbar = ({
         type='button'
         aria-pressed={expiringOnly}
         onClick={() => onExpiringOnlyChange(!expiringOnly)}
-        className={`inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
-          expiringOnly
-            ? 'bg-warning font-semibold text-warning-foreground'
-            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        }`}
+        className={`${toggleClass} ${expiringOnly ? togglePressedClass : toggleIdleClass}`}
       >
         {content.expiringOnly}
+      </button>
+
+      <button
+        type='button'
+        aria-pressed={showFinished}
+        onClick={() => onShowFinishedChange(!showFinished)}
+        className={`${toggleClass} ${showFinished ? togglePressedClass : toggleIdleClass}`}
+      >
+        {content.showFinished}
       </button>
 
       <button

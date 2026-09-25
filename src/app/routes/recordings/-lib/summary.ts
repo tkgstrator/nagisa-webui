@@ -1,10 +1,11 @@
 import { getIntlayer } from 'intlayer'
 import { providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 import { daysUntil } from '../-components/format'
 import { RECORDED_OPTIONS, type RecordedFilter } from '../-components/recordings-toolbar'
 
-const content = getIntlayer('recordings-summary')
+const content = getIntlayer('recordings-summary', appLocale)
 
 export type RecordingsSummary = {
   recorded: number

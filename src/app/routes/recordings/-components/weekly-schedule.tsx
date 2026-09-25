@@ -2,10 +2,11 @@ import dayjs from 'dayjs'
 import { getIntlayer } from 'intlayer'
 import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 import { formatDate } from './format'
 
-const moduleContent = getIntlayer('recordings-weekly-schedule')
+const moduleContent = getIntlayer('recordings-weekly-schedule', appLocale)
 
 /** モックに合わせて月曜始まり。`dayjs().day()` は日曜=0 なので +6 して回す。 */
 const DAY_NAMES = moduleContent.dayNames

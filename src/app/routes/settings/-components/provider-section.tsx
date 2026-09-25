@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import { animeListQueryOptions } from '@/app/lib/query-options'
 import {
   currentSeason,
@@ -22,7 +23,7 @@ const ProviderCount = ({ provider }: { provider: ProviderKey }) => {
   if (isError) return <span>{content.count.error}</span>
   return (
     <span className='tabular-nums'>
-      {content.count.label({ count: data.total.toLocaleString('ja-JP') })}
+      {content.count.label({ count: data.total.toLocaleString(appLocale) })}
       {/* TODO: 最終取得時刻を出す API が無いので件数だけにしている。 */}
     </span>
   )
@@ -59,7 +60,6 @@ export const ProviderSection = () => {
               key={provider}
               index={index}
               badge={<ProviderPill provider={provider} />}
-              tag={unlinked ? content.unlinkedTag.value : undefined}
               description={unlinked ? content.unlinkedDescription : <ProviderCount provider={provider} />}
             >
               <StSwitch

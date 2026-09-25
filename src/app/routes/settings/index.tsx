@@ -3,6 +3,7 @@ import { getDefaultStore } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
+import { appLocale } from '@/app/lib/locale'
 import { cn } from '@/app/lib/utils'
 import { AboutSection } from './-components/about-section'
 import { ADMIN_LINK_COUNT, AdminSection } from './-components/admin-section'
@@ -21,7 +22,7 @@ const useLastSavedAt = () => {
 
   useEffect(() => getDefaultStore().sub(settingsAtom, () => setSavedAt(new Date())), [])
 
-  return savedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+  return savedAt.toLocaleTimeString(appLocale, { hour: '2-digit', minute: '2-digit' })
 }
 
 const SettingsPage = () => {

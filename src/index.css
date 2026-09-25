@@ -76,6 +76,16 @@
   --color-brand-abema-foreground: var(--brand-abema-foreground);
   --color-brand-netflix: var(--brand-netflix);
   --color-brand-netflix-foreground: var(--brand-netflix-foreground);
+  --color-brand-amazon-solid: var(--brand-amazon-solid);
+  --color-brand-amazon-solid-foreground: var(--brand-amazon-solid-foreground);
+  --color-brand-hulu-solid: var(--brand-hulu-solid);
+  --color-brand-hulu-solid-foreground: var(--brand-hulu-solid-foreground);
+  --color-brand-crunchyroll-solid: var(--brand-crunchyroll-solid);
+  --color-brand-crunchyroll-solid-foreground: var(--brand-crunchyroll-solid-foreground);
+  --color-brand-abema-solid: var(--brand-abema-solid);
+  --color-brand-abema-solid-foreground: var(--brand-abema-solid-foreground);
+  --color-brand-netflix-solid: var(--brand-netflix-solid);
+  --color-brand-netflix-solid-foreground: var(--brand-netflix-solid-foreground);
 
   --color-status-releasing: var(--status-releasing);
   --color-status-releasing-foreground: var(--status-releasing-foreground);
@@ -165,6 +175,17 @@
   --brand-abema-foreground: oklch(0.4 0.16 130);
   --brand-netflix: oklch(0.62 0.22 27 / 16%);
   --brand-netflix-foreground: oklch(0.45 0.2 27);
+  /* 画像の上に載せるバッジ用。背景が透けないよう不透明にする。 */
+  --brand-amazon-solid: oklch(0.52 0.15 245);
+  --brand-amazon-solid-foreground: oklch(0.99 0 0);
+  --brand-hulu-solid: oklch(0.5 0.14 152);
+  --brand-hulu-solid-foreground: oklch(0.99 0 0);
+  --brand-crunchyroll-solid: oklch(0.6 0.18 45);
+  --brand-crunchyroll-solid-foreground: oklch(0.99 0 0);
+  --brand-abema-solid: oklch(0.82 0.18 130);
+  --brand-abema-solid-foreground: oklch(0.22 0.04 130);
+  --brand-netflix-solid: oklch(0.53 0.21 27);
+  --brand-netflix-solid-foreground: oklch(0.99 0 0);
 
   --status-releasing: oklch(0.65 0.16 145 / 18%);
   --status-releasing-foreground: oklch(0.4 0.14 145);

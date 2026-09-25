@@ -1,10 +1,11 @@
 import { getIntlayer } from 'intlayer'
 import { useEffect, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
+import { appLocale } from '@/app/lib/locale'
 import { cn } from '@/app/lib/utils'
 import { PROVIDER_KEYS, useSettings } from '../-lib/settings'
 
-const settingsAsideModuleContent = getIntlayer('settings-settings-aside')
+const settingsAsideModuleContent = getIntlayer('settings-settings-aside', appLocale)
 
 const SECTIONS = [
   { id: 's-view', label: settingsAsideModuleContent.sections.view },

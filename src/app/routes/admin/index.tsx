@@ -1,51 +1,44 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Activity, FileQuestion, KeyRound, ScrollText, Send } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { AlignLeft, KeyRound, SearchAlert, Send, Server } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
+import { NavLinkRow } from '@/app/components/nav-link-row'
 import { PageContainer } from '@/app/components/page-container'
+import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminHubPage
 })
 
-const ADMIN_ITEMS: {
-  to: '/admin/unidentified' | '/admin/recorder' | '/admin/abema' | '/admin/logs' | '/admin/status'
-  key: 'unidentified' | 'nagisa' | 'abema' | 'logs' | 'status'
-  icon: typeof FileQuestion
-}[] = [
-  { to: '/admin/unidentified', key: 'unidentified', icon: FileQuestion },
+const ADMIN_ITEMS = [
+  { to: '/admin/unidentified', key: 'unidentified', icon: SearchAlert, warn: true },
   { to: '/admin/recorder', key: 'nagisa', icon: Send },
   { to: '/admin/abema', key: 'abema', icon: KeyRound },
-  { to: '/admin/logs', key: 'logs', icon: ScrollText },
-  { to: '/admin/status', key: 'status', icon: Activity }
-]
+  { to: '/admin/logs', key: 'logs', icon: AlignLeft },
+  { to: '/admin/status', key: 'status', icon: Server }
+] as const
 
 function AdminHubPage() {
   const content = useIntlayer('admin')
   return (
-    <PageContainer className='gap-6'>
-      <div>
-        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>{content.description.value}</p>
-      </div>
+    <PageContainer narrow className='gap-[22px]'>
+      <PageHeader
+        eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
+        title={content.title.value}
+        sub={content.description.value}
+      />
 
-      <div className='grid gap-3 sm:grid-cols-2'>
+      <div className='grid grid-cols-3 gap-3.5 max-lg:grid-cols-2 max-sm:grid-cols-1'>
         {ADMIN_ITEMS.map((item) => {
-          const Icon = item.icon
           const itemContent = content.items[item.key]
           return (
-            <Link
+            <NavLinkRow
               key={item.to}
               to={item.to}
-              className='group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20 hover:bg-muted'
-            >
-              <div className='mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors group-hover:bg-background group-hover:text-foreground'>
-                <Icon className='size-4' />
-              </div>
-              <div className='min-w-0 flex-1 space-y-0.5'>
-                <h2 className='text-sm font-semibold'>{itemContent.title.value}</h2>
-                <p className='text-xs text-muted-foreground'>{itemContent.description.value}</p>
-              </div>
-            </Link>
+              icon={item.icon}
+              title={itemContent.title.value}
+              sub={itemContent.description.value}
+              warn={'warn' in item && item.warn}
+            />
           )
         })}
       </div>

@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getIntlayer } from 'intlayer'
+import { appLocale } from '@/app/lib/locale'
 
-const content = getIntlayer('errors-status-code')
+const content = getIntlayer('errors-status-code', appLocale)
 
 export const Route = createFileRoute('/_errors/$statusCode/')({
   loader: ({ params }) => {

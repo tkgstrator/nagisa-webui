@@ -8,12 +8,15 @@ export function FilterPopover<T extends string | number | boolean | undefined>({
   label,
   value,
   options,
-  onSelect
+  onSelect,
+  outline
 }: {
   label: string
   value: T
   options: { value: T; label: string }[]
   onSelect: (value: T) => void
+  /** 管理画面の `.a-btn.a-outline.a-sm`。常に「ラベル: 選択値」を出し、選択中でも塗らない。 */
+  outline?: boolean
 }) {
   const content = useIntlayer('browse-filter-popover')
   const [open, setOpen] = useState(false)
@@ -23,15 +26,25 @@ export function FilterPopover<T extends string | number | boolean | undefined>({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         render={
-          <Button
-            type='button'
-            size='lg'
-            variant={isActive ? 'default' : 'ghost'}
-            className={isActive ? 'bg-accent text-accent-foreground hover:bg-accent/85' : 'text-muted-foreground'}
-          />
+          outline ? (
+            <Button type='button' variant='outline' size='pill-sm' className='bg-transparent' />
+          ) : (
+            <Button
+              type='button'
+              size='lg'
+              variant={isActive ? 'default' : 'ghost'}
+              className={isActive ? 'bg-accent text-accent-foreground hover:bg-accent/85' : 'text-muted-foreground'}
+            />
+          )
         }
       >
-        <span>{isActive ? (selected?.label ?? content.allLabel.value) : label}</span>
+        <span>
+          {outline
+            ? `${label}: ${selected?.label ?? content.allLabel.value}`
+            : isActive
+              ? (selected?.label ?? content.allLabel.value)
+              : label}
+        </span>
         <ChevronDown data-icon='inline-end' className='opacity-60' />
       </PopoverTrigger>
       <PopoverContent align='start' className='w-44 p-1.5'>

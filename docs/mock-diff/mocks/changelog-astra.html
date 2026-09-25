@@ -63,6 +63,17 @@
   --brand-abema-foreground: oklch(0.4 0.16 130);
   --brand-netflix: oklch(0.62 0.22 27 / 16%);
   --brand-netflix-foreground: oklch(0.45 0.2 27);
+  /* 画像の上に載せるバッジ用。背景が透けないよう不透明にする。 */
+  --brand-amazon-solid: oklch(0.52 0.15 245);
+  --brand-amazon-solid-foreground: oklch(0.99 0 0);
+  --brand-hulu-solid: oklch(0.5 0.14 152);
+  --brand-hulu-solid-foreground: oklch(0.99 0 0);
+  --brand-crunchyroll-solid: oklch(0.6 0.18 45);
+  --brand-crunchyroll-solid-foreground: oklch(0.99 0 0);
+  --brand-abema-solid: oklch(0.82 0.18 130);
+  --brand-abema-solid-foreground: oklch(0.22 0.04 130);
+  --brand-netflix-solid: oklch(0.53 0.21 27);
+  --brand-netflix-solid-foreground: oklch(0.99 0 0);
   --status-releasing: oklch(0.65 0.16 145 / 18%);
   --status-releasing-foreground: oklch(0.4 0.14 145);
   --status-finished: oklch(0.6 0.005 250 / 18%);
@@ -530,7 +541,9 @@ svg { display: block; flex: none; }
         <div class="pg-cl-group">
           <h2 class="pg-cl-date">2026-09-25</h2>
           <ul class="pg-cl-list">
-            <li class="pg-cl-item"><code class="pg-cl-hash">062b7a7</code><span class="pg-cl-msg">refactor(api)!: replace product-specific routes with resource endpoints</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">fcb3e0b</code><span class="pg-cl-msg">docs(mock-diff): nest screen categories with / and drop redundant name prefixes</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">f047d37</code><span class="pg-cl-msg">docs(mock-diff): compose every page from component CSS and skeleton parts only</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">b3e6493</code><span class="pg-cl-msg">refactor(api)!: replace product-specific routes with resource endpoints (#133)</span></li>
           </ul>
         </div>
         <div class="pg-cl-group">
@@ -538,13 +551,30 @@ svg { display: block; flex: none; }
           <ul class="pg-cl-list">
             <li class="pg-cl-item"><code class="pg-cl-hash">1b43b64</code><span class="pg-cl-msg">Merge pull request #132 from tkgstrator/develop</span></li>
             <li class="pg-cl-item"><code class="pg-cl-hash">f92e3b5</code><span class="pg-cl-msg">chore: bump version to 0.9.1 (#131)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">4a47e33</code><span class="pg-cl-msg">fix(nagisa): accept reindex jobs and all-episode seasons in the queue snapshot (#130)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">435a7a1</code><span class="pg-cl-msg">fix(library): apply ledger writes with D1 batch() instead of $transaction (#129)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">5abf743</code><span class="pg-cl-msg">build(dev): keep vite and intlayer from scanning heavy untracked dirs (#127)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">dca89ea</code><span class="pg-cl-msg">Merge pull request #128 from tkgstrator/develop</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">3f46815</code><span class="pg-cl-msg">chore: bump version to 0.9.0 (#126)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">e4403ac</code><span class="pg-cl-msg">feat(library): match ledger rows without episode_id via tmdb_id (#124)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">3a700f7</code><span class="pg-cl-msg">feat(i18n): move logs, sidebar and anime detail copy into intlayer (#125)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">8293939</code><span class="pg-cl-msg">feat(i18n): move UI copy into intlayer content files (#122)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">a0f219a</code><span class="pg-cl-msg">Merge pull request #119 from tkgstrator/develop</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">d1104e8</code><span class="pg-cl-msg">chore: bump version to 0.8.6 (#117)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">2ba1983</code><span class="pg-cl-msg">feat(anime): show nagisa recording state per AniList work (#116)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">517a53c</code><span class="pg-cl-msg">Merge pull request #115 from tkgstrator/develop</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">30931c8</code><span class="pg-cl-msg">feat(anime): record episodes by hand and sync recording state on refresh (#114)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">0715ed6</code><span class="pg-cl-msg">chore: release v0.8.4 (#112)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">ac945fe</code><span class="pg-cl-msg">chore: salvage the token scope probe and the double border fix from #110 (#111)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">354b852</code><span class="pg-cl-msg">feat: share status page layout for errors and split files over 400 lines (#109)</span></li>
           </ul>
         </div>
         <div class="pg-cl-group">
-          <h2 class="pg-cl-date">2026-09-20</h2>
+          <h2 class="pg-cl-date">2026-09-23</h2>
           <ul class="pg-cl-list">
-            <li class="pg-cl-item"><code class="pg-cl-hash">4a47e33</code><span class="pg-cl-msg">fix(nagisa): accept reindex jobs and all-episode seasons in the queue snapshot (#130)</span></li>
-            <li class="pg-cl-item"><code class="pg-cl-hash">435a7a1</code><span class="pg-cl-msg">fix(library): apply ledger writes with D1 batch() instead of $transaction (#129)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">4963d92</code><span class="pg-cl-msg">docs(mock-diff): add the recording events table mocks (#108)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">2379086</code><span class="pg-cl-msg">feat(logs): record recording requests and show them under /admin/logs (#107)</span></li>
+            <li class="pg-cl-item"><code class="pg-cl-hash">c40e65b</code><span class="pg-cl-msg">feat(sync): pull recording status from nagisa's ledger (#106)</span></li>
           </ul>
         </div>
       </div>

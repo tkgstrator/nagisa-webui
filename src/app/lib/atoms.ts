@@ -59,6 +59,8 @@ interface RecordingsFilters {
   search: string
   recorded: RecordedFilter
   expiringOnly: boolean
+  /** 完結した作品も並べるか。保存済みの古い値には無いので undefined は false とみなす。 */
+  showFinished?: boolean
   provider?: string
   sort: SortValue
   view: RecordingsView
@@ -70,6 +72,7 @@ export const recordingsFiltersDefaults = (): RecordingsFilters => ({
   search: '',
   recorded: 'all',
   expiringOnly: false,
+  showFinished: false,
   provider: undefined,
   sort: 'updatedAt-desc',
   view: 'list',

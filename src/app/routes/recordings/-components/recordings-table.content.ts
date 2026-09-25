@@ -4,9 +4,6 @@ const recordingsTableContent = {
   key: 'recordings-recordings-table',
   content: t({
     ja: {
-      selectRow: insert('{{title}} を選択'),
-      unscheduleRow: insert('{{title}} の予約を解除'),
-      unschedule: '予約解除',
       recordedBadge: {
         recorded: '録画済み',
         pending: '未録画'
@@ -18,27 +15,26 @@ const recordingsTableContent = {
           label: '放送中',
           hint: '新しいエピソードが順次追加されます'
         },
+        finished: {
+          label: '完結',
+          hint: '放送が終わった作品です。予約は詳細ページから取り消せます'
+        },
         others: {
           label: 'その他',
-          hint: '完結・未放送・休止を含みます'
+          hint: '未放送・休止などの作品です'
         }
       },
       groupCount: insert('{{count}} 作品'),
       columns: {
-        select: '選択',
         title: '作品',
         provider: '配信元',
         airing: '放送',
         recorded: '録画',
         updatedAt: '最終更新',
-        expiresAt: '配信終了',
-        actions: '操作'
+        expiresAt: '配信終了'
       }
     },
     en: {
-      selectRow: insert('Select {{title}}'),
-      unscheduleRow: insert('Cancel the recording schedule for {{title}}'),
-      unschedule: 'Cancel schedule',
       recordedBadge: {
         recorded: 'Recorded',
         pending: 'Not recorded'
@@ -50,21 +46,23 @@ const recordingsTableContent = {
           label: 'Airing',
           hint: 'New episodes are added as they air'
         },
+        finished: {
+          label: 'Finished',
+          hint: 'These have finished airing. Cancel the schedule from the detail page'
+        },
         others: {
           label: 'Other',
-          hint: 'Includes finished, unaired, and on-hiatus anime'
+          hint: 'Not yet aired, on hiatus, and so on'
         }
       },
       groupCount: insert('{{count}} titles'),
       columns: {
-        select: 'Select',
         title: 'titles',
         provider: 'Provider',
         airing: 'Broadcast',
         recorded: 'Recording status',
         updatedAt: 'Last updated',
-        expiresAt: 'Available until',
-        actions: 'Actions'
+        expiresAt: 'Available until'
       }
     }
   })

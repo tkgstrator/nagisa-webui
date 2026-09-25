@@ -19,6 +19,7 @@ const adminNagisaContent = {
         contentIdRequired: 'content_id を入力してください',
         episodesRequireSeasonNumber: 'episodes を指定する場合は season_number も指定してください'
       },
+      eyebrow: '管理',
       title: 'Nagisa ジョブ投入',
       description: {
         prefix: 'バックエンド経由で Nagisa の',
@@ -64,6 +65,7 @@ const adminNagisaContent = {
         contentIdRequired: 'Enter a content_id',
         episodesRequireSeasonNumber: 'Specify season_number when providing episodes'
       },
+      eyebrow: 'Admin',
       title: 'Submit Nagisa jobs',
       description: {
         prefix: "Submit recording jobs to Nagisa's",

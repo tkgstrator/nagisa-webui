@@ -1,17 +1,19 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
-import { ArrowDownUp, Film } from 'lucide-react'
+import { List } from 'lucide-react'
 import { useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { z } from 'zod'
-import { ProviderBadge } from '@/app/components/anime-badges'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
-import { ProxyImage } from '@/app/components/proxy-image'
-import { SmartPagination } from '@/app/components/smart-pagination'
+import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
+import { PagePager } from '@/app/components/page-pager'
+import { PageNotice, PageToolbar } from '@/app/components/page-section'
+import { PosterCard, PosterGrid, PosterMeta, ProviderTag } from '@/app/components/poster-grid'
 import { Button } from '@/app/components/ui/button'
 import { providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import { unidentifiedListQueryOptions } from '@/app/lib/query-options'
 import { getProviderTitleUrl } from '@/app/routes/anime/$id/-lib/format'
 import { FilterPopover } from '@/app/routes/browse/-components/filter-popover'
@@ -84,76 +86,66 @@ function UnidentifiedAdminPage() {
   const toggleOrder = () => updateSearch({ order: search.order === 'desc' ? 'asc' : 'desc' })
 
   return (
-    <PageContainer className='gap-6'>
+    <PageContainer className='gap-[22px]'>
+      <PageHeader
+        eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
+        title={content.title.value}
+        sub={
+          <>
+            {content.unresolvedCount.prefix.value}{' '}
+            <b className='font-semibold text-foreground tabular-nums'>{total.toLocaleString(appLocale)}</b>{' '}
+            {content.unresolvedCount.suffix.value}
+          </>
+        }
+      />
+
       <div>
-        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>{content.unresolvedCount({ total })}</p>
-      </div>
+        <PageToolbar
+          start={
+            <>
+              <SearchBar value={search.q ?? ''} onChange={(v) => updateSearch({ q: v || undefined })} />
+              <FilterPopover
+                outline
+                label={content.providerFilterLabel.value}
+                value={search.provider}
+                options={PROVIDER_FILTER_OPTIONS}
+                onSelect={(v) => updateSearch({ provider: v })}
+              />
+            </>
+          }
+        >
+          <Button variant='outline' size='pill-sm' className='bg-transparent' onClick={toggleOrder}>
+            <List />
+            {content.sortButton.prefix.value}{' '}
+            {search.order === 'desc' ? content.sortButton.desc.value : content.sortButton.asc.value}
+          </Button>
+        </PageToolbar>
 
-      <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-        <div className='sm:flex-1'>
-          <SearchBar value={search.q ?? ''} onChange={(v) => updateSearch({ q: v || undefined })} />
-        </div>
-        <FilterPopover
-          label={content.providerFilterLabel.value}
-          value={search.provider}
-          options={PROVIDER_FILTER_OPTIONS}
-          onSelect={(v) => updateSearch({ provider: v })}
-        />
-        <Button variant='outline' onClick={toggleOrder} className='sm:w-44'>
-          <ArrowDownUp className='h-4 w-4' />
-          {content.sortButton.prefix.value}{' '}
-          {search.order === 'desc' ? content.sortButton.desc.value : content.sortButton.asc.value}
-        </Button>
-      </div>
-
-      {items.length === 0 ? (
-        <div className='py-20 text-center text-sm text-muted-foreground'>{content.emptyState.value}</div>
-      ) : (
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-          {items.map((item) => {
-            const providerUrl = getProviderTitleUrl(item.provider, item.contentId)
-            const card = (
-              <>
-                <div className='relative aspect-video w-full overflow-hidden rounded-lg bg-muted'>
-                  {item.imageUrl ? (
-                    <ProxyImage
-                      src={item.imageUrl}
-                      alt={item.title}
-                      slotWidth={400}
-                      className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-105'
-                    />
-                  ) : (
-                    <div className='flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground'>
-                      <Film className='size-6 opacity-60' aria-hidden='true' />
-                      <span className='line-clamp-2 w-full break-all'>{item.title}</span>
-                    </div>
-                  )}
-                </div>
-                <p className='mt-1.5 truncate text-sm font-medium'>{item.title}</p>
-                <div className='mt-0.5 flex items-center gap-1.5'>
-                  <ProviderBadge provider={item.provider} className='text-[10px]' />
-                  <span className='truncate font-mono text-[10px] text-muted-foreground'>{item.contentId}</span>
-                </div>
-                <p className='mt-0.5 text-[10px] text-muted-foreground'>
+        {items.length === 0 ? (
+          <PageNotice tone='mute'>{content.emptyState.value}</PageNotice>
+        ) : (
+          <PosterGrid>
+            {items.map((item) => (
+              <PosterCard
+                key={item.id}
+                title={item.title}
+                imageUrl={item.imageUrl}
+                href={getProviderTitleUrl(item.provider, item.contentId)}
+              >
+                <PosterMeta>
+                  <ProviderTag provider={item.provider} />
+                  <span className='truncate font-[ui-monospace,SFMono-Regular,Menlo,monospace]'>{item.contentId}</span>
+                </PosterMeta>
+                <PosterMeta>
                   {content.updatedPrefix.value} {dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm')}
-                </p>
-              </>
-            )
-            return providerUrl ? (
-              <a key={item.id} href={providerUrl} target='_blank' rel='noopener noreferrer' className='group block'>
-                {card}
-              </a>
-            ) : (
-              <div key={item.id} className='block'>
-                {card}
-              </div>
-            )
-          })}
-        </div>
-      )}
+                </PosterMeta>
+              </PosterCard>
+            ))}
+          </PosterGrid>
+        )}
+      </div>
 
-      {totalPages > 1 && <SmartPagination page={page} totalPages={totalPages} onPageChange={setPage} />}
+      <PagePager page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
     </PageContainer>
   )
 }

@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
+import { SegmentedControl, type SegmentOption } from '@/app/components/segmented-control'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
 import { cn } from '@/app/lib/utils'
 import { settingsAtom } from '../-lib/settings'
@@ -107,39 +108,15 @@ export const StSwitch = ({
   </button>
 )
 
-export interface SegmentOption<T extends string> {
-  value: T
-  label: string
-}
+export type { SegmentOption }
 
-export const StSegment = <T extends string>({
-  value,
-  options,
-  onValueChange,
-  label
-}: {
+/** 設定行の右端に置く排他選択。モバイルでは行幅いっぱいに伸ばす。 */
+export const StSegment = <T extends string>(props: {
   value: T
   options: readonly SegmentOption<T>[]
   onValueChange: (next: T) => void
   label: string
-}) => (
-  <fieldset aria-label={label} className='flex min-w-0 shrink-0 gap-[3px] rounded-full bg-muted p-[3px] max-sm:w-full'>
-    {options.map((option) => (
-      <button
-        key={option.value}
-        type='button'
-        aria-pressed={value === option.value}
-        onClick={() => onValueChange(option.value)}
-        className={cn(
-          'h-[26px] shrink-0 rounded-full px-3 text-[12.5px] whitespace-nowrap text-muted-foreground transition-[background-color,color,transform] duration-200 hover:text-foreground active:scale-95 max-sm:flex-1 max-sm:px-2',
-          value === option.value && 'bg-primary font-bold text-primary-foreground'
-        )}
-      >
-        {option.label}
-      </button>
-    ))}
-  </fieldset>
-)
+}) => <SegmentedControl {...props} fill />
 
 /** モックの .st-sel。既存の Select をピル型に寄せただけで中身は共通。 */
 export const StSelect = <T extends string>({

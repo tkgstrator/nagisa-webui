@@ -3,11 +3,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Loader2, Send } from 'lucide-react'
 import { useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
+import { FormField, FormHint, FormRow, formControlClass, MonoText, PreBlock } from '@/app/components/form-field'
 import { PageContainer } from '@/app/components/page-container'
+import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
+import { PageSection } from '@/app/components/page-section'
 import { Button } from '@/app/components/ui/button'
 import { Checkbox } from '@/app/components/ui/checkbox'
 import { Input } from '@/app/components/ui/input'
-import { Label } from '@/app/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
 import api from '@/app/lib/api'
 import { providerLabel } from '@/app/lib/constants'
@@ -143,170 +145,172 @@ function NagisaJobEditorPage() {
   })()
 
   return (
-    <PageContainer className='gap-6'>
+    <PageContainer narrow className='gap-[22px]'>
+      <PageHeader
+        eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
+        title={content.title.value}
+        sub={
+          <>
+            {content.description.prefix.value} <MonoText>/api/queues</MonoText> {content.description.suffix.value}
+          </>
+        }
+      />
+
       <div>
-        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>
-          {content.description.prefix.value} <code className='rounded bg-muted px-1.5 py-0.5 text-xs'>/api/queues</code>{' '}
-          {content.description.suffix.value}
-        </p>
-      </div>
-
-      <div className='space-y-4'>
-        <div className='space-y-1.5'>
-          <Label htmlFor='provider'>provider</Label>
-          <Select value={provider} onValueChange={(v) => setProvider(v as Provider)}>
-            <SelectTrigger id='provider' className='w-full'>
-              <SelectValue>{providerValueLabel}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {PROVIDERS.map((p) => (
-                <SelectItem key={p} value={p}>
-                  {providerLabel[p] ?? p}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className='space-y-1.5'>
-          <Label htmlFor='contentId'>content_id</Label>
-          <Input
-            id='contentId'
-            placeholder={content.placeholders.contentId.value}
-            value={contentId}
-            onChange={(e) => setContentId(e.target.value)}
-          />
-        </div>
-
-        <div className='grid gap-4 sm:grid-cols-[1fr_2fr]'>
-          <div className='space-y-1.5'>
-            <Label htmlFor='seasonNumber'>{content.labels.seasonNumber.value}</Label>
-            <Input
-              id='seasonNumber'
-              placeholder={content.placeholders.seasonNumber.value}
-              value={seasonNumberText}
-              onChange={(e) => setSeasonNumberText(e.target.value)}
-            />
-          </div>
-          <div className='space-y-1.5'>
-            <Label htmlFor='episodes'>{content.labels.episodes.value}</Label>
-            <Input
-              id='episodes'
-              placeholder={content.placeholders.episodes.value}
-              value={episodesText}
-              onChange={(e) => setEpisodesText(e.target.value)}
-            />
-            <p className='text-xs text-muted-foreground'>{content.episodesHint.value}</p>
-          </div>
-        </div>
-
-        <div className='grid gap-4 sm:grid-cols-2'>
-          <div className='space-y-1.5'>
-            <Label htmlFor='marketplace'>{content.labels.marketplace.value}</Label>
-            <Select value={marketplace} onValueChange={(v) => setMarketplace(v as Marketplace | typeof UNSET)}>
-              <SelectTrigger id='marketplace' className='w-full'>
-                <SelectValue>{marketplaceValueLabel}</SelectValue>
+        <div className='flex max-w-[580px] flex-col gap-[18px]'>
+          <FormField label='provider' htmlFor='provider'>
+            <Select value={provider} onValueChange={(v) => setProvider(v as Provider)}>
+              <SelectTrigger id='provider' className={formControlClass}>
+                <SelectValue>{providerValueLabel}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
-                {MARKETPLACES.map((m) => (
-                  <SelectItem key={m.value} value={m.value}>
-                    {m.label}
+                {PROVIDERS.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {providerLabel[p] ?? p}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          </FormField>
+
+          <FormField label='content_id' htmlFor='contentId'>
+            <Input
+              id='contentId'
+              className={formControlClass}
+              placeholder={content.placeholders.contentId.value}
+              value={contentId}
+              onChange={(e) => setContentId(e.target.value)}
+            />
+          </FormField>
+
+          <FormRow>
+            <FormField label={content.labels.seasonNumber.value} htmlFor='seasonNumber'>
+              <Input
+                id='seasonNumber'
+                className={formControlClass}
+                placeholder={content.placeholders.seasonNumber.value}
+                value={seasonNumberText}
+                onChange={(e) => setSeasonNumberText(e.target.value)}
+              />
+            </FormField>
+            <FormField label={content.labels.episodes.value} htmlFor='episodes' hint={content.episodesHint.value}>
+              <Input
+                id='episodes'
+                className={formControlClass}
+                placeholder={content.placeholders.episodes.value}
+                value={episodesText}
+                onChange={(e) => setEpisodesText(e.target.value)}
+              />
+            </FormField>
+          </FormRow>
+
+          <FormRow>
+            <FormField label={content.labels.marketplace.value} htmlFor='marketplace'>
+              <Select value={marketplace} onValueChange={(v) => setMarketplace(v as Marketplace | typeof UNSET)}>
+                <SelectTrigger id='marketplace' className={formControlClass}>
+                  <SelectValue>{marketplaceValueLabel}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
+                  {MARKETPLACES.map((m) => (
+                    <SelectItem key={m.value} value={m.value}>
+                      {m.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+            <FormField label={content.labels.language.value} htmlFor='language'>
+              <Select value={language} onValueChange={(v) => setLanguage(v as Language | typeof UNSET)}>
+                <SelectTrigger id='language' className={formControlClass}>
+                  <SelectValue>{languageValueLabel}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
+                  {LANGUAGES.map((l) => (
+                    <SelectItem key={l.value} value={l.value}>
+                      {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+          </FormRow>
+
+          <label htmlFor='force' className='flex items-start gap-2'>
+            <Checkbox
+              id='force'
+              checked={force}
+              onCheckedChange={(v) => setForce(v === true)}
+              className='size-[18px]'
+            />
+            <FormHint className='mt-0.5'>
+              <b className='font-bold'>force</b> {content.forceHint.prefix.value} <MonoText>-F</MonoText>{' '}
+              {content.forceHint.suffix.value}
+            </FormHint>
+          </label>
+
+          {validationError && <p className='text-xs text-destructive'>{validationError}</p>}
+
+          <div className='flex flex-wrap items-center gap-3'>
+            <Button size='pill' onClick={onSubmit} disabled={mutation.isPending}>
+              {mutation.isPending ? <Loader2 className='animate-spin' /> : <Send />}
+              {content.submit.value}
+            </Button>
+            {mutation.isPending && <span className='text-xs text-muted-foreground'>{content.submitting.value}</span>}
           </div>
-          <div className='space-y-1.5'>
-            <Label htmlFor='language'>{content.labels.language.value}</Label>
-            <Select value={language} onValueChange={(v) => setLanguage(v as Language | typeof UNSET)}>
-              <SelectTrigger id='language' className='w-full'>
-                <SelectValue>{languageValueLabel}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
-                {LANGUAGES.map((l) => (
-                  <SelectItem key={l.value} value={l.value}>
-                    {l.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
         </div>
 
-        <label htmlFor='force' className='inline-flex items-start gap-2 text-sm'>
-          <Checkbox id='force' checked={force} onCheckedChange={(v) => setForce(v === true)} className='mt-0.5' />
-          <span>
-            <span className='font-medium'>force</span>
-            <span className='ml-1 text-muted-foreground'>
-              {content.forceHint.prefix.value} <code>-F</code> {content.forceHint.suffix.value}
-            </span>
-          </span>
-        </label>
+        {preview && (
+          <PageSection title={content.previewTitle.value}>
+            <PreBlock>{JSON.stringify(preview, null, 2)}</PreBlock>
+          </PageSection>
+        )}
 
-        {validationError && <p className='text-sm text-destructive'>{validationError}</p>}
+        {mutation.isError && (
+          <PageSection title={content.errorTitle.value}>
+            <PreBlock error>{mutation.error.message}</PreBlock>
+          </PageSection>
+        )}
 
-        <div className='flex items-center gap-3'>
-          <Button onClick={onSubmit} disabled={mutation.isPending}>
-            {mutation.isPending ? <Loader2 className='animate-spin' /> : <Send />}
-            {content.submit.value}
-          </Button>
-          {mutation.isPending && <span className='text-sm text-muted-foreground'>{content.submitting.value}</span>}
-        </div>
-      </div>
-
-      {preview && (
-        <div className='space-y-1.5'>
-          <p className='text-sm font-medium leading-none'>{content.previewTitle.value}</p>
-          <pre className='overflow-x-auto rounded-xl border border-border bg-muted p-3 font-mono text-xs'>
-            {JSON.stringify(preview, null, 2)}
-          </pre>
-        </div>
-      )}
-
-      {mutation.isError && (
-        <div className='space-y-1.5'>
-          <p className='text-sm font-medium leading-none'>{content.errorTitle.value}</p>
-          <pre className='overflow-x-auto rounded-xl border border-destructive/50 bg-destructive/10 p-3 font-mono text-xs text-destructive'>
-            {mutation.error.message}
-          </pre>
-        </div>
-      )}
-
-      {mutation.isSuccess && (
-        <div className='space-y-3'>
-          <div className='text-sm text-muted-foreground'>{content.enqueuedCount({ count: mutation.data.count })}</div>
-          {mutation.data.jobs.map((job) => (
-            <div key={job.job_id} className='space-y-1.5'>
-              <p className='text-sm font-medium leading-none'>
-                {job.name} ({job.status}) — {job.job_id}
-              </p>
-              {job.preview && (
-                <div className='space-y-0.5 text-sm'>
-                  <div className='font-medium'>{job.preview.title}</div>
-                  {job.preview.title_en && <div className='text-xs text-muted-foreground'>{job.preview.title_en}</div>}
-                  <div className='text-xs text-muted-foreground'>
-                    {content.jobPreviewMeta({
-                      contentType: job.preview.content_type,
-                      selected: job.preview.selected_episodes,
-                      total: job.preview.total_episodes,
-                      marketplace: job.preview.marketplace
-                    })}
+        {mutation.isSuccess && (
+          <>
+            <PageSection title={content.enqueuedCount({ count: mutation.data.count })}>
+              <div className='flex flex-col gap-2.5'>
+                {mutation.data.jobs.map((job) => (
+                  <div
+                    key={job.job_id}
+                    className='flex flex-col gap-[3px] rounded-r-lg border-l-[3px] border-success bg-background px-3 py-2.5'
+                  >
+                    <p className='text-[13px] font-bold'>
+                      {job.name} ({job.status}) — {job.job_id}
+                    </p>
+                    {job.preview && (
+                      <>
+                        <div className='text-[11.5px] text-muted-foreground'>{job.preview.title}</div>
+                        {job.preview.title_en && (
+                          <div className='text-[11.5px] text-muted-foreground'>{job.preview.title_en}</div>
+                        )}
+                        <div className='text-[11.5px] text-muted-foreground tabular-nums'>
+                          {content.jobPreviewMeta({
+                            contentType: job.preview.content_type,
+                            selected: job.preview.selected_episodes,
+                            total: job.preview.total_episodes,
+                            marketplace: job.preview.marketplace
+                          })}
+                        </div>
+                      </>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-          <div className='space-y-1.5'>
-            <p className='text-sm font-medium leading-none'>{content.responseTitle.value}</p>
-            <pre className='overflow-x-auto rounded-xl border border-border bg-muted p-3 font-mono text-xs'>
-              {JSON.stringify(mutation.data, null, 2)}
-            </pre>
-          </div>
-        </div>
-      )}
+                ))}
+              </div>
+            </PageSection>
+            <PageSection title={content.responseTitle.value}>
+              <PreBlock>{JSON.stringify(mutation.data, null, 2)}</PreBlock>
+            </PageSection>
+          </>
+        )}
+      </div>
     </PageContainer>
   )
 }

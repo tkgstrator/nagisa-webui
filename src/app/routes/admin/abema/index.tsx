@@ -3,10 +3,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import { KeyRound } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
+import { PageBottomBar } from '@/app/components/page-bottom-bar'
 import { PageContainer } from '@/app/components/page-container'
-import { StatTile } from '@/app/components/stat-tile'
+import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
+import { StatGrid, StatTile } from '@/app/components/stat-tile'
 import { Button } from '@/app/components/ui/button'
 import api from '@/app/lib/api'
+import { appLocale } from '@/app/lib/locale'
 import { queryKeys } from '@/app/lib/query-keys'
 import { archiveStatsQueryOptions } from '@/app/lib/query-options'
 
@@ -36,61 +39,60 @@ function AbemaArchivePage() {
   })
 
   return (
-    <PageContainer className='gap-6'>
-      <header>
-        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>{content.description.value}</p>
-      </header>
+    <PageContainer narrow className='gap-[22px]'>
+      <PageHeader
+        eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
+        title={content.title.value}
+        sub={content.description.value}
+      />
 
-      {stats === undefined ? (
-        <p className='border-l-[3px] border-border px-3.5 py-3 text-sm text-muted-foreground'>
-          {isPending ? content.loading.value : content.loadError.value}
-        </p>
-      ) : (
-        <section
-          aria-label={content.sectionLabel.value}
-          className='grid grid-cols-3 gap-6 max-lg:grid-cols-2 max-sm:grid-cols-1'
-        >
-          <StatTile
-            label={content.stats.totalAnime.label.value}
-            value={stats.totalAnime}
-            unit={content.stats.totalAnime.unit.value}
-            note={content.stats.totalAnime.note({ count: stats.animeFullyArchived.toLocaleString('ja-JP') }).value}
-            tone='primary'
-          />
-          <StatTile
-            label={content.stats.missingKey.label.value}
-            value={stats.animeWithMissingKey}
-            unit={content.stats.missingKey.unit.value}
-            note={content.stats.missingKey.note.value}
-            tone='warn'
-          />
-          <StatTile
-            label={content.stats.totalEpisodes.label.value}
-            value={stats.totalEpisodes}
-            unit={content.stats.totalEpisodes.unit.value}
-            note={
-              content.stats.totalEpisodes.note({
-                archived: stats.archivedEpisodes.toLocaleString('ja-JP'),
-                pending: stats.pendingEpisodes.toLocaleString('ja-JP')
-              }).value
-            }
-            tone='ok'
-          />
-        </section>
-      )}
+      <div>
+        {stats === undefined ? (
+          <p className='border-l-[3px] border-border px-3.5 py-3 text-sm text-muted-foreground'>
+            {isPending ? content.loading.value : content.loadError.value}
+          </p>
+        ) : (
+          <StatGrid label={content.sectionLabel.value}>
+            <StatTile
+              label={content.stats.totalAnime.label.value}
+              value={stats.totalAnime}
+              unit={content.stats.totalAnime.unit.value}
+              note={content.stats.totalAnime.note({ count: stats.animeFullyArchived.toLocaleString(appLocale) }).value}
+              tone='primary'
+            />
+            <StatTile
+              label={content.stats.missingKey.label.value}
+              value={stats.animeWithMissingKey}
+              unit={content.stats.missingKey.unit.value}
+              note={content.stats.missingKey.note.value}
+              tone='warn'
+            />
+            <StatTile
+              label={content.stats.totalEpisodes.label.value}
+              value={stats.totalEpisodes}
+              unit={content.stats.totalEpisodes.unit.value}
+              note={
+                content.stats.totalEpisodes.note({
+                  archived: stats.archivedEpisodes.toLocaleString(appLocale),
+                  pending: stats.pendingEpisodes.toLocaleString(appLocale)
+                }).value
+              }
+              tone='ok'
+            />
+          </StatGrid>
+        )}
 
-      <div className='flex flex-wrap items-center gap-3 border-t border-border pt-4'>
-        <Button
-          type='button'
-          disabled={enqueueMutation.isPending}
-          onClick={() => enqueueMutation.mutate()}
-          className='gap-2'
-        >
-          <KeyRound className='size-4' />
-          {enqueueMutation.isPending ? content.enqueueButton.pending.value : content.enqueueButton.idle.value}
-        </Button>
-        <span className='text-xs text-muted-foreground'>{content.footerNote.value}</span>
+        <PageBottomBar note={content.footerNote.value}>
+          <Button
+            type='button'
+            size='pill'
+            disabled={enqueueMutation.isPending}
+            onClick={() => enqueueMutation.mutate()}
+          >
+            <KeyRound />
+            {enqueueMutation.isPending ? content.enqueueButton.pending.value : content.enqueueButton.idle.value}
+          </Button>
+        </PageBottomBar>
       </div>
     </PageContainer>
   )
