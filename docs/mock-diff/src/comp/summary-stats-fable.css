@@ -75,3 +75,14 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 .is-rule .ss.busy { border-left-color: var(--info); }
 /* 空の note でも高さを確保してタイルの底を揃える。 */
 .is-rule .ss .note { line-height: 1.5; min-height: 18px; }
+
+/* ---------- 右寄せ (.ss-grid.is-end) ---------- */
+/* 見出しの右に置くとき用。タイルを内容幅で右端に寄せる。均等割りだと最終列の右に空きが残り、
+   右揃えに見えない。見出しの下に落ちる幅 (1024px 以下) では均等割りに戻す。 */
+.ss-grid.is-end { grid-template-columns: repeat(4, max-content); justify-content: end; gap: 48px; }
+@media (max-width: 1024px) {
+  .ss-grid.is-end { grid-template-columns: repeat(4, minmax(0, 1fr)); justify-content: normal; gap: 24px; }
+}
+@media (max-width: 640px) {
+  .ss-grid.is-end { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 14px; }
+}

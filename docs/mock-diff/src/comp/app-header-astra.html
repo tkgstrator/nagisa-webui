@@ -107,7 +107,7 @@ TITLE: アプリヘッダー (サイドバー)
   <h2>常設版 <span class="cat-hint">.side.is-sticky</span></h2>
   <div class="cat-stack">
     <div class="cat-item cat-full is-key"><span class="cat-label">.side.is-sticky</span>
-<div class="cat-frame" style="height:560px;overflow:hidden"><aside class="side is-sticky">
+<div class="cat-frame" style="height:560px;overflow:hidden"><aside class="side is-sticky" data-part="sticky">
     <div class="side-top">
       <a class="side-brand" href="#">
         <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
@@ -121,8 +121,21 @@ TITLE: アプリヘッダー (サイドバー)
       <a href="#" title="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
     </nav>
 
+    <!-- slot -->
     <button type="button" class="side-status"><i></i>サーバー稼働中</button>
   </aside></div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">録画一覧を表示中 (.side-widget を差し込む)</span>
+<div class="cat-frame" style="height:560px;overflow:hidden">
+<!-- @part app-header:sticky current=録画一覧 -->
+    <div class="side-widget" data-part="recordings-stats">
+      <h3>録画状況の概要</h3>
+      <button type="button" class="side-stat d-rec"><span class="dot"></span>録画予約中<span class="v num">22</span></button>
+      <button type="button" class="side-stat d-watch"><span class="dot"></span>録画済み<span class="v num">13</span></button>
+      <button type="button" class="side-stat d-new"><span class="dot"></span>未録画<span class="v num">9</span></button>
+    </div>
+<!-- /@part -->
+</div>
     </div>
   </div>
   <p class="cat-note">ページでは <code>position: sticky</code> でブラウザの縦幅ぴったり (100vh) に表示する。左罫を持つ行は角丸を右側だけに揃える。</p>
