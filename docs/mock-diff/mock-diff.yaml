@@ -6,6 +6,8 @@
 # スキーマの要点:
 #   screens[].id            画面を一意に識別する ID (URL やコマンドで指定する)
 #   screens[].name           画面の表示名
+#   screens[].category       サイドバーの分類。`/` 区切りでネストする (例: コンポーネント/原子)。
+#                             分類がそのまま文脈を表すので、name に「…」の接頭辞は付けない
 #   screens[].threshold      実装とデザインのピクセル差分許容値 (0-1、小さいほど厳密)。
 #                             screen 単位が基本だが devices[] 単位で個別に上書きもできる
 #   screens[].devices[].id           デバイスを一意に識別する ID
@@ -288,8 +290,8 @@ screens:
           url: http://nagisa-webui_devcontainer-app-1:14755/changelog
 
   - id: admin
-    name: 管理
-    category: ページ
+    name: 管理トップ
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -322,8 +324,8 @@ screens:
           url: http://nagisa-webui_devcontainer-app-1:14755/admin
 
   - id: admin-unidentified
-    name: 「管理」未解決の録画
-    category: ページ
+    name: 未解決の録画
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -356,8 +358,8 @@ screens:
           url: http://nagisa-webui_devcontainer-app-1:14755/admin/unidentified
 
   - id: admin-recorder
-    name: 「管理」Nagisa ジョブ投入
-    category: ページ
+    name: Nagisa ジョブ投入
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -390,8 +392,8 @@ screens:
           url: http://nagisa-webui_devcontainer-app-1:14755/admin/recorder
 
   - id: admin-abema
-    name: 「管理」ABEMA 鍵アーカイブ
-    category: ページ
+    name: ABEMA 鍵アーカイブ
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -424,8 +426,8 @@ screens:
           url: http://nagisa-webui_devcontainer-app-1:14755/admin/abema
 
   - id: admin-logs
-    name: 「管理」同期ログ
-    category: ページ
+    name: 同期ログ
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -459,8 +461,8 @@ screens:
 
   # 実行詳細は runId ごとの動的ルートで、既知の実データ ID が無いため actual を持たない。
   - id: admin-log-detail
-    name: 「管理」実行詳細（同期ログ）
-    category: ページ
+    name: 同期ログの実行詳細
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -487,8 +489,8 @@ screens:
             path: mocks/admin-log-detail-astra.html
 
   - id: admin-status
-    name: 「管理」サーバーステータス
-    category: ページ
+    name: サーバーステータス
+    category: ページ/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -521,8 +523,8 @@ screens:
           url: http://nagisa-webui_devcontainer-app-1:14755/admin/status
 
   - id: settings-controls
-    name: 「設定」コントロール
-    category: コンポーネント
+    name: コントロール
+    category: コンポーネント/設定
     threshold: 0.1
     devices:
       - id: desktop
@@ -597,8 +599,8 @@ screens:
   # ---------- コンポーネント単体のモック ----------
   # 画面全体ではなく部品単位の状態カタログ。実装側に単体ページが存在しないため actual は持たない。
   - id: app-header
-    name: 「共通」アプリヘッダー
-    category: コンポーネント
+    name: アプリヘッダー
+    category: コンポーネント/共通
     threshold: 0.1
     devices:
       - id: desktop
@@ -630,8 +632,8 @@ screens:
             type: html
             path: mocks/components/app-header-astra.html
   - id: app-footer
-    name: 「共通」アプリフッター
-    category: コンポーネント
+    name: アプリフッター
+    category: コンポーネント/共通
     threshold: 0.1
     devices:
       - id: desktop
@@ -663,8 +665,8 @@ screens:
             type: html
             path: mocks/components/app-footer-astra.html
   - id: pagination
-    name: 「共通」ページネーション
-    category: コンポーネント
+    name: ページネーション
+    category: コンポーネント/共通
     threshold: 0.1
     devices:
       - id: desktop
@@ -696,8 +698,8 @@ screens:
             type: html
             path: mocks/components/pagination-astra.html
   - id: anime-card
-    name: 「アニメ一覧」アニメカード
-    category: コンポーネント
+    name: アニメカード
+    category: コンポーネント/アニメ一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -729,8 +731,8 @@ screens:
             type: html
             path: mocks/components/anime-card-astra.html
   - id: browse-filters
-    name: 「アニメ一覧」絞り込みパネル
-    category: コンポーネント
+    name: 絞り込みパネル
+    category: コンポーネント/アニメ一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -762,8 +764,8 @@ screens:
             type: html
             path: mocks/components/browse-filters-astra.html
   - id: filter-chips
-    name: 「アニメ一覧」適用中フィルタチップ
-    category: コンポーネント
+    name: 適用中フィルタチップ
+    category: コンポーネント/アニメ一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -795,8 +797,8 @@ screens:
             type: html
             path: mocks/components/filter-chips-astra.html
   - id: anime-drawer
-    name: 「アニメ一覧」作品概要ドロワー
-    category: コンポーネント
+    name: 作品概要ドロワー
+    category: コンポーネント/アニメ一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -828,8 +830,8 @@ screens:
             type: html
             path: mocks/components/anime-drawer-astra.html
   - id: anime-hero
-    name: 「アニメ詳細」作品ヒーロー
-    category: コンポーネント
+    name: 作品ヒーロー
+    category: コンポーネント/アニメ詳細
     threshold: 0.1
     devices:
       - id: desktop
@@ -861,8 +863,8 @@ screens:
             type: html
             path: mocks/components/anime-hero-astra.html
   - id: episode-list
-    name: 「アニメ詳細」エピソード一覧
-    category: コンポーネント
+    name: エピソード一覧
+    category: コンポーネント/アニメ詳細
     threshold: 0.1
     devices:
       - id: desktop
@@ -894,8 +896,8 @@ screens:
             type: html
             path: mocks/components/episode-list-astra.html
   - id: related-providers
-    name: 「アニメ詳細」他プロバイダ一覧
-    category: コンポーネント
+    name: 他プロバイダ一覧
+    category: コンポーネント/アニメ詳細
     threshold: 0.1
     devices:
       - id: desktop
@@ -927,8 +929,8 @@ screens:
             type: html
             path: mocks/components/related-providers-astra.html
   - id: recording-status
-    name: 「アニメ詳細」録画サーバー状態
-    category: コンポーネント
+    name: 録画サーバー状態
+    category: コンポーネント/アニメ詳細
     threshold: 0.1
     devices:
       - id: desktop
@@ -954,8 +956,8 @@ screens:
             type: html
             path: mocks/components/recording-status-fable.html
   - id: anime-info
-    name: 「アニメ詳細」作品情報
-    category: コンポーネント
+    name: 作品情報
+    category: コンポーネント/アニメ詳細
     threshold: 0.1
     devices:
       - id: desktop
@@ -981,8 +983,8 @@ screens:
             type: html
             path: mocks/components/anime-info-fable.html
   - id: breadcrumbs
-    name: 「アニメ詳細」パンくず
-    category: コンポーネント
+    name: パンくず
+    category: コンポーネント/アニメ詳細
     threshold: 0.1
     devices:
       - id: desktop
@@ -1014,8 +1016,8 @@ screens:
             type: html
             path: mocks/components/breadcrumbs-astra.html
   - id: recording-row
-    name: 「録画一覧」録画一覧の行
-    category: コンポーネント
+    name: 録画行
+    category: コンポーネント/録画一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -1047,8 +1049,8 @@ screens:
             type: html
             path: mocks/components/recording-row-astra.html
   - id: recordings-toolbar
-    name: 「録画一覧」録画一覧ツールバー
-    category: コンポーネント
+    name: ツールバー
+    category: コンポーネント/録画一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -1080,8 +1082,8 @@ screens:
             type: html
             path: mocks/components/recordings-toolbar-astra.html
   - id: empty-state
-    name: 「録画一覧」空状態
-    category: コンポーネント
+    name: 空状態
+    category: コンポーネント/録画一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -1113,8 +1115,8 @@ screens:
             type: html
             path: mocks/components/empty-state-astra.html
   - id: recordings-calendar
-    name: 「録画一覧」週カレンダー
-    category: コンポーネント
+    name: 週カレンダー
+    category: コンポーネント/録画一覧
     threshold: 0.1
     devices:
       - id: desktop
@@ -1146,8 +1148,8 @@ screens:
             type: html
             path: mocks/components/recordings-calendar-astra.html
   - id: summary-stats
-    name: 「トップ」録画状況サマリ
-    category: コンポーネント
+    name: 録画状況サマリ
+    category: コンポーネント/トップ
     threshold: 0.1
     devices:
       - id: desktop
@@ -1179,8 +1181,8 @@ screens:
             type: html
             path: mocks/components/summary-stats-astra.html
   - id: anime-carousel
-    name: 「トップ」作品カルーセル
-    category: コンポーネント
+    name: 作品カルーセル
+    category: コンポーネント/トップ
     threshold: 0.1
     devices:
       - id: desktop
@@ -1212,8 +1214,8 @@ screens:
             type: html
             path: mocks/components/anime-carousel-astra.html
   - id: scheduled-updates
-    name: 「トップ」直近更新リスト
-    category: コンポーネント
+    name: 直近更新リスト
+    category: コンポーネント/トップ
     threshold: 0.1
     devices:
       - id: desktop
@@ -1245,8 +1247,8 @@ screens:
             type: html
             path: mocks/components/scheduled-updates-astra.html
   - id: home-tabs
-    name: 「トップ」ホームタブ
-    category: コンポーネント
+    name: ホームタブ
+    category: コンポーネント/トップ
     threshold: 0.1
     devices:
       - id: desktop
@@ -1280,7 +1282,7 @@ screens:
 
   - id: error-state
     name: エラー表示
-    category: コンポーネント
+    category: コンポーネント/共通
     threshold: 0.1
     devices:
       - id: desktop
@@ -1314,7 +1316,7 @@ screens:
 
   - id: server-status
     name: サーバーステータス
-    category: コンポーネント
+    category: コンポーネント/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -1347,8 +1349,8 @@ screens:
             path: mocks/components/server-status-astra.html
 
   - id: recording-events
-    name: 「同期ログ」録画イベント一覧
-    category: コンポーネント
+    name: 録画イベント一覧
+    category: コンポーネント/管理
     threshold: 0.1
     devices:
       - id: desktop
@@ -1382,8 +1384,8 @@ screens:
             path: mocks/components/recording-events-astra.html
 
   - id: tone-palette
-    name: 「原子」トーンパレット
-    category: コンポーネント
+    name: トーンパレット
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1410,8 +1412,8 @@ screens:
             path: mocks/components/tone-palette-astra.html
 
   - id: status-badge
-    name: 「原子」状態バッジ
-    category: コンポーネント
+    name: 状態バッジ
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1438,8 +1440,8 @@ screens:
             path: mocks/components/status-badge-astra.html
 
   - id: status-dot
-    name: 「原子」状態ドット
-    category: コンポーネント
+    name: 状態ドット
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1466,8 +1468,8 @@ screens:
             path: mocks/components/status-dot-astra.html
 
   - id: button
-    name: 「原子」ボタン
-    category: コンポーネント
+    name: ボタン
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1494,8 +1496,8 @@ screens:
             path: mocks/components/button-astra.html
 
   - id: nav-item
-    name: 「原子」ナビゲーション項目
-    category: コンポーネント
+    name: ナビゲーション項目
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1522,8 +1524,8 @@ screens:
             path: mocks/components/nav-item-astra.html
 
   - id: stat-tile
-    name: 「原子」数値タイル
-    category: コンポーネント
+    name: 数値タイル
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1550,8 +1552,8 @@ screens:
             path: mocks/components/stat-tile-astra.html
 
   - id: chip
-    name: 「原子」チップ・タグ
-    category: コンポーネント
+    name: チップ・タグ
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1578,8 +1580,8 @@ screens:
             path: mocks/components/chip-astra.html
 
   - id: input
-    name: 「原子」入力・検索欄
-    category: コンポーネント
+    name: 入力・検索欄
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1606,8 +1608,8 @@ screens:
             path: mocks/components/input-astra.html
 
   - id: toggle
-    name: 「原子」選択コントロール
-    category: コンポーネント
+    name: 選択コントロール
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1634,8 +1636,8 @@ screens:
             path: mocks/components/toggle-astra.html
 
   - id: section-heading
-    name: 「原子」セクション見出し
-    category: コンポーネント
+    name: セクション見出し
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
@@ -1662,8 +1664,8 @@ screens:
             path: mocks/components/section-heading-astra.html
 
   - id: kbd
-    name: 「原子」キーボード表記
-    category: コンポーネント
+    name: キーボード表記
+    category: コンポーネント/原子
     threshold: 0.1
     devices:
       - id: desktop
