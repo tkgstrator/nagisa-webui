@@ -2,7 +2,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
-  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-family: 'Geist Variable', 'Hiragino Kaku Gothic ProN', 'Meiryo', 'IPAGothic', sans-serif;
   font-size: 14px;
   line-height: 1.5;
   color: var(--foreground);

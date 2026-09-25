@@ -31,6 +31,7 @@ const PARTS = join(ROOT, 'parts')
 const COMP = join(ROOT, 'comp')
 const PAGES = join(ROOT, 'pages')
 const ADOPTED = join(ROOT, '..', 'mock-diff.adopted.yaml')
+const GEIST = join(ROOT, '..', '..', '..', 'node_modules', '@fontsource-variable', 'geist')
 
 /** CSS コメント。プリリュード中の位置を保つため findall と sub の両方で使う。 */
 const commentRe = () => /\/\*[\s\S]*?\*\//g
@@ -100,6 +101,25 @@ function transform(css: string): string {
 const rstrip = (s: string) => s.replace(/\s+$/, '')
 const read = (p: string) => rstrip(readFileSync(p, 'utf-8'))
 
+/**
+ * アプリと同じ @fontsource-variable/geist を data: URI で埋め込む。モックは sidecar の
+ * Chromium で単体の HTML として開かれ、外部ファイルを引けないので、埋めないと欧文が
+ * 別フォントに落ちて実装との差がフォントだけで数 % 出る。和文は Geist に無いので
+ * latin / latin-ext の 2 面だけで足りる (base.css のフォールバックに IPAGothic)。
+ */
+const fonts = (() => {
+  const css = readFileSync(join(GEIST, 'index.css'), 'utf-8')
+  const faces = css.match(/\/\* geist-latin(?:-ext)?-wght-normal \*\/\s*@font-face\s*\{[^}]*\}/g) ?? []
+  return faces
+    .map((face) =>
+      face.replace(/url\(\.\/(files\/[^)]+)\)/, (_, file: string) => {
+        const data = readFileSync(join(GEIST, file)).toString('base64')
+        return `url(data:font/woff2;base64,${data})`
+      })
+    )
+    .join('\n')
+})()
+
 /** 先頭のメタ行と本文 (`---` だけの行で区切る) に割る。 */
 function metaSplit(frag: string): { meta: Record<string, string>; body: string } {
   const at = frag.indexOf('\n---\n')
@@ -121,6 +141,7 @@ const page = (title: string, css: string, bodyattr: string, body: string) => `<!
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title}</title>
 <style>
+${fonts}
 ${css}
 </style>
 </head>
