@@ -197,7 +197,8 @@ function HomePage() {
           </p>
         </div>
 
-        <div className='grid grid-cols-4 gap-6 max-sm:grid-cols-2 max-sm:gap-x-3.5 max-sm:gap-y-4'>
+        {/* 内容幅で右端に寄せる。均等割りだと最終列の右に空きが残り、右揃えに見えない。 */}
+        <div className='grid grid-cols-[repeat(4,max-content)] justify-end gap-12 max-lg:grid-cols-4 max-lg:justify-normal max-lg:gap-6 max-sm:grid-cols-2 max-sm:gap-x-3.5 max-sm:gap-y-4'>
           <SummaryTile
             to='/browse?badge=NEW_EPISODE'
             label={content.summary.tiles.newEpisode.label.value}
