@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>作品ヒーロー — astra 案 | Nagisa WebUI コンポーネントモック</title>
+<title>Nagisa — 録画詳細 — 決定稿 | Nagisa WebUI モック</title>
 <style>
 /* geist-latin-ext-wght-normal */
 @font-face {
@@ -139,49 +139,253 @@ svg { display: block; flex: none; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-/* ---------- catalog harness (全コンポーネントモック共通) ---------- */
-.cat { max-width: 1280px; margin: 0 auto; padding: 28px 32px 64px; }
-.cat-head { border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 28px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
-.cat-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.cat-id { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 2px 8px; background: var(--muted); border-radius: 999px; }
-.cat-head p { margin-top: 6px; font-size: 13px; color: var(--muted-foreground); max-width: 68ch; }
-.cat-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted-foreground); }
-.cat-meta code, .cat-note code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--foreground); }
+/* ---------- page skeleton (final / astra) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   astra はサイドバー (app-header の .side) と本文の 2 ペイン構成。 */
 
-.cat-sec { margin-top: 32px; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
-.cat-sec > h2 {
-  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--muted-foreground);
-  padding-bottom: 7px; margin-bottom: 18px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  flex: 1;
+  /* 幅の上限は持たない。236px の常設サイドバーを除いた残りを全部使う。
+     下余白の 90px は本来の 46px + 固定フッターの高さ 44px。 */
+  width: 100%;
+  padding: 26px 36px 90px;
+  /* 節と節の間隔。astra 原案は margin も gap も持たず密着していたので、
+     fable 側 (home / recordings) と同じ縦リズムをここで入れて 4 画面を揃える。 */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
-.cat-sec > h2 .cat-hint { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; opacity: .85; }
+.pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .06s; }
+.pg > *:nth-child(3) { animation-delay: .12s; }
+.pg > *:nth-child(4) { animation-delay: .18s; }
+.pg > *:nth-child(5) { animation-delay: .24s; }
+.pg > *:nth-child(6) { animation-delay: .3s; }
+.pg > *:nth-child(7) { animation-delay: .36s; }
 
-.cat-row { display: flex; flex-wrap: wrap; gap: 22px 20px; align-items: flex-start; }
-.cat-stack { display: flex; flex-direction: column; gap: 18px; }
-.cat-item { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
-.cat-item > .cat-label { order: -1; }
-.cat-label { font-size: 11px; font-weight: 600; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px; }
-.cat-label::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: var(--border); flex: none; }
-.cat-item.is-key > .cat-label::before { background: var(--primary); }
-.cat-label small { font-weight: 500; opacity: .8; }
-.cat-w220 { width: 220px; } .cat-w260 { width: 260px; } .cat-w320 { width: 320px; }
-.cat-full { width: 100%; }
-.cat-note { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 10px; }
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 600; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
 
-/* 枠 = 部品の外形を示すためだけの薄い当て木。部品自身の装飾ではない */
-.cat-frame { border: 1px dashed var(--border); border-radius: calc(var(--radius) - 2px); padding: 14px; background: color-mix(in oklch, var(--muted) 35%, transparent); }
-.cat-frame.is-plain { background: var(--background); }
+/* ---------- page body ---------- */
+/* ヒーローの直下から始まる本文。セクションより詰める。 */
+.pg-body { margin-top: 22px; }
+
+/* ---------- section ---------- */
+.pg-sec { margin-top: 36px; }
+.pg-sec-title { font-size: 16px; font-weight: 700; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ---------- sidebar filter slot ---------- */
+/* astra はフィルタをサイドバー内に差す。中身は browse-filters が持つ。 */
+.pg-side-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 76px; gap: 30px; }
+  .pg-title { font-size: 20px; }
+  .pg-sec { margin-top: 28px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- quick link ---------- */
+/* pg-links の中に並ぶ 1 枚。左罫の色で注意を促す。 */
+.pg-link {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0;
+  transition: background .18s ease, transform .18s ease;
+}
+.pg-link:hover { background: var(--muted); transform: translateX(3px); }
+.pg-link.pg-warn { border-left-color: var(--destructive); }
+.pg-link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
+.pg-link.pg-warn svg { color: var(--destructive); }
+
+/* ---------- header search ---------- */
+/* ページ見出しの右に置く検索欄。部品側のフィルタとは別物。 */
+.pg-search { position: relative; width: 260px; }
+.pg-search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
+.pg-search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.pg-search input:focus-visible { outline: 2px solid var(--ring); }
+/* ---------- component: app-header ---------- */
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.6); } }
+
+.side {
+  width: 236px; flex: 0 0 236px;
+  background: var(--sidebar); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 18px 14px 16px;
+}
+.side.is-tall { min-height: 420px; }
+.side-top { display: flex; align-items: center; gap: 2px; }
+.side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
+/* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
+.side-top .side-brand { min-width: 0; flex: 1; }
+.side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
+.side-logo svg { width: 13px; height: 13px; }
+
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 0 8px 8px 0; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
+.side-nav a svg { width: 16px; height: 16px; }
+.side-nav a:hover { background: var(--muted); color: var(--foreground); }
+.side-nav a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-left-color: var(--primary); font-weight: 600; }
+.side-count { margin-left: auto; font-size: 10px; background: var(--secondary); color: var(--secondary-foreground); border-radius: 999px; padding: 1px 6px; }
+.side-count.is-alert { background: color-mix(in oklch, var(--primary) 20%, transparent); color: var(--accent-foreground); }
+.side-nav.is-solo { width: 208px; }
+
+.side-widget { border-top: 1px solid var(--border); padding-top: 14px; }
+.side-widget h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 8px; font-weight: 600; }
+.side-stat { display: flex; width: 100%; text-align: left; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
+.side-stat:hover { background: var(--muted); }
+.side-stat .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.side-stat .v { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.side-stat.d-new .dot { background: var(--info); }
+.side-stat.d-rec .dot { background: var(--warning); }
+.side-stat.d-err .dot { background: var(--destructive); }
+.side-stat.d-watch .dot { background: var(--success); }
+
+.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
+.side-status.is-checking i { background: var(--warning); }
+.side-status.is-down { color: var(--destructive); }
+.side-status.is-down i { background: var(--destructive); animation: none; }
+
+/* mobile: サイドバーを畳んで上端の横並びバーにする */
+.side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
+.side.is-mobile .side-brand { padding: 0; font-size: 14px; }
+.side.is-mobile .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+.side.is-mobile .side-nav a { padding: 7px; border-left: 0; border-radius: 8px; }
+.side.is-mobile .side-nav a span, .side.is-mobile .side-nav a { font-size: 0; }
+.side.is-mobile .side-nav a svg { width: 18px; height: 18px; }
+.side.is-mobile .side-nav a[aria-current="page"] { background: var(--accent); }
 
 @media (max-width: 640px) {
-  .cat { padding: 20px 16px 48px; }
-  .cat-head h1 { font-size: 17px; }
-  .cat-row { gap: 18px 14px; }
-  .cat-w220, .cat-w260, .cat-w320 { width: 100%; }
+  .side, .side.is-tall { width: 100%; flex: none; min-height: 0; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-brand { padding: 0; font-size: 14px; }
+  .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
+  .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
+  .side-nav a svg { width: 18px; height: 18px; }
+  .side-count, .side-widget, .side-status { display: none; }
+  .side.is-mobile { width: 100%; }
 }
+
+/* ---------- sidebar: 放送スケジュール ---------- */
+/* side-widget の中に敷く行。放送中の回だけ左罫と背景が付く。 */
+.side-sched-row { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px; border-left: 3px solid transparent; border-radius: 0 7px 7px 0; }
+.side-sched-row.now { border-left-color: var(--primary); background: var(--accent); }
+.side-sched-row .k { font-size: 11.5px; color: var(--muted-foreground); }
+.side-sched-row .v { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 数値の性質で左罫と値の見え方を変える (成功 / 失敗) */
+.side-stat.ok { border-left-color: var(--success); }
+.side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
+.side-stat.err { border-left-color: var(--destructive); }
+.side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
+
+/* ---------- 常設版 (.side.is-sticky) ---------- */
+/* 常にブラウザの縦幅ぴったりで表示する。align-self がないと .pg-shell の
+   stretch でメイン側と同じ高さまで伸びてしまい、height: 100vh + sticky が効かない。
+   左罫を持つ行 (ナビ / 件数 / 放送予定) は角丸を右側だけに揃える。 */
+.side.is-sticky {
+  transition: width .18s ease, flex-basis .18s ease;
+  position: sticky; top: 0; align-self: flex-start;
+  height: 100vh; overflow-y: auto;
+}
+.side.is-sticky .side-stat, .side.is-sticky .side-sched-row { border-radius: 0 8px 8px 0; }
+.side.is-sticky .side-stat { border-left: 3px solid transparent; }
+@media (max-width: 640px) {
+  .side.is-sticky { height: auto; overflow-y: visible; }
+  .side.is-sticky .side-nav a { border-radius: 8px; }
+}
+/* ---------- component: breadcrumbs ---------- */
+.crumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted-foreground); }
+.crumb a { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px; border-radius: 6px; }
+.crumb a:hover { background: var(--muted); color: var(--foreground); }
+.crumb svg { width: 12px; height: 12px; }
+.crumb .cur { color: var(--foreground); font-weight: 600; }
 /* ---------- component: anime-hero ---------- */
-/* ---------- identity ---------- *//* 囲み枠を作らず、16:9 のバナーと情報を並べて置く */.identity { display: flex; align-items: flex-start; gap: 28px; }
+/* ---------- identity ---------- */
+/* 囲み枠を作らず、16:9 のバナーと情報を並べて置く */
+.identity { display: flex; align-items: flex-start; gap: 28px; }
 .hero { position: relative; flex: none; width: 400px; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px -18px oklch(0.15 0.02 265 / 40%); }
 .hero .art { position: absolute; inset: 0; background: radial-gradient(120% 100% at 25% 0%, oklch(0.82 0.11 var(--h, 265) / 85%), transparent 55%), linear-gradient(165deg, oklch(0.6 0.15 var(--h, 265)) 0%, oklch(0.32 0.13 calc(var(--h, 265) + 40)) 100%); }
 .hero .kanji { position: absolute; right: 18px; top: 10px; font-size: 52px; font-weight: 800; opacity: .18; line-height: 1; color: oklch(0.99 0.01 265); }
@@ -215,24 +419,27 @@ svg { display: block; flex: none; }
 
 .id-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
 .btn { height: 38px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: var(--foreground); transition: background .15s, transform .12s; }
-.btn:hover, .btn.is-hover { background: var(--muted); }
-.btn:focus-visible, .btn.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+.btn:hover { background: var(--muted); }
+.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .btn svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .btn-primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
-.btn-primary:hover, .btn-primary.is-hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
+.btn-primary:hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
 .btn-success { background: var(--success); color: var(--success-foreground); border-color: transparent; }
-.btn-success:hover, .btn-success.is-hover { background: color-mix(in oklch, var(--success) 86%, var(--foreground)); }
+.btn-success:hover { background: color-mix(in oklch, var(--success) 86%, var(--foreground)); }
 .btn-busy { background: var(--muted); color: var(--muted-foreground); border-color: transparent; pointer-events: none; }
 .btn-busy svg { animation: spin 1s linear infinite; }
 .btn-fail { background: var(--destructive); color: var(--destructive-foreground); border-color: transparent; }
 .btn-icon { width: 38px; padding: 0; }
-/* 詰めた版 (.id-actions.is-compact)。見出し周りの情報が多い決定稿で使う。 */.id-actions.is-compact .btn { height: 34px; padding: 0 15px; }
+/* 詰めた版 (.id-actions.is-compact)。見出し周りの情報が多い決定稿で使う。 */
+.id-actions.is-compact .btn { height: 34px; padding: 0 15px; }
 .id-actions.is-compact .btn-icon { width: 34px; padding: 0; }
-/* 録画済みは取り消せない (録画を削除する API を持たない)。押せないことを見た目で示す。 */.btn[disabled] { pointer-events: none; }
+/* 録画済みは取り消せない (録画を削除する API を持たない)。押せないことを見た目で示す。 */
+.btn[disabled] { pointer-events: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 録画の進捗を 1 本の帯で示す。episode-list (fable) の話数ごとの帯 .strip とぶつからないよう hero- を冠する。
-   決定稿は話数ごとの帯に一本化したので使わない。 */.hero-progress { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
+   決定稿は話数ごとの帯に一本化したので使わない。 */
+.hero-progress { margin-top: 22px; display: flex; align-items: center; gap: 14px; max-width: 680px; }
 .hero-progress .lbl { font-size: 12px; color: var(--muted-foreground); flex: none; }
 .hero-progress .val, .hero-progress .cnt { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
 .hero-strip { flex: 1; height: 8px; border-radius: 999px; overflow: hidden; display: flex; background: var(--muted); }
@@ -241,7 +448,8 @@ svg { display: block; flex: none; }
 .hero-strip .busy { background: var(--info); }
 .hero-strip .pend { background: var(--warning); }
 .hero-strip .fail { background: var(--destructive); }
-/* 未取得ぶんは帯の残り */.hero-strip .none { background: var(--border); }
+/* 未取得ぶんは帯の残り */
+.hero-strip .none { background: var(--border); }
 
 @media (max-width: 640px) {
   .identity { flex-direction: column; gap: 14px; }
@@ -249,189 +457,733 @@ svg { display: block; flex: none; }
   .hero-title { font-size: 21px; }
   .id-facts { gap: 16px; }
   .id-actions .btn { flex: 1 1 auto; }
-  .hero-progress { flex-wrap: wrap; }}
+  .hero-progress { flex-wrap: wrap; }
+}
 
-/* 情報側だけを縦に詰めたいときの調整 (バナー無し配置) */.hero-body { margin-top: 0; }
-/* 再取得ボタン。押している間だけアイコンが 1 回転する。 */.btn-refresh:active svg { animation: spin .5s linear; }
+/* 情報側だけを縦に詰めたいときの調整 (バナー無し配置) */
+.hero-body { margin-top: 0; }
+/* 再取得ボタン。押している間だけアイコンが 1 回転する。 */
+.btn-refresh:active svg { animation: spin .5s linear; }
+/* ---------- component: episode-list ---------- */
+/* ---------- episode list ---------- */
+.ep-list { display: flex; flex-direction: column; }
+.ep {
+  display: grid;
+  grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 20px;
+  gap: 14px; align-items: center;
+  padding: 8px 12px;
+  border-left: 3px solid var(--border);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  transition: background .12s;
+}
+.ep:hover { background: var(--muted); }
+.ep[data-s="done"] { border-left-color: var(--success); }
+.ep[data-s="rec"] { border-left-color: var(--info); }
+.ep[data-s="fail"] { border-left-color: var(--destructive); }
+.ep[data-s="future"] { border-left-color: transparent; color: var(--muted-foreground); }
+.ep[data-s="future"] .thumb { opacity: .55; }
+.ep-no { font-size: 14px; font-weight: 600; color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; }
+
+.thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: linear-gradient(135deg, oklch(0.62 0.12 var(--h, 265)), oklch(0.38 0.12 calc(var(--h, 265) + 40))); color: oklch(0.98 0.01 var(--h, 265)); transition: transform .2s; }
+.ep:hover .thumb { transform: scale(1.06); }
+.thumb svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .3; }
+.thumb .free { position: absolute; top: 4px; left: 4px; padding: 1px 6px; border-radius: 999px; background: var(--success); color: var(--success-foreground); font-size: 9.5px; font-weight: 700; }
+.thumb .dur { position: absolute; right: 4px; bottom: 4px; padding: 0 5px; border-radius: 4px; background: var(--overlay); color: var(--overlay-foreground); font-size: 10px; font-variant-numeric: tabular-nums; }
+
+.ep-main { min-width: 0; }
+.ep-title { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ep-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted-foreground); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.flag { display: inline-flex; align-items: center; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; }
+.ep-date, .ep-dur { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* 録画状態のアイコン。未録画・録画中・録画済みの 3 種だけで、操作は持たない */
+.rec { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; justify-self: end; }
+.rec svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.rec[data-s="todo"] { border: 1.5px solid var(--muted-foreground); }
+.rec[data-s="rec"] { border: 2px solid color-mix(in oklch, var(--info) 30%, transparent); border-top-color: var(--info); animation: spin .9s linear infinite; }
+.rec[data-s="done"] { background: var(--success); color: var(--success-foreground); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 話数の帯 */
+.strip { display: flex; gap: 3px; height: 14px; }
+.strip a { flex: 1; min-width: 0; border-radius: 3px; background: var(--border); transition: transform .1s; }
+.strip a:hover { transform: scaleY(1.35); }
+.strip a[data-s="done"] { background: var(--success); }
+.strip a[data-s="rec"] { background: var(--info); background-image: repeating-linear-gradient(-45deg, transparent 0 4px, oklch(1 0 0 / 25%) 4px 8px); animation: stripe 1.2s linear infinite; }
+.strip a[data-s="fail"] { background: var(--destructive); }
+.strip a[data-s="todo"] { background: color-mix(in oklch, var(--muted-foreground) 45%, transparent); }
+.strip a[data-s="future"] { background: transparent; border: 1px dashed var(--border); }
+@keyframes stripe { to { background-position: 16px 0; } }
+.strip-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; margin-top: 6px; }
+
+/* 絞り込みチップ / シーズンタブ */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12.5px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; }
+.chip:hover { background: var(--muted); color: var(--foreground); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); border-color: transparent; font-weight: 600; }
+.chip .n { font-variant-numeric: tabular-nums; opacity: .8; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tab { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted-foreground); font-size: 14px; white-space: nowrap; }
+.tab:hover { color: var(--foreground); }
+.tab[aria-selected="true"] { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+
+@media (max-width: 640px) {
+  .ep { grid-template-columns: 2.5ch 68px minmax(0, 1fr) auto; gap: 10px; padding: 8px; }
+  .ep-date, .ep-dur { display: none; }
+}
+
+/* ---------- タブの件数と注記 ---------- */
+.tab .tab-count { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+.tab-note { align-self: center; font-size: 12px; color: var(--muted-foreground); padding: 0 4px; white-space: nowrap; }
+.tabs .spacer { flex: 1; }
+/* 折り返す版 (.is-wrap) は下罫を inset の影で引く。border + 負のマージンだと
+   横スクロールの枠からはみ出して縦にも揺れる。 */
+.tabs.is-wrap { border-bottom: 0; box-shadow: inset 0 -1px 0 var(--border); }
+.tabs.is-wrap .tab { margin-bottom: 0; }
+.chips .spacer { flex: 1; }
+/* 枠線を持たないチップ。絞り込みを外す導線に使う。 */
+.chip-ghost { border-color: transparent; }
+
+/* ---------- 録画進捗ストリップ ---------- */
+/* 一覧の上に置く帯。左に進捗バー、右に内訳の数値を並べる。 */
+.progress { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 24px; align-items: center; padding: 14px 16px; margin-bottom: 16px; border-left: 3px solid var(--primary); background: color-mix(in oklch, var(--muted) 60%, transparent); border-radius: 0 8px 8px 0; }
+.stats { grid-column: 2; grid-row: 1 / span 2; display: grid; grid-auto-flow: column; grid-auto-columns: auto; gap: 0 18px; }
+.stat { display: flex; flex-direction: column; align-items: flex-end; }
+.stat .k { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted-foreground); white-space: nowrap; }
+.stat .k::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--dot); }
+.stat .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat .v small { font-size: 11px; font-weight: 400; color: var(--muted-foreground); margin-left: 2px; }
+
+/* ---------- 一覧の脚 ---------- */
+.ep-foot { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 0; font-size: 12px; color: var(--muted-foreground); }
+.ep-foot .link { color: var(--primary); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+/* 狭い画面でだけ出すメタ情報 */
+.ep-meta .m-mobile { display: none; }
+
+/* 絞り込みチップの下は一覧との間を空ける */
+.chips + .ep-list { margin-top: 12px; }
+
+@media (max-width: 640px) {
+  /* 自動録画の注記はタブ行の右端に置くと幅が足りずに切れるので、行を分ける。 */
+  .tabs.is-wrap { flex-wrap: wrap; overflow-x: visible; }
+  .tabs.is-wrap .spacer { display: none; }
+  .tabs.is-wrap .tab-note { flex: 1 0 100%; padding: 4px 2px 6px; }
+}
+/* ---------- component: recording-status ---------- */
+/* 録画サーバーへの問い合わせ結果。失敗時は左端の destructive で知らせ、原因の文言をそのまま添える。 */
+.recstat-err { border-left: 3px solid var(--destructive); padding: 14px 13px; font-size: 12.5px; color: var(--muted-foreground); }
+.recstat-err .msg { display: block; margin-top: 4px; font-size: 11px; word-break: break-all; }
+/* ---------- component: anime-info ---------- */
+/* 作品の識別情報の一覧。キーを左、値を右に寄せ、行間は薄い罫で区切る。 */
+.anime-info { border-left: 3px solid var(--border); padding: 4px 12px; }
+.anime-info-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent); font-size: 13px; }
+.anime-info-row:last-child { border-bottom: 0; }
+.anime-info-row .k { color: var(--muted-foreground); }
+.anime-info-row .v { text-align: right; font-weight: 600; }
+.anime-info-row .v a { color: var(--primary); }
+.anime-info-row .v.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+/* ---------- component: recording-events ---------- */
+/* ---------- recording events (dense table) ---------- */
+/* 左のアクセントバーは行 (.rev-row) だけが持つ。箱側 (.rev-box) には出さない。
+   両方に border-left を持たせると hover / is-err / is-warn で二重線になるため。 */
+
+.rev-cols,
+.rev-row,
+.rev-skel {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr) 76px 60px 44px 46px 48px;
+  gap: 10px;
+  align-items: center;
+}
+
+.rev-cols {
+  padding: 0 10px 6px 13px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+.rev-r { text-align: right; }
+
+.rev-row {
+  padding: 7px 10px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  transition: background .12s ease, border-color .12s ease;
+}
+.rev-row:hover { background: var(--muted); border-left-color: var(--primary); }
+.rev-row:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.rev-row.is-err { border-left-color: var(--destructive); }
+.rev-row.is-warn { border-left-color: var(--warning); }
+
+/* 日時: 時刻 + 日付の 2 段。桁を揃える。 */
+.rev-ts {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+.rev-ts small { display: block; font-size: 10.5px; color: var(--muted-foreground); }
+
+.rev-title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 7px; min-width: 0; }
+.rev-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+/* 失敗の理由は 2 行目。作品名と同じ行に押し込むと両方読めなくなる。 */
+.rev-err {
+  flex-basis: 100%;
+  font-size: 11px;
+  color: var(--destructive);
+  word-break: break-all;
+}
+
+.rev-prov {
+  flex: none;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.rev-p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.rev-p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.rev-p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.rev-p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.rev-p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.rev-kind {
+  display: inline-block;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rev-src {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+}
+
+.rev-n {
+  text-align: right;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.rev-dim { color: var(--muted-foreground); }
+
+.rev-res {
+  justify-self: end;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.rev-ok { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); }
+.rev-ng { background: color-mix(in oklch, var(--destructive) 14%, transparent); color: var(--destructive); }
+
+.rev-empty {
+  padding: 46px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  border-left: 3px solid var(--border);
+}
+
+.rev-skel { padding: 9px 10px 9px 13px; }
+.rev-skel .sk { height: 11px; border-radius: 4px; background: var(--muted); }
+.rev-skel .sk-ts { width: 100%; }
+.rev-skel .sk-t { width: 62%; }
+.rev-skel .sk-k { width: 100%; }
+.rev-skel .sk-s { width: 78%; }
+.rev-skel .sk-n { width: 100%; }
+.rev-skel .sk-r { width: 100%; }
+
+@media (max-width: 640px) {
+  /* 経路と HTTP を落として、日時 / 作品 / 種別 / 結果 の 4 列にする。 */
+  .rev-cols,
+  .rev-row,
+  .rev-skel { grid-template-columns: 62px minmax(0, 1fr) 68px 44px; gap: 8px; }
+  .rev-cols > :nth-child(4),
+  .rev-cols > :nth-child(6),
+  .rev-row > :nth-child(4),
+  .rev-row > :nth-child(6),
+  .rev-skel > :nth-child(4),
+  .rev-skel > :nth-child(6) { display: none; }
+  .rev-ts { font-size: 11px; }
+}
+/* ---------- component: settings-controls ---------- */
+.pill { display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; flex: none; }
+.p-amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.p-hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
+.p-crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.p-abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.p-netflix { background: var(--brand-netflix); color: var(--brand-netflix-foreground); }
+
+.st-row .pill { height: 24px; min-width: 108px; padding: 0 12px; justify-content: center; font-size: 11px; }
+
+.st-panel {
+  display: flex; flex-direction: column; gap: 1px;
+  background: var(--border); border-radius: 14px; overflow: hidden;
+}
+.st-row {
+  background: var(--background); padding: 14px 18px 14px 21px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  transition: background .2s ease;
+  animation: fadeUp .42s cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+.st-row:hover, .st-row:focus-within { background: var(--muted); }
+
+.st-rt { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.st-ico {
+  width: 30px; height: 30px; border-radius: 999px; flex: none;
+  display: grid; place-items: center;
+  background: var(--muted); color: var(--muted-foreground);
+  transition: background .22s ease, color .22s ease;
+}
+.st-ico svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.st-row:hover .st-ico{ background: color-mix(in oklch, var(--primary) 16%, transparent); color: var(--primary); }
+.st-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.st-desc { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
+.st-ctl { flex: none; display: flex; align-items: center; gap: 10px; }
+.st-note { font-size: 11.5px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.st-tag {
+  display: inline-flex; align-items: center; height: 18px; padding: 0 8px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: .03em;
+  background: var(--secondary); color: var(--secondary-foreground);
+}
+
+.st-seg { display: flex; gap: 3px; padding: 3px; border-radius: 999px; background: var(--muted); flex: none; }
+.st-seg button {
+  height: 26px; padding: 0 12px; border-radius: 999px; flex: none;
+  font-size: 12.5px; color: var(--muted-foreground); white-space: nowrap;
+  transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+.st-seg button:hover { color: var(--foreground); }
+.st-seg button:active { transform: scale(.95); }
+.st-seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); font-weight: 700; }
+
+.st-sw {
+  width: 40px; height: 23px; border-radius: 999px; background: var(--input);
+  position: relative; flex: none; transition: background .2s ease;
+}
+.st-sw::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px;
+  border-radius: 999px; background: var(--background);
+  transition: transform .24s cubic-bezier(.16, 1, .3, 1);
+}
+.st-sw.on { background: var(--primary); }
+.st-sw.on::after { transform: translateX(17px); background: var(--primary-foreground); }
+.st-sw:focus-visible{ outline: 2px solid var(--ring); outline-offset: 2px; }
+
+.st-sel {
+  display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px;
+  border: 1px solid var(--input); border-radius: 999px;
+  font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.st-sel:hover{ border-color: var(--primary); background: var(--background); }
+.st-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
+
+.st-btn {
+  height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--input);
+  font-size: 12.5px; font-weight: 700; white-space: nowrap;
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.st-btn:hover{ background: var(--muted); }
+.st-btn:active { transform: scale(.96); }
+.st-btn.is-danger { border-color: color-mix(in oklch, var(--destructive) 45%, transparent); color: var(--destructive); }
+.st-btn.is-danger:hover{ background: color-mix(in oklch, var(--destructive) 12%, transparent); }
+
+.st-row.is-danger .st-ico { background: color-mix(in oklch, var(--destructive) 14%, transparent); color: var(--destructive); }
+.st-row.is-danger:hover .st-ico { background: color-mix(in oklch, var(--destructive) 20%, transparent); color: var(--destructive); }
+
+.st-toc { display: flex; flex-direction: column; gap: 2px; }
+.st-toc h3 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted-foreground); font-weight: 700; padding: 0 12px 8px;
+}
+.st-toc a {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  border-left: 3px solid transparent; border-radius: 0 9px 9px 0;
+  font-size: 12.5px; color: var(--muted-foreground);
+  transition: background .18s ease, color .18s ease;
+}
+.st-toc a:hover{ background: var(--muted); color: var(--foreground); }
+.st-toc a[aria-current="true"] {
+  background: var(--accent); color: var(--accent-foreground);
+  border-left-color: var(--primary); font-weight: 700;
+}
+.st-toc a .c { margin-left: auto; font-size: 10.5px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
+
+.st-saved {
+  display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px;
+  border-radius: 999px; background: color-mix(in oklch, var(--success) 14%, transparent);
+  font-size: 11.5px; font-weight: 700; color: var(--success);
+}
+.st-saved svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.st-hint {
+  border-left: 3px solid var(--border); border-radius: 0 11px 11px 0;
+  background: var(--muted); padding: 14px 16px;
+  font-size: 11.5px; color: var(--muted-foreground); line-height: 1.6;
+}
+.st-hint b { color: var(--foreground); font-weight: 700; }
+
+.st-meta {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden;
+}
+.st-meta > div {
+  background: var(--background); padding: 14px 16px 14px 19px; min-width: 0;
+}
+.st-meta dt { font-size: 11px; color: var(--muted-foreground); }
+.st-meta dd { margin: 5px 0 0; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.st-meta dd.mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 14px; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .st-row { animation: none; }
+}
+
+@media (max-width: 1024px) {
+
+  .st-toc { flex-direction: row; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .st-toc::-webkit-scrollbar { display: none; }
+  .st-toc h3 { display: none; }
+  .st-toc a { flex: none; border-left: 0; border-radius: 999px; background: var(--muted); padding: 7px 14px; }
+  .st-toc a[aria-current="true"] { background: var(--primary); color: var(--primary-foreground); }
+  .st-toc a[aria-current="true"] .c { color: var(--primary-foreground); }
+}
+@media (max-width: 640px) {
+  .st-row { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px 16px; }
+  .st-ctl { width: 100%; justify-content: space-between; }
+  .st-seg { width: 100%; justify-content: stretch; }
+  .st-seg button { flex: 1; padding: 0 8px; }
+  .st-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .st-meta dd { font-size: 17px; }
+}
+/* ---------- component: app-footer ---------- */
+/* ---------- footer ---------- */
+.ftr {
+  padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted-foreground);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ftr .l { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.ftr .r { display: inline-flex; align-items: center; gap: 14px; }
+.ftr a { transition: color .12s; }
+.ftr a:hover { color: var(--foreground); }
+.ftr .sha { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 10.5px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
+.ftr .tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; }
+.ftr .tag.is-dev { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+.ftr .tag.is-stg { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.ftr .ext { display: inline-flex; align-items: center; gap: 4px; }
+.ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
+.ftr .dot.is-down { background: var(--destructive); }
+/* 画面下端に常時固定する版。左端は常設サイドバー (236px) の右から。
+   高さ 44px は決定稿骨格の .pg の下余白 90px (= 46 + 44) と対になっている。 */
+.ftr.is-fixed {
+  position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
+  padding: 0 36px; background: var(--background); flex-wrap: nowrap;
+}
+@media (max-width: 640px) {
+  .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ftr .r { gap: 12px; }
+  .ftr.is-fixed { left: 0; padding: 0 16px; gap: 10px; flex-direction: row; align-items: center; }
+}
+/* ---------- 決定稿での静止 ---------- */
+/* 静止撮影と差分比較を安定させるため、決定稿ではアニメーションを全部止める。
+   入場 (fadeUp / growX) も infinite なループ (pulse / spin / shimmer) も、
+   keyframes の 100% か 0%/100% が基底状態と一致するので animation: none だけで
+   「見えている」静止状態になる。keyframes 定義は実装側でそのまま使うので部品側に残す。
+   build.ts が決定稿のページにだけ最後に差し込む。 */
+*, *::before, *::after { animation: none !important; }
+
+/* スケルトンは reduced-motion 時と同じ静止形 (フラットな muted) に寄せる。 */
+.sk { background: var(--muted); }
 </style>
 </head>
 <body>
-<main class="cat">
-<header class="cat-head">
-  <h1>作品ヒーロー <span class="cat-id">anime-hero</span></h1>
-  <p>詳細画面の冒頭。配信サービスの作品ページに寄せて、囲み枠を一切使わず 16:9 のバナーと情報を横に並べる。録画の進み具合はボタンの下に 1 本の帯で出す。</p>
-  <div class="cat-meta"><span>バナー幅 <code>400px</code></span><span>ボタンは丸型 <code>999px</code></span><span>狭い画面では縦積み</span></div>
-</header>
 
-<section class="cat-sec">
-  <h2>基本 <span class="cat-hint">放送中 · 8 話録画済み</span></h2>
-  <div class="cat-item cat-full is-key" data-story="基本">
-    <div class="identity">
-      <div class="hero" style="--h: 265"><div class="art"></div><span class="kanji">星</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div>
-      <div class="identity-body">
-        <div class="id-badges"><span class="badge b-amazon">Prime Video</span><span class="badge b-releasing">放送中</span><span class="badge b-plain">2026 春</span></div>
-        <h1 class="hero-title">星降る夜のアストロノーツ</h1>
-        <p class="hero-alt">Astronauts Under a Falling Sky</p>
-        <dl class="id-facts">
-          <div><dt>全話数</dt><dd class="num">24 話</dd></div>
-          <div><dt>録画済み</dt><dd class="num">8 話</dd></div>
-          <div><dt>総再生時間</dt><dd class="num">9:36</dd></div>
-          <div><dt>最終更新</dt><dd class="num">09/17 04:12</dd></div>
-        </dl>
-        <p class="id-syn is-clamp">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録。</p>
-        <div class="id-actions">
-          <button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>録画予約中</button>
-          <button class="btn" type="button">全話を録画済みにする</button>
-          <button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button>
-        </div>
-        <div class="hero-progress">
-          <span class="lbl">録画</span>
-          <span class="hero-strip"><span class="rec" style="width:33%"></span><span class="busy" style="width:8%"></span></span>
-          <span class="val num">8 / 24</span>
-        </div>
-      </div>
+<div class="pg-shell">
+  <aside class="side is-sticky">
+    <div class="side-top">
+      <a class="side-brand" href="#">
+        <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        Nagisa
+      </a>
     </div>
-  </div>
-</section>
+    <nav class="side-nav" id="side-nav" aria-label="メインナビゲーション">
+      <a href="#" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#" title="アニメ一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#" aria-current="page" title="録画一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#" title="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
 
-<section class="cat-sec">
-  <h2>状態違い</h2>
-  <div class="cat-stack">
-    <div class="cat-item cat-full" data-story="状態違い / 完結 · 全話録画済み"><span class="cat-label">完結 · 全話録画済み</span>
+    <button type="button" class="side-status"><i></i>サーバー稼働中</button>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg">
+
+      <nav class="crumb" aria-label="パンくずリスト">
+        <a href="recordings-final.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>録画一覧</a>
+        <span>/</span>
+        <span class="cur">クラスで２番目に可愛い女の子と友だちになった</span>
+      </nav>
+
       <div class="identity">
-        <div class="hero" style="--h: 210"><div class="art"></div><span class="kanji">海</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div>
-        <div class="identity-body">
-          <div class="id-badges"><span class="badge b-netflix">Netflix</span><span class="badge b-finished">完結</span><span class="badge b-plain">2025 秋</span></div>
-          <h1 class="hero-title">蒼海のリフレイン</h1>
-          <p class="hero-alt">Refrain of the Blue</p>
-          <dl class="id-facts">
-            <div><dt>全話数</dt><dd class="num">13 話</dd></div>
-            <div><dt>録画済み</dt><dd class="num">13 話</dd></div>
-            <div><dt>総再生時間</dt><dd class="num">5:12</dd></div>
-          </dl>
-          <p class="id-syn is-clamp">沈んだ観測都市を舞台に、三度目の夏がめぐってきたとき少女は最初の記録を読み返す。</p>
-          <div class="id-actions"><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全話録画済み</button><button class="btn" type="button">予約を解除</button></div>
-          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"><span class="rec" style="width:100%"></span></span><span class="val num">13 / 13</span></div>
+        <div class="hero" role="img" aria-label="クラスで２番目に可愛い女の子と友だちになった のサムネイル画像" style="--h: 330">
+          <div class="art"></div>
+          <span class="kanji">ク</span>
         </div>
-      </div>
-    </div>
-    <div class="cat-item cat-full" data-story="状態違い / 未放送 · あらすじ未取得"><span class="cat-label">未放送 · あらすじ未取得</span>
-      <div class="identity">
-        <div class="hero" style="--h: 130"><div class="art"></div><span class="kanji">陽</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div>
         <div class="identity-body">
-          <div class="id-badges"><span class="badge b-abema">ABEMA</span><span class="badge b-not-yet">未放送</span><span class="badge b-plain">2026 夏</span></div>
-          <h1 class="hero-title">ひだまり商店街の観測日誌</h1>
-          <p class="hero-alt">Sunlit Arcade Journal</p>
-          <dl class="id-facts">
-            <div><dt>全話数</dt><dd class="num">— 話</dd></div>
-            <div><dt>録画済み</dt><dd class="num">0 話</dd></div>
-            <div><dt>総再生時間</dt><dd class="num">—</dd></div>
-          </dl>
-          <p class="id-syn is-clamp">あらすじは配信開始後に取得されます。</p>
-          <div class="id-actions"><button class="btn btn-primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>配信開始時に録画</button><button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
-          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"></span><span class="val num">0 / —</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="cat-item cat-full" data-story="状態違い / 休止 · 失敗が 1 話"><span class="cat-label">休止 · 失敗が 1 話</span>
-      <div class="identity">
-        <div class="hero" style="--h: 40"><div class="art"></div><span class="kanji">雷</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div>
-        <div class="identity-body">
-          <div class="id-badges"><span class="badge b-crunchyroll">Crunchyroll</span><span class="badge b-hiatus">休止</span><span class="badge b-plain">2026 春</span></div>
-          <h1 class="hero-title">機械仕掛けの遠雷</h1>
-          <p class="hero-alt">Distant Thunder, Clockwork</p>
-          <dl class="id-facts">
-            <div><dt>全話数</dt><dd class="num">12 話</dd></div>
-            <div><dt>録画済み</dt><dd class="num">6 話</dd></div>
-            <div><dt>総再生時間</dt><dd class="num">4:48</dd></div>
-          </dl>
-          <p class="id-syn is-clamp">落雷のたびに一度だけ時計が戻る町で、修理屋の主人は同じ朝を数えつづけている。</p>
-          <div class="id-actions"><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>録画予約中</button><button class="btn btn-busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>再取得中</button></div>
-          <div class="hero-progress"><span class="lbl">録画</span><span class="hero-strip"><span class="rec" style="width:50%"></span><span class="fail" style="width:8.3%"></span></span><span class="val num">6 / 12</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <p class="cat-note">帯は 3 色。録画済みが <code>--success</code>、処理中が <code>--info</code>、失敗が <code>--destructive</code>。分子と分母は帯の右に別の語として置く。</p>
-</section>
-
-<section class="cat-sec">
-  <h2>バナーのプレースホルダ <span class="cat-hint">作品ごとに色相をずらす</span></h2>
-  <div class="cat-row">
-    <div class="cat-item cat-w260" data-story="バナーのプレースホルダ / --h: 265"><span class="cat-label">--h: 265</span><div class="hero" style="--h: 265; width: 100%"><div class="art"></div><span class="kanji">星</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div></div>
-    <div class="cat-item cat-w260" data-story="バナーのプレースホルダ / --h: 210"><span class="cat-label">--h: 210</span><div class="hero" style="--h: 210; width: 100%"><div class="art"></div><span class="kanji">海</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div></div>
-    <div class="cat-item cat-w260" data-story="バナーのプレースホルダ / --h: 40"><span class="cat-label">--h: 40</span><div class="hero" style="--h: 40; width: 100%"><div class="art"></div><span class="kanji">雷</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div></div>
-    <div class="cat-item cat-w260" data-story="バナーのプレースホルダ / --h: 130"><span class="cat-label">--h: 130</span><div class="hero" style="--h: 130; width: 100%"><div class="art"></div><span class="kanji">陽</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div></div>
-    <div class="cat-item cat-w260" data-story="バナーのプレースホルダ / --h: 320"><span class="cat-label">--h: 320</span><div class="hero" style="--h: 320; width: 100%"><div class="art"></div><span class="kanji">灯</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div></div>
-    <div class="cat-item cat-w260" data-story="バナーのプレースホルダ / --h: 90"><span class="cat-label">--h: 90</span><div class="hero" style="--h: 90; width: 100%"><div class="art"></div><span class="kanji">鉄</span><span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div></div>
-  </div>
-  <p class="cat-note">実データのサムネイルは 16:9 しか無いので、枠も 16:9 に固定する。画像が取れなかったときもこの枠をそのまま出す。</p>
-</section>
-
-<section class="cat-sec">
-  <h2>バッジ</h2>
-  <div class="cat-row">
-    <div class="cat-item" data-story="バッジ / 配信元"><span class="cat-label">配信元</span><span class="badge b-amazon">Prime Video</span></div>
-    <div class="cat-item" data-story="バッジ / 配信元 2"><span class="cat-label">配信元</span><span class="badge b-hulu">Hulu</span></div>
-    <div class="cat-item" data-story="バッジ / 配信元 3"><span class="cat-label">配信元</span><span class="badge b-crunchyroll">Crunchyroll</span></div>
-    <div class="cat-item" data-story="バッジ / 配信元 4"><span class="cat-label">配信元</span><span class="badge b-abema">ABEMA</span></div>
-    <div class="cat-item" data-story="バッジ / 配信元 5"><span class="cat-label">配信元</span><span class="badge b-netflix">Netflix</span></div>
-  </div>
-  <div class="cat-row">
-    <div class="cat-item" data-story="バッジ / ステータス"><span class="cat-label">ステータス</span><span class="badge b-releasing">放送中</span></div>
-    <div class="cat-item" data-story="バッジ / ステータス 2"><span class="cat-label">ステータス</span><span class="badge b-finished">完結</span></div>
-    <div class="cat-item" data-story="バッジ / ステータス 3"><span class="cat-label">ステータス</span><span class="badge b-not-yet">未放送</span></div>
-    <div class="cat-item" data-story="バッジ / ステータス 4"><span class="cat-label">ステータス</span><span class="badge b-cancelled">中止</span></div>
-    <div class="cat-item" data-story="バッジ / ステータス 5"><span class="cat-label">ステータス</span><span class="badge b-hiatus">休止</span></div>
-  </div>
-</section>
-
-<section class="cat-sec">
-  <h2>アクション</h2>
-  <div class="cat-row">
-    <div class="cat-item" data-story="アクション / 予約する"><span class="cat-label is-key">予約する</span><button class="btn btn-primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button></div>
-    <div class="cat-item" data-story="アクション / hover"><span class="cat-label">hover</span><button class="btn btn-primary is-hover" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg>録画予約する</button></div>
-    <div class="cat-item" data-story="アクション / 予約中"><span class="cat-label">予約中</span><button class="btn btn-success" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>録画予約中</button></div>
-    <div class="cat-item" data-story="アクション / 送信中"><span class="cat-label">送信中</span><button class="btn btn-busy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>送信中</button></div>
-    <div class="cat-item" data-story="アクション / 失敗"><span class="cat-label">失敗</span><button class="btn btn-fail" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5M12 16v.5"/><circle cx="12" cy="12" r="9"/></svg>失敗 · 再試行</button></div>
-    <div class="cat-item" data-story="アクション / 副次"><span class="cat-label">副次</span><button class="btn" type="button">全話を録画済みにする</button></div>
-    <div class="cat-item" data-story="アクション / 副次 hover"><span class="cat-label">副次 hover</span><button class="btn is-hover" type="button">全話を録画済みにする</button></div>
-    <div class="cat-item" data-story="アクション / 再取得"><span class="cat-label">再取得</span><button class="btn btn-icon" type="button" aria-label="情報を再取得"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg></button></div>
-    <div class="cat-item" data-story="アクション / フォーカス"><span class="cat-label">フォーカス</span><button class="btn btn-primary is-focus" type="button">録画予約する</button></div>
-  </div>
-  <p class="cat-note">再取得はアイコンだけにして端に離す。押す頻度が低く、隣の予約ボタンと取り違えられると困るため。</p>
-</section>
-
-<section class="cat-sec">
-  <h2>あらすじの畳み方</h2>
-  <div class="cat-stack">
-    <div class="cat-item cat-full" data-story="あらすじの畳み方 / 3 行で畳む (既定)"><span class="cat-label is-key">3 行で畳む (既定)</span><p class="id-syn is-clamp">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録であり、同時に終わりの記録でもある物語。第 1 話は観測所の屋上から始まる。</p></div>
-    <div class="cat-item cat-full" data-story="あらすじの畳み方 / 展開後"><span class="cat-label">展開後</span><p class="id-syn">観測所に取り残された少年と、名前を失った人工知能。二人は毎晩ひとつずつ星に名前をつけていく。名前が尽きたその夜に何が起きるのかを、誰もまだ知らない。長い夜のはじまりの記録であり、同時に終わりの記録でもある物語。第 1 話は観測所の屋上から始まる。</p></div>
-  </div>
-</section>
-
-<section class="cat-sec">
-  <h2>詰めた操作列 <span class="cat-hint">.id-actions.is-compact</span></h2>
-  <div class="cat-stack">
-    <div class="cat-item cat-full is-key" data-story="詰めた操作列 / .id-actions.is-compact"><span class="cat-label">.id-actions.is-compact</span>
-<div class="id-actions is-compact">
-              <button class="btn" type="button" aria-pressed="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                録画を予約
-              </button>
-              <button class="btn" type="button" title="放送済みで未録画のエピソードを録画サーバーにリクエストする">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.7 3.05a.5.5 0 0 0-.68.63l2.84 7.62a2 2 0 0 1 0 1.4l-2.84 7.62a.5.5 0 0 0 .68.63l18-8.5a.5.5 0 0 0 0-.9z"/><path d="M6 12h16"/></svg>
-                今すぐ録画
+          <div class="hero-body">
+            <div class="id-badges">
+              <span class="badge b-crunchyroll">Crunchyroll</span>
+              <span class="badge b-releasing">放送中</span>
+            </div>
+            <h1 class="hero-title">クラスで２番目に可愛い女の子と友だちになった</h1>
+          </div>
+          <div class="pg-body">
+            <div class="id-facts">
+              <div><dt>予約登録日</dt><dd class="num">2026/04/02</dd></div>
+              <div><dt>録画済み</dt><dd class="num">7 / 9 話</dd></div>
+              <div><dt>最終録画</dt><dd class="num">2026/09/15</dd></div>
+              <div><dt>次回配信</dt><dd class="num">9/28 (日) 23:00</dd></div>
+            </div>
+            <div class="id-actions is-compact">
+              <button class="btn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+                作品ページを開く
               </button>
               <button class="btn btn-refresh" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
                 再取得
               </button>
             </div>
-    </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pg-cols">
+      <div>
+      <section aria-labelledby="ep-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="ep-heading">録画状況</h2></div>
+
+        <div>
+<div class="progress" aria-label="録画状況">
+  <div class="strip" role="list">
+    <a href="#ep-1" data-s="done" title="第1話"></a><a href="#ep-2" data-s="done" title="第2話"></a><a href="#ep-3" data-s="done" title="第3話"></a><a href="#ep-4" data-s="done" title="第4話"></a><a href="#ep-5" data-s="done" title="第5話"></a><a href="#ep-6" data-s="done" title="第6話"></a><a href="#ep-7" data-s="done" title="第7話"></a><a href="#ep-8" data-s="fail" title="第8話"></a><a href="#ep-9" data-s="rec" title="第9話"></a><a href="#ep-10" data-s="future" title="第10話"></a><a href="#ep-11" data-s="future" title="第11話"></a><a href="#ep-12" data-s="future" title="第12話"></a>
   </div>
-  <p class="cat-note">作品詳細 (決定稿) で使う、操作ボタンの列を詰める修飾。「録画を予約」は状態を持つトグル (aria-pressed)。「今すぐ録画」は押すたびに放送済み・未録画のエピソードの録画リクエストを送るだけの一回きりの操作なので、押下状態を持たずアイコンも送信にする。</p>
-</section>
-</main>
+  <div class="strip-labels"><span>第1話</span><span>第6話</span><span>第12話</span></div>
+  <div class="stats">
+    <div class="stat" style="--dot: var(--success)"><span class="k">録画済み</span><span class="v">7</span></div>
+    <div class="stat" style="--dot: var(--info)"><span class="k">録画中</span><span class="v">1</span></div>
+    <div class="stat" style="--dot: var(--destructive)"><span class="k">失敗</span><span class="v">1</span></div>
+    <div class="stat" style="--dot: var(--border)"><span class="k">配信予定</span><span class="v">3</span></div>
+  </div>
+</div>
+
+<ol class="ep-list">
+  <li class="ep" id="ep-1" data-s="done" style="--h: 274">
+    <span class="ep-no num">1</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 40 Q24 20 48 34 T96 26 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">二番目の席</a></p><div class="ep-meta"><span>第1話</span><span class="m-mobile">04/05</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/04/05</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-2" data-s="done" style="--h: 333">
+    <span class="ep-no num">2</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 44 Q30 14 60 36 T96 22 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">放課後の約束</a></p><div class="ep-meta"><span>第2話</span><span class="m-mobile">04/12</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/04/12</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-3" data-s="done" style="--h: 94">
+    <span class="ep-no num">3</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 36 Q20 30 48 40 T96 30 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">雨の日の相合い傘</a></p><div class="ep-meta"><span>第3話</span><span class="m-mobile">04/19</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/04/19</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-4" data-s="done" style="--h: 358">
+    <span class="ep-no num">4</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 30 Q40 50 70 28 T96 36 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">はじめての連絡先</a></p><div class="ep-meta"><span>第4話</span><span class="m-mobile">04/26</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/04/26</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-5" data-s="done" style="--h: 192">
+    <span class="ep-no num">5</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 46 Q26 26 52 42 T96 32 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">ゴールデンウィークの過ごし方</a></p><div class="ep-meta"><span>第5話</span><span class="m-mobile">05/03</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/05/03</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-6" data-s="done" style="--h: 157">
+    <span class="ep-no num">6</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 38 Q24 44 48 30 T96 40 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">一番じゃない理由</a></p><div class="ep-meta"><span>第6話</span><span class="m-mobile">05/10</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/05/10</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-7" data-s="done" style="--h: 4">
+    <span class="ep-no num">7</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 40 Q24 20 48 34 T96 26 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">テスト前夜</a></p><div class="ep-meta"><span>第7話</span><span class="m-mobile">05/17</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/05/17</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="done" role="img" aria-label="録画済み" title="録画済み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+  </li>
+  <li class="ep" id="ep-8" data-s="fail" style="--h: 126">
+    <span class="ep-no num">8</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 44 Q30 14 60 36 T96 22 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">夏服の季節</a></p><div class="ep-meta"><span>第8話</span><span class="m-mobile">05/24</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/05/24</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="todo" role="img" aria-label="未録画" title="未録画"></span>
+  </li>
+  <li class="ep" id="ep-9" data-s="rec" style="--h: 307">
+    <span class="ep-no num">9</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 36 Q20 30 48 40 T96 30 V54 H0Z" fill="currentColor"/></svg><span class="dur">23:40</span></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">ふたりの帰り道</a></p><div class="ep-meta"><span>第9話</span><span class="m-mobile">05/31</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/05/31</span><span class="ep-dur num">23:40</span>
+    <span class="rec" data-s="rec" role="img" aria-label="録画中" title="録画中"></span>
+  </li>
+  <li class="ep" id="ep-10" data-s="future" style="--h: 152">
+    <span class="ep-no num">10</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 30 Q40 50 70 28 T96 36 V54 H0Z" fill="currentColor"/></svg></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">花火大会</a></p><div class="ep-meta"><span>第10話</span><span class="m-mobile">06/07</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/06/07</span><span class="ep-dur num">—</span>
+    <span class="rec" data-s="todo" role="img" aria-label="未録画" title="未録画"></span>
+  </li>
+  <li class="ep" id="ep-11" data-s="future" style="--h: 10">
+    <span class="ep-no num">11</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 46 Q26 26 52 42 T96 32 V54 H0Z" fill="currentColor"/></svg></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">告白の順番</a></p><div class="ep-meta"><span>第11話</span><span class="m-mobile">06/14</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/06/14</span><span class="ep-dur num">—</span>
+    <span class="rec" data-s="todo" role="img" aria-label="未録画" title="未録画"></span>
+  </li>
+  <li class="ep" id="ep-12" data-s="future" style="--h: 262">
+    <span class="ep-no num">12</span>
+    <div class="thumb"><svg viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M0 38 Q24 44 48 30 T96 40 V54 H0Z" fill="currentColor"/></svg></div>
+    <div class="ep-main"><p class="ep-title"><a href="#">友だちの定義</a></p><div class="ep-meta"><span>第12話</span><span class="m-mobile">06/21</span><span class="flag">字幕</span></div></div>
+    <span class="ep-date num">2026/06/21</span><span class="ep-dur num">—</span>
+    <span class="rec" data-s="todo" role="img" aria-label="未録画" title="未録画"></span>
+  </li>
+</ol>
+<div class="ep-foot">
+  <span>録画済み 7 話 · 2 時間 45 分</span>
+  <a class="link" href="#">アニメ詳細で開く <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+</div>
+</div>
+      </section>
+
+      <section class="pg-sec" aria-labelledby="ev-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="ev-heading">録画履歴</h2></div>
+        <div>
+          <div class="rev-cols">
+            <span>日時</span><span>対象</span><span>種別</span><span>経路</span><span class="rev-r">話数</span><span class="rev-r">HTTP</span><span class="rev-r">結果</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">03:24:10<small>今日</small></span>
+            <span class="rev-title"><span class="rev-name">ふたりの帰り道</span></span>
+            <span class="rev-kind">録画開始</span>
+            <span class="rev-src">cron</span>
+            <span class="rev-n">9</span>
+            <span class="rev-n">202</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+          <div class="rev-row is-err">
+            <span class="rev-ts">03:12:48<small>9/22</small></span>
+            <span class="rev-title"><span class="rev-name">夏服の季節</span>
+              <span class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</span></span>
+            <span class="rev-kind">録画リクエスト</span>
+            <span class="rev-src">cron</span>
+            <span class="rev-n">8</span>
+            <span class="rev-n">503</span>
+            <span class="rev-res rev-ng">失敗</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">03:31:02<small>9/15</small></span>
+            <span class="rev-title"><span class="rev-name">テスト前夜</span></span>
+            <span class="rev-kind">録画完了</span>
+            <span class="rev-src">webhook</span>
+            <span class="rev-n">7</span>
+            <span class="rev-n rev-dim">—</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">03:10:15<small>9/15</small></span>
+            <span class="rev-title"><span class="rev-name">テスト前夜</span></span>
+            <span class="rev-kind">録画リクエスト</span>
+            <span class="rev-src">cron</span>
+            <span class="rev-n">7</span>
+            <span class="rev-n">202</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">21:40:33<small>4/02</small></span>
+            <span class="rev-title"><span class="rev-name">クラスで２番目に可愛い女の子と友だちになった</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+            <span class="rev-kind">予約登録</span>
+            <span class="rev-src">画面</span>
+            <span class="rev-n rev-dim">—</span>
+            <span class="rev-n">201</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="pg-sec" aria-labelledby="rsv-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="rsv-heading">予約</h2></div>
+        <div class="st-panel">
+          <div class="st-row is-danger">
+            <div class="st-rt">
+              <span class="st-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span>
+              <div>
+                <p class="st-label">録画予約を取り消す</p>
+                <p class="st-desc">以降のエピソードは自動で録画されなくなります。録画済みの 7 話は削除されません。</p>
+              </div>
+            </div>
+            <div class="st-ctl">
+              <button type="button" class="st-btn is-danger">予約を取り消す</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <aside class="pg-aside">
+        <section aria-labelledby="recstat-heading">
+          <h3 class="pg-eyebrow" id="recstat-heading">録画サーバー</h3>
+          <p class="recstat-err">録画サーバーに問い合わせできませんでした<span class="msg">Nagisa config missing: CF_ACCESS_CLIENT_SECRET</span></p>
+        </section>
+
+        <section aria-labelledby="info-heading">
+          <h3 class="pg-eyebrow" id="info-heading">予約情報</h3>
+          <div class="anime-info">
+            <div class="anime-info-row"><span class="k">登録日</span><span class="v">2026/04/02 21:40</span></div>
+            <div class="anime-info-row"><span class="k">登録元</span><span class="v">画面</span></div>
+            <div class="anime-info-row"><span class="k">配信元</span><span class="v"><a href="#">Crunchyroll</a></span></div>
+            <div class="anime-info-row"><span class="k">AniList</span><span class="v"><a href="#anilist">#171018</a></span></div>
+            <div class="anime-info-row"><span class="k">予約 ID</span><span class="v mono">rsv_8f3a21c4</span></div>
+          </div>
+        </section>
+      </aside>
+      </div>
+
+      <footer class="ftr is-fixed">
+        <span class="l"><span>Nagisa WebUI</span><span>v0.10.0</span><span class="sha">f5298cb</span></span>
+        <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></span>
+      </footer>
+
+    </div>
+  </main>
+</div>
 </body>
 </html>

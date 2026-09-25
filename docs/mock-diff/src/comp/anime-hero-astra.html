@@ -162,8 +162,8 @@ TITLE: 作品ヒーロー
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
                 録画を予約
               </button>
-              <button class="btn" type="button" aria-pressed="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+              <button class="btn" type="button" title="放送済みで未録画のエピソードを録画サーバーにリクエストする">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.7 3.05a.5.5 0 0 0-.68.63l2.84 7.62a2 2 0 0 1 0 1.4l-2.84 7.62a.5.5 0 0 0 .68.63l18-8.5a.5.5 0 0 0 0-.9z"/><path d="M6 12h16"/></svg>
                 今すぐ録画
               </button>
               <button class="btn btn-refresh" type="button">
@@ -173,5 +173,5 @@ TITLE: 作品ヒーロー
             </div>
     </div>
   </div>
-  <p class="cat-note">作品詳細 (決定稿) で使う、操作ボタンの列を詰める修飾。</p>
+  <p class="cat-note">作品詳細 (決定稿) で使う、操作ボタンの列を詰める修飾。「録画を予約」は状態を持つトグル (aria-pressed)。「今すぐ録画」は押すたびに放送済み・未録画のエピソードの録画リクエストを送るだけの一回きりの操作なので、押下状態を持たずアイコンも送信にする。</p>
 </section>

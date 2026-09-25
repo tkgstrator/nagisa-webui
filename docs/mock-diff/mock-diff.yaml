@@ -168,6 +168,33 @@ screens:
         actual:
           type: url
           url: http://nagisa-webui_devcontainer-app-1:14755/recordings
+  - id: recording-detail
+    name: 録画詳細
+    category: ページ
+    threshold: 0.1
+    devices:
+      - id: desktop
+        name: Desktop
+        viewport:
+          width: 1440
+          height: 900
+          deviceScaleFactor: 2
+        orientations: [landscape]
+        versions:
+          final:
+            type: html
+            path: mocks/recording-detail-final.html
+      - id: iphone
+        name: iPhone
+        viewport:
+          width: 390
+          height: 844
+          deviceScaleFactor: 1
+        orientations: [portrait]
+        versions:
+          final:
+            type: html
+            path: mocks/recording-detail-final.html
   - id: home
     name: トップ
     category: ページ

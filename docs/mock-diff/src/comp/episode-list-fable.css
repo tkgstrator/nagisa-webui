@@ -2,7 +2,7 @@
 .ep-list { display: flex; flex-direction: column; }
 .ep {
   display: grid;
-  grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 136px;
+  grid-template-columns: 3ch 96px minmax(0, 1fr) 84px 56px 20px;
   gap: 14px; align-items: center;
   padding: 8px 12px;
   border-left: 3px solid var(--border);
@@ -28,30 +28,13 @@
 .ep-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted-foreground); margin-top: 2px; font-variant-numeric: tabular-nums; }
 .flag { display: inline-flex; align-items: center; height: 16px; padding: 0 5px; border-radius: 4px; border: 1px solid var(--border); font-size: 10.5px; line-height: 1; }
 .ep-date, .ep-dur { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; text-align: right; }
-.ep-msg { font-size: 12px; color: var(--destructive); margin-top: 2px; }
-.ep-msg-info { color: var(--info); }
 
-/* 録画状態のトグル。幅を固定して語が動かないようにする */
-.rec { display: inline-flex; align-items: center; gap: 7px; width: 136px; height: 32px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 600; background: var(--background); transition: background .12s, border-color .12s; white-space: nowrap; }
-.rec:hover { background: var(--secondary); }
-.rec:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
-.rec .ico { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; flex: none; }
-.rec .ico svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
-.rec[data-s="todo"] { color: var(--foreground); }
-.rec[data-s="todo"] .ico { border: 1.5px solid var(--muted-foreground); }
-.rec[data-s="done"] { color: var(--success); border-color: color-mix(in oklch, var(--success) 40%, transparent); background: color-mix(in oklch, var(--success) 10%, transparent); }
-.rec[data-s="done"] .ico { background: var(--success); color: var(--success-foreground); }
-.rec[data-s="done"]:hover { background: color-mix(in oklch, var(--success) 18%, transparent); }
-.rec[data-s="rec"] { color: var(--info); border-color: color-mix(in oklch, var(--info) 40%, transparent); background: color-mix(in oklch, var(--info) 10%, transparent); }
-.rec[data-s="rec"] .ico { border: 2px solid color-mix(in oklch, var(--info) 30%, transparent); border-top-color: var(--info); animation: spin .9s linear infinite; }
-.rec[data-s="rec"] .pct { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 500; }
-.rec[data-s="fail"] { color: var(--destructive); border-color: color-mix(in oklch, var(--destructive) 40%, transparent); background: color-mix(in oklch, var(--destructive) 8%, transparent); }
-.rec[data-s="fail"] .ico { background: var(--destructive); color: var(--destructive-foreground); }
-.rec[data-s="future"] { color: var(--muted-foreground); border-style: dashed; cursor: default; background: transparent; }
-.rec[data-s="future"] .ico { border: 1.5px dashed var(--muted-foreground); }
-.rec .lbl-hover { display: none; }
-.rec[data-s="done"]:hover .lbl, .rec[data-s="fail"]:hover .lbl { display: none; }
-.rec[data-s="done"]:hover .lbl-hover, .rec[data-s="fail"]:hover .lbl-hover { display: inline; }
+/* 録画状態のアイコン。未録画・録画中・録画済みの 3 種だけで、操作は持たない */
+.rec { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; justify-self: end; }
+.rec svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.rec[data-s="todo"] { border: 1.5px solid var(--muted-foreground); }
+.rec[data-s="rec"] { border: 2px solid color-mix(in oklch, var(--info) 30%, transparent); border-top-color: var(--info); animation: spin .9s linear infinite; }
+.rec[data-s="done"] { background: var(--success); color: var(--success-foreground); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 話数の帯 */
@@ -80,8 +63,6 @@
 @media (max-width: 640px) {
   .ep { grid-template-columns: 2.5ch 68px minmax(0, 1fr) auto; gap: 10px; padding: 8px; }
   .ep-date, .ep-dur { display: none; }
-  .rec { width: 34px; padding: 0; justify-content: center; }
-  .rec .lbl, .rec .lbl-hover, .rec .pct { display: none; }
 }
 
 /* ---------- タブの件数と注記 ---------- */
@@ -112,26 +93,10 @@
 /* 狭い画面でだけ出すメタ情報 */
 .ep-meta .m-mobile { display: none; }
 
-/* ---------- 選択モード (.ep-list.is-select) ---------- */
-/* 行頭のチェックで話を選び、まとめて録画する。録画ボタンは状態の表示に寄せ、
-   押せるのは「録画する」だけなので、済みの行は色を抜いて退かせる。 */
-.chips.is-select { margin-bottom: 12px; }
-.chip-check { display: inline-flex; height: 28px; align-items: center; padding: 0 6px 0 2px; }
-.chip-rec { border-color: color-mix(in oklch, var(--primary) 40%, transparent); color: var(--primary); font-weight: 600; }
-.chip-rec:hover { background: color-mix(in oklch, var(--primary) 10%, transparent); }
-.chip-rec:disabled { cursor: default; border-color: var(--border); color: var(--muted-foreground); font-weight: 400; background: transparent; }
-.is-select .ep { grid-template-columns: 16px 3ch 96px minmax(0, 1fr) 84px 56px 104px; padding: 12px; }
-/* 行頭の選択チェック。見た目はブラウザ既定のまま 16px の列に置く。 */
-.ep > .cb { cursor: pointer; }
-.is-select .rec { justify-content: center; gap: 6px; width: 104px; padding: 0; }
-.is-select .rec[data-s="done"] { border-color: var(--border); background: var(--background); color: var(--muted-foreground); font-weight: 400; }
-.is-select .rec[data-s="done"]:hover { background: var(--secondary); }
-.is-select .rec[data-s="rec"] { color: var(--foreground); }
+/* 絞り込みチップの下は一覧との間を空ける */
+.chips + .ep-list { margin-top: 12px; }
 
 @media (max-width: 640px) {
-  .is-select .ep { grid-template-columns: 16px 2.5ch 68px minmax(0, 1fr) auto; gap: 10px; padding: 8px; }
-  .is-select .rec { width: 34px; }
-  .rec .label { display: none; }
   /* 自動録画の注記はタブ行の右端に置くと幅が足りずに切れるので、行を分ける。 */
   .tabs.is-wrap { flex-wrap: wrap; overflow-x: visible; }
   .tabs.is-wrap .spacer { display: none; }

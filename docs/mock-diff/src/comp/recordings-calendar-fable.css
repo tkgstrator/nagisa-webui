@@ -1,14 +1,17 @@
-.week-grid {
-  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+/* 1 日 = 1 行。曜日は左端の固定列、その日の作品は右側 (.day-slots) で折り返して並べる。 */
+.week-grid { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.day {
+  display: grid; grid-template-columns: 72px minmax(0, 1fr);
+  padding: 10px 0; border-bottom: 1px solid var(--border);
 }
-.day { border-left: 1px solid var(--border); padding: 10px 12px 14px; min-height: 96px; }
-.day-head { display: flex; align-items: baseline; gap: 6px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.day:last-child { border-bottom: 0; }
+.day-head { display: flex; align-items: baseline; gap: 6px; padding: 4px 12px 0 2px; }
 .day-head .dname { font-size: 12px; font-weight: 700; color: var(--muted-foreground); }
 .day-head .dcount { font-size: 11px; color: var(--muted-foreground); opacity: .7; }
 .day.weekend .day-head .dname { color: var(--accent-foreground); }
-.slot { border-left: 3px solid var(--border); padding: 6px 0 6px 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
-.slot:last-child { margin-bottom: 0; }
+/* 件数が少ない日でも 1 枠の幅が間延びしないよう、最小幅を決めて左から詰める。 */
+.day-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px 14px; }
+.slot { border-left: 3px solid var(--border); padding: 6px 0 6px 10px; display: flex; flex-direction: column; gap: 3px; }
 .slot .stime { font-size: 11px; color: var(--muted-foreground); }
 .slot .sname { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
 .slot .snote { font-size: 11px; color: var(--muted-foreground); }
@@ -20,29 +23,10 @@
 .day-empty { font-size: 11px; color: var(--muted-foreground); opacity: .65; padding: 6px 0; }
 
 @media (max-width: 640px) {
-  .week-grid { grid-template-columns: 1fr; border-top: 0; border-bottom: 0; }
-  .day { border-left: 3px solid var(--border); border-bottom: 1px solid var(--border); min-height: 0; padding: 10px 4px 14px; }
+  .week-grid { border-top: 0; border-bottom: 0; }
+  .day { grid-template-columns: 1fr; gap: 8px; border-left: 3px solid var(--border); padding: 10px 4px 14px; }
   .day.weekend { border-left-color: var(--accent); }
-}
-
-/* ---------- 行レイアウト版 (.week-grid.is-rows) ---------- */
-/* 曜日は左端の固定列。全幅を使えるので、その日の作品は右側 (.day-slots) で折り返して並べる。 */
-.week-grid.is-rows { display: block; }
-.is-rows .day {
-  display: grid; grid-template-columns: 72px minmax(0, 1fr);
-  border-left: 0; min-height: 0; padding: 10px 0; border-bottom: 1px solid var(--border);
-}
-.is-rows .day:last-child { border-bottom: 0; }
-.is-rows .day-head { padding: 4px 12px 0 2px; margin-bottom: 0; border-bottom: 0; }
-/* 件数が少ない日でも 1 枠の幅が間延びしないよう、最小幅を決めて左から詰める。 */
-.day-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px 14px; }
-.day-slots .slot { margin-bottom: 0; }
-
-@media (max-width: 640px) {
-  .week-grid.is-rows { border-top: 0; border-bottom: 0; }
-  .is-rows .day { grid-template-columns: 1fr; gap: 8px; border-left: 3px solid var(--border); padding: 10px 4px 14px; }
-  .is-rows .day.weekend { border-left-color: var(--accent); }
-  .is-rows .day:last-child { border-bottom: 1px solid var(--border); }
-  .is-rows .day-head { padding: 0 0 8px; border-bottom: 1px solid var(--border); }
+  .day:last-child { border-bottom: 1px solid var(--border); }
+  .day-head { padding: 0 0 8px; border-bottom: 1px solid var(--border); }
   .day-slots { grid-template-columns: 1fr; }
 }

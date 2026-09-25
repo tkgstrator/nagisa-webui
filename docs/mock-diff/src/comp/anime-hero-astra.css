@@ -36,7 +36,7 @@
 .btn { height: 38px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: var(--foreground); transition: background .15s, transform .12s; }
 .btn:hover { background: var(--muted); }
 .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-.btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.btn svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .btn-primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
 .btn-primary:hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
 .btn-success { background: var(--success); color: var(--success-foreground); border-color: transparent; }

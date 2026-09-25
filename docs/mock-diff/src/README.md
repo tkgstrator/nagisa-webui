@@ -63,6 +63,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
 | `browse` | `app-header anime-card browse-filters filter-chips anime-drawer pagination app-footer` |
 | `anime-detail` | `app-header breadcrumbs anime-hero episode-list related-providers app-footer` |
 | `recordings` | `app-header recordings-toolbar recording-row recordings-calendar empty-state pagination summary-stats app-footer` |
+| `recording-detail` | `app-header breadcrumbs anime-hero episode-list recording-status anime-info recording-events settings-controls app-footer` |
 | `home` | `app-header summary-stats anime-carousel scheduled-updates home-tabs app-footer` |
 | `changelog` | `app-header app-footer` |
 | `admin` | `app-header nav-item app-footer` |

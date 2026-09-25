@@ -1,81 +1,106 @@
 TITLE: 週カレンダー
+USES: recording-row
 ---
 <header class="cat-head">
   <h1>週カレンダー <span class="cat-id">recordings-calendar</span></h1>
-  <p>録画一覧ページで「今週の放送予定」を曜日別に並べる 7 列グリッド。1 列が 1 日 (<code>.day</code>)、その中に放送 1 本ぶんの枠 (<code>.slot</code>) を積む。枠の左罫の色が状態を表し、休止・放送予定だけ注記 (<code>.snote</code>) を添える。640px 以下では 7 列を畳んで 1 列の縦並びになる。</p>
+  <p>録画一覧ページで「今週の放送予定」を曜日別に並べる。1 日が 1 行 (<code>.day</code>) で、曜日は左端の固定列、その日の放送 1 本ぶんの枠 (<code>.slot</code>) は右側 (<code>.day-slots</code>) に折り返して並べる。枠の左罫の色が状態を表し、休止・放送予定だけ注記 (<code>.snote</code>) を添える。640px 以下では曜日を上に載せた縦積みになる。</p>
   <div class="cat-meta">
-    <span>列は常に 7 本（月〜日）</span>
+    <span>行は常に 7 本（月〜日）</span>
     <span>状態は <code>.slot</code> の左罫色</span>
-    <span>640px 以下で 1 列</span>
+    <span>枠は最小 210px で折り返す</span>
+    <span>640px 以下で縦積み</span>
   </div>
 </header>
 
 <section class="cat-sec">
-  <h2>週ぜんたい <span class="cat-hint">通常・休止・予定・空日を含む 1 週間</span></h2>
+  <h2>週ぜんたい <span class="cat-hint">通常・休止・予定・複数件を含む 1 週間</span></h2>
   <div class="cat-item cat-full is-key">
     <div class="week-grid">
       <div class="day">
         <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
-        <div class="slot">
-          <span class="stime num">25:30</span>
-          <span class="sname">蒼穹のリベリオン</span>
-          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        <div class="day-slots">
+          <div class="slot">
+            <span class="stime num">25:30</span>
+            <span class="sname">蒼穹のリベリオン</span>
+            <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+          </div>
         </div>
       </div>
       <div class="day">
         <div class="day-head"><span class="dname">火</span><span class="dcount num">1</span></div>
-        <div class="slot">
-          <span class="stime num">23:00</span>
-          <span class="sname">放課後クロノグラフ</span>
-          <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+        <div class="day-slots">
+          <div class="slot">
+            <span class="stime num">23:00</span>
+            <span class="sname">放課後クロノグラフ</span>
+            <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+          </div>
         </div>
       </div>
       <div class="day">
         <div class="day-head"><span class="dname">水</span><span class="dcount num">2</span></div>
-        <div class="slot">
-          <span class="stime num">22:00</span>
-          <span class="sname">海辺のカフェテラス</span>
-          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
-        </div>
-        <div class="slot hiatus">
-          <span class="stime num">24:30</span>
-          <span class="sname">春待ちレコード</span>
-          <span class="snote">休止中</span>
-          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+        <div class="day-slots">
+          <div class="slot">
+            <span class="stime num">22:00</span>
+            <span class="sname">海辺のカフェテラス</span>
+            <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+          </div>
+          <div class="slot hiatus">
+            <span class="stime num">24:30</span>
+            <span class="sname">春待ちレコード</span>
+            <span class="snote">休止中</span>
+            <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+          </div>
         </div>
       </div>
       <div class="day">
-        <div class="day-head"><span class="dname">木</span><span class="dcount num">0</span></div>
-        <div class="day-empty">予定なし</div>
+        <div class="day-head"><span class="dname">木</span><span class="dcount num">1</span></div>
+        <div class="day-slots">
+          <div class="slot">
+            <span class="stime num">25:00</span>
+            <span class="sname">星降る夜のアストロノーツ</span>
+            <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+          </div>
+        </div>
       </div>
       <div class="day">
         <div class="day-head"><span class="dname">金</span><span class="dcount num">1</span></div>
-        <div class="slot upcoming">
-          <span class="stime num">24:30</span>
-          <span class="sname">天空回廊アルカディア</span>
-          <span class="snote">初回放送</span>
-          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        <div class="day-slots">
+          <div class="slot">
+            <span class="stime num">24:00</span>
+            <span class="sname">魔法少女は二度目の朝を迎える</span>
+            <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
+          </div>
         </div>
       </div>
       <div class="day weekend">
         <div class="day-head"><span class="dname">土</span><span class="dcount num">1</span></div>
-        <div class="slot">
-          <span class="stime num">18:00</span>
-          <span class="sname">猫と魔王とカフェラテ</span>
-          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+        <div class="day-slots">
+          <div class="slot">
+            <span class="stime num">23:30</span>
+            <span class="sname">王都パン屋のスローライフ</span>
+            <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+          </div>
         </div>
       </div>
       <div class="day weekend">
-        <div class="day-head"><span class="dname">日</span><span class="dcount num">1</span></div>
-        <div class="slot">
-          <span class="stime num">17:00</span>
-          <span class="sname">ひだまりレストラン</span>
-          <span class="sbadges"><span class="badge netflix">Netflix</span></span>
+        <div class="day-head"><span class="dname">日</span><span class="dcount num">2</span></div>
+        <div class="day-slots">
+          <div class="slot upcoming">
+            <span class="stime num">23:00</span>
+            <span class="sname">銀河鉄道の車掌さん</span>
+            <span class="snote">初回 9/20</span>
+            <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+          </div>
+          <div class="slot">
+            <span class="stime num">24:00</span>
+            <span class="sname">雨上がりのガーデナー</span>
+            <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <p class="cat-note">土日は <code>.day.weekend</code> で曜日名の色だけ変える。背景は変えない。</p>
+  <p class="cat-note">土日は <code>.day.weekend</code> で曜日名の色だけ変える（640px 以下では左罫もアクセント色）。背景は変えない。</p>
 </section>
 
 <section class="cat-sec">
@@ -103,149 +128,74 @@ TITLE: 週カレンダー
       <div class="slot upcoming">
         <span class="stime num">24:30</span>
         <span class="sname">天空回廊アルカディア</span>
-        <span class="snote">初回放送</span>
+        <span class="snote">初回 9/20</span>
         <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
       </div>
     </div>
   </div>
+  <p class="cat-note">放送予定の注記は初回放送日（<code>初回 M/D</code>）。</p>
 </section>
 
 <section class="cat-sec">
   <h2>1 日の中身 <span class="cat-hint">件数 0 / 1 / 複数</span></h2>
-  <div class="cat-row">
-    <div class="cat-item cat-w220">
-      <span class="cat-label">0 件</span>
-      <div class="day">
-        <div class="day-head"><span class="dname">木</span><span class="dcount num">0</span></div>
-        <div class="day-empty">予定なし</div>
-      </div>
-    </div>
-    <div class="cat-item cat-w220">
-      <span class="cat-label">1 件</span>
-      <div class="day">
-        <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
-        <div class="slot">
-          <span class="stime num">25:30</span>
-          <span class="sname">蒼穹のリベリオン</span>
-          <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
-        </div>
-      </div>
-    </div>
-    <div class="cat-item cat-w220">
-      <span class="cat-label">3 件（積み重なる）</span>
-      <div class="day">
-        <div class="day-head"><span class="dname">水</span><span class="dcount num">3</span></div>
-        <div class="slot">
-          <span class="stime num">22:00</span>
-          <span class="sname">海辺のカフェテラス</span>
-          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
-        </div>
-        <div class="slot hiatus">
-          <span class="stime num">24:30</span>
-          <span class="sname">春待ちレコード</span>
-          <span class="snote">休止中</span>
-          <span class="sbadges"><span class="badge abema">ABEMA</span></span>
-        </div>
-        <div class="slot">
-          <span class="stime num">26:00</span>
-          <span class="sname">とある小さな町の魔法使いと不思議な仲間たち</span>
-          <span class="sbadges"><span class="badge hulu">Hulu</span></span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <p class="cat-note">作品名 (<code>.sname</code>) は折り返す。列幅が狭いので省略はしない。</p>
-</section>
-
-<section class="cat-sec">
-  <h2>行レイアウト版 <span class="cat-hint">.week-grid.is-rows + .day-slots</span></h2>
   <div class="cat-stack">
-    <div class="cat-item cat-full is-key"><span class="cat-label">.week-grid.is-rows</span>
-<div class="week-grid is-rows">
-          <div class="day">
-            <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
-            <div class="day-slots">
-              <div class="slot">
-                <span class="stime num">25:30</span>
-                <span class="sname">蒼穹のリベリオン</span>
-                <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="day">
-            <div class="day-head"><span class="dname">火</span><span class="dcount num">1</span></div>
-            <div class="day-slots">
-              <div class="slot">
-                <span class="stime num">23:00</span>
-                <span class="sname">放課後クロノグラフ</span>
-                <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="day">
-            <div class="day-head"><span class="dname">水</span><span class="dcount num">2</span></div>
-            <div class="day-slots">
-              <div class="slot">
-                <span class="stime num">22:00</span>
-                <span class="sname">海辺のカフェテラス</span>
-                <span class="sbadges"><span class="badge abema">ABEMA</span></span>
-              </div>
-              <div class="slot hiatus">
-                <span class="stime num">24:30</span>
-                <span class="sname">春待ちレコード</span>
-                <span class="snote">休止中</span>
-                <span class="sbadges"><span class="badge abema">ABEMA</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="day">
-            <div class="day-head"><span class="dname">木</span><span class="dcount num">1</span></div>
-            <div class="day-slots">
-              <div class="slot">
-                <span class="stime num">25:00</span>
-                <span class="sname">星降る夜のアストロノーツ</span>
-                <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="day">
-            <div class="day-head"><span class="dname">金</span><span class="dcount num">1</span></div>
-            <div class="day-slots">
-              <div class="slot">
-                <span class="stime num">24:00</span>
-                <span class="sname">魔法少女は二度目の朝を迎える</span>
-                <span class="sbadges"><span class="badge amazon">Prime Video</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="day weekend">
-            <div class="day-head"><span class="dname">土</span><span class="dcount num">1</span></div>
-            <div class="day-slots">
-              <div class="slot">
-                <span class="stime num">23:30</span>
-                <span class="sname">王都パン屋のスローライフ</span>
-                <span class="sbadges"><span class="badge hulu">Hulu</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="day weekend">
-            <div class="day-head"><span class="dname">日</span><span class="dcount num">2</span></div>
-            <div class="day-slots">
-              <div class="slot upcoming">
-                <span class="stime num">23:00</span>
-                <span class="sname">銀河鉄道の車掌さん</span>
-                <span class="snote">初回 9/20</span>
-                <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
-              </div>
-              <div class="slot">
-                <span class="stime num">24:00</span>
-                <span class="sname">雨上がりのガーデナー</span>
-                <span class="sbadges"><span class="badge hulu">Hulu</span></span>
-              </div>
+    <div class="cat-item cat-full"><span class="cat-label">0 件</span>
+      <div class="week-grid">
+        <div class="day">
+          <div class="day-head"><span class="dname">木</span><span class="dcount num">0</span></div>
+          <div class="day-empty">予定なし</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">1 件</span>
+      <div class="week-grid">
+        <div class="day">
+          <div class="day-head"><span class="dname">月</span><span class="dcount num">1</span></div>
+          <div class="day-slots">
+            <div class="slot">
+              <span class="stime num">25:30</span>
+              <span class="sname">蒼穹のリベリオン</span>
+              <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="cat-item cat-full"><span class="cat-label">5 件（右側で折り返す）</span>
+      <div class="week-grid">
+        <div class="day">
+          <div class="day-head"><span class="dname">水</span><span class="dcount num">5</span></div>
+          <div class="day-slots">
+            <div class="slot">
+              <span class="stime num">22:00</span>
+              <span class="sname">海辺のカフェテラス</span>
+              <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+            </div>
+            <div class="slot hiatus">
+              <span class="stime num">24:30</span>
+              <span class="sname">春待ちレコード</span>
+              <span class="snote">休止中</span>
+              <span class="sbadges"><span class="badge abema">ABEMA</span></span>
+            </div>
+            <div class="slot">
+              <span class="stime num">25:00</span>
+              <span class="sname">星降る夜のアストロノーツ</span>
+              <span class="sbadges"><span class="badge crunchyroll">Crunchyroll</span></span>
+            </div>
+            <div class="slot">
+              <span class="stime num">26:00</span>
+              <span class="sname">とある小さな町の魔法使いと不思議な仲間たち</span>
+              <span class="sbadges"><span class="badge hulu">Hulu</span></span>
+            </div>
+            <div class="slot">
+              <span class="stime num">26:30</span>
+              <span class="sname">猫と魔王とカフェラテ</span>
+              <span class="sbadges"><span class="badge netflix">Netflix</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <p class="cat-note">曜日を左端の固定列に置き、その日の作品は右側で折り返して並べる。640px 以下では縦積みに戻る。</p>
+  <p class="cat-note">作品名 (<code>.sname</code>) は折り返す。省略はしない。</p>
 </section>
