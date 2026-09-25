@@ -7,20 +7,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
   <!-- モバイルの絞り込みシート。:has() で拾うので置き場所は pg-shell 直下でよい。 -->
   <input type="checkbox" id="fsheet" class="sr">
   <label class="fsheet-scrim" for="fsheet" aria-hidden="true"></label>
-  <aside class="side is-sticky">
-    <div class="side-top">
-      <a class="side-brand" href="#">
-        <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-        Nagisa
-      </a>
-    </div>
-    <nav class="side-nav" id="side-nav" aria-label="メインナビゲーション">
-      <a href="#" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
-      <a href="#" aria-current="page" title="アニメ一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
-      <a href="#" title="録画一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count">22</span></a>
-      <a href="#" title="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
-    </nav>
-
+  <!-- @part app-header:sticky current=アニメ一覧 -->
     <div class="pg-side-filters fsheet" aria-label="絞り込み">
       <div class="fsheet-head">絞り込み<label class="fsheet-x" for="fsheet" aria-label="絞り込みを閉じる"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></label></div>
       <div class="fgroup">
@@ -74,8 +61,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
       </div>
       <button class="reset-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M3 12a9 9 0 1 0 9-9M3 12V5m0 7h7"/></svg>絞り込みをリセット</button>
     </div>
-    <button type="button" class="side-status"><i></i>サーバー稼働中</button>
-  </aside>
+  <!-- /@part -->
 
   <main class="pg-main">
     <div class="pg">
@@ -161,10 +147,7 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
         </div>
       </nav>
 
-      <footer class="ftr is-fixed">
-        <span class="l"><span>Nagisa WebUI</span><span>v0.9.0</span><span class="sha">5abf743</span></span>
-        <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a><a class="ext" href="#github">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></span>
-      </footer>
+      <!-- @part app-footer:fixed /-->
 
     </div>
   </main>
