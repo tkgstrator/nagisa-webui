@@ -21,8 +21,6 @@ type AnimeDrawerProps = {
   onOpenChange: (open: boolean) => void
 }
 
-const EPISODE_PREVIEW_LIMIT = 5
-
 function getProviderTitleUrl(provider: string, contentId: string): string | null {
   if (!contentId) return null
   switch (provider) {
@@ -123,9 +121,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
   const titleUrl = getProviderTitleUrl(anime.provider, anime.contentId)
   const providerName = providerLabel[anime.provider] ? providerLabel[anime.provider] : anime.provider
   const totalEpisodes = anime.seasons.reduce((sum, s) => sum + s.episodes.length, 0)
-  const firstSeason = anime.seasons[0]
-  const previewEpisodes = firstSeason ? firstSeason.episodes.slice(0, EPISODE_PREVIEW_LIMIT) : []
-  const remainingEpisodes = firstSeason ? Math.max(0, firstSeason.episodes.length - previewEpisodes.length) : 0
+  const seasons = anime.seasons.filter((s) => s.episodes.length > 0)
 
   const toggleScheduled = () => {
     updateAnimeMutation.mutate({ scheduled: !anime.scheduled })
@@ -211,27 +207,32 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
             <p className='text-xs text-muted-foreground'>{content.episodes.count({ count: totalEpisodes })}</p>
           )}
 
-          {previewEpisodes.length > 0 && (
+          {/* 本文はシート内でスクロールするので、件数で切らずに全話を並べる */}
+          {seasons.length > 0 && (
             <section className='space-y-1.5 pt-1'>
               <h3 className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
-                {content.episodes.previewHeading({ count: previewEpisodes.length })}
+                {content.episodes.heading}
               </h3>
-              <ul className='space-y-1.5'>
-                {previewEpisodes.map((ep) => (
-                  <li key={ep.id} className='flex items-center gap-2 text-xs'>
-                    <span className='shrink-0 text-muted-foreground'>{ep.episodeNumber}.</span>
-                    <span className='truncate'>{ep.title}</span>
-                    {ep.releaseDate && (
-                      <span className='ml-auto shrink-0 text-muted-foreground'>
-                        {dayjs(ep.releaseDate).format('M/D')}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {remainingEpisodes > 0 && (
-                <p className='text-xs text-muted-foreground'>{content.episodes.more({ count: remainingEpisodes })}</p>
-              )}
+              {seasons.map((season) => (
+                <div key={season.id} className='space-y-1.5'>
+                  {seasons.length > 1 && (
+                    <h4 className='pt-1 text-xs font-semibold text-muted-foreground'>{season.displayName}</h4>
+                  )}
+                  <ul className='space-y-1.5'>
+                    {season.episodes.map((ep) => (
+                      <li key={ep.id} className='flex items-center gap-2 text-xs'>
+                        <span className='shrink-0 tabular-nums text-muted-foreground'>{ep.episodeNumber}.</span>
+                        <span className='truncate'>{ep.title}</span>
+                        {ep.releaseDate && (
+                          <span className='ml-auto shrink-0 tabular-nums text-muted-foreground'>
+                            {dayjs(ep.releaseDate).format('M/D')}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </section>
           )}
         </div>
@@ -252,7 +253,6 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
         {titleUrl && (
           <Button
             size='sm'
-            variant='ghost'
             render={
               <a href={titleUrl} target='_blank' rel='noopener noreferrer'>
                 {content.watchOn({ provider: providerName })}

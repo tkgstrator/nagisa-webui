@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { ChevronRight, Info } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/app/components/ui/carousel'
+import { Carousel, CarouselContent, CarouselItem } from '@/app/components/ui/carousel'
 import { providerColor, providerLabel, statusLabel } from '@/app/lib/constants'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
 
@@ -42,8 +42,6 @@ const Rail = ({ children, className }: { children: React.ReactNode; className?: 
   <div className='relative min-w-0'>
     <Carousel opts={{ align: 'start', dragFree: true, loop: false }} className='w-full min-w-0'>
       <CarouselContent className={`-mt-1 ml-0 gap-3.5 py-1 ${className ?? ''}`}>{children}</CarouselContent>
-      <CarouselPrevious className='-left-4 hidden sm:flex' />
-      <CarouselNext className='-right-4 hidden sm:flex' />
     </Carousel>
     <span
       aria-hidden='true'
@@ -211,10 +209,13 @@ function CarouselCard({
             {flag.label}
           </span>
         )}
-        <span
-          className={`absolute bottom-2 left-2 z-1 inline-flex h-[18px] items-center rounded px-1.5 text-[10px] font-semibold ${providerColor[anime.provider] ?? 'bg-secondary text-secondary-foreground'}`}
-        >
-          {providerLabel[anime.provider] ?? anime.provider}
+        {/* ダークのブランド色は 32% の半透明なので、画像の上では下に overlay を敷かないと白文字が沈む */}
+        <span className='absolute bottom-2 left-2 z-1 rounded dark:bg-overlay'>
+          <span
+            className={`inline-flex h-[18px] items-center rounded px-1.5 text-[10px] font-semibold ${providerColor[anime.provider] ?? 'bg-secondary text-secondary-foreground'}`}
+          >
+            {providerLabel[anime.provider] ?? anime.provider}
+          </span>
         </span>
         <RecordingState anime={anime} />
       </div>

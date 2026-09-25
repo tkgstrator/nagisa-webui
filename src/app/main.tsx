@@ -6,6 +6,7 @@ import { IntlayerProvider } from 'react-intlayer'
 
 import '../index.css'
 
+import { registerImageCacheWorker } from './lib/image-cache'
 import { queryClient } from './lib/query-client'
 import { routeTree } from './routeTree.gen'
 
@@ -21,6 +22,8 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+
+registerImageCacheWorker()
 
 // biome-ignore lint/style/noNonNullAssertion: reason
 const rootElement = document.getElementById('root')!
