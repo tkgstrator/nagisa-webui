@@ -28,8 +28,7 @@ const animeDrawerContent = {
       },
       episodes: {
         count: insert('{{count}} 話'),
-        previewHeading: insert('エピソード（先頭 {{count}} 話）'),
-        more: insert('ほか {{count}} 件')
+        heading: 'エピソード'
       },
       openFullPage: '詳細ページを開く',
       watchOn: insert('{{provider}} で見る')
@@ -59,8 +58,7 @@ const animeDrawerContent = {
       },
       episodes: {
         count: insert('Episodes: {{count}}'),
-        previewHeading: insert('Episodes (first {{count}})'),
-        more: insert('{{count}} more')
+        heading: 'Episodes'
       },
       openFullPage: 'Open full page',
       watchOn: insert('Watch on {{provider}}')

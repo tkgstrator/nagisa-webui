@@ -1,7 +1,8 @@
 import { getIntlayer } from 'intlayer'
+import { appLocale } from '@/app/lib/locale'
 import type { RecordStatus } from '@/schemas/recording.dto'
 
-const content = getIntlayer('constants')
+const content = getIntlayer('constants', appLocale)
 
 export const providerLabel: Record<string, string> = {
   amazon: content.provider.amazon,
@@ -17,6 +18,15 @@ export const providerColor: Record<string, string> = {
   crunchyroll: 'bg-brand-crunchyroll text-brand-crunchyroll-foreground',
   abema: 'bg-brand-abema text-brand-abema-foreground',
   netflix: 'bg-brand-netflix text-brand-netflix-foreground'
+}
+
+/** 画像の上に載せる用。providerColor は半透明で背景が透けるので不透明版を使う。 */
+export const providerSolidColor: Record<string, string> = {
+  amazon: 'bg-brand-amazon-solid text-brand-amazon-solid-foreground',
+  hulu: 'bg-brand-hulu-solid text-brand-hulu-solid-foreground',
+  crunchyroll: 'bg-brand-crunchyroll-solid text-brand-crunchyroll-solid-foreground',
+  abema: 'bg-brand-abema-solid text-brand-abema-solid-foreground',
+  netflix: 'bg-brand-netflix-solid text-brand-netflix-solid-foreground'
 }
 
 export const statusLabel: Record<string, string> = {

@@ -1,10 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import type { ReactNode } from 'react'
 import { useIntlayer } from 'react-intlayer'
+import { DataTable, DataTd, DataTh, DataTr, type RowTone } from '@/app/components/data-table'
+import { FormHint } from '@/app/components/form-field'
 import { PageContainer } from '@/app/components/page-container'
-import { StatTile } from '@/app/components/stat-tile'
-import { recordStatusAccent, recordStatusLabel, recordStatusNote } from '@/app/lib/constants'
+import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
+import { PageNotice, PageSection } from '@/app/components/page-section'
+import { StatGrid, StatTile } from '@/app/components/stat-tile'
+import { recordStatusLabel, recordStatusNote } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import {
   recorderQueueSnapshotQueryOptions,
   recorderStatusQueryOptions,
@@ -12,15 +16,11 @@ import {
   recordingSyncStateQueryOptions
 } from '@/app/lib/query-options'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
-import { RecordStatusEnum } from '@/schemas/recording.dto'
+import { type RecordStatus, RecordStatusEnum } from '@/schemas/recording.dto'
 
 export const Route = createFileRoute('/admin/status/')({
   component: StatusAdminPage
 })
-
-const headClass =
-  'px-2.5 py-2 text-left text-[11px] font-semibold tracking-[0.03em] text-muted-foreground max-sm:px-[5px] max-sm:py-[9px]'
-const cellClass = 'p-2.5 align-middle max-sm:px-[5px] max-sm:py-[9px]'
 
 /** 台帳の合計サイズ。TB を超えたら TB 表記にする。 */
 const formatSize = (bytes: number): string => {
@@ -28,55 +28,15 @@ const formatSize = (bytes: number): string => {
   return gb >= 1024 ? `${(gb / 1024).toFixed(2)} TB` : `${gb.toFixed(1)} GB`
 }
 
-type FieldTone = 'mute' | 'ok' | 'warn' | 'err'
-
-const fieldAccent: Record<FieldTone, string> = {
-  mute: 'border-l-border',
-  ok: 'border-l-success',
-  warn: 'border-l-warning',
-  err: 'border-l-destructive'
+const recordStatusTone: Record<RecordStatus, RowTone> = {
+  none: 'mute',
+  pending: 'primary',
+  downloading: 'info',
+  completed: 'ok',
+  failed: 'err',
+  stale: 'warn',
+  missing: 'mute'
 }
-
-/** 数値にならない項目 (バージョン・カーソル・ロック) 用。StatTile と縦の見えを揃える。 */
-const Field = ({
-  label,
-  value,
-  note,
-  tone = 'mute',
-  mono
-}: {
-  label: string
-  value: string
-  note?: string
-  tone?: FieldTone
-  mono?: boolean
-}) => (
-  <div className={`flex min-w-0 flex-col gap-0.5 rounded-r-lg border-l-[3px] py-0.5 pr-2 pl-3.5 ${fieldAccent[tone]}`}>
-    <span className='text-xs leading-[1.5] text-muted-foreground'>{label}</span>
-    <span className={`truncate text-[15px] font-semibold leading-[1.4] ${mono ? 'font-mono text-[13px]' : ''}`}>
-      {value}
-    </span>
-    <span className='text-xs leading-[1.5] text-muted-foreground'>{note ?? ''}</span>
-  </div>
-)
-
-const Notice = ({ tone, children }: { tone: FieldTone; children: ReactNode }) => (
-  <p className={`rounded-r-lg border-l-[3px] py-2 pr-2 pl-3.5 text-sm text-muted-foreground ${fieldAccent[tone]}`}>
-    {children}
-  </p>
-)
-
-const Section = ({ title, description, children }: { title: string; description: string; children: ReactNode }) => (
-  <section className='flex flex-col gap-3'>
-    <div>
-      <h2 className='text-sm font-semibold'>{title}</h2>
-      <p className='mt-0.5 text-xs text-muted-foreground'>{description}</p>
-    </div>
-    {children}
-  </section>
-)
-
-const tileGrid = 'grid grid-cols-4 gap-6 max-lg:grid-cols-2'
 
 function StatusAdminPage() {
   const content = useIntlayer('admin-status')
@@ -104,279 +64,268 @@ function StatusAdminPage() {
   }
 
   return (
-    <PageContainer className='gap-6'>
-      <header>
-        <h1 className='text-2xl font-bold tracking-tight'>{content.title.value}</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>{content.description.value}</p>
-      </header>
+    <PageContainer narrow className='gap-[22px]'>
+      <PageHeader
+        eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
+        title={content.title.value}
+        sub={content.description.value}
+      />
 
-      <Section title='Nagisa' description={content.nagisaSection.description.value}>
-        {status.isPending ? (
-          <Notice tone='mute'>{content.loading.value}</Notice>
-        ) : status.isError || status.data === undefined ? (
-          <Notice tone='err'>{content.nagisaSection.error.value}</Notice>
-        ) : (
-          <div className={tileGrid}>
-            <Field
-              label={content.nagisaSection.version.value}
-              value={`v${status.data.version}`}
-              note={content.nagisaSection.uptimeNote({ uptime: formatUptime(status.data.uptime) }).value}
-              tone='ok'
-            />
-            <Field
-              label={content.nagisaSection.redisLabel.value}
-              value={
-                status.data.redis === null
-                  ? content.unknown.value
-                  : status.data.redis.connected
-                    ? content.nagisaSection.redisConnected.value
-                    : content.nagisaSection.redisDisconnected.value
-              }
-              note={
-                status.data.redis === null
-                  ? content.nagisaSection.redisUnknownNote.value
-                  : content.nagisaSection.redisMemoryNote({ memory: status.data.redis.memory_used }).value
-              }
-              tone={status.data.redis?.connected === true ? 'ok' : 'err'}
-            />
-            <Field
-              label={content.nagisaSection.cpuMemory.value}
-              value={
-                status.data.system === null
-                  ? content.unknown.value
-                  : `${status.data.system.cpu_percent.toFixed(1)}% / ${status.data.system.memory_percent.toFixed(1)}%`
-              }
-              note={content.nagisaSection.cpuMemoryNote.value}
-              tone={(status.data.system?.memory_percent ?? 0) >= 90 ? 'warn' : 'mute'}
-            />
-            <Field
-              label={content.nagisaSection.diskFree.value}
-              value={
-                status.data.system === null ? content.unknown.value : `${status.data.system.disk_free_gb.toFixed(1)} GB`
-              }
-              note={content.nagisaSection.diskFreeNote.value}
-              tone={(status.data.system?.disk_free_gb ?? Number.POSITIVE_INFINITY) < 100 ? 'warn' : 'mute'}
-            />
-          </div>
-        )}
-      </Section>
-
-      <Section title={content.queueSection.title.value} description={content.queueSection.description.value}>
-        {snapshot.isPending ? (
-          <Notice tone='mute'>{content.loading.value}</Notice>
-        ) : snapshot.isError || snapshot.data === undefined ? (
-          <Notice tone='err'>{content.queueSection.error.value}</Notice>
-        ) : (
-          <>
-            <div className={tileGrid}>
+      <div className='pt-3.5 max-sm:pt-1.5'>
+        <PageSection title='Nagisa'>
+          <FormHint>{content.nagisaSection.description.value}</FormHint>
+          {status.isPending ? (
+            <PageNotice tone='mute'>{content.loading.value}</PageNotice>
+          ) : status.isError || status.data === undefined ? (
+            <PageNotice tone='err'>{content.nagisaSection.error.value}</PageNotice>
+          ) : (
+            <StatGrid>
               <StatTile
-                label={content.queueSection.active.value}
-                value={snapshot.data.counts.active}
-                unit={content.queueSection.unit.value}
-                note={content.queueSection.activeNote.value}
-                tone='primary'
+                label={content.nagisaSection.version.value}
+                value={`v${status.data.version}`}
+                note={content.nagisaSection.uptimeNote({ uptime: formatUptime(status.data.uptime) }).value}
+                tone='ok'
               />
               <StatTile
-                label={content.queueSection.waiting.value}
-                value={snapshot.data.counts.wait + snapshot.data.counts.delayed}
-                unit={content.queueSection.unit.value}
-                note={
-                  content.queueSection.waitingNote({ count: snapshot.data.counts.delayed.toLocaleString('ja-JP') })
-                    .value
+                label={content.nagisaSection.redisLabel.value}
+                value={
+                  status.data.redis === null
+                    ? content.unknown.value
+                    : status.data.redis.connected
+                      ? content.nagisaSection.redisConnected.value
+                      : content.nagisaSection.redisDisconnected.value
                 }
+                note={
+                  status.data.redis === null
+                    ? content.nagisaSection.redisUnknownNote.value
+                    : content.nagisaSection.redisMemoryNote({ memory: status.data.redis.memory_used }).value
+                }
+                tone={status.data.redis?.connected === true ? 'ok' : 'err'}
+              />
+              <StatTile
+                label={content.nagisaSection.cpuMemory.value}
+                value={
+                  status.data.system === null
+                    ? content.unknown.value
+                    : `${status.data.system.cpu_percent.toFixed(1)}% / ${status.data.system.memory_percent.toFixed(1)}%`
+                }
+                note={content.nagisaSection.cpuMemoryNote.value}
+                tone={(status.data.system?.memory_percent ?? 0) >= 90 ? 'warn' : 'mute'}
+              />
+              <StatTile
+                label={content.nagisaSection.diskFree.value}
+                value={
+                  status.data.system === null
+                    ? content.unknown.value
+                    : `${status.data.system.disk_free_gb.toFixed(1)} GB`
+                }
+                note={content.nagisaSection.diskFreeNote.value}
+                tone={(status.data.system?.disk_free_gb ?? Number.POSITIVE_INFINITY) < 100 ? 'warn' : 'mute'}
+              />
+            </StatGrid>
+          )}
+        </PageSection>
+
+        <PageSection title={content.queueSection.title.value}>
+          <FormHint>{content.queueSection.description.value}</FormHint>
+          {snapshot.isPending ? (
+            <PageNotice tone='mute'>{content.loading.value}</PageNotice>
+          ) : snapshot.isError || snapshot.data === undefined ? (
+            <PageNotice tone='err'>{content.queueSection.error.value}</PageNotice>
+          ) : (
+            <>
+              <StatGrid>
+                <StatTile
+                  label={content.queueSection.active.value}
+                  value={snapshot.data.counts.active}
+                  unit={content.queueSection.unit.value}
+                  note={content.queueSection.activeNote.value}
+                  tone='primary'
+                />
+                <StatTile
+                  label={content.queueSection.waiting.value}
+                  value={snapshot.data.counts.wait + snapshot.data.counts.delayed}
+                  unit={content.queueSection.unit.value}
+                  note={
+                    content.queueSection.waitingNote({ count: snapshot.data.counts.delayed.toLocaleString(appLocale) })
+                      .value
+                  }
+                  tone='warn'
+                />
+                <StatTile
+                  label={content.queueSection.failed.value}
+                  value={snapshot.data.counts.failed}
+                  unit={content.queueSection.unit.value}
+                  note={content.queueSection.failedNote.value}
+                  tone='err'
+                />
+                <StatTile
+                  label={content.queueSection.completed.value}
+                  value={snapshot.data.counts.completed}
+                  unit={content.queueSection.unit.value}
+                  note={content.queueSection.completedNote.value}
+                  tone='ok'
+                />
+              </StatGrid>
+              <FormHint>
+                {content.queueSection.fetchedAt({
+                  time: formatAbsolute(new Date(snapshot.data.generated_at * 1000).toISOString())
+                })}
+              </FormHint>
+            </>
+          )}
+        </PageSection>
+
+        <PageSection title={content.librarySection.title.value}>
+          <FormHint>{content.librarySection.description.value}</FormHint>
+          {stats.isPending ? (
+            <PageNotice tone='mute'>{content.loading.value}</PageNotice>
+          ) : stats.isError || stats.data === undefined ? (
+            <PageNotice tone='err'>{content.librarySection.error.value}</PageNotice>
+          ) : (
+            <StatGrid>
+              <StatTile
+                label={content.librarySection.recordings.value}
+                value={stats.data.recordings}
+                unit={content.librarySection.unit.value}
+                note={content.librarySection.recordingsNote.value}
+                tone='ok'
+              />
+              <StatTile
+                label={content.librarySection.unresolved.value}
+                value={stats.data.unresolved}
+                unit={content.librarySection.unit.value}
+                note={content.librarySection.unresolvedNote.value}
                 tone='warn'
               />
               <StatTile
-                label={content.queueSection.failed.value}
-                value={snapshot.data.counts.failed}
-                unit={content.queueSection.unit.value}
-                note={content.queueSection.failedNote.value}
-                tone='err'
+                label={content.librarySection.totalSize.value}
+                value={formatSize(stats.data.total_size)}
+                note={content.librarySection.totalSizeNote.value}
+                tone='mute'
               />
               <StatTile
-                label={content.queueSection.completed.value}
-                value={snapshot.data.counts.completed}
-                unit={content.queueSection.unit.value}
-                note={content.queueSection.completedNote.value}
-                tone='ok'
+                label={content.librarySection.position.value}
+                value={`seq ${stats.data.last_seq.toLocaleString(appLocale)}`}
+                note={`epoch ${stats.data.epoch}`}
+                tone='mute'
+                mono
               />
-            </div>
-            <p className='text-xs text-muted-foreground'>
-              {content.queueSection.fetchedAt({
-                time: formatAbsolute(new Date(snapshot.data.generated_at * 1000).toISOString())
-              })}
-            </p>
-          </>
-        )}
-      </Section>
+            </StatGrid>
+          )}
+        </PageSection>
 
-      <Section title={content.librarySection.title.value} description={content.librarySection.description.value}>
-        {stats.isPending ? (
-          <Notice tone='mute'>{content.loading.value}</Notice>
-        ) : stats.isError || stats.data === undefined ? (
-          <Notice tone='err'>{content.librarySection.error.value}</Notice>
-        ) : (
-          <div className={tileGrid}>
-            <StatTile
-              label={content.librarySection.recordings.value}
-              value={stats.data.recordings}
-              unit={content.librarySection.unit.value}
-              note={content.librarySection.recordingsNote.value}
-              tone='ok'
-            />
-            <StatTile
-              label={content.librarySection.unresolved.value}
-              value={stats.data.unresolved}
-              unit={content.librarySection.unit.value}
-              note={content.librarySection.unresolvedNote.value}
-              tone='warn'
-            />
-            <Field
-              label={content.librarySection.totalSize.value}
-              value={formatSize(stats.data.total_size)}
-              note={content.librarySection.totalSizeNote.value}
-            />
-            <Field
-              label={content.librarySection.position.value}
-              value={`seq ${stats.data.last_seq.toLocaleString('ja-JP')}`}
-              note={`epoch ${stats.data.epoch}`}
-              mono
-            />
-          </div>
-        )}
-      </Section>
-
-      <Section title={content.syncSection.title.value} description={content.syncSection.description.value}>
-        {sync.isPending ? (
-          <Notice tone='mute'>{content.loading.value}</Notice>
-        ) : sync.data === undefined ? (
-          <Notice tone='err'>{content.syncSection.error.value}</Notice>
-        ) : (
-          <>
-            {/*
+        <PageSection title={content.syncSection.title.value}>
+          <FormHint>{content.syncSection.description.value}</FormHint>
+          {sync.isPending ? (
+            <PageNotice tone='mute'>{content.loading.value}</PageNotice>
+          ) : sync.data === undefined ? (
+            <PageNotice tone='err'>{content.syncSection.error.value}</PageNotice>
+          ) : (
+            <>
+              {/*
               react-query は再取得に失敗しても直前の data を保持する。黙って出すと
               「同期が止まっている」と「同期状態を読めていない」が見分けられない。
             */}
-            {sync.isError && <Notice tone='warn'>{content.syncSection.staleWarning.value}</Notice>}
-            <div className={tileGrid}>
-              <Field
-                label={content.syncSection.lastSucceeded.value}
-                value={
-                  sync.data.lastSucceededAt === null
-                    ? content.syncSection.neverRun.value
-                    : formatRelative(sync.data.lastSucceededAt)
-                }
-                note={
-                  sync.data.lastSucceededAt === null
-                    ? content.syncSection.neverRunNote.value
-                    : formatAbsolute(sync.data.lastSucceededAt)
-                }
-                tone={sync.data.lastSucceededAt === null ? 'err' : 'ok'}
-              />
-              <Field
-                label={content.syncSection.cursor.value}
-                value={
-                  sync.data.snapshotCursor !== null
-                    ? content.syncSection.cursorSnapshotting.value
-                    : sync.data.cursor === null
-                      ? content.syncSection.cursorUnfetched.value
-                      : content.syncSection.cursorTracking.value
-                }
-                note={
-                  sync.data.snapshotCursor !== null && sync.data.snapshotStartedAt !== null
-                    ? content.syncSection.cursorSnapshotStartedNote({
-                        time: formatRelative(sync.data.snapshotStartedAt)
-                      }).value
-                    : sync.data.cursor === null
-                      ? content.syncSection.cursorNeverRunNote.value
-                      : content.syncSection.cursorTrackingNote.value
-                }
-                tone={sync.data.cursor === null && sync.data.snapshotCursor === null ? 'warn' : 'mute'}
-              />
-              <Field
-                label={content.syncSection.lock.value}
-                value={
-                  leaseUntil === null
-                    ? content.syncSection.lockFree.value
-                    : leaseExpired
-                      ? content.syncSection.lockExpired.value
-                      : content.syncSection.lockRunning.value
-                }
-                note={
-                  leaseUntil === null
-                    ? content.syncSection.lockFreeNote.value
-                    : leaseExpired
-                      ? content.syncSection.lockExpiredNote({
-                          owner: sync.data.leaseOwner ?? content.unknown.value,
-                          time: formatRelative(leaseUntil)
+              {sync.isError && <PageNotice tone='warn'>{content.syncSection.staleWarning.value}</PageNotice>}
+              <StatGrid>
+                <StatTile
+                  label={content.syncSection.lastSucceeded.value}
+                  value={
+                    sync.data.lastSucceededAt === null
+                      ? content.syncSection.neverRun.value
+                      : formatRelative(sync.data.lastSucceededAt)
+                  }
+                  note={
+                    sync.data.lastSucceededAt === null
+                      ? content.syncSection.neverRunNote.value
+                      : formatAbsolute(sync.data.lastSucceededAt)
+                  }
+                  tone={sync.data.lastSucceededAt === null ? 'err' : 'ok'}
+                />
+                <StatTile
+                  label={content.syncSection.cursor.value}
+                  value={
+                    sync.data.snapshotCursor !== null
+                      ? content.syncSection.cursorSnapshotting.value
+                      : sync.data.cursor === null
+                        ? content.syncSection.cursorUnfetched.value
+                        : content.syncSection.cursorTracking.value
+                  }
+                  note={
+                    sync.data.snapshotCursor !== null && sync.data.snapshotStartedAt !== null
+                      ? content.syncSection.cursorSnapshotStartedNote({
+                          time: formatRelative(sync.data.snapshotStartedAt)
                         }).value
-                      : content.syncSection.lockRunningNote({
-                          owner: sync.data.leaseOwner ?? content.unknown.value,
-                          time: formatAbsolute(leaseUntil)
-                        }).value
-                }
-                tone={leaseExpired ? 'warn' : 'mute'}
-              />
-              <StatTile
-                label={content.syncSection.tracked.value}
-                value={sync.data.tracked}
-                unit={content.syncSection.unit.value}
-                note={content.syncSection.trackedNote.value}
-                tone='primary'
-              />
-            </div>
-          </>
-        )}
-      </Section>
+                      : sync.data.cursor === null
+                        ? content.syncSection.cursorNeverRunNote.value
+                        : content.syncSection.cursorTrackingNote.value
+                  }
+                  tone={sync.data.cursor === null && sync.data.snapshotCursor === null ? 'warn' : 'mute'}
+                />
+                <StatTile
+                  label={content.syncSection.lock.value}
+                  value={
+                    leaseUntil === null
+                      ? content.syncSection.lockFree.value
+                      : leaseExpired
+                        ? content.syncSection.lockExpired.value
+                        : content.syncSection.lockRunning.value
+                  }
+                  note={
+                    leaseUntil === null
+                      ? content.syncSection.lockFreeNote.value
+                      : leaseExpired
+                        ? content.syncSection.lockExpiredNote({
+                            owner: sync.data.leaseOwner ?? content.unknown.value,
+                            time: formatRelative(leaseUntil)
+                          }).value
+                        : content.syncSection.lockRunningNote({
+                            owner: sync.data.leaseOwner ?? content.unknown.value,
+                            time: formatAbsolute(leaseUntil)
+                          }).value
+                  }
+                  tone={leaseExpired ? 'warn' : 'mute'}
+                />
+                <StatTile
+                  label={content.syncSection.tracked.value}
+                  value={sync.data.tracked}
+                  unit={content.syncSection.unit.value}
+                  note={content.syncSection.trackedNote.value}
+                  tone='primary'
+                />
+              </StatGrid>
+            </>
+          )}
+        </PageSection>
 
-      {sync.data !== undefined && (
-        <Section
-          title={content.breakdownSection.title.value}
-          description={
-            sync.isError
-              ? content.breakdownSection.descriptionError.value
-              : content.breakdownSection.descriptionOk.value
-          }
-        >
-          <div className='overflow-x-auto'>
-            <table className='w-full border-collapse text-[13px]'>
-              <thead>
-                <tr className='border-b border-border'>
-                  <th scope='col' className={`${headClass} pl-[13px]`}>
-                    {content.breakdownSection.status.value}
-                  </th>
-                  <th scope='col' className={`${headClass} text-right`}>
-                    {content.breakdownSection.count.value}
-                  </th>
-                  <th scope='col' className={headClass}>
-                    {content.breakdownSection.meaning.value}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {RecordStatusEnum.options.map((s) => {
-                  const count = sync.data.counts[s]
-                  return (
-                    <tr key={s} className='border-b border-border transition-colors hover:bg-muted'>
-                      <td
-                        className={`${cellClass} whitespace-nowrap border-l-[3px] font-medium ${count === 0 ? 'border-l-border text-muted-foreground' : recordStatusAccent[s]}`}
-                      >
-                        {recordStatusLabel[s]}
-                      </td>
-                      <td
-                        className={`${cellClass} text-right tabular-nums ${count === 0 ? 'text-muted-foreground' : ''}`}
-                      >
-                        {count.toLocaleString('ja-JP')}
-                      </td>
-                      <td className={`${cellClass} text-muted-foreground`}>{recordStatusNote[s]}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </Section>
-      )}
+        {sync.data !== undefined && (
+          <PageSection title={content.breakdownSection.title.value}>
+            <FormHint>
+              {sync.isError
+                ? content.breakdownSection.descriptionError.value
+                : content.breakdownSection.descriptionOk.value}
+            </FormHint>
+            <DataTable
+              head={
+                <>
+                  <DataTh>{content.breakdownSection.status.value}</DataTh>
+                  <DataTh right>{content.breakdownSection.count.value}</DataTh>
+                  <DataTh>{content.breakdownSection.meaning.value}</DataTh>
+                </>
+              }
+            >
+              {RecordStatusEnum.options.map((s) => (
+                <DataTr key={s} tone={recordStatusTone[s]}>
+                  <DataTd>{recordStatusLabel[s]}</DataTd>
+                  <DataTd right>{sync.data.counts[s].toLocaleString(appLocale)}</DataTd>
+                  <DataTd sub>{recordStatusNote[s]}</DataTd>
+                </DataTr>
+              ))}
+            </DataTable>
+          </PageSection>
+        )}
+      </div>
     </PageContainer>
   )
 }

@@ -35,6 +35,7 @@ const adminLogsContent = {
         ariaLabel: 'ログ本文で検索'
       },
       page: {
+        eyebrow: '管理',
         title: '同期ログ',
         description: 'cron・キューバッチ・手動実行の履歴、Worker の生ログ、録画リクエストの結果を確認します。'
       },
@@ -60,6 +61,7 @@ const adminLogsContent = {
         }
       },
       tabs: {
+        ariaLabel: '表示するログの種類',
         runs: '実行履歴',
         entries: '生ログ',
         recordings: '録画'
@@ -115,6 +117,7 @@ const adminLogsContent = {
         ariaLabel: 'Search log messages'
       },
       page: {
+        eyebrow: 'Admin',
         title: 'Sync logs',
         description: 'View cron, queue batch, and manual run history, raw Worker logs, and recording request results.'
       },
@@ -140,6 +143,7 @@ const adminLogsContent = {
         }
       },
       tabs: {
+        ariaLabel: 'Log type to show',
         runs: 'Run history',
         entries: 'Raw logs',
         recordings: 'Recordings'

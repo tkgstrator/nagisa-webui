@@ -22,6 +22,7 @@ const recordingsToolbarContent = {
         provider: '配信元'
       },
       expiringOnly: '配信終了予定のみ',
+      showFinished: '完結も表示',
       reset: '絞り込みをリセット',
       sortLabel: '並べ替え'
     },
@@ -44,6 +45,7 @@ const recordingsToolbarContent = {
         provider: 'Provider'
       },
       expiringOnly: 'Leaving soon only',
+      showFinished: 'Show finished',
       reset: 'Reset filters',
       sortLabel: 'Sort'
     }

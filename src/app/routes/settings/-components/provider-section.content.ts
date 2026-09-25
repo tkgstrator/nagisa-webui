@@ -11,8 +11,7 @@ const providerSectionContent = {
         error: '作品数を取得できません',
         label: insert('{{count}} 作品')
       },
-      unlinkedTag: '未連携',
-      unlinkedDescription: 'カタログの取得はまだ設定されていません。',
+      unlinkedDescription: 'まだ対応していません。',
       switchLabel: insert('{{provider}} を表示'),
       season: {
         label: '既定のクール',
@@ -28,8 +27,7 @@ const providerSectionContent = {
         error: 'Could not load the title count',
         label: insert('{{count}} titles')
       },
-      unlinkedTag: 'Not connected',
-      unlinkedDescription: 'Catalog retrieval has not been configured yet.',
+      unlinkedDescription: 'Not supported yet.',
       switchLabel: insert('Show {{provider}}'),
       season: {
         label: 'Default season',

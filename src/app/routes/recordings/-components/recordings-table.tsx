@@ -59,49 +59,14 @@ const SortableHead = ({ label, sortKey, sort, onSortChange, className = '' }: So
   )
 }
 
-const Checkbox = ({
-  checked,
-  onChange,
-  label
-}: {
-  checked: boolean
-  onChange: (value: boolean) => void
-  label: string
-}) => (
-  <input
-    type='checkbox'
-    aria-label={label}
-    checked={checked}
-    onChange={(e) => onChange(e.target.checked)}
-    className='size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border border-input bg-background transition-colors checked:border-primary checked:bg-primary checked:bg-[url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m5%2013%204%204%2010-10%27%2F%3E%3C%2Fsvg%3E")] checked:bg-[length:12px_12px] checked:bg-center checked:bg-no-repeat focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
-  />
-)
-
-type RowProps = {
-  anime: AnimeSchema
-  selected: boolean
-  onToggleSelected: (id: string) => void
-  onUnschedule: (anime: AnimeSchema) => void
-  unscheduling: boolean
-}
-
-const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: RowProps) => {
+const Row = ({ anime }: { anime: AnimeSchema }) => {
   const { settings } = useSettings()
   const content = useIntlayer('recordings-recordings-table')
   const season = seasonLabel(anime.year, anime.quarter)
   const remaining = anime.expiredAt === null ? null : daysUntil(anime.expiredAt)
   return (
-    <tr
-      className={`border-b border-border transition-colors ${selected ? 'bg-accent/55 hover:bg-accent/75' : 'hover:bg-muted focus-within:bg-muted'}`}
-    >
+    <tr className='border-b border-border transition-colors focus-within:bg-muted hover:bg-muted'>
       <td className={`${cellClass} border-l-[3px] ${rowAccent(anime)}`}>
-        <Checkbox
-          checked={selected}
-          onChange={() => onToggleSelected(anime.id)}
-          label={content.selectRow({ title: anime.title }).value}
-        />
-      </td>
-      <td className={cellClass}>
         <div className='flex min-w-0 items-center gap-3 max-sm:gap-2'>
           <div className='group relative aspect-video w-[88px] shrink-0 overflow-hidden rounded-md max-sm:w-[60px]'>
             <ProxyImage
@@ -174,28 +139,6 @@ const Row = ({ anime, selected, onToggleSelected, onUnschedule, unscheduling }: 
           </>
         )}
       </td>
-      <td className={cellClass}>
-        <button
-          type='button'
-          aria-label={content.unscheduleRow({ title: anime.title }).value}
-          disabled={unscheduling}
-          onClick={() => onUnschedule(anime)}
-          className='inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-status-cancelled hover:text-status-cancelled-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring disabled:cursor-default disabled:opacity-45 max-sm:px-1'
-        >
-          <svg
-            viewBox='0 0 24 24'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='2.2'
-            strokeLinecap='round'
-            className='size-3.5 shrink-0'
-            aria-hidden='true'
-          >
-            <path d='M6 6l12 12M18 6 6 18' />
-          </svg>
-          <span>{content.unschedule}</span>
-        </button>
-      </td>
     </tr>
   )
 }
@@ -205,7 +148,7 @@ const GroupRow = ({ label, count, hint }: { label: string; count: number; hint: 
   return (
     <tr>
       <th
-        colSpan={8}
+        colSpan={6}
         scope='colgroup'
         className='border-b border-border px-2.5 pt-[18px] pb-1.5 pl-[13px] text-left text-xs font-semibold text-muted-foreground'
       >
@@ -219,49 +162,39 @@ const GroupRow = ({ label, count, hint }: { label: string; count: number; hint: 
 
 type RecordingsTableProps = {
   items: AnimeSchema[]
-  selected: Set<string>
-  onToggleSelected: (id: string) => void
-  onUnschedule: (anime: AnimeSchema) => void
-  unschedulingId: string | null
   sort: SortValue
   onSortChange: (value: SortValue) => void
 }
 
-export const RecordingsTable = ({
-  items,
-  selected,
-  onToggleSelected,
-  onUnschedule,
-  unschedulingId,
-  sort,
-  onSortChange
-}: RecordingsTableProps) => {
+export const RecordingsTable = ({ items, sort, onSortChange }: RecordingsTableProps) => {
   const content = useIntlayer('recordings-recordings-table')
   const airing = items.filter((anime) => anime.status === 'RELEASING')
-  const others = items.filter((anime) => anime.status !== 'RELEASING')
+  const finished = items.filter((anime) => anime.status === 'FINISHED')
+  const others = items.filter((anime) => anime.status !== 'RELEASING' && anime.status !== 'FINISHED')
   const groups = [
     { key: 'airing', label: content.groups.airing.label.value, hint: content.groups.airing.hint.value, items: airing },
+    {
+      key: 'finished',
+      label: content.groups.finished.label.value,
+      hint: content.groups.finished.hint.value,
+      items: finished
+    },
     { key: 'others', label: content.groups.others.label.value, hint: content.groups.others.hint.value, items: others }
   ].filter((group) => group.items.length > 0)
 
   return (
     <div className='min-w-0 max-sm:overflow-x-auto'>
-      <table className='w-full table-fixed border-collapse text-sm max-sm:min-w-[760px]'>
+      <table className='w-full table-fixed border-collapse text-sm max-sm:min-w-[656px]'>
         <colgroup>
-          <col className='w-10' />
           <col />
           <col className='w-[104px]' />
           <col className='w-[76px]' />
           <col className='w-[88px]' />
           <col className='w-[112px]' />
           <col className='w-24' />
-          <col className='w-16' />
         </colgroup>
         <thead>
           <tr className='border-b border-border'>
-            <th scope='col' className={headClass}>
-              <span className='sr-only'>{content.columns.select}</span>
-            </th>
             <SortableHead label={content.columns.title.value} sortKey='title' sort={sort} onSortChange={onSortChange} />
             <th scope='col' className={headClass}>
               {content.columns.provider}
@@ -281,9 +214,6 @@ export const RecordingsTable = ({
             <th scope='col' className={headClass}>
               {content.columns.expiresAt}
             </th>
-            <th scope='col' className={headClass}>
-              <span className='sr-only'>{content.columns.actions}</span>
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -291,14 +221,7 @@ export const RecordingsTable = ({
             <Fragment key={group.key}>
               <GroupRow label={group.label} count={group.items.length} hint={group.hint} />
               {group.items.map((anime) => (
-                <Row
-                  key={anime.id}
-                  anime={anime}
-                  selected={selected.has(anime.id)}
-                  onToggleSelected={onToggleSelected}
-                  onUnschedule={onUnschedule}
-                  unscheduling={unschedulingId === anime.id}
-                />
+                <Row key={anime.id} anime={anime} />
               ))}
             </Fragment>
           ))}

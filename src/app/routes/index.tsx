@@ -10,6 +10,7 @@ import { PageContainer } from '@/app/components/page-container'
 import { ScheduledUpdatesList } from '@/app/components/scheduled-updates-list'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs'
 import { providerColor, providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import { animeListQueryOptions, badgedAnimeQueryOptions } from '@/app/lib/query-options'
 import {
   activeSeason,
@@ -90,7 +91,7 @@ const SummaryTile = ({
       <span
         className={`text-[28px] leading-[1.1] tracking-[-0.02em] tabular-nums max-sm:text-2xl ${isZero ? 'font-semibold text-muted-foreground' : 'font-bold'}`}
       >
-        {value.toLocaleString('ja-JP')}
+        {value.toLocaleString(appLocale)}
         <small className='ml-1 text-[13px] font-medium tracking-normal text-muted-foreground'>{unit}</small>
       </span>
       <span
@@ -363,7 +364,7 @@ function HomePage() {
             description={
               <>
                 {content.links.browse.prefix}{' '}
-                <span className='tabular-nums'>{seasonTotal.toLocaleString('ja-JP')}</span>{' '}
+                <span className='tabular-nums'>{seasonTotal.toLocaleString(appLocale)}</span>{' '}
                 {content.links.browse.suffix}
               </>
             }
@@ -374,7 +375,7 @@ function HomePage() {
             description={
               <>
                 {content.links.recordings.prefix}{' '}
-                <span className='tabular-nums'>{scheduledTotal.toLocaleString('ja-JP')}</span>{' '}
+                <span className='tabular-nums'>{scheduledTotal.toLocaleString(appLocale)}</span>{' '}
                 {content.links.recordings.suffix}
               </>
             }

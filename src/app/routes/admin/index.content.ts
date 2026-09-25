@@ -4,6 +4,7 @@ const adminContent = {
   key: 'admin',
   content: t({
     ja: {
+      eyebrow: '設定',
       title: '管理',
       description: '運用・デバッグ用のツール',
       items: {
@@ -30,6 +31,7 @@ const adminContent = {
       }
     },
     en: {
+      eyebrow: 'Settings',
       title: 'Admin',
       description: 'Tools for operations and debugging',
       items: {

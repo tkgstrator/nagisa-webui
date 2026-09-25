@@ -75,6 +75,8 @@ export const AnimeListQuerySchema = z.object({
   year: z.coerce.number().int().optional(),
   quarter: z.coerce.number().int().min(0).max(3).optional(),
   status: z.string().nonempty().optional(),
+  /** この放送状態の作品を除く。AniList の紐付けが無い作品は残す。 */
+  excludeStatus: z.string().nonempty().optional(),
   scheduled: z.coerce.boolean().optional(),
   recorded: z.coerce.boolean().optional(),
   badge: z.string().nonempty().optional(),

@@ -1,13 +1,15 @@
 import { useIntlayer } from 'react-intlayer'
 
 type RecordingsHeaderProps = {
-  /** 予約中の総件数 (フィルタ適用後・全ページ)。 */
+  /** 予約中の総件数 (フィルタ適用後・全ページ)。非表示にしている完結作品も含む。 */
   total: number
+  /** 一覧から外している完結作品の件数。0 なら注記を出さない。 */
+  hiddenFinished: number
   search: string
   onSearchChange: (value: string) => void
 }
 
-export const RecordingsHeader = ({ total, search, onSearchChange }: RecordingsHeaderProps) => {
+export const RecordingsHeader = ({ total, hiddenFinished, search, onSearchChange }: RecordingsHeaderProps) => {
   const content = useIntlayer('recordings-recordings-header')
   return (
     <header className='flex flex-wrap items-end justify-between gap-5'>
@@ -16,6 +18,7 @@ export const RecordingsHeader = ({ total, search, onSearchChange }: RecordingsHe
         <p className='mt-1 text-xs text-muted-foreground'>
           <span className='tabular-nums'>{total}</span>
           {content.scheduledSuffix}
+          {hiddenFinished > 0 ? content.finishedHidden({ count: hiddenFinished }) : null}
         </p>
       </div>
       <label className='relative max-w-[360px] flex-[1_1_260px] max-sm:max-w-none max-sm:flex-[1_1_100%]'>

@@ -21,6 +21,10 @@ const displaySectionContent = {
         label: 'テーマ',
         description: '「システム」は OS の外観設定に合わせます。'
       },
+      language: {
+        label: '言語',
+        description: '切り替えるとページを再読み込みします。'
+      },
       pageSize: {
         label: '1 ページの表示件数',
         description: 'アニメ一覧・録画一覧・未識別タイトル一覧に適用されます。'
@@ -57,6 +61,10 @@ const displaySectionContent = {
       theme: {
         label: 'Theme',
         description: "System follows your operating system's appearance settings."
+      },
+      language: {
+        label: 'Language',
+        description: 'Switching reloads the page.'
       },
       pageSize: {
         label: 'Items per page',

@@ -4,6 +4,7 @@ const adminStatusContent = {
   key: 'admin-status',
   content: t({
     ja: {
+      eyebrow: '管理',
       title: 'サーバーステータス',
       description: 'Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状況を確認します。',
       loading: '取得中…',
@@ -94,6 +95,7 @@ const adminStatusContent = {
       }
     },
     en: {
+      eyebrow: 'Admin',
       title: 'Server status',
       description: 'Check Nagisa health, queues, recording library, and WebUI sync progress.',
       loading: 'Loading…',

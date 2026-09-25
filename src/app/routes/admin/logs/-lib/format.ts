@@ -1,8 +1,10 @@
 import dayjs from 'dayjs'
 import { getIntlayer } from 'intlayer'
+import type { RowTone } from '@/app/components/data-table'
+import { appLocale } from '@/app/lib/locale'
 import type { LogLevelEnum, RecordingEventSchema, SyncRunSchema } from '@/schemas/log.dto'
 
-const content = getIntlayer('admin-logs-format')
+const content = getIntlayer('admin-logs-format', appLocale)
 
 export const runStatusLabel: Record<SyncRunSchema['status'], string> = {
   running: content.runStatusLabel.running,
@@ -17,6 +19,14 @@ export const runStatusAccent: Record<SyncRunSchema['status'], string> = {
   success: 'border-l-success',
   partial: 'border-l-warning',
   failed: 'border-l-destructive'
+}
+
+/** 共有表 (`DataTr`) の行トーン。 */
+export const runStatusTone: Record<SyncRunSchema['status'], RowTone> = {
+  running: 'primary',
+  success: 'ok',
+  partial: 'warn',
+  failed: 'err'
 }
 
 export const runStatusBadge: Record<SyncRunSchema['status'], string> = {

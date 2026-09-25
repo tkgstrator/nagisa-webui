@@ -1,8 +1,9 @@
 import { getIntlayer } from 'intlayer'
 import type { BrowseFilters } from '@/app/lib/atoms'
 import { providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 
-const content = getIntlayer('browse-filters')
+const content = getIntlayer('browse-filters', appLocale)
 
 const PAGE_SIZE = 24
 

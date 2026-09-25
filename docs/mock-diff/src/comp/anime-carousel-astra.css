@@ -62,6 +62,11 @@
 
 .car-thumb .flag { position: absolute; left: 8px; top: 8px; z-index: 1; }
 .car-thumb .prov { position: absolute; left: 8px; bottom: 8px; z-index: 1; }
+.car-thumb .prov.b-amazon { background: var(--brand-amazon-solid); color: var(--brand-amazon-solid-foreground); }
+.car-thumb .prov.b-hulu { background: var(--brand-hulu-solid); color: var(--brand-hulu-solid-foreground); }
+.car-thumb .prov.b-crunchyroll { background: var(--brand-crunchyroll-solid); color: var(--brand-crunchyroll-solid-foreground); }
+.car-thumb .prov.b-abema { background: var(--brand-abema-solid); color: var(--brand-abema-solid-foreground); }
+.car-thumb .prov.b-netflix { background: var(--brand-netflix-solid); color: var(--brand-netflix-solid-foreground); }
 .car-thumb .state {
   position: absolute; right: 8px; bottom: 8px; z-index: 1;
   display: inline-flex; align-items: center; gap: 5px; height: 19px; padding: 0 8px; border-radius: 999px;
