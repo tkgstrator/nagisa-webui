@@ -30,8 +30,7 @@ export const StRow = ({ icon, badge, label, description, tag, index = 0, danger 
   return (
     <div
       className={cn(
-        'group/row flex items-center justify-between gap-5 border-l-[3px] border-l-transparent bg-background px-[18px] py-3.5 transition-[background-color,border-color] duration-200 focus-within:border-l-primary hover:bg-muted hover:border-l-primary max-sm:flex-col max-sm:items-start max-sm:gap-3 max-sm:px-4',
-        danger && 'border-l-destructive',
+        'group/row flex items-center justify-between gap-5 bg-background py-3.5 pr-[18px] pl-[21px] transition-colors duration-200 focus-within:bg-muted hover:bg-muted max-sm:flex-col max-sm:items-start max-sm:gap-3 max-sm:pr-4 max-sm:pl-[19px]',
         animations &&
           'fill-mode-both animate-in fade-in-0 slide-in-from-bottom-2 duration-[420ms] motion-reduce:animate-none'
       )}
