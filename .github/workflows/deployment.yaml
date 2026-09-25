@@ -20,7 +20,7 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Generate Prisma client
         run: bunx prisma generate
       - name: Build

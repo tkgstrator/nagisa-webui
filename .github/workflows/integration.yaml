@@ -18,7 +18,7 @@ jobs:
           bun install conventional-changelog-conventionalcommits
           bun install commitlint@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Validate current commit (last commit) with commitlint
         if: github.event_name == 'push'
         run: bunx commitlint --last --verbose
@@ -53,7 +53,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Generate Prisma client
         run: bunx prisma generate
       - name: Run tests
@@ -72,7 +72,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Generate Prisma client
         run: bunx prisma generate
       - name: Build intlayer dictionaries
@@ -95,7 +95,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Generate Prisma client
         run: bunx prisma generate
       - name: Build worker and client
@@ -116,7 +116,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Generate Prisma client
         run: bunx prisma generate
       - name: Build worker and client
