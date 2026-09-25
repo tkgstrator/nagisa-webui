@@ -1,0 +1,13 @@
+code { overflow-wrap: anywhere; }
+.matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 22px 24px; }
+.sample { min-height: 52px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.sample > * { max-width: 100%; }
+.cat svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cat .num { text-align: right; }
+.cat .is-disabled { opacity: .45; }
+.cat .is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+.swatch { width: 88px; height: 48px; border-radius: 0 8px 8px 0; border-left: 3px solid var(--tone-border); display: grid; place-items: center; }
+.role-bg { background: var(--tone-bg); } .role-fg { background: var(--tone-bg); color: var(--tone-fg); }
+.role-border { border-left-width: 8px; } .role-dot span { width: 10px; height: 10px; border-radius: 999px; background: var(--tone-dot); }
+.role-soft { background: var(--tone-soft); } .role-ink { background: var(--tone-soft); color: var(--tone-ink); }

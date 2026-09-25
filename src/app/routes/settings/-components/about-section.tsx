@@ -7,7 +7,7 @@ import { cn } from '@/app/lib/utils'
 import { PgSec, SecMoreLabel, secMoreClass } from './section'
 
 const Meta = ({ label, value, mono = false }: { label: string; value: ReactNode; mono?: boolean }) => (
-  <div className='min-w-0 border-l-[3px] border-l-border bg-background px-4 py-3.5'>
+  <div className='min-w-0 bg-background py-3.5 pr-4 pl-[19px]'>
     <dt className='text-[11px] text-muted-foreground'>{label}</dt>
     <dd
       className={cn(

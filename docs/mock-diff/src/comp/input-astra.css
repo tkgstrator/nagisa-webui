@@ -1,0 +1,16 @@
+.a-field { display: flex; align-items: center; gap: 8px; width: 280px; max-width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); }
+.a-field.a-pill { border-radius: 999px; } .a-field input { width: 100%; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; }
+.a-field input::placeholder { color: var(--muted-foreground); }
+.a-field:focus-within, .a-field.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
+.a-field.a-error { border-color: var(--destructive); } .a-field.a-disabled { background: var(--muted); opacity: .45; }
+.a-field .a-key { flex: none; } .a-field svg { color: var(--muted-foreground); }
+.a-field-wrap { display: flex; flex-direction: column; gap: 6px; width: 280px; max-width: 100%; } .a-field-wrap > label { font-size: 12px; font-weight: 600; }
+.a-error-text { color: var(--destructive); font-size: 12px; }
+
+:where(.a-field) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-field):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+.a-field.a-search { width: 260px; min-height: 34px; }
+.a-field.a-search input { height: 32px; }
+.a-field.a-search svg { width: 15px; height: 15px; }
+@media (max-width: 640px) { .a-field.a-search { width: 100%; } }

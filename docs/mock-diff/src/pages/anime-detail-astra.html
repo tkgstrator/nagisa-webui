@@ -1,5 +1,5 @@
 TITLE: Nagisa — アニメ詳細 (astra 案)
-USES: app-header breadcrumbs anime-hero episode-list related-providers app-footer
+USES: app-header breadcrumbs anime-hero episode-list related-providers app-footer nav-item status-dot button section-heading status-badge
 ---
 
 <div class="pg-shell">
@@ -8,11 +8,11 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
       <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       Nagisa
     </a>
-    <nav class="side-nav" aria-label="メイン">
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
-      <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">12</span></a>
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a class="a-nav" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span class="a-nav-text">ホーム</span></a>
+      <a class="a-nav" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="a-nav-text">アニメ一覧</span></a>
+      <a class="a-nav" href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg><span class="a-nav-text">録画一覧</span><span class="a-nav-count num">12</span></a>
+      <a class="a-nav" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="a-nav-text">設定</span></a>
     </nav>
 
     <div class="side-widget">
@@ -20,15 +20,15 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
       <div class="side-sched-row now"><span class="k">第9話 (今週)</span><span class="v">録画中</span></div>
       <div class="side-sched-row"><span class="k">第10話</span><span class="v num">7/25 (金)</span></div>
       <div class="side-sched-row"><span class="k">第11話</span><span class="v num">8/1 (金)</span></div>
-      <div class="side-sched-row"><span class="k">最終話 (全24話)</span><span class="v num">12/19</span></div>
+      <div class="side-sched-row"><span class="k">最終話 (全 24 話)</span><span class="v num">12/19</span></div>
     </div>
-    <div class="side-status"><i></i>サーバー稼働中</div>
+    <div class="side-status"><i class="a-dot tone-success a-pulse"></i>サーバー稼働中</div>
   </aside>
 
   <main class="pg-main">
     <div class="pg">
 
-      <nav class="crumb" aria-label="パス">
+      <nav class="crumb" aria-label="パンくずリスト">
         <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
         <span>/</span>
         <span class="cur">星降る夜のアストロノーツ</span>
@@ -43,7 +43,7 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
           <div class="hero-body">
             <div class="id-badges">
               <span class="badge b-amazon">Prime Video</span>
-              <span class="badge b-releasing">放送中</span>
+              <span class="a-badge tone-success"><span class="a-dot a-sm"></span>放送中</span>
             </div>
             <h1 class="hero-title">星降る夜のアストロノーツ</h1>
           </div>
@@ -51,7 +51,7 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
             <div class="id-facts">
               <div><dt>放送</dt><dd class="num">2026年 春</dd></div>
               <div><dt>話数</dt><dd class="num">全24話 (予定)</dd></div>
-              <div><dt>1話あたり</dt><dd class="num">24分</dd></div>
+              <div><dt>1 話あたり</dt><dd class="num">24分</dd></div>
               <div><dt>総再生時間</dt><dd class="num">3時間36分 (9話分)</dd></div>
             </div>
             <p class="id-syn">
@@ -60,15 +60,15 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
               静かな宇宙と、少しずつ明かされる二人の過去が交差するSFジュブナイル。
             </p>
             <div class="id-actions">
-              <button class="btn btn-primary" type="button" aria-pressed="true">
+              <button class="a-btn" type="button" aria-pressed="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
                 録画予約中
               </button>
-              <button class="btn btn-success" type="button" aria-pressed="true">
+              <button class="a-btn a-success" type="button" aria-pressed="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
-                録画済み (7話)
+                録画済み (7 話)
               </button>
-              <button class="btn btn-refresh" type="button" title="AniList / プロバイダから再同期">
+              <button class="a-btn a-outline" type="button" title="AniList / プロバイダから再同期">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
                 タイトル情報を再取得
               </button>
@@ -77,16 +77,16 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
         </div>
       </div>
 
-      <div class="progress-row">
+      <div class="progress-row hero-progress">
         <span class="lbl">録画進捗</span>
-        <div class="strip" aria-hidden="true">
+        <div class="hero-strip" aria-hidden="true">
           <span class="rec" style="flex:7"></span><span class="fail" style="flex:1"></span><span class="pend" style="flex:1"></span><span class="none" style="flex:15"></span>
         </div>
         <span class="cnt num">7 / 24話</span>
       </div>
 
       <section class="pg-sec">
-        <div class="sec-head">
+        <div class="sec-head a-heading a-compact">
           <h2 class="pg-sec-title">エピソード</h2>
           <div class="legend">
             <span class="rec"><i></i>録画済み</span>
@@ -135,4 +135,3 @@ USES: app-header breadcrumbs anime-hero episode-list related-providers app-foote
     </div>
   </main>
 </div>
-

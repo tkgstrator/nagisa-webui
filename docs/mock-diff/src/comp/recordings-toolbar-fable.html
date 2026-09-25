@@ -15,7 +15,7 @@ TITLE: 録画一覧のツールバー
         <button type="button" aria-pressed="false">未録画 <span class="n">1</span></button>
         <button type="button" aria-pressed="false">録画済み <span class="n">5</span></button>
       </div>
-      <div class="chips" role="group" aria-label="プロバイダ">
+      <div class="chips" role="group" aria-label="配信元">
         <button type="button" class="chip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button>
         <button type="button" class="chip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button>
         <button type="button" class="chip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button>
@@ -23,7 +23,7 @@ TITLE: 録画一覧のツールバー
         <button type="button" class="chip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button>
       </div>
       <button type="button" class="toggle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button>
-      <button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット</button>
+      <button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット</button>
       <span class="spacer"></span>
       <label class="sort">並べ替え
         <select>
@@ -35,7 +35,7 @@ TITLE: 録画一覧のツールバー
       </label>
     </div>
     <div class="selbar" style="margin-top:14px">
-      <label><input type="checkbox" class="cb is-mixed"> 表示中をすべて選択</label>
+      <label><input type="checkbox" class="cb is-mixed"> 表示中の作品をすべて選択</label>
       <span class="cnt"><b>2</b> 件選択中</span>
       <div class="actions">
         <button type="button" class="btn-outline"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>選択分を再試行</button>
@@ -91,8 +91,8 @@ TITLE: 録画一覧のツールバー
   <div class="cat-row">
     <div class="cat-item is-key"><span class="cat-label">並べ替え</span><label class="sort">並べ替え<select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select></label></div>
     <div class="cat-item"><span class="cat-label">フォーカス</span><label class="sort">並べ替え<select class="is-focus"><option>進捗が低い順</option></select></label></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット <span class="num">3</span></button></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>条件をリセット</button></div>
+    <div class="cat-item"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット <span class="num">3</span></button></div>
+    <div class="cat-item"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット</button></div>
   </div>
 </section>
 
@@ -101,7 +101,7 @@ TITLE: 録画一覧のツールバー
   <div class="cat-stack">
     <div class="cat-item cat-full is-key"><span class="cat-label">未選択 <small>操作は無効</small></span>
       <div class="selbar">
-        <label><input type="checkbox" class="cb"> 表示中をすべて選択</label>
+        <label><input type="checkbox" class="cb"> 表示中の作品をすべて選択</label>
         <span class="cnt">選択されていません</span>
         <div class="actions">
           <button type="button" class="btn-outline" disabled><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>選択分を再試行</button>
@@ -111,7 +111,7 @@ TITLE: 録画一覧のツールバー
     </div>
     <div class="cat-item cat-full"><span class="cat-label">一部選択 <small>indeterminate</small></span>
       <div class="selbar">
-        <label><input type="checkbox" class="cb is-mixed"> 表示中をすべて選択</label>
+        <label><input type="checkbox" class="cb is-mixed"> 表示中の作品をすべて選択</label>
         <span class="cnt"><b>2</b> 件選択中</span>
         <div class="actions">
           <button type="button" class="btn-outline"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>選択分を再試行</button>
@@ -121,7 +121,7 @@ TITLE: 録画一覧のツールバー
     </div>
     <div class="cat-item cat-full"><span class="cat-label">全選択 <small>解除ボタンは hover</small></span>
       <div class="selbar">
-        <label><input type="checkbox" class="cb" checked> 表示中をすべて選択</label>
+        <label><input type="checkbox" class="cb" checked> 表示中の作品をすべて選択</label>
         <span class="cnt"><b>16</b> 件選択中</span>
         <div class="actions">
           <button type="button" class="btn-outline"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>選択分を再試行</button>
@@ -141,4 +141,39 @@ TITLE: 録画一覧のツールバー
     <div class="cat-item"><span class="cat-label">一部選択</span><input type="checkbox" class="cb is-mixed" aria-label="一部選択"></div>
     <div class="cat-item"><span class="cat-label">フォーカス</span><input type="checkbox" class="cb is-focus" aria-label="フォーカス"></div>
   </div>
+</section>
+
+<section class="cat-sec">
+  <h2>ページ用の修飾 <span class="cat-hint">.seg.is-quiet / .chips.is-loose / .sort-wrap</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">.seg.is-quiet</span>
+<div class="seg is-quiet" role="group" aria-label="録画状態">
+          <button type="button" aria-pressed="true">すべて</button>
+          <button type="button" aria-pressed="false">未録画</button>
+          <button type="button" aria-pressed="false">録画済み</button>
+        </div>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">.chips.is-loose</span>
+<div class="chips is-loose" role="group" aria-label="配信元">
+          <button type="button" class="chip amazon" aria-pressed="false"><i class="dot"></i>Prime Video</button>
+          <button type="button" class="chip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button>
+          <button type="button" class="chip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button>
+          <button type="button" class="chip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button>
+          <button type="button" class="chip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button>
+        </div>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">.sort-wrap</span>
+<span class="sort-wrap">
+            <select>
+              <option>最終更新が新しい順</option>
+              <option>最終更新が古い順</option>
+              <option>タイトル順</option>
+              <option>放送年 (新しい順)</option>
+              <option>放送年 (古い順)</option>
+            </select>
+            <svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+    </div>
+  </div>
+  <p class="cat-note">録画一覧 (決定稿) で使う修飾。部品の既定値はそのままで、ページ側がクラスを足したときだけ効く。</p>
 </section>

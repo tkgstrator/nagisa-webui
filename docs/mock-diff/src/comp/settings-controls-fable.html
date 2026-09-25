@@ -1,0 +1,241 @@
+TITLE: 設定コントロール
+---
+<header class="cat-head">
+  <h1>設定コントロール <span class="cat-id">settings-controls</span></h1>
+  <p>設定ページ (<code>settings</code>) を組み立てている行コンポーネント群。<code>.set-list</code> の中に <code>.set-row</code> を並べ、行ごとに下罫線だけで区切る (枠は持たない)。選択状態は下線 2px と太字で示し、astra 案のような pill 塗りつぶしは使わない。</p>
+  <div class="cat-meta"><span>fable 案 = 下線方式</span><span>アイコンは持たず、ラベルと補足だけで構成する</span><span>危険な操作は行の左罫だけを destructive に</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>set-row + set-seg <span class="cat-hint">2〜3 値・選択中は下線 2px + 太字</span></h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">テーマ</p>
+            <p class="set-desc">「システム」は OS の外観設定に追従する。</p>
+          </div>
+          <div class="set-ctl">
+            <div class="set-seg" role="group">
+              <button type="button">ライト</button>
+              <button type="button">ダーク</button>
+              <button type="button" class="on" aria-pressed="true">システム</button>
+            </div>
+          </div>
+        </div>
+        <div class="set-row is-hover">
+          <div class="set-rt">
+            <p class="set-label">カードの密度</p>
+            <p class="set-desc">1 行あたりの枚数とサムネイルの大きさが変わる。</p>
+          </div>
+          <div class="set-ctl">
+            <div class="set-seg" role="group">
+              <button type="button">ゆったり</button>
+              <button type="button" class="on" aria-pressed="true">標準</button>
+              <button type="button" class="is-hover">詰める</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">選択中のボタンだけ <code>.on</code> を付け、下線を <code>::after</code> で描く。色の遷移は <code>.15s</code>。pill の背景塗りは無く、行の hover は <code>.set-row</code> 全体の背景でのみ示す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>set-row + set-sel <span class="cat-hint">下線だけのセレクト</span></h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">1 ページの表示件数</p>
+            <p class="set-desc">アニメ一覧・録画一覧・未識別タイトルに適用される。</p>
+          </div>
+          <div class="set-ctl">
+            <span class="set-sel is-hover"><span class="num">24</span> 件
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">既定の並び順</p>
+            <p class="set-desc">一覧を開いた直後に適用される並び。URL で指定があればそちらが優先される。</p>
+          </div>
+          <div class="set-ctl">
+            <span class="set-sel">放送年 (新しい順)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">枠は持たず <code>border-bottom</code> のみ。hover / <code>.is-hover</code> で下線を <code>var(--foreground)</code> にする、色の遷移は <code>.15s</code>。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>set-row + set-sw <span class="cat-hint">on / off、プロバイダ行 (set-pv)</span></h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">アニメーション</p>
+            <p class="set-desc">OS で「視差を減らす」が有効なときは、この設定にかかわらず抑制される。</p>
+          </div>
+          <div class="set-ctl">
+            <span class="set-note">有効</span>
+            <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="アニメーション"></button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label"><span class="set-pv"><span class="chip netflix">Netflix</span></span> <span class="set-tag">未連携</span></p>
+          </div>
+          <div class="set-ctl">
+            <button type="button" class="set-sw" role="switch" aria-checked="false" aria-label="Netflix を表示"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">つまみの移動は <code>.18s cubic-bezier(.16,1,.3,1)</code>、背景色は <code>.18s ease</code>。プロバイダ行では <code>.set-pv .chip</code> がアイコンの代わりにラベル内へ入り、未連携は <code>.set-tag</code> で添える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>set-row + set-btn <span class="cat-hint">通常 / danger</span></h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="set-list">
+        <div class="set-row">
+          <div class="set-rt">
+            <p class="set-label">設定の書き出しと読み込み</p>
+            <p class="set-desc">この画面の内容を JSON で保存し、別の端末に持ち込める。</p>
+          </div>
+          <div class="set-ctl">
+            <button type="button" class="set-btn is-hover">書き出す</button>
+            <button type="button" class="set-btn">読み込む</button>
+          </div>
+        </div>
+        <div class="set-row is-danger">
+          <div class="set-rt">
+            <p class="set-label">すべての設定を初期化する</p>
+            <p class="set-desc">この画面の内容だけが既定に戻る。録画予約と作品データには触れない。</p>
+          </div>
+          <div class="set-ctl">
+            <button type="button" class="set-btn is-danger">初期化</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note"><code>.set-btn</code> の角丸は 7px、astra 案の pill 形状 (999px) とは異なる。危険な操作の行は <code>.is-danger</code> を <code>.set-row</code> に付けて左罫だけを destructive にし、ボタンは枠線と文字色だけを destructive にする。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>ページ用の部品 <span class="cat-hint">.set-tabs / .set-saved / .set-list.is-stack / .set-meta</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">.set-tabs</span>
+<nav class="set-tabs" aria-label="設定の節">
+    <a class="on" href="#s-view">表示</a>
+    <a href="#s-provider">配信プロバイダ <span class="n num">4 / 5</span></a>
+    <a href="#s-rec">録画</a>
+    <a href="#s-admin">管理 <span class="n num">38</span></a>
+    <a href="#s-data">データ</a>
+    <a href="#s-about">アプリ情報</a>
+  </nav>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">.set-saved</span>
+<span class="set-saved">
+        <svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>
+        保存済み · <span class="num">13:04</span>
+      </span>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">.set-list.is-stack</span>
+<div class="set-list is-stack">
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">テーマ</p>
+          <p class="set-desc">「システム」は OS の外観設定に追従する。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button">ライト</button>
+            <button type="button">ダーク</button>
+            <button type="button" class="on" aria-pressed="true">システム</button>
+          </div>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">1 ページの表示件数</p>
+          <p class="set-desc">アニメ一覧・録画一覧・未識別タイトルに適用される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel"><span class="num">24</span> 件
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">既定の並び順</p>
+          <p class="set-desc">一覧を開いた直後に適用される並び。URL で指定があればそちらが優先される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-sel">放送年 (新しい順)
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">カードの密度</p>
+          <p class="set-desc">1 行あたりの枚数とサムネイルの大きさが変わる。</p>
+        </div>
+        <div class="set-ctl">
+          <div class="set-seg" role="group">
+            <button type="button">ゆったり</button>
+            <button type="button" class="on" aria-pressed="true">標準</button>
+            <button type="button">詰める</button>
+          </div>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-rt">
+          <p class="set-label">アニメーション</p>
+          <p class="set-desc">OS で「視差を減らす」が有効なときは、この設定にかかわらず抑制される。</p>
+        </div>
+        <div class="set-ctl">
+          <span class="set-note">有効</span>
+          <button type="button" class="set-sw on" role="switch" aria-checked="true" aria-label="アニメーション"></button>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">.set-meta</span>
+<dl class="set-meta">
+      <div>
+        <dt>バージョン</dt>
+        <dd class="num">v0.4.0</dd>
+      </div>
+      <div>
+        <dt>ビルド</dt>
+        <dd class="mono">319250c</dd>
+      </div>
+      <div>
+        <dt>登録作品</dt>
+        <dd class="num">3,275</dd>
+      </div>
+      <div>
+        <dt>録画予約</dt>
+        <dd class="num">16</dd>
+      </div>
+    </dl>
+    </div>
+  </div>
+  <p class="cat-note">設定ページで使う節タブ・保存表示・縦積みの設定行・版情報。</p>
+</section>

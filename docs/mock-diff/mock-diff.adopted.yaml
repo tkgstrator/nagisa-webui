@@ -13,6 +13,8 @@ adopted:
   anime-hero: astra
   episode-list: fable
   related-providers: fable
+  recording-status: fable
+  anime-info: fable
   breadcrumbs: astra
   recording-row: fable
   recordings-toolbar: fable
@@ -23,6 +25,8 @@ adopted:
   scheduled-updates: fable
   home-tabs: fable
   settings: astra
+  settings-controls: astra
   recording-events: fable
   not-found: fable
   error-state: fable
+  server-status: fable

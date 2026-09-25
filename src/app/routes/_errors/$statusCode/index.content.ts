@@ -5,6 +5,9 @@ const errorsStatusCodeContent = {
   content: t({
     ja: {
       testError: insert('テスト用エラー ({{code}})')
+    },
+    en: {
+      testError: insert('Test error ({{code}})')
     }
   })
 } satisfies Dictionary

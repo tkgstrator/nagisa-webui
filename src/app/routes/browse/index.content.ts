@@ -10,10 +10,22 @@ const browseContent = {
         matching: '件に絞り込み中',
         managing: '件のアニメを管理中'
       },
-      sortAriaLabel: '並び替え',
+      sortAriaLabel: '並べ替え',
       noResults: '条件に合うアニメが見つかりません',
-      resetFilters: 'フィルタをリセット',
+      resetFilters: '絞り込みをリセット',
       filterSheetTitle: '絞り込み'
+    },
+    en: {
+      title: 'Browse anime',
+      filtered: {
+        of: ' titles total ·',
+        matching: ' matching',
+        managing: ' anime titles in the catalog'
+      },
+      sortAriaLabel: 'Sort',
+      noResults: 'No anime matches your filters',
+      resetFilters: 'Reset filters',
+      filterSheetTitle: 'Filters'
     }
   })
 } satisfies Dictionary

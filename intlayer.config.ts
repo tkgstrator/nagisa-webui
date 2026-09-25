@@ -8,7 +8,7 @@ const HEAVY_DIRS = ['**/.cache/**', '**/.wrangler/**', '**/.claude/**', '**/.git
 // 表示がおかしいときは該当画面の content ファイルだけを見ればよい。
 const config: IntlayerConfig = {
   internationalization: {
-    locales: [Locales.JAPANESE],
+    locales: [Locales.JAPANESE, Locales.ENGLISH],
     defaultLocale: Locales.JAPANESE
   },
   // 言語は URL にもストレージにも持たない。proxy を生かすと Hono / mock-diff の

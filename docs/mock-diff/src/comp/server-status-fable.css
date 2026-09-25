@@ -1,0 +1,171 @@
+/* ---------- server status (fable) ---------- */
+/* ダイアログ1枚に「いま動いているか」「何を待っているか」「取りこぼしていないか」を
+   縦一列で積む。囲みカードは使わず、左罫線と区切り線だけで階層を出す。 */
+.srv-dlg {
+  width: 512px;
+  max-width: 100%;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 22px 20px;
+  box-shadow: 0 12px 32px -18px oklch(0.18 0.005 250 / 45%);
+}
+.srv-dlg + .srv-dlg { margin-top: 18px; }
+
+.srv-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.srv-id { border-left: 3px solid var(--success); padding-left: 12px; }
+.srv-id.is-bad { border-left-color: var(--destructive); }
+.srv-id.is-idle { border-left-color: var(--muted-foreground); }
+.srv-id.is-busy { border-left-color: var(--info); }
+.srv-name { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+.srv-state {
+  margin-top: 5px;
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--success);
+}
+.srv-id.is-bad .srv-state { color: var(--destructive); }
+.srv-id.is-idle .srv-state { color: var(--muted-foreground); }
+.srv-id.is-busy .srv-state { color: var(--info); }
+.srv-state .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; flex: none; }
+.srv-state .dot.is-live { animation: srvPulse 1.6s ease-in-out infinite; }
+@keyframes srvPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.srv-sub { margin-top: 6px; font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.srv-ver {
+  flex: none;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11.5px; font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.srv-ver.is-old { background: var(--status-not-yet); color: var(--status-not-yet-foreground); }
+
+/* 見出し。カード化せず罫線で区切る */
+.srv-h {
+  margin-top: 20px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.srv-h .srv-h-note { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11.5px; }
+
+/* キュー内訳: 数字を横一列。縦罫線だけで仕切る */
+.srv-q { margin-top: 12px; display: flex; }
+.srv-q-cell { flex: 1; min-width: 0; padding: 0 10px; border-left: 1px solid var(--border); }
+.srv-q-cell:first-child { padding-left: 0; border-left: 0; }
+.srv-q-cell .n { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.srv-q-cell .l { margin-top: 2px; font-size: 10.5px; color: var(--muted-foreground); }
+.srv-q-cell.is-busy .n { color: var(--info); }
+.srv-q-cell.is-bad .n { color: var(--destructive); }
+.srv-q-cell.is-zero .n { color: var(--muted-foreground); font-weight: 600; }
+
+/* ジョブ行 */
+.srv-job { padding: 11px 0; border-bottom: 1px solid var(--border); }
+.srv-job:last-child { border-bottom: 0; padding-bottom: 2px; }
+.srv-job-top { display: flex; align-items: center; gap: 9px; }
+.srv-job-title { min-width: 0; flex: 1; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srv-tag {
+  flex: none;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+  padding: 2px 8px; border-radius: 999px;
+}
+.srv-tag.abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.srv-tag.amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.srv-tag.crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.srv-job-meta {
+  margin-top: 5px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.srv-job-meta .r { margin-left: auto; }
+.srv-bar { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+.srv-bar-track { flex: 1; height: 4px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.srv-bar-fill { height: 100%; border-radius: 999px; background: var(--info); transform-origin: left; animation: growX .6s cubic-bezier(.16,1,.3,1) both; }
+.srv-bar-n { flex: none; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.srv-fail {
+  margin-top: 7px;
+  border-left: 2px solid var(--destructive);
+  padding: 2px 0 2px 9px;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11px; line-height: 1.6;
+  color: var(--destructive);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* 指標の表。同期の進捗で使う */
+.srv-kv { margin-top: 10px; }
+.srv-kv-row { display: flex; align-items: center; gap: 14px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.srv-kv-row:last-child { border-bottom: 0; }
+.srv-kv-row .k { flex: none; width: 108px; color: var(--muted-foreground); display: flex; align-items: center; gap: 7px; }
+.srv-kv-row .k svg { width: 13px; height: 13px; opacity: .8; }
+.srv-kv-row .v { margin-left: auto; font-variant-numeric: tabular-nums; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11.5px; }
+.srv-kv-row .v.is-ok { color: var(--success); font-family: inherit; font-size: 12px; font-weight: 600; }
+.srv-kv-row .v.is-bad { color: var(--destructive); font-family: inherit; font-size: 12px; font-weight: 700; }
+.srv-kv-row .v.is-warn { color: var(--status-not-yet-foreground); font-family: inherit; font-size: 12px; font-weight: 700; }
+.srv-kv-row .v.is-mute { color: var(--muted-foreground); }
+/* 進捗は数値の手前に細いメーターを添える。
+   幅は上限であって固定ではない: 固定にすると k と v の合計が行幅を超えても
+   誰も縮まず、ダイアログの外へ溢れる。 */
+.srv-meter { flex: 0 1 92px; min-width: 32px; height: 3px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.srv-meter > span { display: block; height: 100%; border-radius: 999px; background: var(--muted-foreground); }
+.srv-meter > span.is-warn { background: var(--warning); }
+
+/* 詳細ページ (/admin/status) への導線。ダイアログ最下段に固定で置く。
+   Redis・CPU・メモリ・ディスク・台帳・同期ロックはこの先にあり、
+   ダイアログ側には持たせない。 */
+.srv-link {
+  margin-top: 18px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12.5px;
+  color: inherit; text-decoration: none;
+}
+.srv-link:hover svg { color: var(--foreground); transform: translateX(2px); }
+.srv-link svg { transition: color .15s, transform .15s; }
+.srv-link .t { flex: none; font-weight: 600; }
+.srv-link .d { min-width: 0; font-size: 11.5px; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srv-link svg { width: 15px; height: 15px; margin-left: auto; color: var(--muted-foreground); }
+
+/* 空/読み込み/到達不能 */
+.srv-msg { display: flex; align-items: center; gap: 12px; padding: 4px 0 2px; }
+.srv-msg svg { width: 20px; height: 20px; color: var(--muted-foreground); }
+.srv-msg.is-bad svg { color: var(--destructive); }
+.srv-msg .t { font-size: 13px; font-weight: 600; }
+.srv-msg .d { margin-top: 3px; font-size: 11.5px; color: var(--muted-foreground); }
+.srv-spin { animation: srvSpin 1s linear infinite; }
+@keyframes srvSpin { to { transform: rotate(360deg); } }
+.srv-skel { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.srv-skel > i { display: block; height: 10px; border-radius: 4px; background: var(--muted); }
+.srv-skel > i:nth-child(2) { width: 72%; }
+.srv-skel > i:nth-child(3) { width: 48%; }
+.srv-quiet { margin-top: 12px; font-size: 12px; color: var(--muted-foreground); }
+
+/* サイドバー最下段の起動導線 */
+.srv-trigger {
+  width: 248px; max-width: 100%;
+  background: var(--sidebar);
+  border-top: 1px solid var(--border);
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12px;
+}
+.srv-trigger .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--success); flex: none; }
+.srv-trigger.is-bad .dot { background: var(--destructive); }
+.srv-trigger.is-busy .dot { background: var(--info); animation: srvPulse 1.6s ease-in-out infinite; }
+.srv-trigger .t { font-weight: 600; }
+.srv-trigger .r { margin-left: auto; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 640px) {
+  .srv-dlg { width: 100%; padding: 18px 16px 16px; }
+  .srv-q-cell { padding: 0 6px; }
+  .srv-q-cell .n { font-size: 17px; }
+  .srv-kv-row .k { width: 92px; }
+  .srv-link .d { display: none; }
+}

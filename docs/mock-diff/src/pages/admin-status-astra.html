@@ -1,0 +1,210 @@
+TITLE: サーバーステータス
+USES: app-header stat-tile app-footer
+---
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg pg-narrow">
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">管理 · <b>サーバーステータス</b></p>
+          <h1 class="pg-title">サーバーステータス</h1>
+          <p class="pg-sub">Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状況を確認します。</p>
+        </div>
+      </div>
+
+      <div class="pg-body">
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">Nagisa</p></div>
+          <p class="pg-form-hint">GET /api/status。このエンドポイントが停止している場合、このセクションのみ取得できません。</p>
+          <div class="pg-stat-grid">
+            <div class="a-stat tone-success">
+              <span class="a-label">バージョン</span>
+              <span class="a-value">v1.6.0</span>
+              <span class="a-note">稼働 3 日 4 時間</span>
+            </div>
+            <div class="a-stat tone-success">
+              <span class="a-label">Redis</span>
+              <span class="a-value">接続中</span>
+              <span class="a-note">メモリ 42.3 MB</span>
+            </div>
+            <div class="a-stat tone-muted">
+              <span class="a-label">CPU / メモリ</span>
+              <span class="a-value num">18.2% / 61.4%</span>
+              <span class="a-note">ホストの使用率</span>
+            </div>
+            <div class="a-stat tone-muted">
+              <span class="a-label">ディスク空き容量</span>
+              <span class="a-value num">812.4 GB</span>
+              <span class="a-note">録画先の空き容量</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">キュー</p></div>
+          <p class="pg-form-hint">GET /api/queue/snapshot。completed / failed は保持期間を過ぎると削除されるため、件数は目安です。録画完了は台帳で確認します。</p>
+          <div class="pg-stat-grid">
+            <div class="a-stat tone-primary">
+              <span class="a-label">実行中</span>
+              <span class="a-value num">2<small>件</small></span>
+              <span class="a-note">ダウンロード中</span>
+            </div>
+            <div class="a-stat tone-warning">
+              <span class="a-label">待機中</span>
+              <span class="a-value num">9<small>件</small></span>
+              <span class="a-note">うち遅延 2 件</span>
+            </div>
+            <div class="a-stat tone-destructive">
+              <span class="a-label">失敗</span>
+              <span class="a-value num">2<small>件</small></span>
+              <span class="a-note">キューに残っている失敗ジョブ</span>
+            </div>
+            <div class="a-stat tone-success">
+              <span class="a-label">完了</span>
+              <span class="a-value num">186<small>件</small></span>
+              <span class="a-note">保持期間内のもののみ</span>
+            </div>
+          </div>
+          <p class="pg-form-hint num">取得時刻 2026-09-25 14:19:52</p>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">録画台帳 (Nagisa)</p></div>
+          <p class="pg-form-hint">GET /api/library/stats。録画ファイルの集計です。</p>
+          <div class="pg-stat-grid">
+            <div class="a-stat tone-success">
+              <span class="a-label">録画ファイル</span>
+              <span class="a-value num">6,204<small>件</small></span>
+              <span class="a-note">台帳に登録されているファイル</span>
+            </div>
+            <div class="a-stat tone-warning">
+              <span class="a-label">未解決</span>
+              <span class="a-value num">34<small>件</small></span>
+              <span class="a-note">provider / episode_id と照合できていません</span>
+            </div>
+            <div class="a-stat tone-muted">
+              <span class="a-label">合計サイズ</span>
+              <span class="a-value num">4.82 TB</span>
+              <span class="a-note">ライブラリ全体</span>
+            </div>
+            <div class="a-stat tone-muted">
+              <span class="a-label">台帳の位置</span>
+              <span class="a-value pg-tbl-mono">seq 918,204</span>
+              <span class="a-note">epoch 3</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">WebUI 側の同期</p></div>
+          <p class="pg-form-hint">ローカルの D1 のみを参照するため、Nagisa が停止していても表示されます。</p>
+          <div class="pg-stat-grid">
+            <div class="a-stat tone-success">
+              <span class="a-label">最終成功</span>
+              <span class="a-value">2 分前</span>
+              <span class="a-note">2026-09-25 14:17:40</span>
+            </div>
+            <div class="a-stat tone-muted">
+              <span class="a-label">カーソル</span>
+              <span class="a-value">差分を追跡中</span>
+              <span class="a-note">差分カーソルを保持しています</span>
+            </div>
+            <div class="a-stat tone-muted">
+              <span class="a-label">実行ロック</span>
+              <span class="a-value">空き</span>
+              <span class="a-note">同期は実行されていません</span>
+            </div>
+            <div class="a-stat tone-primary">
+              <span class="a-label">追跡中</span>
+              <span class="a-value num">3<small>件</small></span>
+              <span class="a-note">ジョブ ID がある待機中・実行中のジョブ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">録画状態の内訳</p></div>
+          <p class="pg-form-hint">エピソード単位の集計です。completed に更新できるのは台帳同期のみです。</p>
+          <div class="pg-tbl-wrap">
+            <table class="pg-tbl">
+              <thead>
+                <tr>
+                  <th scope="col">状態</th>
+                  <th scope="col" class="pg-r">件数</th>
+                  <th scope="col">意味</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="pg-tone tone-muted">
+                  <td>未リクエスト</td>
+                  <td class="pg-r num">1,204</td>
+                  <td class="pg-tbl-sub">録画リクエストは送信されていません</td>
+                </tr>
+                <tr class="pg-tone tone-primary">
+                  <td>待機中</td>
+                  <td class="pg-r num">8</td>
+                  <td class="pg-tbl-sub">リクエストは受け付けられ、キューで待機中です</td>
+                </tr>
+                <tr class="pg-tone tone-info">
+                  <td>ダウンロード中</td>
+                  <td class="pg-r num">2</td>
+                  <td class="pg-tbl-sub">キューで実行中です</td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td>録画済み</td>
+                  <td class="pg-r num">5,780</td>
+                  <td class="pg-tbl-sub">録画台帳でファイルの存在を確認済みです</td>
+                </tr>
+                <tr class="pg-tone tone-destructive">
+                  <td>失敗</td>
+                  <td class="pg-r num">12</td>
+                  <td class="pg-tbl-sub">キューのジョブが失敗しました</td>
+                </tr>
+                <tr class="pg-tone tone-warning">
+                  <td>追跡不能</td>
+                  <td class="pg-r num">3</td>
+                  <td class="pg-tbl-sub">30 分間キューで確認できていません（失敗とは限りません）</td>
+                </tr>
+                <tr class="pg-tone tone-muted">
+                  <td>ファイルなし</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-tbl-sub">録画台帳からファイル情報が削除されました</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.9.1<span class="sha">062b7a7</span>2026/09/25 14:20</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a href="#admin">管理</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>

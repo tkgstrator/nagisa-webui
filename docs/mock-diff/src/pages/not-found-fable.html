@@ -1,0 +1,66 @@
+TITLE: 作品が見つからない
+SKELETON: final-astra
+USES: app-header@astra error-state app-footer@astra
+---
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メイン">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+  <main class="pg-main">
+    <div class="pg">
+      <div class="err is-page">
+        <div class="err-hero">
+          <span class="err-eyebrow"><span class="dot"></span>404 NOT FOUND</span>
+          <h1 class="err-title">この作品は見つかりませんでした</h1>
+          <p class="err-sub">指定された ID に一致する作品がデータベースにありません。削除されたか、URL が間違っている可能性があります。</p>
+        </div>
+        <div class="err-meta">
+          <div class="err-meta-row"><span class="k">リクエスト</span><span class="v">GET /anime/{id}</span></div>
+          <div class="err-meta-row"><span class="k">作品 ID</span><span class="v is-bad">9e7134ef-299a-5e74-b7fa-75c162a8fcbb</span></div>
+          <div class="err-meta-row"><span class="k">発生時刻</span><span class="v num">2026-09-18 13:04:22</span></div>
+        </div>
+        <div class="err-sec">
+          <h2 class="err-sec-title">考えられる原因</h2>
+          <ul class="err-causes">
+            <li>作品が削除され、参照だけが残っている</li>
+            <li>古いブックマークや共有リンクから開いた</li>
+            <li>URL の ID を手で書き換えた</li>
+          </ul>
+        </div>
+        <div class="err-sec">
+          <h2 class="err-sec-title">次にできること</h2>
+          <div class="err-links">
+            <a class="err-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><div><div class="t">アニメ一覧から探す</div><div class="s">登録済みの作品をすべて表示します</div></div></a>
+            <a class="err-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg><div><div class="t">録画を確認する</div><div class="s">予約済み・録画済みの一覧を表示します</div></div></a>
+            <a class="err-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><div><div class="t">ホームに戻る</div><div class="s">今期の更新状況を確認します</div></div></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="ftr is-fixed">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.7.0<span class="sha">319250c</span>2026/09/18 13:04</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>

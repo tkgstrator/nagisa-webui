@@ -1,0 +1,21 @@
+.a-btn { height: 36px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid transparent; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: 13px; font-weight: 600; }
+.a-btn.a-sm { height: 30px; padding: 0 10px; font-size: 12px; } .a-btn.a-lg { height: 42px; padding: 0 18px; font-size: 14px; }
+.a-btn.a-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.a-btn.a-ghost { background: transparent; color: var(--foreground); }
+.a-btn.a-outline { background: transparent; color: var(--foreground); border-color: var(--border); }
+.a-btn.a-destructive { background: var(--destructive); color: var(--destructive-foreground); }
+.a-btn:not(:disabled):hover, .a-btn.is-hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
+.a-btn.a-destructive:not(:disabled):hover, .a-btn.a-destructive.is-hover { background: color-mix(in oklch, var(--destructive) 86%, var(--foreground)); }
+.a-btn.a-secondary:not(:disabled):hover, .a-btn.a-ghost:not(:disabled):hover, .a-btn.a-outline:not(:disabled):hover, .a-btn.a-secondary.is-hover, .a-btn.a-ghost.is-hover, .a-btn.a-outline.is-hover { background: var(--muted); color: var(--foreground); }
+.a-btn:not(:disabled):active, .a-btn.is-active { transform: scale(.96); filter: brightness(.9); }
+.a-btn:disabled:not([aria-busy]) { opacity: .45; }
+.a-btn[aria-busy] svg { animation: astraAtomSpin 1s linear infinite; }
+
+:where(.a-btn) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-btn):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+@keyframes astraAtomSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .a-btn[aria-busy] svg { animation: none; } }
+
+.a-btn.a-success { background: var(--success); color: var(--success-foreground); }
+.a-btn.a-success:not(:disabled):hover { background: color-mix(in oklch, var(--success) 86%, var(--foreground)); }

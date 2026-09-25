@@ -39,6 +39,42 @@ const errorPageContent = {
         home: 'ホームに戻る'
       },
       details: '技術的な詳細'
+    },
+    en: {
+      meta: {
+        request: 'Request',
+        status: 'Status',
+        occurredAt: 'Occurred at'
+      },
+      variants: {
+        network: {
+          title: 'Cannot connect to the server',
+          description: 'You may be offline, or the server could not be reached. Check your connection and try again.',
+          statusValue: 'No response'
+        },
+        notFound: {
+          title: 'Page not found',
+          description: 'The page you are looking for does not exist or may have moved.'
+        },
+        unavailable: {
+          title: 'Temporarily unavailable',
+          description: 'The service may be under maintenance or experiencing heavy traffic. Please try again later.'
+        },
+        gateway: {
+          title: 'The server is not responding',
+          description: 'The upstream server did not respond. Please try again later.'
+        },
+        generic: {
+          title: 'Failed to load data',
+          description:
+            'An unexpected server error occurred. Your data has not been lost. Please wait a moment and reload.'
+        }
+      },
+      actions: {
+        reload: 'Reload',
+        home: 'Back to home'
+      },
+      details: 'Technical details'
     }
   })
 } satisfies Dictionary

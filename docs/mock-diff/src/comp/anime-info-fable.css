@@ -1,0 +1,8 @@
+/* 作品の識別情報の一覧。キーを左、値を右に寄せ、行間は薄い罫で区切る。 */
+.anime-info { border-left: 3px solid var(--border); padding: 4px 12px; }
+.anime-info-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent); font-size: 13px; }
+.anime-info-row:last-child { border-bottom: 0; }
+.anime-info-row .k { color: var(--muted-foreground); }
+.anime-info-row .v { text-align: right; font-weight: 600; }
+.anime-info-row .v a { color: var(--primary); }
+.anime-info-row .v.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }

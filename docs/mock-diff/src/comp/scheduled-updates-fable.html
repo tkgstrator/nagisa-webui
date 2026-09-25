@@ -1,7 +1,7 @@
-TITLE: 録画予約中の更新
+TITLE: 録画予約中の作品の更新
 ---
 <header class="cat-head">
-  <h1>録画予約中の更新 <span class="cat-id">scheduled-updates</span></h1>
+  <h1>録画予約中の作品の更新 <span class="cat-id">scheduled-updates</span></h1>
   <p>ホームに置く「直近で動きのあった録画予約中の作品」。更新日時の新しい順に最大 6 件。1 行で 作品 / 配信元 / 進捗 / 更新日時 を読ませる。</p>
   <div class="cat-meta"><span>最大 6 件</span><span>更新日時の降順</span><span>録画予約中の作品のみ</span><span>行の高さ 60px</span><span>狭い画面ではバーと全話数を落とす</span></div>
 </header>
@@ -11,7 +11,7 @@ TITLE: 録画予約中の更新
   <div class="cat-item cat-full is-key">
     <div class="su-box">
       <div class="su-head">
-        <h3>録画予約中の更新<span class="sub">更新が新しい順・最大 6 件</span></h3>
+        <h3>録画予約中の作品の更新<span class="sub">更新が新しい順・最大 6 件</span></h3>
         <a class="more" href="#">録画一覧へ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
       </div>
       <div class="su-cols"><span></span><span>作品</span><span class="bar">進捗</span><span class="num">録画</span><span class="num all">全話</span><span class="upd">更新</span></div>
@@ -215,7 +215,7 @@ TITLE: 録画予約中の更新
   <h2>0 件のとき</h2>
   <div class="cat-item cat-full">
     <div class="su-box">
-      <div class="su-head"><h3>録画予約中の更新<span class="sub">更新が新しい順・最大 6 件</span></h3></div>
+      <div class="su-head"><h3>録画予約中の作品の更新<span class="sub">更新が新しい順・最大 6 件</span></h3></div>
       <div class="su-empty">
         <p>録画予約中の作品はまだありません。一覧から作品を選んで録画予約すると、ここに更新が並びます。</p>
         <a class="cta" href="#">作品を探す <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
@@ -237,4 +237,20 @@ TITLE: 録画予約中の更新
     </div>
   </div>
   <p class="cat-note">件数が決まっているリストなので、読み込み中も行の高さと列の位置を保ったまま差し替える。中身が届いても表がずれない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>3 列の行 <span class="cat-hint">.su-row-3</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">.su-row-3</span>
+<div class="su-box"><div class="su-list">
+<a class="su-row su-row-3" href="#anime"><span class="su-thumb" style="background:var(--muted);color:var(--muted-foreground)">ク</span><span class="su-body"><span class="su-title">クラスで２番目に可愛い女の子と友だちになった</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-done">録画済み</span></span></span><span class="su-upd"><span class="rel">2 日前</span><span class="abs">9/21 22:04</span></span></a>
+<a class="su-row su-row-3" href="#anime"><span class="su-thumb" style="background:var(--muted);color:var(--muted-foreground)">上</span><span class="su-body"><span class="su-title">上伊那ぼたん、酔へる姿は百合の花</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-done">録画済み</span></span></span><span class="su-upd"><span class="rel">2 日前</span><span class="abs">9/21 22:04</span></span></a>
+<a class="su-row su-row-3" href="#anime"><span class="su-thumb" style="background:var(--muted);color:var(--muted-foreground)">マ</span><span class="su-body"><span class="su-title">マリッジトキシン</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag">未録画</span></span></span><span class="su-upd"><span class="rel">2 日前</span><span class="abs">9/21 22:03</span></span></a>
+<a class="su-row su-row-3" href="#anime"><span class="su-thumb" style="background:var(--muted);color:var(--muted-foreground)">愛</span><span class="su-body"><span class="su-title">愛してるゲームを終わらせたい</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-done">録画済み</span></span></span><span class="su-upd"><span class="rel">2 日前</span><span class="abs">9/21 22:03</span></span></a>
+<a class="su-row su-row-3" href="#anime"><span class="su-thumb" style="background:var(--muted);color:var(--muted-foreground)">N</span><span class="su-body"><span class="su-title">NEEDY GIRL OVERDOSE</span><span class="su-sub"><span class="pv pv-crunchyroll">Crunchyroll</span><span class="tag tag-done">録画済み</span></span></span><span class="su-upd"><span class="rel">2 日前</span><span class="abs">9/21 22:03</span></span></a>
+</div></div>
+    </div>
+  </div>
+  <p class="cat-note">進捗バーと件数を持たない行 (サムネ / 本文 / 更新日時)。</p>
 </section>

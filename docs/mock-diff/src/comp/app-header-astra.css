@@ -7,12 +7,15 @@
   padding: 18px 14px 16px;
 }
 .side.is-tall { min-height: 420px; }
+.side-top { display: flex; align-items: center; gap: 2px; }
 .side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
+/* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
+.side-top .side-brand { min-width: 0; flex: 1; }
 .side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
 .side-logo svg { width: 13px; height: 13px; }
 
 .side-nav { display: flex; flex-direction: column; gap: 2px; }
-.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
+.side-nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 0 8px 8px 0; color: var(--muted-foreground); font-size: 13px; border-left: 3px solid transparent; transition: background-color .15s, color .15s; }
 .side-nav a svg { width: 16px; height: 16px; }
 .side-nav a:hover { background: var(--muted); color: var(--foreground); }
 .side-nav a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-left-color: var(--primary); font-weight: 600; }
@@ -22,7 +25,7 @@
 
 .side-widget { border-top: 1px solid var(--border); padding-top: 14px; }
 .side-widget h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); padding: 0 10px 8px; font-weight: 600; }
-.side-stat { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
+.side-stat { display: flex; width: 100%; text-align: left; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; color: var(--foreground); transition: background-color .15s; }
 .side-stat:hover { background: var(--muted); }
 .side-stat .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
 .side-stat .v { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -30,12 +33,6 @@
 .side-stat.d-rec .dot { background: var(--warning); }
 .side-stat.d-err .dot { background: var(--destructive); }
 .side-stat.d-watch .dot { background: var(--success); }
-
-.side-search { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin: 0 2px; border-radius: 8px; border: 1px solid var(--input); background: var(--background); color: var(--muted-foreground); font-size: 12.5px; transition: border-color .15s, box-shadow .15s; }
-.side-search svg { width: 13px; height: 13px; flex: none; }
-.side-search:hover { border-color: var(--ring); }
-.side-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); color: var(--foreground); }
-.side-search kbd { margin-left: auto; font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--muted); }
 
 .side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
 .side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
@@ -58,7 +55,7 @@
   .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
   .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
   .side-nav a svg { width: 18px; height: 18px; }
-  .side-count, .side-widget, .side-status, .side-search { display: none; }
+  .side-count, .side-widget, .side-status { display: none; }
   .side.is-mobile { width: 100%; }
 }
 
@@ -74,3 +71,19 @@
 .side-stat.ok .v { color: var(--success-foreground); background: var(--success); border-radius: 5px; padding: 0 5px; }
 .side-stat.err { border-left-color: var(--destructive); }
 .side-stat.err .v { color: var(--destructive-foreground); background: var(--destructive); border-radius: 5px; padding: 0 5px; }
+
+/* ---------- 常設版 (.side.is-sticky) ---------- */
+/* 常にブラウザの縦幅ぴったりで表示する。align-self がないと .pg-shell の
+   stretch でメイン側と同じ高さまで伸びてしまい、height: 100vh + sticky が効かない。
+   左罫を持つ行 (ナビ / 件数 / 放送予定) は角丸を右側だけに揃える。 */
+.side.is-sticky {
+  transition: width .18s ease, flex-basis .18s ease;
+  position: sticky; top: 0; align-self: flex-start;
+  height: 100vh; overflow-y: auto;
+}
+.side.is-sticky .side-stat, .side.is-sticky .side-sched-row { border-radius: 0 8px 8px 0; }
+.side.is-sticky .side-stat { border-left: 3px solid transparent; }
+@media (max-width: 640px) {
+  .side.is-sticky { height: auto; overflow-y: visible; }
+  .side.is-sticky .side-nav a { border-radius: 8px; }
+}

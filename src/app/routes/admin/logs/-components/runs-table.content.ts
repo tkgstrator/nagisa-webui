@@ -12,9 +12,22 @@ const adminLogsRunsTableContent = {
         total: '対象',
         succeeded: '成功',
         failed: '失敗',
-        duration: '所要'
+        duration: '所要時間'
       },
       detail: '詳細'
+    },
+    en: {
+      headers: {
+        startedAt: 'Started at',
+        kind: 'Type',
+        trigger: 'Trigger',
+        status: 'Status',
+        total: 'Total',
+        succeeded: 'Succeeded',
+        failed: 'Failed',
+        duration: 'Duration'
+      },
+      detail: 'Details'
     }
   })
 } satisfies Dictionary

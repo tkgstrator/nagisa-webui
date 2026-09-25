@@ -1,0 +1,131 @@
+TITLE: エラー表示
+---
+<header class="cat-head">
+  <h1>エラー表示 <span class="cat-id">error-state</span></h1>
+  <p>例外を受け取ったときに本文と差し替える画面。利用者が次に何をすればいいかを先に示し、開発者向けの生のエラー文は「技術的な詳細」を開いたときだけ見せる。NotFound (404) も同じ枠で扱う。</p>
+  <div class="cat-meta"><span>astra 案 = 中央寄せ・要点だけ</span><span>見出しは大きく 1 行で言い切る</span><span>操作は 2 つまでに絞る</span><span>生のエラー文は 技術的な詳細 の中だけ</span><span>囲み枠と影は使わない</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>500 · サーバー内部エラー</h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="err">
+        <div class="err-code">500</div>
+        <h3 class="err-title">問題が発生しました</h3>
+        <p class="err-desc">サーバー側で予期しないエラーが発生しました。しばらく待ってから再読み込みしてください。</p>
+        <div class="err-acts">
+          <button class="err-btn is-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>再読み込み</button>
+          <a class="err-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+        <details class="err-det">
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>技術的な詳細</summary>
+          <pre>Zodios: request failed with status 500 Internal Server Error on get /anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">API が 5xx を返した。利用者側では解決できないので、再読み込みだけを促す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>503 · 一時的に利用できない</h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="err">
+        <div class="err-code">503</div>
+        <h3 class="err-title">一時的に利用できません</h3>
+        <p class="err-desc">メンテナンス中か、アクセスが集中しています。時間をおいてから再度お試しください。</p>
+        <div class="err-acts">
+          <button class="err-btn is-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>再読み込み</button>
+          <a class="err-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+        <details class="err-det">
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>技術的な詳細</summary>
+          <pre>Zodios: request failed with status 503 Service Unavailable on get /anime</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">メンテナンスや過負荷。時間をおけば直る見込みがあることを伝える。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>— · ネットワーク到達不能</h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="err">
+        <div class="err-code is-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l20 20"/><path d="M4.5 11.5a12 12 0 0 1 4.2-2.6"/><path d="M8 15a7 7 0 0 1 2.6-1.6"/><path d="M12 19h.01"/><path d="M19.8 11.6a12 12 0 0 0-5.6-3"/></svg></div>
+        <h3 class="err-title">接続できません</h3>
+        <p class="err-desc">ネットワークに接続されていないか、サーバーに到達できませんでした。接続を確認してください。</p>
+        <div class="err-acts">
+          <button class="err-btn is-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>再読み込み</button>
+          <a class="err-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+        <details class="err-det">
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>技術的な詳細</summary>
+          <pre>TypeError: Failed to fetch</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">ステータスコードが無い。数字の代わりにアイコンを出す。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>404 · ルート不在</h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="err">
+        <div class="err-code">404</div>
+        <h3 class="err-title">ページが見つかりません</h3>
+        <p class="err-desc">お探しのページは存在しないか、移動した可能性があります。</p>
+        <div class="err-acts">
+          <a class="err-btn is-primary" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">存在しない URL。作品の 404 とは文言を分ける（そちらは not-found 画面）。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>open · 技術的な詳細を開いた状態</h2>
+  <div class="cat-item cat-full">
+    <div class="cat-frame">
+      <div class="err">
+        <div class="err-code">500</div>
+        <h3 class="err-title">問題が発生しました</h3>
+        <p class="err-desc">サーバー側で予期しないエラーが発生しました。しばらく待ってから再読み込みしてください。</p>
+        <div class="err-acts">
+          <button class="err-btn is-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>再読み込み</button>
+          <a class="err-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+        <details class="err-det" open>
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>技術的な詳細</summary>
+          <pre>Zodios: request failed with status 500 Internal Server Error on get /anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb
+    at ZodiosClass.request (zodios/index.mjs:412:15)
+    at async animeDetailQueryOptions.queryFn (query-options.ts:38:5)</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">開発者が原因を追える最小限。ここ以外に生の例外文を出さない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>404 · 作品が見つからない</h2>
+  <div class="cat-item cat-full">
+<div class="err is-not-found" data-part="not-found">
+        <div class="err-code">404</div>
+        <h1 class="err-title">お探しの作品が見つかりません</h1>
+        <p class="err-desc">削除されたか、URL が間違っている可能性があります。ブックマークから開いた場合は、一覧から探し直してください。</p>
+        <div class="err-path"><span class="m">GET</span>/anime/9e7134ef-299a-5e74-b7fa-75c162a8fcbb</div>
+        <div class="err-acts">
+          <a class="err-btn is-primary" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧へ</a>
+          <a class="err-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>ホームに戻る</a>
+        </div>
+      </div>
+  </div>
+</section>
+

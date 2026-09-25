@@ -5,6 +5,9 @@ const searchBarContent = {
   content: t({
     ja: {
       placeholder: 'タイトルで検索'
+    },
+    en: {
+      placeholder: 'Search by title'
     }
   })
 } satisfies Dictionary

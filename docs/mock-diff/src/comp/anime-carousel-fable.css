@@ -112,3 +112,6 @@
 /* アニメカード (anime-card の .tile) をレールに載せるとき */
 .car-rail > .tile { flex: 0 0 176px; scroll-snap-align: start; }
 @media (max-width: 640px) { .car-rail > .tile { flex: 0 0 44%; } }
+
+/* レールの左右の逃げ (2px) を持たない版。親の端とタイルの端を揃えたいときに付ける。 */
+.car-wrap.is-flush .car-rail { padding: 4px 0 12px; margin: -4px 0 -8px; }

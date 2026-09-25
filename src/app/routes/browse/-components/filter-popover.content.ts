@@ -5,6 +5,9 @@ const filterPopoverContent = {
   content: t({
     ja: {
       allLabel: 'すべて'
+    },
+    en: {
+      allLabel: 'All'
     }
   })
 } satisfies Dictionary

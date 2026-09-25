@@ -1,0 +1,259 @@
+TITLE: 同期ログ
+USES: app-header stat-tile status-badge toggle button pagination app-footer
+---
+<div class="pg-shell">
+  <aside class="side is-tall">
+    <a class="side-brand" href="#">
+      <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      Nagisa
+    </a>
+    <nav class="side-nav" aria-label="メインナビゲーション">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>録画一覧<span class="side-count num">22</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</a>
+    </nav>
+    <div class="side-widget">
+      <h3>今日のサマリ</h3>
+      <a class="side-stat d-new" href="#new"><span class="dot"></span>新着エピソード<span class="v num">6</span></a>
+      <a class="side-stat d-rec" href="#queue"><span class="dot"></span>録画中<span class="v num">1</span></a>
+      <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
+      <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
+    </div>
+    <div class="side-status"><i></i>サーバー稼働中</div>
+  </aside>
+
+  <main class="pg-main">
+    <div class="pg">
+      <div class="pg-head">
+        <div>
+          <p class="pg-eyebrow">管理 · <b>同期ログ</b></p>
+          <h1 class="pg-title">同期ログ</h1>
+          <p class="pg-sub">cron・キューバッチ・手動実行の履歴、Worker の生ログ、録画リクエストの結果を確認します。</p>
+        </div>
+      </div>
+
+      <div class="pg-body">
+        <section class="pg-stat-grid" aria-label="直近 24 時間の実行">
+          <div class="a-stat tone-primary">
+            <span class="a-label">実行</span>
+            <span class="a-value num">42<small>件</small></span>
+            <span class="a-note">直近 24 時間</span>
+          </div>
+          <div class="a-stat tone-success">
+            <span class="a-label">成功</span>
+            <span class="a-value num">35<small>件</small></span>
+            <span class="a-note">全件処理できた実行</span>
+          </div>
+          <div class="a-stat tone-warning">
+            <span class="a-label">一部失敗</span>
+            <span class="a-value num">5<small>件</small></span>
+            <span class="a-note">一部のジョブが失敗した実行</span>
+          </div>
+          <div class="a-stat tone-destructive">
+            <span class="a-label">失敗</span>
+            <span class="a-value num">2<small>件</small></span>
+            <span class="a-note">実行中 1 件</span>
+          </div>
+        </section>
+
+        <div class="pg-sec">
+          <div class="a-segments" role="group" aria-label="表示するログの種類">
+            <button type="button" aria-pressed="true">実行履歴</button>
+            <button type="button" aria-pressed="false">生ログ</button>
+            <button type="button" aria-pressed="false">録画</button>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-sec-head"><p class="pg-sec-title">cron の稼働状況</p></div>
+          <div class="pg-tbl-wrap">
+            <table class="pg-tbl">
+              <thead>
+                <tr>
+                  <th scope="col">スケジュール</th>
+                  <th scope="col">cron 式</th>
+                  <th scope="col">最終実行</th>
+                  <th scope="col">結果</th>
+                  <th scope="col" class="pg-r">所要時間</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="pg-tone tone-success">
+                  <td><span>録画ジョブ同期</span></td>
+                  <td class="pg-tbl-mono">job-sync</td>
+                  <td><div>3 分前</div><span class="pg-tbl-sub">2026-09-25 14:17</span></td>
+                  <td><span class="a-badge tone-success a-sm">成功</span><span class="pg-tbl-sub num">成功 12 / 失敗 0</span></td>
+                  <td class="pg-r num">1.4 秒</td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><span>録画台帳の差分同期</span></td>
+                  <td class="pg-tbl-mono">library-sync</td>
+                  <td><div>18 分前</div><span class="pg-tbl-sub">2026-09-25 14:02</span></td>
+                  <td><span class="a-badge tone-success a-sm">成功</span><span class="pg-tbl-sub num">成功 8 / 失敗 0</span></td>
+                  <td class="pg-r num">820 ms</td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><span>新着 / 配信予定</span></td>
+                  <td class="pg-tbl-mono">0 */1 * * *</td>
+                  <td><div>42 分前</div><span class="pg-tbl-sub">2026-09-25 13:38</span></td>
+                  <td><span class="a-badge tone-success a-sm">成功</span><span class="pg-tbl-sub num">成功 24 / 失敗 0</span></td>
+                  <td class="pg-r num">3.2 秒</td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><span>配信終了間近</span></td>
+                  <td class="pg-tbl-mono">0 0 * * *</td>
+                  <td><div>9 時間前</div><span class="pg-tbl-sub">2026-09-25 05:00</span></td>
+                  <td><span class="a-badge tone-success a-sm">成功</span><span class="pg-tbl-sub num">成功 1 / 失敗 0</span></td>
+                  <td class="pg-r num">540 ms</td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><span>カタログ全件</span></td>
+                  <td class="pg-tbl-mono">0 3 * * *</td>
+                  <td><div>11 時間前</div><span class="pg-tbl-sub">2026-09-25 03:00</span></td>
+                  <td><span class="a-badge tone-success a-sm">成功</span><span class="pg-tbl-sub num">成功 1 / 失敗 0</span></td>
+                  <td class="pg-r num">18 分 42 秒</td>
+                </tr>
+                <tr class="pg-tone tone-warning">
+                  <td><span>ABEMA 鍵アーカイブ</span></td>
+                  <td class="pg-tbl-mono">0 4 * * *</td>
+                  <td><div>10 時間前</div><span class="pg-tbl-sub">2026-09-25 04:00</span></td>
+                  <td><span class="a-badge tone-warning a-sm">一部失敗</span><span class="pg-tbl-sub num">成功 30 / 失敗 2</span></td>
+                  <td class="pg-r num">2 分 05 秒</td>
+                </tr>
+                <tr class="pg-tone tone-destructive">
+                  <td><span>AniList 同期</span></td>
+                  <td class="pg-tbl-mono">0 5 * * SUN</td>
+                  <td><span class="a-badge tone-destructive a-sm">未実行</span></td>
+                  <td class="pg-tbl-sub">—</td>
+                  <td class="pg-r num">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pg-sec">
+          <div class="pg-toolbar">
+            <div class="pg-toolbar-l"><p class="pg-sec-title num">実行履歴 (42 件)</p></div>
+            <div class="pg-toolbar-r">
+              <button type="button" class="a-btn a-outline a-sm">
+                期間: 直近 24 時間
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <button type="button" class="a-btn a-outline a-sm">
+                種別: すべて
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <button type="button" class="a-btn a-outline a-sm">
+                状態: すべて
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="pg-tbl-wrap">
+            <table class="pg-tbl">
+              <thead>
+                <tr>
+                  <th scope="col">開始</th>
+                  <th scope="col">種別</th>
+                  <th scope="col">トリガー</th>
+                  <th scope="col">状態</th>
+                  <th scope="col" class="pg-r">対象</th>
+                  <th scope="col" class="pg-r">成功</th>
+                  <th scope="col" class="pg-r">失敗</th>
+                  <th scope="col" class="pg-r">所要時間</th>
+                  <th scope="col" class="pg-r">詳細</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="pg-tone tone-success">
+                  <td><div>3 分前</div><span class="pg-tbl-sub">2026-09-25 14:17</span></td>
+                  <td>Schedule</td>
+                  <td class="pg-tbl-mono">録画ジョブ同期</td>
+                  <td><span class="a-badge tone-success a-sm">成功</span></td>
+                  <td class="pg-r num">12</td>
+                  <td class="pg-r num">12</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num">1.4 秒</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><div>18 分前</div><span class="pg-tbl-sub">2026-09-25 14:02</span></td>
+                  <td>Schedule</td>
+                  <td class="pg-tbl-mono">録画台帳の差分同期</td>
+                  <td><span class="a-badge tone-success a-sm">成功</span></td>
+                  <td class="pg-r num">8</td>
+                  <td class="pg-r num">8</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num">820 ms</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+                <tr class="pg-tone tone-success">
+                  <td><div>42 分前</div><span class="pg-tbl-sub">2026-09-25 13:38</span></td>
+                  <td>Schedule</td>
+                  <td class="pg-tbl-mono">新着 / 配信予定</td>
+                  <td><span class="a-badge tone-success a-sm">成功</span></td>
+                  <td class="pg-r num">24</td>
+                  <td class="pg-r num">24</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num">3.2 秒</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+                <tr class="pg-tone tone-primary">
+                  <td><div>2 時間前</div><span class="pg-tbl-sub">2026-09-25 12:20</span></td>
+                  <td>Queue</td>
+                  <td>queue:recording-jobs</td>
+                  <td><span class="a-badge tone-muted a-sm">実行中</span></td>
+                  <td class="pg-r num">5</td>
+                  <td class="pg-r num">2</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num">—</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+                <tr class="pg-tone tone-destructive">
+                  <td><div>1 時間前</div><span class="pg-tbl-sub">2026-09-25 13:20</span></td>
+                  <td>Manual</td>
+                  <td>tkgstrator<span class="pg-tbl-sub">Nagisa への接続がタイムアウトしました</span></td>
+                  <td><span class="a-badge tone-destructive a-sm">失敗</span></td>
+                  <td class="pg-r num">3</td>
+                  <td class="pg-r num">0</td>
+                  <td class="pg-r num"><b>3</b></td>
+                  <td class="pg-r num">4.8 秒</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+                <tr class="pg-tone tone-warning">
+                  <td><div>10 時間前</div><span class="pg-tbl-sub">2026-09-25 04:00</span></td>
+                  <td>Schedule</td>
+                  <td class="pg-tbl-mono">ABEMA 鍵アーカイブ</td>
+                  <td><span class="a-badge tone-warning a-sm">一部失敗</span></td>
+                  <td class="pg-r num">32</td>
+                  <td class="pg-r num">30</td>
+                  <td class="pg-r num"><b>2</b></td>
+                  <td class="pg-r num">2 分 05 秒</td>
+                  <td class="pg-r"><a class="pg-link" href="#admin-log-detail">詳細</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pager">
+            <button type="button" disabled aria-label="前のページ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+            <span class="cur num"><b>1</b> / 5 ページ · 42件</span>
+            <button type="button" aria-label="次のページ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ftr">
+      <span class="l"><span class="dot"></span>Nagisa WebUI v0.9.1<span class="sha">062b7a7</span>2026/09/25 14:20</span>
+      <span class="r">
+        <a href="#changelog">変更履歴</a>
+        <a href="#admin">管理</a>
+        <a class="ext" href="#">GitHub<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </span>
+    </footer>
+  </main>
+</div>

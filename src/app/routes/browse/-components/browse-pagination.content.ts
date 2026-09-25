@@ -7,6 +7,11 @@ const browsePaginationContent = {
       ariaLabel: 'ページネーション',
       rangeOf: insert('/ {{total}} 件'),
       pageSizeLabel: '表示件数'
+    },
+    en: {
+      ariaLabel: 'Pagination',
+      rangeOf: insert('/ {{total}} items'),
+      pageSizeLabel: 'Items per page'
     }
   })
 } satisfies Dictionary

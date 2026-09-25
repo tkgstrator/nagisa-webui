@@ -27,11 +27,41 @@ const browseFiltersContent = {
       },
       badges: {
         newEpisode: '新着エピソード',
-        recentlyAdded: '新着追加',
+        recentlyAdded: '新規追加',
         comingSoon: '配信予定',
         expiring: '配信終了予定'
       },
-      reset: 'フィルタをリセット'
+      reset: '絞り込みをリセット'
+    },
+    en: {
+      groups: {
+        provider: 'Provider',
+        year: 'Year',
+        quarter: 'Season',
+        status: 'Status',
+        badge: 'Badge'
+      },
+      allYears: 'All',
+      quarters: {
+        winter: 'Winter',
+        spring: 'Spring',
+        summer: 'Summer',
+        autumn: 'Fall'
+      },
+      statuses: {
+        releasing: 'Airing',
+        finished: 'Finished',
+        notYetReleased: 'Not yet aired',
+        hiatus: 'On hiatus',
+        cancelled: 'Cancelled'
+      },
+      badges: {
+        newEpisode: 'New episodes',
+        recentlyAdded: 'Recently added',
+        comingSoon: 'Upcoming',
+        expiring: 'Leaving soon'
+      },
+      reset: 'Reset filters'
     }
   })
 } satisfies Dictionary

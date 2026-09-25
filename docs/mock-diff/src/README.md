@@ -33,16 +33,22 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
 | メタ | 要否 | 意味 |
 | --- | --- | --- |
 | `TITLE` | 必須 | `<title>` に入る画面名 |
-| `USES` | 必須 | 使う部品 id を空白区切りで。`comp/<id>-<author>.css` が存在しないとビルドが落ちる |
+| `USES` | 必須 | 使う部品 id を空白区切りで。`comp/<id>-<author>.css` が存在しないとビルドが落ちる。`<id>@<author>` と書くとその部品だけ作者を固定する（例: fable ページに astra のヘッダ） |
+| `SKELETON` | 任意 | 骨格 CSS の名前。`parts/page-<SKELETON>.css` を使う（省略時は `page-<author>.css`）。final ページでは `page-final-<SKELETON>.css` で、こちらは必須 |
 | `BODY` | 任意 | `<body>` に足す属性。先頭に空白を入れて ` class="dark"` のように書く |
 
-ビルドは `tokens.css` + `base.css` + `page-<author>.css` + `USES` の部品 CSS を順に連結するだけ。
+ビルドは `tokens.css` + `base.css` + 骨格 CSS + `USES` の部品 CSS を順に連結するだけ。
 部品 CSS は **`comp/` のものをそのまま**取り込む（カタログ用の `.is-hover` 変換はページでは行わない）。
+
+部品カタログのメタにも `USES:` を指定できる。`dependencies.ts` が依存部品を再帰的に展開し、
+依存先から順に各 CSS を一度だけ取り込む。カタログとページと検証で同じ依存解決を使う。
+存在しない部品と循環依存はエラー。`.stage.css` はカタログ専用で、依存先からは取り込まない。
 
 ## 原則
 
 1. **部品のクラスは `comp/*.css` が正**。ページ側で再定義しない。ページの HTML は部品カタログ
    （`src/comp/<id>-<author>.html`）に出てくるマークアップをそのまま使い、クラス名を勝手に変えない。
+   ページでだけ見た目を変えたいときは、部品の既定値は触らず `is-*` 修飾クラスを部品 CSS に足す。
 2. **骨格は `pg-` 名前空間だけ**。ページ固有の余白・段組み・見出しは `page-<author>.css` に
    `pg-*` で足す。部品と同じクラス名は作らない（`check.ts` が弾く）。
 3. 同じ見た目のものを別名で二重実装しない。既存の `mocks/<id>-<author>.html` に独自クラスが
@@ -57,7 +63,16 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
 | `browse` | `app-header anime-card browse-filters filter-chips anime-drawer pagination app-footer` |
 | `anime-detail` | `app-header breadcrumbs anime-hero episode-list related-providers app-footer` |
 | `recordings` | `app-header recordings-toolbar recording-row recordings-calendar empty-state pagination summary-stats app-footer` |
+| `recording-detail` | `app-header breadcrumbs anime-hero episode-list recording-status anime-info recording-events settings-controls app-footer` |
 | `home` | `app-header summary-stats anime-carousel scheduled-updates home-tabs app-footer` |
+| `changelog` | `app-header app-footer` |
+| `admin` | `app-header nav-item app-footer` |
+| `admin-unidentified` | `app-header input button pagination recording-events app-footer` |
+| `admin-recorder` | `app-header input toggle button app-footer` |
+| `admin-abema` | `app-header stat-tile button app-footer` |
+| `admin-logs` | `app-header stat-tile status-badge toggle button pagination app-footer` |
+| `admin-log-detail` | `app-header stat-tile status-badge app-footer` |
+| `admin-status` | `app-header stat-tile app-footer` |
 
 `fable` はヘッダー横並び（`.hdr`）、`astra` はサイドバー（`.side`）+ 本文の 2 ペイン（`.pg-shell` > `.side` + `.pg-main`）。
 
