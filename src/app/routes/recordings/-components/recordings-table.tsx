@@ -2,7 +2,9 @@ import { Link } from '@tanstack/react-router'
 import { Fragment } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
+import { StatusBadge } from '@/app/components/ui/status-badge'
 import { providerColor, providerLabel, statusColor, statusLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import { useSettings } from '@/app/routes/settings/-lib/settings'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 import { daysUntil, formatAbsolute, formatDate, formatRelative, seasonLabel } from './format'
@@ -40,11 +42,7 @@ const SortableHead = ({ label, sortKey, sort, onSortChange, className = '' }: So
   const next: SortValue =
     sortKey === 'title' ? 'title-asc' : sort === 'updatedAt-desc' ? 'updatedAt-asc' : 'updatedAt-desc'
   return (
-    <th
-      scope='col'
-      aria-sort={state}
-      className={`${headClass} ${state === undefined ? '' : 'text-foreground'} ${className}`}
-    >
+    <th scope='col' aria-sort={state} className={cn(headClass, state !== undefined && 'text-foreground', className)}>
       <button
         type='button'
         onClick={() => onSortChange(next)}
@@ -66,7 +64,7 @@ const Row = ({ anime }: { anime: AnimeSchema }) => {
   const remaining = anime.expiredAt === null ? null : daysUntil(anime.expiredAt)
   return (
     <tr className='border-b border-border transition-colors focus-within:bg-muted hover:bg-muted'>
-      <td className={`${cellClass} border-l-[3px] ${rowAccent(anime)}`}>
+      <td className={cn(cellClass, 'border-l-[3px]', rowAccent(anime))}>
         <div className='flex min-w-0 items-center gap-3 max-sm:gap-2'>
           <div className='group relative aspect-video w-[88px] shrink-0 overflow-hidden rounded-md max-sm:w-[60px]'>
             <ProxyImage
@@ -96,34 +94,26 @@ const Row = ({ anime }: { anime: AnimeSchema }) => {
           </div>
         </div>
       </td>
-      <td className={`${cellClass}`}>
-        <span
-          className={`inline-flex h-5 items-center rounded-full px-[7px] text-[11px] font-semibold ${providerColor[anime.provider] ?? 'bg-muted text-muted-foreground'}`}
-        >
+      <td className={cellClass}>
+        <StatusBadge size='sm' className={providerColor[anime.provider] ?? 'bg-muted text-muted-foreground'}>
           {providerLabel[anime.provider] ?? anime.provider}
-        </span>
-      </td>
-      <td className={`${cellClass}`}>
-        <span
-          className={`inline-flex h-5 items-center rounded-full px-[7px] text-[11px] font-semibold ${statusColor[anime.status] ?? 'bg-muted text-muted-foreground'}`}
-        >
-          {statusLabel[anime.status] ?? anime.status}
-        </span>
+        </StatusBadge>
       </td>
       <td className={cellClass}>
-        <span
-          className={`inline-flex h-5 items-center rounded-full px-[7px] text-[11px] font-semibold whitespace-nowrap ${
-            anime.recorded ? 'bg-success text-success-foreground' : 'bg-muted text-muted-foreground'
-          }`}
-        >
-          {anime.recorded ? content.recordedBadge.recorded : content.recordedBadge.pending}
-        </span>
+        <StatusBadge size='sm' className={statusColor[anime.status] ?? 'bg-muted text-muted-foreground'}>
+          {statusLabel[anime.status] ?? anime.status}
+        </StatusBadge>
       </td>
-      <td className={`${cellClass}`}>
+      <td className={cellClass}>
+        <StatusBadge size='sm' variant='solid' tone={anime.recorded ? 'success' : 'muted'}>
+          {anime.recorded ? content.recordedBadge.recorded : content.recordedBadge.pending}
+        </StatusBadge>
+      </td>
+      <td className={cellClass}>
         <span className='block text-[12.5px]'>{formatRelative(anime.updatedAt)}</span>
         <span className='block text-[11px] text-muted-foreground tabular-nums'>{formatAbsolute(anime.updatedAt)}</span>
       </td>
-      <td className={`${cellClass} text-xs text-muted-foreground tabular-nums max-sm:px-[5px] max-sm:py-[9px]`}>
+      <td className={cn(cellClass, 'text-xs text-muted-foreground tabular-nums max-sm:px-[5px] max-sm:py-[9px]')}>
         {anime.expiredAt === null ? (
           '—'
         ) : (

@@ -89,21 +89,21 @@ function SyncRunDetailPage() {
           value={run.succeeded}
           unit={content.stats.unit.value}
           note={content.stats.succeeded.note.value}
-          tone='ok'
+          tone='success'
         />
         <StatTile
           label={content.stats.failed.label.value}
           value={run.failed}
           unit={content.stats.unit.value}
           note={content.stats.failed.note.value}
-          tone='err'
+          tone='destructive'
         />
         <StatTile
           label={content.stats.retried.label.value}
           value={run.retried}
           unit={content.stats.unit.value}
           note={content.stats.retried.note.value}
-          tone='warn'
+          tone='warning'
         />
       </section>
 

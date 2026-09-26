@@ -16,10 +16,12 @@ import {
   Zap
 } from 'lucide-react'
 import type { ReactElement } from 'react'
+import { cn } from '@/app/lib/utils'
 import type { NagisaStatusJob } from '@/schemas/nagisa.dto'
 import { Badge } from '../lib/../components/ui/badge'
 import { recorderStatusAtom } from '../lib/atoms'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
+import { StatusDot } from './ui/status-dot'
 
 const formatUptime = (seconds: number): string => {
   const d = Math.floor(seconds / 86400)
@@ -41,7 +43,7 @@ const JobItem = ({ job }: { job: NagisaStatusJob }) => {
   return (
     <div className='rounded-lg bg-muted/40 px-3 py-2'>
       <div className='flex items-center gap-2'>
-        <span className='inline-block size-1.5 shrink-0 animate-pulse rounded-full bg-info' />
+        <StatusDot aria-hidden='true' tone='info' pulse className='size-1.5' />
         <p className='min-w-0 flex-1 truncate text-xs font-medium'>{job.title ?? job.content_id}</p>
         <span className='shrink-0 text-xs text-muted-foreground'>{job.provider}</span>
       </div>
@@ -225,11 +227,12 @@ const QueueStat = ({
 }) => (
   <div className='flex flex-col items-center gap-1 rounded-lg bg-muted/40 px-1 py-2'>
     <Icon
-      className={`size-3.5 ${
+      className={cn(
+        'size-3.5',
         error ? 'text-destructive' : active && value > 0 ? 'animate-spin text-info' : 'text-muted-foreground'
-      }`}
+      )}
     />
-    <span className={`text-base font-semibold tabular-nums ${error ? 'text-destructive' : ''}`}>{value}</span>
+    <span className={cn('text-base font-semibold tabular-nums', error && 'text-destructive')}>{value}</span>
     <span className='text-[10px] text-muted-foreground'>{label}</span>
   </div>
 )

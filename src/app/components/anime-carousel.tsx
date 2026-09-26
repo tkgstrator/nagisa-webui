@@ -4,7 +4,9 @@ import { ChevronRight, Info } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { Carousel, CarouselContent, CarouselItem } from '@/app/components/ui/carousel'
+import { StatusDot } from '@/app/components/ui/status-dot'
 import { providerLabel, providerSolidColor, statusLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
 
 type BadgeType = 'updatedAt' | 'nextEpisodeDate' | 'expiredAt'
@@ -41,7 +43,7 @@ const ThumbFallback = ({ title }: { title: string }) => {
 const Rail = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <div className='relative min-w-0'>
     <Carousel opts={{ align: 'start', dragFree: true, loop: false }} className='w-full min-w-0'>
-      <CarouselContent className={`-mt-1 ml-0 gap-3.5 py-1 ${className ?? ''}`}>{children}</CarouselContent>
+      <CarouselContent className={cn('-mt-1 ml-0 gap-3.5 py-1', className)}>{children}</CarouselContent>
     </Carousel>
     <span
       aria-hidden='true'
@@ -69,7 +71,10 @@ const SectionHead = ({ title, subtitle, viewAllLink }: { title: string; subtitle
 export const ViewAllLink = ({ to, label, className }: { to: string; label: string; className?: string }) => (
   <Link
     to={to}
-    className={`group/more inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1.5 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground ${className ?? ''}`}
+    className={cn(
+      'group/more inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1.5 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground',
+      className
+    )}
   >
     {label}
     <ChevronRight className='size-3.5 transition-transform group-hover/more:translate-x-0.5' />
@@ -162,7 +167,7 @@ function RecordingState({ anime }: { anime: AnimeSchema }) {
   if (anime.recorded) {
     return (
       <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-success dark:text-overlay-foreground'>
-        <i className='size-1.5 rounded-full bg-success' />
+        <StatusDot aria-hidden='true' tone='success' className='size-1.5' />
         {content.recordingState.recorded}
       </span>
     )
@@ -170,7 +175,7 @@ function RecordingState({ anime }: { anime: AnimeSchema }) {
   if (anime.scheduled) {
     return (
       <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-overlay-foreground'>
-        <i className='size-1.5 animate-pulse rounded-full bg-info' />
+        <StatusDot aria-hidden='true' tone='info' pulse className='size-1.5' />
         {content.recordingState.scheduled}
       </span>
     )
@@ -203,14 +208,20 @@ function CarouselCard({
         />
         {flag !== undefined && (
           <span
-            className={`absolute top-2 left-2 z-1 inline-flex h-[18px] items-center gap-1 rounded px-1.5 text-[10px] font-semibold ${flagToneClass[flag.tone]}`}
+            className={cn(
+              'absolute top-2 left-2 z-1 inline-flex h-[18px] items-center gap-1 rounded px-1.5 text-[10px] font-semibold',
+              flagToneClass[flag.tone]
+            )}
           >
-            {flag.pulse === true && <i className='size-[5px] animate-pulse rounded-full bg-current' />}
+            {flag.pulse === true && <StatusDot aria-hidden='true' tone='info' pulse size='sm' className='bg-current' />}
             {flag.label}
           </span>
         )}
         <span
-          className={`absolute bottom-2 left-2 z-1 inline-flex h-[18px] items-center rounded px-1.5 text-[10px] font-semibold ${providerSolidColor[anime.provider] ?? 'bg-secondary text-secondary-foreground'}`}
+          className={cn(
+            'absolute bottom-2 left-2 z-1 inline-flex h-[18px] items-center rounded px-1.5 text-[10px] font-semibold',
+            providerSolidColor[anime.provider] ?? 'bg-secondary text-secondary-foreground'
+          )}
         >
           {providerLabel[anime.provider] ?? anime.provider}
         </span>
@@ -257,7 +268,10 @@ function PosterTile({
         <span aria-hidden='true' className='absolute inset-0 bg-gradient-to-b from-transparent to-overlay' />
         {tagLabel !== null && (
           <span
-            className={`absolute top-2 left-2 z-1 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9.5px] font-bold ${flagToneClass[tag?.tone ?? 'new']}`}
+            className={cn(
+              'absolute top-2 left-2 z-1 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9.5px] font-bold',
+              flagToneClass[tag?.tone ?? 'new']
+            )}
           >
             {tagLabel}
           </span>
@@ -279,8 +293,8 @@ function PosterTile({
       {showMeta && (status !== null || time !== null) && (
         <div className='mt-1.5 flex items-center justify-between gap-1.5 text-[11px]'>
           {status !== null && (
-            <span className={`inline-flex items-center gap-1 font-semibold ${statusDotClass(anime.status)}`}>
-              <i className='size-[5px] rounded-full bg-current' />
+            <span className={cn('inline-flex items-center gap-1 font-semibold', statusDotClass(anime.status))}>
+              <StatusDot aria-hidden='true' size='sm' className='bg-current' />
               {status}
             </span>
           )}

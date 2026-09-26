@@ -1,16 +1,8 @@
 import { useIntlayer } from 'react-intlayer'
-
-type Tone = 'primary' | 'ok' | 'warn' | 'mute'
-
-const toneBorder: Record<Tone, string> = {
-  primary: 'border-l-primary',
-  ok: 'border-l-success',
-  warn: 'border-l-warning',
-  mute: 'border-l-border'
-}
+import { StatTile } from '@/app/components/stat-tile'
 
 type StatProps = {
-  tone: Tone
+  tone: 'primary' | 'success' | 'warning' | 'muted'
   label: string
   value: number
   unit: string
@@ -19,20 +11,10 @@ type StatProps = {
 }
 
 const Stat = ({ tone, label, value, unit, ratio }: StatProps) => (
-  <div
-    className={`flex min-w-0 flex-col gap-0.5 rounded-r-lg border-l-[3px] py-0.5 pr-2 pl-3.5 ${value === 0 ? 'border-l-border' : toneBorder[tone]}`}
-  >
-    <div className='flex items-center gap-1.5 text-xs text-muted-foreground max-sm:text-[11.5px]'>
-      <span className='min-w-0 truncate'>{label}</span>
-    </div>
-    <div
-      className={`text-[28px] leading-[1.1] font-bold tracking-[-0.02em] tabular-nums max-sm:text-2xl ${value === 0 ? 'font-semibold text-muted-foreground' : ''}`}
-    >
-      {value}
-      <small className='ml-1 text-[13px] font-medium tracking-normal text-muted-foreground'>{unit}</small>
-    </div>
+  <div className='min-w-0'>
+    <StatTile tone={tone} label={label} value={value} unit={unit} />
     {ratio === undefined ? null : (
-      <div className='mt-1.5 h-1 overflow-hidden rounded-sm bg-muted'>
+      <div className='mt-1.5 ml-[3px] h-1 overflow-hidden rounded-sm bg-muted'>
         <span className='block h-full bg-success transition-[width] duration-500' style={{ width: `${ratio}%` }} />
       </div>
     )}
@@ -70,15 +52,15 @@ export const SummaryStats = ({
     >
       <Stat tone='primary' label={content.stats.scheduled.value} value={total} unit={content.unit.value} />
       <Stat
-        tone='ok'
+        tone='success'
         label={content.stats.recordedVisible.value}
         value={recorded}
         unit={content.recordedUnit({ visible }).value}
         ratio={visible === 0 ? 0 : Math.round((recorded / visible) * 100)}
       />
-      <Stat tone='mute' label={content.stats.pendingVisible.value} value={pending} unit={content.unit.value} />
+      <Stat tone='muted' label={content.stats.pendingVisible.value} value={pending} unit={content.unit.value} />
       <Stat
-        tone='warn'
+        tone='warning'
         label={content.stats.expiringVisible.value}
         value={expiring}
         unit={

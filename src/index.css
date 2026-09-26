@@ -281,3 +281,69 @@
   --status-hiatus: oklch(0.7 0.18 50 / 30%);
   --status-hiatus-foreground: oklch(0.96 0.003 250);
 }
+
+/* Mock Diff の tone-palette-astra 原子契約。chip / status-badge / status-dot / stat-tile が
+   --tone-bg / --tone-fg / --tone-border / --tone-dot / --tone-soft / --tone-ink を参照する。
+   primary / muted は soft と ink をブランド色の薄塗りではなく accent / muted にそろえるため、
+   後段で上書きしている (tone-palette-astra.css の 2 段階宣言と同じ)。 */
+.tone-success {
+  --tone-bg: var(--success);
+  --tone-fg: var(--success-foreground);
+  --tone-border: color-mix(in oklch, var(--success) 45%, var(--border));
+  --tone-dot: var(--success);
+  --tone-soft: color-mix(in oklch, var(--success) 14%, var(--background));
+  --tone-ink: color-mix(in oklch, var(--success) 35%, var(--foreground));
+}
+.tone-info {
+  --tone-bg: var(--info);
+  --tone-fg: var(--info-foreground);
+  --tone-border: color-mix(in oklch, var(--info) 45%, var(--border));
+  --tone-dot: var(--info);
+  --tone-soft: color-mix(in oklch, var(--info) 14%, var(--background));
+  --tone-ink: color-mix(in oklch, var(--info) 35%, var(--foreground));
+}
+.tone-warning {
+  --tone-bg: var(--warning);
+  --tone-fg: var(--warning-foreground);
+  --tone-border: color-mix(in oklch, var(--warning) 45%, var(--border));
+  --tone-dot: var(--warning);
+  --tone-soft: color-mix(in oklch, var(--warning) 14%, var(--background));
+  --tone-ink: color-mix(in oklch, var(--warning) 35%, var(--foreground));
+}
+.tone-destructive {
+  --tone-bg: var(--destructive);
+  --tone-fg: var(--destructive-foreground);
+  --tone-border: color-mix(in oklch, var(--destructive) 45%, var(--border));
+  --tone-dot: var(--destructive);
+  --tone-soft: color-mix(in oklch, var(--destructive) 14%, var(--background));
+  --tone-ink: color-mix(in oklch, var(--destructive) 35%, var(--foreground));
+}
+.tone-muted {
+  --tone-bg: var(--muted);
+  --tone-fg: var(--muted-foreground);
+  --tone-border: var(--border);
+  --tone-dot: var(--muted-foreground);
+  --tone-soft: var(--muted);
+  --tone-ink: var(--muted-foreground);
+}
+.tone-primary {
+  --tone-bg: var(--primary);
+  --tone-fg: var(--primary-foreground);
+  --tone-border: color-mix(in oklch, var(--primary) 45%, var(--border));
+  --tone-dot: var(--primary);
+  --tone-soft: var(--accent);
+  --tone-ink: var(--accent-foreground);
+}
+
+/* `docs/mock-diff/src/comp/status-dot-astra.css` の `.a-pulse` 用キーフレーム。
+   `motion-reduce:` で無効化するのは Tailwind 側の variant に任せる。 */
+@theme {
+  --animate-astra-pulse: astraAtomPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes astraAtomPulse {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}

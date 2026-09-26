@@ -69,7 +69,7 @@ const SettingsPage = () => {
           enter(1)
         )}
       >
-        <div>
+        <div className='pt-8 pl-4 max-lg:pl-0'>
           <DisplaySection />
           <ProviderSection />
           <RecordingSection />

@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import { SectionHeading, SectionHeadingCount } from '@/app/components/ui/section-heading'
+import { cn } from '@/app/lib/utils'
 
 interface PageSectionProps {
   id?: string
@@ -16,11 +18,11 @@ interface PageSectionProps {
 export const PageSection = ({ id, title, count, more, children, 'aria-label': ariaLabel }: PageSectionProps) => (
   <section id={id} aria-label={ariaLabel} className='mt-9 scroll-mt-6 first:mt-0 max-sm:mt-7'>
     {title !== undefined && (
-      <div className='mb-3.5 flex flex-wrap items-baseline justify-between gap-3'>
-        <h2 className='text-base font-bold'>{title}</h2>
-        {count !== undefined && <span className='text-xs tabular-nums text-muted-foreground'>{count}</span>}
+      <SectionHeading appearance='plain' compact className='mb-3.5 items-baseline gap-3'>
+        <h2>{title}</h2>
+        {count !== undefined && <SectionHeadingCount>{count}</SectionHeadingCount>}
         {more}
-      </div>
+      </SectionHeading>
     )}
     {children}
   </section>
@@ -56,7 +58,7 @@ const noticeToneClass: Record<NoticeTone, string> = {
 
 /** 1 行の状態メッセージ (取得中 / 失敗 / 古いデータの警告)。モックの `.pg-notice`。 */
 export const PageNotice = ({ tone, children }: { tone: NoticeTone; children: ReactNode }) => (
-  <p className={`rounded-r-lg border-l-[3px] bg-background px-3.5 py-2.5 text-[12.5px] ${noticeToneClass[tone]}`}>
+  <p className={cn('rounded-r-lg border-l-[3px] bg-background px-3.5 py-2.5 text-[12.5px]', noticeToneClass[tone])}>
     {children}
   </p>
 )

@@ -1,18 +1,20 @@
 import type { ReactNode } from 'react'
 import { appLocale } from '@/app/lib/locale'
+import { cn } from '@/app/lib/utils'
 
 /**
  * 左ボーダーのアクセント色だけがトーンで変わる、モック準拠のフラットなタイル。
  * 値が 0 のときはアクセントを落として「見るべきものが無い」ことを表す。
  */
-export type StatTone = 'primary' | 'ok' | 'warn' | 'err' | 'mute'
+export type StatTone = 'primary' | 'success' | 'info' | 'warning' | 'destructive' | 'muted'
 
 const toneClass: Record<StatTone, string> = {
   primary: 'border-l-primary',
-  ok: 'border-l-success',
-  warn: 'border-l-warning',
-  err: 'border-l-destructive',
-  mute: 'border-l-muted-foreground'
+  success: 'border-l-success',
+  info: 'border-l-info',
+  warning: 'border-l-warning',
+  destructive: 'border-l-destructive',
+  muted: 'border-l-muted-foreground'
 }
 
 /**
@@ -35,11 +37,18 @@ export const StatTile = ({
   mono?: boolean
 }) => (
   <div
-    className={`flex min-w-0 flex-col gap-0.5 rounded-r-lg border-l-[3px] py-0.5 pr-2 pl-3.5 ${value === 0 ? 'border-l-border' : toneClass[tone]}`}
+    className={cn(
+      'flex min-w-0 flex-col gap-0.5 rounded-r-lg border-l-[3px] py-0.5 pr-2 pl-3.5',
+      value === 0 ? 'border-l-border' : toneClass[tone]
+    )}
   >
     <span className='text-xs leading-[1.5] text-muted-foreground'>{label}</span>
     <span
-      className={`text-[28px] leading-[1.1] tracking-[-0.02em] tabular-nums max-sm:text-2xl ${value === 0 ? 'font-semibold text-muted-foreground' : 'font-bold'} ${mono ? 'font-[ui-monospace,SFMono-Regular,Menlo,monospace]' : ''}`}
+      className={cn(
+        'text-[28px] leading-[1.1] tracking-[-0.02em] tabular-nums max-sm:text-2xl',
+        value === 0 ? 'font-semibold text-muted-foreground' : 'font-bold',
+        mono && 'font-[ui-monospace,SFMono-Regular,Menlo,monospace]'
+      )}
     >
       {typeof value === 'number' ? value.toLocaleString(appLocale) : value}
       {unit && <small className='ml-1 text-[13px] font-medium tracking-normal text-muted-foreground'>{unit}</small>}

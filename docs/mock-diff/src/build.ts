@@ -137,7 +137,14 @@ function metaSplit(frag: string): { meta: Record<string, string>; body: string }
   return { meta, body: rstrip(body) }
 }
 
-const page = (title: string, css: string, bodyattr: string, body: string) => `<!doctype html>
+const componentScripts = (parts: { id: string; author: string }[]) =>
+  parts
+    .map(({ id, author }) => join(COMP, `${id}-${author}.js`))
+    .filter(existsSync)
+    .map((path) => `<script>\n${read(path)}\n</script>`)
+    .join('\n')
+
+const page = (title: string, css: string, bodyattr: string, body: string, scripts = '') => `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -149,7 +156,7 @@ ${css}
 </style>
 </head>
 <body${bodyattr}>
-${body}
+${body}${scripts ? `\n${scripts}` : ''}
 </body>
 </html>
 `
@@ -167,7 +174,8 @@ function buildComp(cid: string, author: string): [string, string] {
   const css = [read(join(PARTS, 'tokens.css')), read(join(PARTS, 'base.css')), read(join(PARTS, 'harness.css'))]
   const stage = join(COMP, `${cid}-${author}.stage.css`)
   if (existsSync(stage)) css.push(`/* ---------- catalog stage: ${cid} ---------- */\n${read(stage)}`)
-  for (const dep of components(COMP, author, [cid])) {
+  const parts = components(COMP, author, [cid])
+  for (const dep of parts) {
     css.push(
       `/* ---------- component: ${dep.id} ---------- */\n${transform(read(join(COMP, `${dep.id}-${dep.author}.css`))).trim()}`
     )
@@ -176,7 +184,8 @@ function buildComp(cid: string, author: string): [string, string] {
     `${meta.TITLE} — ${author} 案 | Nagisa WebUI コンポーネントモック`,
     css.join('\n'),
     '',
-    `<main class="cat">\n${mark(body)}\n</main>`
+    `<main class="cat">\n${mark(body)}\n</main>`,
+    componentScripts(parts)
   )
   const dst = join(MOCKS, 'components', `${cid}-${author}.html`)
   mkdirSync(dirname(dst), { recursive: true })
@@ -198,7 +207,8 @@ function buildPage(pid: string, author: string): [string, string] {
   const body = unmark(expandParts(raw, catalog(partAuthor), used))
   const stray = [...used].filter((id) => !ids.includes(id))
   if (stray.length) throw new Error(`${pid}-${author}: USES に無い部品を @part で取り込んでいます: ${stray.join(' ')}`)
-  for (const c of components(COMP, partAuthor, ids)) {
+  const parts = components(COMP, partAuthor, ids)
+  for (const c of parts) {
     css.push(`/* ---------- component: ${c.id} ---------- */\n${read(join(COMP, `${c.id}-${c.author}.css`))}`)
   }
   if (final) css.push(read(join(PARTS, 'still.css')))
@@ -206,7 +216,8 @@ function buildPage(pid: string, author: string): [string, string] {
     `${meta.TITLE} — ${final ? '決定稿' : `${author} 案`} | Nagisa WebUI モック`,
     css.join('\n'),
     meta.BODY ?? '',
-    body
+    body,
+    componentScripts(parts)
   )
   const dst = join(MOCKS, `${pid}-${author}.html`)
   writeFileSync(dst, html, 'utf-8')

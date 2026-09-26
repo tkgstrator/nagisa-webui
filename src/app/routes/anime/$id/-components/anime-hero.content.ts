@@ -22,6 +22,7 @@ const animeHeroContent = {
       recordButton: {
         recorded: insert('録画済み ({{count}} 話)'),
         recordNow: '今すぐ録画',
+        recordNowTitle: '放送済みで未録画のエピソードを録画サーバーにリクエストする',
         recordedTitle: '録画済みの取り消しには対応していません'
       },
       refreshButton: '再取得'
@@ -45,6 +46,7 @@ const animeHeroContent = {
       recordButton: {
         recorded: insert('Recorded ({{count}} ep.)'),
         recordNow: 'Record now',
+        recordNowTitle: 'Request aired episodes that are not recorded yet from the recording server',
         recordedTitle: 'Marking recordings as unrecorded is not supported'
       },
       refreshButton: 'Refresh'

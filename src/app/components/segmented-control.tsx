@@ -1,3 +1,4 @@
+import { ToggleGroup, ToggleGroupItem } from '@/app/components/ui/toggle-group'
 import { cn } from '@/app/lib/utils'
 
 export interface SegmentOption<T extends string> {
@@ -22,27 +23,16 @@ export const SegmentedControl = <T extends string>({
   label: string
   fill?: boolean
 }) => (
-  <fieldset
+  <ToggleGroup
+    value={[value]}
+    onValueChange={(values) => values[0] && onValueChange(values[0] as T)}
     aria-label={label}
-    className={cn(
-      'inline-flex min-w-0 shrink-0 gap-[3px] rounded-full bg-muted p-[3px]',
-      fill && 'max-sm:flex max-sm:w-full'
-    )}
+    className={cn('min-w-0 shrink-0', fill && 'max-sm:flex max-sm:w-full')}
   >
     {options.map((option) => (
-      <button
-        key={option.value}
-        type='button'
-        aria-pressed={value === option.value}
-        onClick={() => onValueChange(option.value)}
-        className={cn(
-          'h-[26px] shrink-0 rounded-full px-3 text-[12.5px] whitespace-nowrap text-muted-foreground transition-[background-color,color,transform] duration-200 hover:text-foreground active:scale-95',
-          fill && 'max-sm:flex-1 max-sm:px-2',
-          value === option.value && 'bg-primary font-bold text-primary-foreground'
-        )}
-      >
+      <ToggleGroupItem key={option.value} value={option.value} className={cn(fill && 'max-sm:flex-1 max-sm:px-2')}>
         {option.label}
-      </button>
+      </ToggleGroupItem>
     ))}
-  </fieldset>
+  </ToggleGroup>
 )

@@ -1,17 +1,16 @@
 import { Link } from '@tanstack/react-router'
 import { useSetAtom } from 'jotai'
-import { Check, Circle, RefreshCw } from 'lucide-react'
+import { Check, Circle, RotateCw, Send } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
+import { Button } from '@/app/components/ui/button'
+import { StatusBadge } from '@/app/components/ui/status-badge'
+import { StatusDot } from '@/app/components/ui/status-dot'
 import { browseFiltersAtom, browseFiltersDefaults } from '@/app/lib/atoms'
 import { providerColor, providerLabel, statusColor, statusLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import { type AnimeInfoSchema, QuarterLabel } from '@/schemas/anime.dto'
 import { formatRuntime } from '../-lib/format'
 import { Artwork } from './artwork'
-
-const badgeClass = 'inline-flex items-center gap-[5px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold'
-
-const btnClass =
-  'inline-flex h-[34px] items-center justify-center gap-[7px] rounded-full border border-border px-[15px] text-[13px] font-semibold transition-colors hover:bg-muted disabled:pointer-events-none max-sm:flex-auto'
 
 const Fact = ({ label, value }: { label: string; value: string }) => (
   <div className='flex flex-col gap-0.5'>
@@ -60,13 +59,26 @@ export function AnimeHero({
 
       <div className='min-w-0 flex-auto'>
         <div className='flex flex-wrap items-center gap-2'>
-          <span className={`${badgeClass} ${providerColor[anime.provider]}`}>{providerLabel[anime.provider]}</span>
-          <span className={`${badgeClass} ${statusColor[anime.status]}`}>
-            {anime.status === 'RELEASING' && <span aria-hidden='true' className='size-[5px] rounded-full bg-current' />}
+          <StatusBadge
+            className={cn('h-auto border-0 px-[9px] py-[3px] text-[11px]', providerColor[anime.provider])}
+            size='sm'
+          >
+            {providerLabel[anime.provider]}
+          </StatusBadge>
+          <StatusBadge
+            className={cn('h-auto border-0 px-[9px] py-[3px] text-[11px]', statusColor[anime.status])}
+            size='sm'
+          >
+            {anime.status === 'RELEASING' && <StatusDot aria-hidden='true' size='sm' className='bg-current' />}
             {statusLabel[anime.status]}
-          </span>
+          </StatusBadge>
           {anime.entityType === 'movie' && (
-            <span className={`${badgeClass} bg-secondary text-secondary-foreground`}>{content.movieBadge}</span>
+            <StatusBadge
+              className='h-auto border-0 bg-secondary px-[9px] py-[3px] text-[11px] text-secondary-foreground'
+              size='sm'
+            >
+              {content.movieBadge}
+            </StatusBadge>
           )}
         </div>
 
@@ -115,34 +127,47 @@ export function AnimeHero({
           )}
 
           <div className='mt-[18px] flex flex-wrap items-center gap-2.5'>
-            <button
+            <Button
               type='button'
+              variant={anime.scheduled ? 'default' : 'outline'}
+              size='pill'
+              className='h-[34px] px-[15px] max-sm:flex-auto'
               onClick={onToggleScheduled}
               disabled={updating}
               aria-pressed={anime.scheduled}
-              className={`${btnClass} ${anime.scheduled ? 'border-transparent bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
             >
-              {anime.scheduled ? <Check className='size-[15px]' /> : <Circle className='size-[15px]' />}
+              {anime.scheduled ? <Check className='size-[14px]' /> : <Circle className='size-[14px]' />}
               {anime.scheduled ? content.scheduleButton.scheduled : content.scheduleButton.schedule}
-            </button>
+            </Button>
             {/* 録画を取り消す API がないので、録画済みになったら押せない。位置と見た目は保ったまま意味だけ変える。 */}
-            <button
+            <Button
               type='button'
+              variant={anime.recorded ? 'success' : 'outline'}
+              size='pill'
+              className='h-[34px] px-[15px] max-sm:flex-auto'
               onClick={onToggleRecorded}
               disabled={updating || anime.recorded}
               aria-pressed={anime.recorded}
-              title={anime.recorded ? content.recordButton.recordedTitle.value : undefined}
-              className={`${btnClass} ${anime.recorded ? 'border-transparent bg-success text-success-foreground' : ''}`}
+              title={
+                anime.recorded ? content.recordButton.recordedTitle.value : content.recordButton.recordNowTitle.value
+              }
             >
-              {anime.recorded ? <Check className='size-[15px]' /> : <Circle className='size-[15px]' />}
+              {anime.recorded ? <Check className='size-[14px]' /> : <Send className='size-[14px]' />}
               {anime.recorded
                 ? content.recordButton.recorded({ count: recordedCount })
                 : content.recordButton.recordNow}
-            </button>
-            <button type='button' onClick={onRefresh} disabled={updating} className={btnClass}>
-              <RefreshCw className={`size-[15px] ${refreshing ? 'animate-spin' : ''}`} />
+            </Button>
+            <Button
+              type='button'
+              variant='outline'
+              size='pill'
+              className='h-[34px] px-[15px] max-sm:flex-auto'
+              onClick={onRefresh}
+              disabled={updating}
+            >
+              <RotateCw className={cn('size-[14px]', refreshing && 'animate-spin')} />
               {content.refreshButton}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

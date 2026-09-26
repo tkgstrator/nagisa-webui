@@ -145,7 +145,7 @@ function NagisaJobEditorPage() {
   })()
 
   return (
-    <PageContainer narrow className='gap-[22px]'>
+    <PageContainer className='gap-[22px]'>
       <PageHeader
         eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
         title={content.title.value}

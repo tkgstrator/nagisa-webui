@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { useIntlayer } from 'react-intlayer'
 import { SidebarSlot } from '@/app/components/app-sidebar'
+import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
 import { formatMonthDay } from '../-lib/format'
 
@@ -35,7 +36,7 @@ export function BroadcastSchedule({ anime }: { anime: AnimeInfoSchema }) {
         {soon.map((episode, index) => {
           const isNow = index === 0 && dayjs(episode.releaseDate).diff(dayjs(), 'day') <= 7
           return (
-            <div key={episode.id} className={`${rowClass} ${isNow ? 'border-l-primary bg-accent' : ''}`}>
+            <div key={episode.id} className={cn(rowClass, isNow && 'border-l-primary bg-accent')}>
               <span className={keyClass}>
                 {content.episodeLabel({ number: episode.episodeNumber })}
                 {isNow && content.thisWeekSuffix}

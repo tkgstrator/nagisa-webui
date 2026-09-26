@@ -2,6 +2,8 @@ import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
 import { SegmentedControl, type SegmentOption } from '@/app/components/segmented-control'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
+import { StatusBadge } from '@/app/components/ui/status-badge'
+import { Switch } from '@/app/components/ui/switch'
 import { cn } from '@/app/lib/utils'
 import { settingsAtom } from '../-lib/settings'
 
@@ -68,9 +70,9 @@ export const StRow = ({ icon, badge, label, description, tag, index = 0, danger 
 }
 
 export const StTag = ({ children }: { children: ReactNode }) => (
-  <span className='inline-flex h-[18px] items-center rounded-full bg-secondary px-2 text-[10px] font-bold tracking-[0.03em] text-secondary-foreground'>
+  <StatusBadge className='h-[18px] bg-secondary px-2 text-[10px] tracking-[0.03em] text-secondary-foreground'>
     {children}
-  </span>
+  </StatusBadge>
 )
 
 /** 右端の補足。数値が入るので tabular-nums 固定。 */
@@ -86,27 +88,7 @@ export const StSwitch = ({
   checked: boolean
   onCheckedChange: (next: boolean) => void
   label: string
-}) => (
-  <button
-    type='button'
-    role='switch'
-    aria-checked={checked}
-    aria-label={label}
-    onClick={() => onCheckedChange(!checked)}
-    className={cn(
-      'relative h-[23px] w-10 shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
-      checked ? 'bg-primary' : 'bg-input'
-    )}
-  >
-    <span
-      aria-hidden='true'
-      className={cn(
-        'absolute top-0.5 left-0.5 size-[19px] rounded-full transition-transform duration-[240ms] ease-[cubic-bezier(.16,1,.3,1)]',
-        checked ? 'translate-x-[17px] bg-primary-foreground' : 'bg-background'
-      )}
-    />
-  </button>
-)
+}) => <Switch checked={checked} aria-label={label} onCheckedChange={onCheckedChange} />
 
 export type { SegmentOption }
 

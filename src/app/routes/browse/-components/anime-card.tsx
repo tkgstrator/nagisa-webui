@@ -1,7 +1,10 @@
 import dayjs from 'dayjs'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
+import { StatusBadge } from '@/app/components/ui/status-badge'
+import type { Tone } from '@/app/components/ui/tone'
 import { providerLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
 
 /** id ごとに安定した色相。画像が来るまでのプレースホルダ専用。 */
@@ -38,23 +41,11 @@ export function AnimeCard({
     HIATUS: { label: content.status.hiatus.value, className: 'text-status-hiatus-foreground' }
   }
 
-  const badgeTag: Record<string, { label: string; className: string; pulse: boolean }> = {
-    NEW_EPISODE: { label: content.badge.newEpisode.value, className: 'bg-info text-info-foreground', pulse: true },
-    RECENTLY_ADDED: {
-      label: content.badge.recentlyAdded.value,
-      className: 'bg-success text-success-foreground',
-      pulse: false
-    },
-    COMING_SOON: {
-      label: content.badge.comingSoon.value,
-      className: 'bg-warning text-warning-foreground',
-      pulse: false
-    },
-    EXPIRING: {
-      label: content.badge.expiring.value,
-      className: 'bg-destructive text-destructive-foreground',
-      pulse: false
-    }
+  const badgeTag: Record<string, { label: string; tone: Tone; pulse: boolean }> = {
+    NEW_EPISODE: { label: content.badge.newEpisode.value, tone: 'info', pulse: true },
+    RECENTLY_ADDED: { label: content.badge.recentlyAdded.value, tone: 'success', pulse: false },
+    COMING_SOON: { label: content.badge.comingSoon.value, tone: 'warning', pulse: false },
+    EXPIRING: { label: content.badge.expiring.value, tone: 'destructive', pulse: false }
   }
 
   /** 一覧 API にエピソード番号が無いため、代わりに次回配信日 / 配信終了日を出す。 */
@@ -108,12 +99,14 @@ export function AnimeCard({
             />
 
             {tag !== undefined && (
-              <span
-                className={`absolute left-2 top-2 z-1 inline-flex items-center gap-1 rounded-[4px] px-1.5 py-0.5 text-[9.5px] font-bold ${tag.className}`}
+              <StatusBadge
+                tone={tag.tone}
+                variant='solid'
+                className='absolute top-2 left-2 z-1 h-auto rounded-[4px] px-1.5 py-0.5 text-[9.5px] font-bold'
               >
                 {tag.pulse && <span className='size-[5px] animate-pulse rounded-full bg-current' />}
                 {tag.label}
-              </span>
+              </StatusBadge>
             )}
 
             <span className='absolute inset-0 z-1 flex items-center justify-center bg-overlay/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible/tile:opacity-100'>
@@ -149,7 +142,10 @@ export function AnimeCard({
             type='button'
             aria-pressed={filterStatus === anime.status}
             onClick={() => onFilterStatus(filterStatus === anime.status ? undefined : anime.status)}
-            className={`inline-flex items-center gap-1 rounded-sm font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${status.className}`}
+            className={cn(
+              'inline-flex items-center gap-1 rounded-sm font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+              status.className
+            )}
           >
             <span aria-hidden='true' className='size-[5px] rounded-full bg-current' />
             {status.label}

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { Button } from '@/app/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover'
+import { cn } from '@/app/lib/utils'
 
 export function FilterPopover<T extends string | number | boolean | undefined>({
   label,
@@ -62,7 +63,7 @@ export function FilterPopover<T extends string | number | boolean | undefined>({
               }}
               className='flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-muted aria-checked:font-medium aria-checked:text-accent-foreground'
             >
-              <Check className={`size-3.5 shrink-0 ${checked ? 'opacity-100' : 'opacity-0'}`} />
+              <Check className={cn('size-3.5 shrink-0', checked ? 'opacity-100' : 'opacity-0')} />
               <span>{opt.label}</span>
             </button>
           )
