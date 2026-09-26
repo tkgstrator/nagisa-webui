@@ -1,5 +1,6 @@
-import { SlidersHorizontal, X } from 'lucide-react'
+import { SlidersHorizontal } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
+import { ActiveFilterChip } from '@/app/components/ui/active-filter-chip'
 import { cn } from '@/app/lib/utils'
 import type { ActiveChip } from '../-lib/filters'
 
@@ -34,27 +35,15 @@ export const ActiveFilters = ({ hasFilters, activeChips, onOpenFilterSheet, onRe
         <>
           <span className='text-muted-foreground max-sm:hidden'>{content.applied}</span>
           {activeChips.map((chip) => (
-            <span
+            <ActiveFilterChip
               key={chip.key}
-              className={cn(
-                'inline-flex h-6 items-center gap-1 rounded-md pr-1 pl-2.5 text-xs',
-                chip.query ? 'bg-accent text-accent-foreground' : 'bg-secondary text-secondary-foreground'
-              )}
-            >
-              {chip.dot !== undefined && (
-                <span aria-hidden='true' className={cn('size-[7px] rounded-full', chip.dot)} />
-              )}
-              <span className={chip.query ? 'opacity-65' : 'text-muted-foreground'}>{chip.label}</span>
-              <span className='max-w-40 truncate'>{chip.value}</span>
-              <button
-                type='button'
-                onClick={chip.onClear}
-                aria-label={content.clearChipLabel({ label: chip.label, value: chip.value }).value}
-                className='grid size-[18px] place-items-center rounded-sm text-muted-foreground hover:bg-border hover:text-foreground'
-              >
-                <X className='size-[11px]' />
-              </button>
-            </span>
+              label={chip.label}
+              value={chip.value}
+              dot={chip.dot}
+              query={chip.query}
+              onClear={chip.onClear}
+              clearLabel={content.clearChipLabel({ label: chip.label, value: chip.value }).value}
+            />
           ))}
           <button
             type='button'

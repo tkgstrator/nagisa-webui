@@ -33,7 +33,7 @@ USES: app-header stat-tile app-footer
         <div>
           <p class="pg-eyebrow">管理 · <b>サーバーステータス</b></p>
           <h1 class="pg-title">サーバーステータス</h1>
-          <p class="pg-sub">Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状況を確認します。</p>
+          <p class="pg-sub">サーバーの稼働状況・キュー・録画ファイル・同期の状態を確認します。</p>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ USES: app-header stat-tile app-footer
         </div>
 
         <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">録画台帳 (Nagisa)</p></div>
+          <div class="pg-sec-head"><p class="pg-sec-title">録画サーバー</p></div>
           <p class="pg-form-hint">GET /api/library/stats。録画ファイルの集計です。</p>
           <div class="pg-stat-grid">
             <div class="a-stat tone-success">
@@ -121,7 +121,7 @@ USES: app-header stat-tile app-footer
         </div>
 
         <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">WebUI 側の同期</p></div>
+          <div class="pg-sec-head"><p class="pg-sec-title">データベース</p></div>
           <p class="pg-form-hint">ローカルの D1 のみを参照するため、Nagisa が停止していても表示されます。</p>
           <div class="pg-stat-grid">
             <div class="a-stat tone-success">
@@ -148,7 +148,7 @@ USES: app-header stat-tile app-footer
         </div>
 
         <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">録画状態の内訳</p></div>
+          <div class="pg-sec-head"><p class="pg-sec-title">録画状態</p></div>
           <p class="pg-form-hint">エピソード単位の集計です。completed に更新できるのは台帳同期のみです。</p>
           <div class="pg-tbl-wrap">
             <table class="pg-tbl">

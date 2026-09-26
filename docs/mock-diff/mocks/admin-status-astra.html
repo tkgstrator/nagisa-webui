@@ -401,6 +401,9 @@ svg { display: block; flex: none; }
 .side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
 /* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
 .side-top .side-brand { min-width: 0; flex: 1; }
+.side-toggle { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border: 0; border-radius: 8px; background: transparent; color: var(--muted-foreground); cursor: pointer; }
+.side-toggle:hover, .side-toggle:focus-visible { background: var(--muted); color: var(--foreground); }
+.side-toggle svg { width: 16px; height: 16px; }
 .side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
 .side-logo svg { width: 13px; height: 13px; }
 
@@ -477,6 +480,15 @@ svg { display: block; flex: none; }
 }
 .side.is-sticky .side-stat, .side.is-sticky .side-sched-row { border-radius: 0 8px 8px 0; }
 .side.is-sticky .side-stat { border-left: 3px solid transparent; }
+/* Shadcn Sidebar の icon 折り畳み状態。通常のページは展開状態が採用モック。 */
+.side.is-compact { width: 56px; flex-basis: 56px; padding: 18px 4px 16px; }
+.side.is-compact .side-top { justify-content: center; }
+.side.is-compact .side-brand, .side.is-compact .side-widget, .side.is-compact .side-count { display: none; }
+.side.is-compact .side-nav a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
+.side.is-compact .side-foot a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; font-size: 0; }
+.side.is-compact .side-foot svg { width: 16px; height: 16px; }
+.side.is-compact .side-foot .side-status i { width: 7px; height: 7px; }
+@media (max-width: 640px) { .side.is-compact { width: 100%; flex-basis: auto; } }
 @media (max-width: 640px) {
   .side.is-sticky { height: auto; overflow-y: visible; }
   .side.is-sticky .side-nav a { border-radius: 8px; }
@@ -566,7 +578,7 @@ svg { display: block; flex: none; }
         <div>
           <p class="pg-eyebrow">管理 · <b>サーバーステータス</b></p>
           <h1 class="pg-title">サーバーステータス</h1>
-          <p class="pg-sub">Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状況を確認します。</p>
+          <p class="pg-sub">サーバーの稼働状況・キュー・録画ファイル・同期の状態を確認します。</p>
         </div>
       </div>
 
@@ -627,7 +639,7 @@ svg { display: block; flex: none; }
         </div>
 
         <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">録画台帳 (Nagisa)</p></div>
+          <div class="pg-sec-head"><p class="pg-sec-title">録画サーバー</p></div>
           <p class="pg-form-hint">GET /api/library/stats。録画ファイルの集計です。</p>
           <div class="pg-stat-grid">
             <div class="a-stat tone-success">
@@ -654,7 +666,7 @@ svg { display: block; flex: none; }
         </div>
 
         <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">WebUI 側の同期</p></div>
+          <div class="pg-sec-head"><p class="pg-sec-title">データベース</p></div>
           <p class="pg-form-hint">ローカルの D1 のみを参照するため、Nagisa が停止していても表示されます。</p>
           <div class="pg-stat-grid">
             <div class="a-stat tone-success">
@@ -681,7 +693,7 @@ svg { display: block; flex: none; }
         </div>
 
         <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">録画状態の内訳</p></div>
+          <div class="pg-sec-head"><p class="pg-sec-title">録画状態</p></div>
           <p class="pg-form-hint">エピソード単位の集計です。completed に更新できるのは台帳同期のみです。</p>
           <div class="pg-tbl-wrap">
             <table class="pg-tbl">

@@ -190,7 +190,10 @@ function HomePage() {
   const tabTriggerClass =
     'group/tab h-[38px] flex-none gap-[7px] rounded-none border-b-2 border-transparent px-3 text-sm font-normal text-muted-foreground after:hidden hover:bg-muted/65 hover:text-foreground data-active:border-b-primary data-active:bg-transparent data-active:font-semibold data-active:text-foreground data-active:hover:bg-transparent dark:data-active:border-transparent dark:data-active:border-b-primary dark:data-active:bg-transparent'
   const tabCountClass = (value: number) =>
-    `text-xs tabular-nums text-muted-foreground group-data-active/tab:font-semibold group-data-active/tab:text-primary ${value === 0 ? 'opacity-45' : ''}`
+    cn(
+      'text-xs tabular-nums text-muted-foreground group-data-active/tab:font-semibold group-data-active/tab:text-primary',
+      value === 0 && 'opacity-45'
+    )
 
   return (
     <PageContainer className='gap-10 max-sm:gap-[30px]'>

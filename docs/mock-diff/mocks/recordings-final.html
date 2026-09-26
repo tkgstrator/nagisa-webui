@@ -314,6 +314,9 @@ svg { display: block; flex: none; }
 .side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
 /* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
 .side-top .side-brand { min-width: 0; flex: 1; }
+.side-toggle { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border: 0; border-radius: 8px; background: transparent; color: var(--muted-foreground); cursor: pointer; }
+.side-toggle:hover, .side-toggle:focus-visible { background: var(--muted); color: var(--foreground); }
+.side-toggle svg { width: 16px; height: 16px; }
 .side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
 .side-logo svg { width: 13px; height: 13px; }
 
@@ -390,6 +393,15 @@ svg { display: block; flex: none; }
 }
 .side.is-sticky .side-stat, .side.is-sticky .side-sched-row { border-radius: 0 8px 8px 0; }
 .side.is-sticky .side-stat { border-left: 3px solid transparent; }
+/* Shadcn Sidebar の icon 折り畳み状態。通常のページは展開状態が採用モック。 */
+.side.is-compact { width: 56px; flex-basis: 56px; padding: 18px 4px 16px; }
+.side.is-compact .side-top { justify-content: center; }
+.side.is-compact .side-brand, .side.is-compact .side-widget, .side.is-compact .side-count { display: none; }
+.side.is-compact .side-nav a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
+.side.is-compact .side-foot a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; font-size: 0; }
+.side.is-compact .side-foot svg { width: 16px; height: 16px; }
+.side.is-compact .side-foot .side-status i { width: 7px; height: 7px; }
+@media (max-width: 640px) { .side.is-compact { width: 100%; flex-basis: auto; } }
 @media (max-width: 640px) {
   .side.is-sticky { height: auto; overflow-y: visible; }
   .side.is-sticky .side-nav a { border-radius: 8px; }
@@ -1020,6 +1032,7 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
         <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         Nagisa
       </a>
+      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
     </div>
     <nav class="side-nav" id="side-nav" aria-label="メインナビゲーション">
       <a href="#" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>

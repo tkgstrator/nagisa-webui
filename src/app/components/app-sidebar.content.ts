@@ -5,6 +5,8 @@ const appSidebarContent = {
   content: t({
     ja: {
       navAriaLabel: 'メインナビゲーション',
+      collapseLabel: 'メニューをコンパクトにする',
+      expandLabel: 'メニューを展開する',
       nav: {
         home: 'ホーム',
         browse: 'アニメ一覧',
@@ -23,6 +25,8 @@ const appSidebarContent = {
     },
     en: {
       navAriaLabel: 'Main navigation',
+      collapseLabel: 'Collapse menu',
+      expandLabel: 'Expand menu',
       nav: {
         home: 'Home',
         browse: 'Browse anime',
