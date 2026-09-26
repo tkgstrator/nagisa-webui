@@ -22,6 +22,10 @@
 .pg > *:nth-child(7) { animation-delay: .36s; }
 .pg-narrow { max-width: 1060px; }
 
+/* 管理画面 (admin*) だけ .pg / .pg-narrow の幅上限と中央寄せを解除し、
+   本文領域いっぱいに左寄せで広げる。他ページの見た目は変えない。 */
+.pg-admin { max-width: none; margin: 0; }
+
 /* ---------- page head ---------- */
 .pg-head {
   display: flex;

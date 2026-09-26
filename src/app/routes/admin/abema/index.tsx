@@ -65,7 +65,7 @@ function AbemaArchivePage() {
               value={stats.animeWithMissingKey}
               unit={content.stats.missingKey.unit.value}
               note={content.stats.missingKey.note.value}
-              tone='warn'
+              tone='warning'
             />
             <StatTile
               label={content.stats.totalEpisodes.label.value}
@@ -77,7 +77,7 @@ function AbemaArchivePage() {
                   pending: stats.pendingEpisodes.toLocaleString(appLocale)
                 }).value
               }
-              tone='ok'
+              tone='success'
             />
           </StatGrid>
         )}

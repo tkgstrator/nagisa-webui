@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { providerLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
 
 /** id ごとに安定した色相。画像が来るまでのプレースホルダ専用。 */
@@ -109,7 +110,10 @@ export function AnimeCard({
 
             {tag !== undefined && (
               <span
-                className={`absolute left-2 top-2 z-1 inline-flex items-center gap-1 rounded-[4px] px-1.5 py-0.5 text-[9.5px] font-bold ${tag.className}`}
+                className={cn(
+                  'absolute left-2 top-2 z-1 inline-flex items-center gap-1 rounded-[4px] px-1.5 py-0.5 text-[9.5px] font-bold',
+                  tag.className
+                )}
               >
                 {tag.pulse && <span className='size-[5px] animate-pulse rounded-full bg-current' />}
                 {tag.label}
@@ -149,7 +153,10 @@ export function AnimeCard({
             type='button'
             aria-pressed={filterStatus === anime.status}
             onClick={() => onFilterStatus(filterStatus === anime.status ? undefined : anime.status)}
-            className={`inline-flex items-center gap-1 rounded-sm font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${status.className}`}
+            className={cn(
+              'inline-flex items-center gap-1 rounded-sm font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+              status.className
+            )}
           >
             <span aria-hidden='true' className='size-[5px] rounded-full bg-current' />
             {status.label}

@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/ta
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import { appLocale } from '@/app/lib/locale'
 import { animeListQueryOptions, badgedAnimeQueryOptions } from '@/app/lib/query-options'
+import { cn } from '@/app/lib/utils'
 import {
   activeSeason,
   formatSeason,
@@ -83,19 +84,28 @@ const SummaryTile = ({
   return (
     <Link
       to={to}
-      className={`flex min-w-0 flex-col gap-0.5 rounded-r-lg border-l-[3px] py-0.5 pr-2 pl-3.5 transition-colors hover:bg-muted ${isZero ? 'border-l-border' : summaryToneClass[tone]}`}
+      className={cn(
+        'flex min-w-0 flex-col gap-0.5 rounded-r-lg border-l-[3px] py-0.5 pr-2 pl-3.5 transition-colors hover:bg-muted',
+        isZero ? 'border-l-border' : summaryToneClass[tone]
+      )}
     >
       <span className='flex items-center gap-1.5 text-xs leading-[1.5] text-muted-foreground max-sm:text-[11.5px]'>
         {label}
       </span>
       <span
-        className={`text-[28px] leading-[1.1] tracking-[-0.02em] tabular-nums max-sm:text-2xl ${isZero ? 'font-semibold text-muted-foreground' : 'font-bold'}`}
+        className={cn(
+          'text-[28px] leading-[1.1] tracking-[-0.02em] tabular-nums max-sm:text-2xl',
+          isZero ? 'font-semibold text-muted-foreground' : 'font-bold'
+        )}
       >
         {value.toLocaleString(appLocale)}
         <small className='ml-1 text-[13px] font-medium tracking-normal text-muted-foreground'>{unit}</small>
       </span>
       <span
-        className={`min-h-[18px] text-xs leading-[1.5] ${tone === 'err' ? 'text-destructive' : 'text-muted-foreground'}`}
+        className={cn(
+          'min-h-[18px] text-xs leading-[1.5]',
+          tone === 'err' ? 'text-destructive' : 'text-muted-foreground'
+        )}
       >
         {note}
       </span>
@@ -117,7 +127,10 @@ const QuickLink = ({
 }) => (
   <Link
     to={to}
-    className={`group/link grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-[3px] rounded-r-lg border-l-[3px] px-3.5 py-3 text-sm leading-[1.5] transition-colors hover:bg-muted ${tone === 'warn' ? 'border-l-warning' : 'border-l-primary'}`}
+    className={cn(
+      'group/link grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-[3px] rounded-r-lg border-l-[3px] px-3.5 py-3 text-sm leading-[1.5] transition-colors hover:bg-muted',
+      tone === 'warn' ? 'border-l-warning' : 'border-l-primary'
+    )}
   >
     <span className='text-[13.5px] font-semibold'>{title}</span>
     <ChevronRight className='size-4 text-muted-foreground transition-transform group-hover/link:translate-x-0.5' />
@@ -335,7 +348,10 @@ function HomePage() {
                   <div key={provider}>
                     <div className='mb-2.5 flex items-center justify-between gap-3'>
                       <span
-                        className={`inline-flex h-[22px] items-center rounded px-2.5 text-xs font-semibold ${providerColor[provider] ?? 'bg-secondary text-secondary-foreground'}`}
+                        className={cn(
+                          'inline-flex h-[22px] items-center rounded px-2.5 text-xs font-semibold',
+                          providerColor[provider] ?? 'bg-secondary text-secondary-foreground'
+                        )}
                       >
                         {providerLabel[provider] ?? provider}
                       </span>

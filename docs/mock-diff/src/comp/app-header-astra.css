@@ -34,11 +34,15 @@
 .side-stat.d-err .dot { background: var(--destructive); }
 .side-stat.d-watch .dot { background: var(--success); }
 
-.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; }
+.side-status, .side-link { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; font-size: 11px; color: var(--muted-foreground); transition: background-color .15s, color .15s; }
+.side-status:hover, .side-link:hover { background: var(--muted); color: var(--foreground); }
+.side-status[aria-current="page"], .side-link[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
 .side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
 .side-status.is-checking i { background: var(--warning); }
 .side-status.is-down { color: var(--destructive); }
 .side-status.is-down i { background: var(--destructive); animation: none; }
+.side-link svg { width: 13px; height: 13px; flex: none; }
 
 /* mobile: サイドバーを畳んで上端の横並びバーにする */
 .side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
@@ -55,7 +59,7 @@
   .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
   .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
   .side-nav a svg { width: 18px; height: 18px; }
-  .side-count, .side-widget, .side-status { display: none; }
+  .side-count, .side-widget, .side-foot { display: none; }
   .side.is-mobile { width: 100%; }
 }
 

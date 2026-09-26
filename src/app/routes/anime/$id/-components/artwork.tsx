@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { ProxyImage } from '@/app/components/proxy-image'
+import { cn } from '@/app/lib/utils'
 import { hueOf } from '../-lib/format'
 
 type ArtworkProps = {
@@ -32,7 +33,7 @@ export const Artwork = ({ src, alt, seed, slotWidth, variant, initial, className
       : { background: `linear-gradient(135deg, oklch(0.62 0.12 ${h}), oklch(0.38 0.12 ${h + 40}))` }
 
   return (
-    <div className={`relative aspect-video overflow-hidden ${className ?? ''}`}>
+    <div className={cn('relative aspect-video overflow-hidden', className)}>
       <div aria-hidden='true' className='absolute inset-0' style={art} />
       {initial !== undefined && (
         <span

@@ -1,5 +1,6 @@
 import { SlidersHorizontal, X } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
+import { cn } from '@/app/lib/utils'
 import type { ActiveChip } from '../-lib/filters'
 
 export type ActiveFiltersProps = {
@@ -14,7 +15,7 @@ export const ActiveFilters = ({ hasFilters, activeChips, onOpenFilterSheet, onRe
   const content = useIntlayer('browse-active-filters')
 
   return (
-    <div className={`flex min-h-[26px] flex-wrap items-center gap-1.5 text-xs ${hasFilters ? '' : 'sm:hidden'}`}>
+    <div className={cn('flex min-h-[26px] flex-wrap items-center gap-1.5 text-xs', !hasFilters && 'sm:hidden')}>
       <button
         type='button'
         onClick={onOpenFilterSheet}
@@ -35,11 +36,14 @@ export const ActiveFilters = ({ hasFilters, activeChips, onOpenFilterSheet, onRe
           {activeChips.map((chip) => (
             <span
               key={chip.key}
-              className={`inline-flex h-6 items-center gap-1 rounded-md pr-1 pl-2.5 text-xs ${
+              className={cn(
+                'inline-flex h-6 items-center gap-1 rounded-md pr-1 pl-2.5 text-xs',
                 chip.query ? 'bg-accent text-accent-foreground' : 'bg-secondary text-secondary-foreground'
-              }`}
+              )}
             >
-              {chip.dot !== undefined && <span aria-hidden='true' className={`size-[7px] rounded-full ${chip.dot}`} />}
+              {chip.dot !== undefined && (
+                <span aria-hidden='true' className={cn('size-[7px] rounded-full', chip.dot)} />
+              )}
               <span className={chip.query ? 'opacity-65' : 'text-muted-foreground'}>{chip.label}</span>
               <span className='max-w-40 truncate'>{chip.value}</span>
               <button

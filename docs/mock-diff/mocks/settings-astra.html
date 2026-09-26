@@ -174,6 +174,10 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(7) { animation-delay: .36s; }
 .pg-narrow { max-width: 1060px; }
 
+/* 管理画面 (admin*) だけ .pg / .pg-narrow の幅上限と中央寄せを解除し、
+   本文領域いっぱいに左寄せで広げる。他ページの見た目は変えない。 */
+.pg-admin { max-width: none; margin: 0; }
+
 /* ---------- page head ---------- */
 .pg-head {
   display: flex;
@@ -420,11 +424,15 @@ svg { display: block; flex: none; }
 .side-stat.d-err .dot { background: var(--destructive); }
 .side-stat.d-watch .dot { background: var(--success); }
 
-.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; }
+.side-status, .side-link { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; font-size: 11px; color: var(--muted-foreground); transition: background-color .15s, color .15s; }
+.side-status:hover, .side-link:hover { background: var(--muted); color: var(--foreground); }
+.side-status[aria-current="page"], .side-link[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
 .side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
 .side-status.is-checking i { background: var(--warning); }
 .side-status.is-down { color: var(--destructive); }
 .side-status.is-down i { background: var(--destructive); animation: none; }
+.side-link svg { width: 13px; height: 13px; flex: none; }
 
 /* mobile: サイドバーを畳んで上端の横並びバーにする */
 .side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
@@ -441,7 +449,7 @@ svg { display: block; flex: none; }
   .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
   .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
   .side-nav a svg { width: 18px; height: 18px; }
-  .side-count, .side-widget, .side-status { display: none; }
+  .side-count, .side-widget, .side-foot { display: none; }
   .side.is-mobile { width: 100%; }
 }
 
@@ -699,7 +707,11 @@ svg { display: block; flex: none; }
       <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
       <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
     </div>
-    <div class="side-status"><i></i>サーバー稼働中</div>
+    <div class="side-foot">
+      <a class="side-status" href="#admin-status"><i></i>サーバー稼働中</a>
+      <a class="side-link" href="#admin-logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>ログ</a>
+      <a class="side-link" href="#admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>管理</a>
+    </div>
   </aside>
 
   <main class="pg-main">
@@ -996,59 +1008,6 @@ svg { display: block; flex: none; }
             </div>
           </section>
 
-          <section class="pg-sec" id="s-admin">
-            <div class="pg-sec-head">
-              <h2 class="pg-sec-title">管理</h2>
-              <a class="pg-sec-more" href="#admin">管理画面を開く
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-              </a>
-            </div>
-            <div class="pg-links">
-              <a class="a-nav-link a-nav-warn" href="#admin-unidentified">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v3M11 14h.01"/></svg>
-                <div>
-                  <p class="a-nav-title">未識別タイトル <span class="num">38</span> 件</p>
-                  <p class="a-nav-sub">AniList で照合できなかった作品を確認・修正します。</p>
-                </div>
-              </a>
-              <a class="a-nav-link" href="#admin-nagisa">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M12 15l-4-4M12 15l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-                <div>
-                  <p class="a-nav-title">Nagisa ジョブ投入</p>
-                  <p class="a-nav-sub">provider / content_id を指定して、ジョブを直接送信します。</p>
-                </div>
-              </a>
-              <a class="a-nav-link" href="#server-status">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7.5h.01M7 17h.01"/></svg>
-                <div>
-                  <p class="a-nav-title">サーバーステータス</p>
-                  <p class="a-nav-sub">API・D1・Nagisa の疎通を確認する</p>
-                </div>
-              </a>
-              <a class="a-nav-link" href="#abema-keys">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8 2 2-2 2 2 2-3 3-2-2-2 2"/></svg>
-                <div>
-                  <p class="a-nav-title">ABEMA 鍵アーカイブ</p>
-                  <p class="a-nav-sub">進捗 <span class="num">82%</span> · 手動で取得を走らせる</p>
-                </div>
-              </a>
-              <a class="a-nav-link" href="#changelog">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><path d="M3.1 13a9 9 0 1 0 2-6.4"/><path d="M3 4v5h5"/></svg>
-                <div>
-                  <p class="a-nav-title">変更履歴</p>
-                  <p class="a-nav-sub">最近のデプロイとコミットを日付ごとに確認します。</p>
-                </div>
-              </a>
-              <a class="a-nav-link" href="#cron">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17v-4a4 4 0 0 1 4-4h10"/><path d="m14 6 3 3-3 3"/><path d="M21 7v4a4 4 0 0 1-4 4H7"/><path d="m10 18-3-3 3-3"/></svg>
-                <div>
-                  <p class="a-nav-title">取得ジョブの履歴</p>
-                  <p class="a-nav-sub">最終実行 <span class="num">9/18 12:41</span> · 失敗 <span class="num">0</span> 件</p>
-                </div>
-              </a>
-            </div>
-          </section>
-
           <section class="pg-sec" id="s-data">
             <div class="pg-sec-head">
               <h2 class="pg-sec-title">データ</h2>
@@ -1132,7 +1091,6 @@ svg { display: block; flex: none; }
             <a href="#s-provider">配信元<span class="c num">4 / 5</span></a>
             <a href="#s-rec">録画<span class="c num">5</span></a>
             <a href="#s-sync">台帳同期</a>
-            <a href="#s-admin">管理<span class="c num">6</span></a>
             <a href="#s-data">データ<span class="c num">3</span></a>
             <a href="#s-about">アプリ情報</a>
           </nav>

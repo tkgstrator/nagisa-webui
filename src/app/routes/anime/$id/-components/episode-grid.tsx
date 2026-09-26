@@ -5,22 +5,25 @@ import { useMemo, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import { Checkbox } from '@/app/components/ui/checkbox'
+import { Chip } from '@/app/components/ui/chip'
+import { SectionHeading } from '@/app/components/ui/section-heading'
+import { StatusDot } from '@/app/components/ui/status-dot'
 import api from '@/app/lib/api'
 import { queryKeys } from '@/app/lib/query-keys'
+import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
-import { type EpisodeStatus, episodeStatus, formatRuntime } from '../-lib/format'
-import { type Episode, EpisodeRow } from './episode-row'
+import { episodeStatus, formatRuntime } from '../-lib/format'
+import { type Episode, EpisodeRow, type RowState, rowStateOf } from './episode-row'
 
 type Filter = 'all' | 'todo' | 'free'
 
-const stripColor: Record<EpisodeStatus, string> = {
+const stripColor: Record<RowState, string> = {
   done: 'bg-success',
   todo: 'bg-muted-foreground/45',
-  future: 'border border-dashed border-border'
+  future: 'border border-dashed border-border',
+  rec: 'bg-info',
+  fail: 'bg-destructive'
 }
-
-const chipClass =
-  'inline-flex h-7 items-center gap-1.5 rounded-full border border-border px-2.5 text-[12.5px] text-muted-foreground transition-colors hover:bg-muted aria-pressed:border-transparent aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground'
 
 export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   const content = useIntlayer('anime-id-episode-grid')
@@ -44,7 +47,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
       setSelectedIds(new Set())
     },
     onError: () => toast.error(content.recordToast.error.value),
-    // 失敗したときもサーバー側は録画イベントと失敗状態を書いているので、どちらでも読み直す
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
@@ -67,7 +69,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
     return {
       done: episodes.filter((episode) => episodeStatus(episode) === 'done').length,
       todo: episodes.filter((episode) => episodeStatus(episode) === 'todo').length,
-      future: episodes.filter((episode) => episodeStatus(episode) === 'future').length,
       free: episodes.filter((episode) => episode.hasLocalKey).length,
       duration: episodes.reduce((sum, episode) => (episode.recorded ? sum + episode.duration : sum), 0)
     }
@@ -84,7 +85,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
     return order === 'asc' ? episodes : episodes.reverse()
   }, [season, filter, order])
 
-  /** 選択は表示中のシーズンの話だけを数える (タブを切り替えた先に古い選択を持ち越さない)。 */
+  /** 選択は表示中のシーズンの話だけを数える。 */
   const selectable = visible.filter((episode) => episodeStatus(episode) !== 'future')
   const selected = (season?.episodes ?? []).filter((episode) => selectedIds.has(episode.id))
   const allSelected = selectable.length > 0 && selectable.every((episode) => selectedIds.has(episode.id))
@@ -96,9 +97,9 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   if (season === undefined) {
     return (
       <section aria-labelledby='ep-heading'>
-        <h2 id='ep-heading' className='mb-3.5 text-base font-bold'>
-          {content.heading}
-        </h2>
+        <SectionHeading compact appearance='plain' className='mb-3.5'>
+          <h2 id='ep-heading'>{content.heading}</h2>
+        </SectionHeading>
         <p className='border-l-[3px] border-border px-3 py-3.5 text-[12.5px] text-muted-foreground'>
           {content.noEpisodes}
         </p>
@@ -116,9 +117,9 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   return (
     <section aria-labelledby='ep-heading'>
       {/* シーズン名と話数はすぐ下のタブが出すので、見出しでは繰り返さない。 */}
-      <h2 id='ep-heading' className='mb-3.5 text-base font-bold'>
-        {content.heading}
-      </h2>
+      <SectionHeading compact appearance='plain' className='mb-3.5'>
+        <h2 id='ep-heading'>{content.heading}</h2>
+      </SectionHeading>
 
       <div
         className='flex gap-0.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--border)]'
@@ -158,7 +159,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
                 key={episode.id}
                 href={`#ep-${episode.id}`}
                 title={content.episodeLabel({ number: episode.episodeNumber }).value}
-                className={`min-w-0 flex-1 rounded-[3px] ${stripColor[episodeStatus(episode)]}`}
+                className={cn('min-w-0 flex-1 rounded-[3px]', stripColor[rowStateOf(episode)])}
               >
                 <span className='sr-only'>{content.episodeLabel({ number: episode.episodeNumber })}</span>
               </a>
@@ -170,10 +171,9 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             <span>{content.episodeLabel({ number: last })}</span>
           </div>
         </div>
-        <div className='grid grid-cols-3 gap-x-[18px] max-sm:col-start-1'>
-          <Stat label={content.stats.done.value} value={stats.done} dot='bg-success' />
-          <Stat label={content.stats.todo.value} value={stats.todo} dot='bg-muted-foreground/45' />
-          <Stat label={content.stats.future.value} value={stats.future} dot='bg-border' />
+        <div className='grid grid-flow-col gap-x-[18px] max-sm:col-start-1'>
+          <Stat label={content.stats.total.value} value={season.episodes.length} tone='muted' />
+          <Stat label={content.stats.done.value} value={stats.done} tone='success' />
         </div>
       </section>
 
@@ -189,31 +189,28 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             onCheckedChange={selectAll}
           />
         </span>
-        <button type='button' aria-pressed={filter === 'all'} onClick={() => setFilter('all')} className={chipClass}>
+        <Chip type='button' aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>
           {content.filterChips.all} <span className='opacity-80 tabular-nums'>{season.episodes.length}</span>
-        </button>
-        <button type='button' aria-pressed={filter === 'todo'} onClick={() => setFilter('todo')} className={chipClass}>
+        </Chip>
+        <Chip type='button' aria-pressed={filter === 'todo'} onClick={() => setFilter('todo')}>
           {content.filterChips.todo} <span className='opacity-80 tabular-nums'>{stats.todo}</span>
-        </button>
-        <button type='button' aria-pressed={filter === 'free'} onClick={() => setFilter('free')} className={chipClass}>
+        </Chip>
+        <Chip type='button' aria-pressed={filter === 'free'} onClick={() => setFilter('free')}>
           {content.filterChips.free} <span className='opacity-80 tabular-nums'>{stats.free}</span>
-        </button>
+        </Chip>
         <span className='flex-1' />
-        <button
+        <Chip
           type='button'
+          tone='primary'
           disabled={selected.length === 0 || record.isPending}
           onClick={() => record.mutate(selected.map((episode) => episode.id))}
-          className={`${chipClass} border-primary/40 font-semibold text-primary enabled:hover:bg-primary/10 disabled:cursor-default disabled:border-border disabled:font-normal disabled:text-muted-foreground disabled:hover:bg-transparent`}
+          className='border-primary/40 font-semibold text-primary enabled:hover:bg-primary/10 disabled:cursor-default disabled:border-border disabled:font-normal disabled:text-muted-foreground disabled:hover:bg-transparent'
         >
           {content.recordSelected} <span className='opacity-80 tabular-nums'>{selected.length}</span>
-        </button>
-        <button
-          type='button'
-          onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-          className={`${chipClass} border-transparent`}
-        >
+        </Chip>
+        <Chip type='button' tone='primary' onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
           {content.orderButton} {order === 'asc' ? '↑' : '↓'}
-        </button>
+        </Chip>
       </fieldset>
 
       <ol>
@@ -244,10 +241,10 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   )
 }
 
-const Stat = ({ label, value, dot }: { label: string; value: number; dot: string }) => (
+const Stat = ({ label, value, tone }: { label: string; value: number; tone: 'muted' | 'success' }) => (
   <div className='flex flex-col items-end'>
     <span className='flex items-center gap-[5px] whitespace-nowrap text-[11px] text-muted-foreground'>
-      <span aria-hidden='true' className={`size-2 rounded-[2px] ${dot}`} />
+      <StatusDot aria-hidden='true' tone={tone} size='lg' />
       {label}
     </span>
     <span className='text-xl font-bold leading-[1.2] tabular-nums'>{value}</span>
