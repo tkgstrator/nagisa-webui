@@ -396,8 +396,8 @@ svg { display: block; flex: none; }
   display: flex; flex-direction: column; gap: 16px;
   padding: 18px 14px 16px;
 }
-.side.is-tall { min-height: 420px; }
-.side-top { display: flex; align-items: center; gap: 2px; }
+.side.is-tall { min-height: 540px; }
+.side-top { display: flex; align-items: center; gap: 2px; min-height: 30px; }
 .side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
 /* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
 .side-top .side-brand { min-width: 0; flex: 1; }
@@ -474,7 +474,6 @@ svg { display: block; flex: none; }
    stretch でメイン側と同じ高さまで伸びてしまい、height: 100vh + sticky が効かない。
    左罫を持つ行 (ナビ / 件数 / 放送予定) は角丸を右側だけに揃える。 */
 .side.is-sticky {
-  transition: width .18s ease, flex-basis .18s ease;
   position: sticky; top: 0; align-self: flex-start;
   height: 100vh; overflow-y: auto;
 }
@@ -484,8 +483,9 @@ svg { display: block; flex: none; }
 .side.is-compact { width: 56px; flex-basis: 56px; padding: 18px 4px 16px; }
 .side.is-compact .side-top { justify-content: center; }
 .side.is-compact .side-brand, .side.is-compact .side-widget, .side.is-compact .side-count { display: none; }
-.side.is-compact .side-nav a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
-.side.is-compact .side-foot a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; font-size: 0; }
+.side.is-compact .side-nav a span:not(.side-count) { display: none; }
+.side.is-compact .side-nav a { width: 32px; height: 35.5px; justify-content: center; gap: 0; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
+.side.is-compact .side-foot a { width: 32px; height: 28.5px; justify-content: center; gap: 0; padding: 6px 8px; margin: 0 auto; font-size: 0; }
 .side.is-compact .side-foot svg { width: 16px; height: 16px; }
 .side.is-compact .side-foot .side-status i { width: 7px; height: 7px; }
 @media (max-width: 640px) { .side.is-compact { width: 100%; flex-basis: auto; } }
