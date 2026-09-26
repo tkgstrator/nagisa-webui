@@ -71,21 +71,21 @@ function LogsAdminPage() {
               value={stats.recent.success}
               unit={content.stats.unit.value}
               note={content.stats.success.note.value}
-              tone='ok'
+              tone='success'
             />
             <StatTile
               label={content.stats.partial.label.value}
               value={stats.recent.partial}
               unit={content.stats.unit.value}
               note={content.stats.partial.note.value}
-              tone='warn'
+              tone='warning'
             />
             <StatTile
               label={content.stats.failed.label.value}
               value={stats.recent.failed}
               unit={content.stats.unit.value}
               note={content.stats.failed.note({ count: stats.recent.running.toLocaleString(appLocale) }).value}
-              tone='err'
+              tone='destructive'
             />
           </StatGrid>
         )}

@@ -64,7 +64,7 @@ function StatusAdminPage() {
   }
 
   return (
-    <PageContainer narrow className='gap-[22px]'>
+    <PageContainer className='gap-[22px]'>
       <PageHeader
         eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
         title={content.title.value}
@@ -84,7 +84,7 @@ function StatusAdminPage() {
                 label={content.nagisaSection.version.value}
                 value={`v${status.data.version}`}
                 note={content.nagisaSection.uptimeNote({ uptime: formatUptime(status.data.uptime) }).value}
-                tone='ok'
+                tone='success'
               />
               <StatTile
                 label={content.nagisaSection.redisLabel.value}
@@ -100,7 +100,7 @@ function StatusAdminPage() {
                     ? content.nagisaSection.redisUnknownNote.value
                     : content.nagisaSection.redisMemoryNote({ memory: status.data.redis.memory_used }).value
                 }
-                tone={status.data.redis?.connected === true ? 'ok' : 'err'}
+                tone={status.data.redis?.connected === true ? 'success' : 'destructive'}
               />
               <StatTile
                 label={content.nagisaSection.cpuMemory.value}
@@ -110,7 +110,7 @@ function StatusAdminPage() {
                     : `${status.data.system.cpu_percent.toFixed(1)}% / ${status.data.system.memory_percent.toFixed(1)}%`
                 }
                 note={content.nagisaSection.cpuMemoryNote.value}
-                tone={(status.data.system?.memory_percent ?? 0) >= 90 ? 'warn' : 'mute'}
+                tone={(status.data.system?.memory_percent ?? 0) >= 90 ? 'warning' : 'muted'}
               />
               <StatTile
                 label={content.nagisaSection.diskFree.value}
@@ -120,7 +120,7 @@ function StatusAdminPage() {
                     : `${status.data.system.disk_free_gb.toFixed(1)} GB`
                 }
                 note={content.nagisaSection.diskFreeNote.value}
-                tone={(status.data.system?.disk_free_gb ?? Number.POSITIVE_INFINITY) < 100 ? 'warn' : 'mute'}
+                tone={(status.data.system?.disk_free_gb ?? Number.POSITIVE_INFINITY) < 100 ? 'warning' : 'muted'}
               />
             </StatGrid>
           )}
@@ -150,21 +150,21 @@ function StatusAdminPage() {
                     content.queueSection.waitingNote({ count: snapshot.data.counts.delayed.toLocaleString(appLocale) })
                       .value
                   }
-                  tone='warn'
+                  tone='warning'
                 />
                 <StatTile
                   label={content.queueSection.failed.value}
                   value={snapshot.data.counts.failed}
                   unit={content.queueSection.unit.value}
                   note={content.queueSection.failedNote.value}
-                  tone='err'
+                  tone='destructive'
                 />
                 <StatTile
                   label={content.queueSection.completed.value}
                   value={snapshot.data.counts.completed}
                   unit={content.queueSection.unit.value}
                   note={content.queueSection.completedNote.value}
-                  tone='ok'
+                  tone='success'
                 />
               </StatGrid>
               <FormHint>
@@ -189,26 +189,26 @@ function StatusAdminPage() {
                 value={stats.data.recordings}
                 unit={content.librarySection.unit.value}
                 note={content.librarySection.recordingsNote.value}
-                tone='ok'
+                tone='success'
               />
               <StatTile
                 label={content.librarySection.unresolved.value}
                 value={stats.data.unresolved}
                 unit={content.librarySection.unit.value}
                 note={content.librarySection.unresolvedNote.value}
-                tone='warn'
+                tone='warning'
               />
               <StatTile
                 label={content.librarySection.totalSize.value}
                 value={formatSize(stats.data.total_size)}
                 note={content.librarySection.totalSizeNote.value}
-                tone='mute'
+                tone='muted'
               />
               <StatTile
                 label={content.librarySection.position.value}
                 value={`seq ${stats.data.last_seq.toLocaleString(appLocale)}`}
                 note={`epoch ${stats.data.epoch}`}
-                tone='mute'
+                tone='muted'
                 mono
               />
             </StatGrid>
@@ -241,7 +241,7 @@ function StatusAdminPage() {
                       ? content.syncSection.neverRunNote.value
                       : formatAbsolute(sync.data.lastSucceededAt)
                   }
-                  tone={sync.data.lastSucceededAt === null ? 'err' : 'ok'}
+                  tone={sync.data.lastSucceededAt === null ? 'destructive' : 'success'}
                 />
                 <StatTile
                   label={content.syncSection.cursor.value}
@@ -261,7 +261,7 @@ function StatusAdminPage() {
                         ? content.syncSection.cursorNeverRunNote.value
                         : content.syncSection.cursorTrackingNote.value
                   }
-                  tone={sync.data.cursor === null && sync.data.snapshotCursor === null ? 'warn' : 'mute'}
+                  tone={sync.data.cursor === null && sync.data.snapshotCursor === null ? 'warning' : 'muted'}
                 />
                 <StatTile
                   label={content.syncSection.lock.value}
@@ -285,7 +285,7 @@ function StatusAdminPage() {
                             time: formatAbsolute(leaseUntil)
                           }).value
                   }
-                  tone={leaseExpired ? 'warn' : 'mute'}
+                  tone={leaseExpired ? 'warning' : 'muted'}
                 />
                 <StatTile
                   label={content.syncSection.tracked.value}

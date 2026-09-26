@@ -5,6 +5,8 @@ const appSidebarContent = {
   content: t({
     ja: {
       navAriaLabel: 'メインナビゲーション',
+      collapseLabel: 'メニューをコンパクトにする',
+      expandLabel: 'メニューを展開する',
       nav: {
         home: 'ホーム',
         browse: 'アニメ一覧',
@@ -15,10 +17,16 @@ const appSidebarContent = {
         connecting: '接続を確認中',
         down: 'サーバー停止中',
         up: 'サーバー稼働中'
+      },
+      foot: {
+        logs: 'ログ',
+        admin: '管理'
       }
     },
     en: {
       navAriaLabel: 'Main navigation',
+      collapseLabel: 'Collapse menu',
+      expandLabel: 'Expand menu',
       nav: {
         home: 'Home',
         browse: 'Browse anime',
@@ -29,6 +37,10 @@ const appSidebarContent = {
         connecting: 'Checking connection',
         down: 'Server offline',
         up: 'Server online'
+      },
+      foot: {
+        logs: 'Logs',
+        admin: 'Admin'
       }
     }
   })

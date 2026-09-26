@@ -1,10 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { useIntlayer } from 'react-intlayer'
-
-const btnClass =
-  'inline-flex h-8 items-center rounded-md border border-border bg-background px-[13px] text-[12.5px] font-semibold transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
-const btnPrimaryClass =
-  'inline-flex h-8 items-center rounded-md border border-transparent bg-primary px-[13px] text-[12.5px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
+import { Button, buttonVariants } from '@/app/components/ui/button'
+import { StatusBadge } from '@/app/components/ui/status-badge'
+import { cn } from '@/app/lib/utils'
 
 type RecordingsEmptyProps = {
   /** 絞り込みの結果 0 件なのか、そもそも予約が 1 件も無いのか。 */
@@ -19,10 +17,16 @@ export const RecordingsEmpty = ({ filtered, terms, onReset }: RecordingsEmptyPro
   const variant = filtered ? content.filtered : content.empty
   return (
     <div
-      className={`flex items-start gap-4 bg-muted/45 py-6 pr-[22px] pl-[19px] max-sm:px-4 ${filtered ? 'border-l-[3px] border-l-primary' : 'border-l-[3px] border-l-border'}`}
+      className={cn(
+        'flex items-start gap-4 border-l-[3px] bg-muted/45 py-6 pr-[22px] pl-[19px] max-sm:px-4',
+        filtered ? 'border-l-primary' : 'border-l-border'
+      )}
     >
       <div
-        className={`grid size-10 shrink-0 place-items-center rounded-md ${filtered ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'}`}
+        className={cn(
+          'grid size-10 shrink-0 place-items-center rounded-md',
+          filtered ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
+        )}
       >
         <svg
           viewBox='0 0 24 24'
@@ -45,22 +49,25 @@ export const RecordingsEmpty = ({ filtered, terms, onReset }: RecordingsEmptyPro
         {terms.length === 0 ? null : (
           <div className='mt-[11px] flex flex-wrap gap-1.5'>
             {terms.map((term) => (
-              <span
-                key={term}
-                className='inline-flex h-[22px] items-center rounded px-2 text-[11.5px] font-semibold bg-accent text-accent-foreground'
-              >
+              <StatusBadge key={term} size='sm' tone='primary' className='h-[22px] rounded px-2 text-[11.5px]'>
                 {term}
-              </span>
+              </StatusBadge>
             ))}
           </div>
         )}
         <div className='mt-3.5 flex flex-wrap gap-2'>
           {filtered ? (
-            <button type='button' onClick={onReset} className={btnPrimaryClass}>
+            <Button type='button' onClick={onReset} className='h-8 rounded-md px-[13px] text-[12.5px]'>
               {content.reset}
-            </button>
+            </Button>
           ) : null}
-          <Link to='/browse' className={filtered ? btnClass : btnPrimaryClass}>
+          <Link
+            to='/browse'
+            className={cn(
+              buttonVariants({ variant: filtered ? 'outline' : 'default' }),
+              'h-8 rounded-md px-[13px] text-[12.5px]'
+            )}
+          >
             {content.browse}
           </Link>
         </div>

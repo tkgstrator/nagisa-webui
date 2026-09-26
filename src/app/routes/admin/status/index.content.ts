@@ -6,7 +6,7 @@ const adminStatusContent = {
     ja: {
       eyebrow: '管理',
       title: 'サーバーステータス',
-      description: 'Nagisa の稼働状況・キュー・録画台帳と、WebUI 側の同期状況を確認します。',
+      description: 'サーバーの稼働状況・キュー・録画ファイル・同期の状態を確認します。',
       loading: '取得中…',
       unknown: '不明',
       uptime: {
@@ -47,7 +47,7 @@ const adminStatusContent = {
         fetchedAt: insert('取得時刻 {{time}}')
       },
       librarySection: {
-        title: '録画台帳 (Nagisa)',
+        title: '録画サーバー',
         description: 'GET /api/library/stats。録画ファイルの集計です。',
         error: '台帳の集計を取得できません',
         unit: '件',
@@ -60,7 +60,7 @@ const adminStatusContent = {
         position: '台帳の位置'
       },
       syncSection: {
-        title: 'WebUI 側の同期',
+        title: 'データベース',
         description: 'ローカルの D1 のみを参照するため、Nagisa が停止していても表示されます。',
         error: '同期状態を取得できません',
         staleWarning: '再取得に失敗しました。以下は直前に取得できた内容です。',
@@ -86,7 +86,7 @@ const adminStatusContent = {
         trackedNote: 'ジョブ ID がある待機中・実行中のジョブ'
       },
       breakdownSection: {
-        title: '録画状態の内訳',
+        title: '録画状態',
         descriptionError: 'エピソード単位の集計です。再取得に失敗したため、直前に取得できた件数を表示しています。',
         descriptionOk: 'エピソード単位の集計です。completed に更新できるのは台帳同期のみです。',
         status: '状態',
@@ -97,7 +97,7 @@ const adminStatusContent = {
     en: {
       eyebrow: 'Admin',
       title: 'Server status',
-      description: 'Check Nagisa health, queues, recording library, and WebUI sync progress.',
+      description: 'Check server health, queues, recording files, and sync status.',
       loading: 'Loading…',
       unknown: 'Unknown',
       uptime: {
@@ -138,7 +138,7 @@ const adminStatusContent = {
         fetchedAt: insert('Fetched at {{time}}')
       },
       librarySection: {
-        title: 'Recording library (Nagisa)',
+        title: 'Recording server',
         description: 'GET /api/library/stats. Counts of recording files.',
         error: 'Failed to load library statistics',
         unit: 'items',
@@ -151,7 +151,7 @@ const adminStatusContent = {
         position: 'Library position'
       },
       syncSection: {
-        title: 'WebUI sync',
+        title: 'Database',
         description: 'Reads only local D1 data, so this section remains available when Nagisa is down.',
         error: 'Failed to load sync status',
         staleWarning: 'Refresh failed. Showing the last successfully loaded data.',
@@ -177,7 +177,7 @@ const adminStatusContent = {
         trackedNote: 'Waiting or running jobs with a job ID'
       },
       breakdownSection: {
-        title: 'Recording status breakdown',
+        title: 'Recording status',
         descriptionError: 'Counts by episode. Refresh failed, so the last successfully loaded counts are shown.',
         descriptionOk: 'Counts by episode. Only library sync can set the status to completed.',
         status: 'Status',

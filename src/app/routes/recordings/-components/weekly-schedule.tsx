@@ -1,8 +1,10 @@
 import dayjs from 'dayjs'
 import { getIntlayer } from 'intlayer'
 import { useIntlayer } from 'react-intlayer'
+import { StatusBadge } from '@/app/components/ui/status-badge'
 import { providerColor, providerLabel } from '@/app/lib/constants'
 import { appLocale } from '@/app/lib/locale'
+import { cn } from '@/app/lib/utils'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 import { formatDate } from './format'
 
@@ -44,21 +46,22 @@ const toSlot = (anime: AnimeSchema): Slot | null => {
 
 const SlotItem = ({ slot }: { slot: Slot }) => (
   <div
-    className={`flex flex-col gap-[3px] border-l-[3px] py-1.5 pl-2.5 ${slot.tone === null ? 'border-l-border' : toneBorder[slot.tone]}`}
+    className={cn(
+      'flex flex-col gap-[3px] border-l-[3px] py-1.5 pl-2.5',
+      slot.tone === null ? 'border-l-border' : toneBorder[slot.tone]
+    )}
   >
     <span className='text-[11px] text-muted-foreground tabular-nums'>{slot.time}</span>
     <span className='text-[12.5px] leading-[1.35] font-semibold'>{slot.anime.title}</span>
     {slot.note === null ? null : (
-      <span className={`text-[11px] ${slot.tone === null ? 'text-muted-foreground' : toneNote[slot.tone]}`}>
+      <span className={cn('text-[11px]', slot.tone === null ? 'text-muted-foreground' : toneNote[slot.tone])}>
         {slot.note}
       </span>
     )}
     <span className='mt-px flex flex-wrap gap-1'>
-      <span
-        className={`inline-flex h-5 items-center rounded-full px-[7px] text-[11px] font-semibold ${providerColor[slot.anime.provider] ?? 'bg-muted text-muted-foreground'}`}
-      >
+      <StatusBadge size='sm' className={providerColor[slot.anime.provider] ?? 'bg-muted text-muted-foreground'}>
         {providerLabel[slot.anime.provider] ?? slot.anime.provider}
-      </span>
+      </StatusBadge>
     </span>
   </div>
 )
@@ -83,10 +86,13 @@ export const WeeklySchedule = ({ items }: { items: AnimeSchema[] }) => {
           return (
             <div
               key={DAY_NAMES[day]}
-              className={`grid grid-cols-[72px_minmax(0,1fr)] border-b border-border py-2.5 last:border-b-0 max-sm:grid-cols-1 max-sm:gap-2 max-sm:border-l-[3px] max-sm:px-1 max-sm:pt-2.5 max-sm:pb-3.5 max-sm:last:border-b ${weekend ? 'max-sm:border-l-accent' : 'max-sm:border-l-border'}`}
+              className={cn(
+                'grid grid-cols-[72px_minmax(0,1fr)] border-b border-border py-2.5 last:border-b-0 max-sm:grid-cols-1 max-sm:gap-2 max-sm:border-l-[3px] max-sm:px-1 max-sm:pt-2.5 max-sm:pb-3.5 max-sm:last:border-b',
+                weekend ? 'max-sm:border-l-accent' : 'max-sm:border-l-border'
+              )}
             >
               <div className='flex items-baseline gap-1.5 pt-1 pr-3 pl-0.5 max-sm:border-b max-sm:border-border max-sm:p-0 max-sm:pb-2'>
-                <span className={`text-xs font-bold ${weekend ? 'text-accent-foreground' : 'text-muted-foreground'}`}>
+                <span className={cn('text-xs font-bold', weekend ? 'text-accent-foreground' : 'text-muted-foreground')}>
                   {DAY_NAMES[day]}
                 </span>
                 <span className='text-[11px] text-muted-foreground opacity-70 tabular-nums'>{slots.length}</span>

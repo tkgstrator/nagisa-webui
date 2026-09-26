@@ -174,6 +174,10 @@ svg { display: block; flex: none; }
 .pg > *:nth-child(7) { animation-delay: .36s; }
 .pg-narrow { max-width: 1060px; }
 
+/* 管理画面 (admin*) だけ .pg / .pg-narrow の幅上限と中央寄せを解除し、
+   本文領域いっぱいに左寄せで広げる。他ページの見た目は変えない。 */
+.pg-admin { max-width: none; margin: 0; }
+
 /* ---------- page head ---------- */
 .pg-head {
   display: flex;
@@ -397,6 +401,9 @@ svg { display: block; flex: none; }
 .side-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 2px 6px 4px; }
 /* 横並びの .side-top に入れたときだけ、残り幅を取って右のボタンを端へ寄せる。 */
 .side-top .side-brand { min-width: 0; flex: 1; }
+.side-toggle { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border: 0; border-radius: 8px; background: transparent; color: var(--muted-foreground); cursor: pointer; }
+.side-toggle:hover, .side-toggle:focus-visible { background: var(--muted); color: var(--foreground); }
+.side-toggle svg { width: 16px; height: 16px; }
 .side-logo { width: 24px; height: 24px; border-radius: 7px; background: var(--primary); color: var(--primary-foreground); display: grid; place-items: center; flex: none; }
 .side-logo svg { width: 13px; height: 13px; }
 
@@ -420,11 +427,15 @@ svg { display: block; flex: none; }
 .side-stat.d-err .dot { background: var(--destructive); }
 .side-stat.d-watch .dot { background: var(--success); }
 
-.side-status { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); padding: 0 10px; }
+.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; }
+.side-status, .side-link { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; font-size: 11px; color: var(--muted-foreground); transition: background-color .15s, color .15s; }
+.side-status:hover, .side-link:hover { background: var(--muted); color: var(--foreground); }
+.side-status[aria-current="page"], .side-link[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
 .side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
 .side-status.is-checking i { background: var(--warning); }
 .side-status.is-down { color: var(--destructive); }
 .side-status.is-down i { background: var(--destructive); animation: none; }
+.side-link svg { width: 13px; height: 13px; flex: none; }
 
 /* mobile: サイドバーを畳んで上端の横並びバーにする */
 .side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
@@ -441,7 +452,7 @@ svg { display: block; flex: none; }
   .side-nav { flex-direction: row; margin-left: auto; gap: 2px; }
   .side-nav a { padding: 7px; border-left: 0; font-size: 0; }
   .side-nav a svg { width: 18px; height: 18px; }
-  .side-count, .side-widget, .side-status { display: none; }
+  .side-count, .side-widget, .side-foot { display: none; }
   .side.is-mobile { width: 100%; }
 }
 
@@ -469,6 +480,15 @@ svg { display: block; flex: none; }
 }
 .side.is-sticky .side-stat, .side.is-sticky .side-sched-row { border-radius: 0 8px 8px 0; }
 .side.is-sticky .side-stat { border-left: 3px solid transparent; }
+/* Shadcn Sidebar の icon 折り畳み状態。通常のページは展開状態が採用モック。 */
+.side.is-compact { width: 56px; flex-basis: 56px; padding: 18px 4px 16px; }
+.side.is-compact .side-top { justify-content: center; }
+.side.is-compact .side-brand, .side.is-compact .side-widget, .side.is-compact .side-count { display: none; }
+.side.is-compact .side-nav a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
+.side.is-compact .side-foot a { width: 32px; height: 32px; justify-content: center; padding: 8px; margin: 0 auto; font-size: 0; }
+.side.is-compact .side-foot svg { width: 16px; height: 16px; }
+.side.is-compact .side-foot .side-status i { width: 7px; height: 7px; }
+@media (max-width: 640px) { .side.is-compact { width: 100%; flex-basis: auto; } }
 @media (max-width: 640px) {
   .side.is-sticky { height: auto; overflow-y: visible; }
   .side.is-sticky .side-nav a { border-radius: 8px; }
@@ -548,14 +568,18 @@ svg { display: block; flex: none; }
       <a class="side-stat d-err" href="#queue"><span class="dot"></span>失敗<span class="v num">1</span></a>
       <a class="side-stat d-watch" href="#watch"><span class="dot"></span>継続視聴中<span class="v num">10</span></a>
     </div>
-    <div class="side-status"><i></i>サーバー稼働中</div>
+    <div class="side-foot">
+      <a class="side-status" href="#admin-status"><i></i>サーバー稼働中</a>
+      <a class="side-link" href="#admin-logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>ログ</a>
+      <a class="side-link" href="#admin" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>管理</a>
+    </div>
   </aside>
 
   <main class="pg-main">
-    <div class="pg pg-narrow">
+    <div class="pg pg-admin">
       <div class="pg-head">
         <div>
-          <p class="pg-eyebrow">設定 · <b>管理</b></p>
+          <p class="pg-eyebrow"><b>管理</b> · サーバー運用</p>
           <h1 class="pg-title">管理</h1>
           <p class="pg-sub">運用・デバッグ用のツール</p>
         </div>
