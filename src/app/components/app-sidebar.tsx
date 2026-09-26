@@ -38,23 +38,6 @@ export const SidebarSlot = ({ children }: { children: ReactNode }) => {
   return createPortal(children, slot)
 }
 
-const logo = (
-  <span className='grid size-6 shrink-0 place-items-center rounded-[7px] bg-primary text-primary-foreground'>
-    <svg
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2.2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      className='size-[13px]'
-      aria-hidden='true'
-    >
-      <path d='M5 12h14M12 5l7 7-7 7' />
-    </svg>
-  </span>
-)
-
 const navItems = [
   { to: '/' as const, key: 'home' as const, icon: House },
   { to: '/browse' as const, key: 'browse' as const, icon: Grid2X2 },
@@ -96,7 +79,7 @@ const SidebarNavigation = () => {
               isActive={active(to)}
               aria-current={active(to) ? 'page' : undefined}
               tooltip={content.nav[key].value}
-              className='h-9 gap-2.5 rounded-r-lg rounded-l-none border-l-[3px] border-l-transparent px-2.5 text-[13px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:border-l-primary data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:h-9! group-data-[collapsible=icon]:rounded-lg group-data-[collapsible=icon]:border-l-0 group-data-[collapsible=icon]:p-2!'
+              className='h-9 gap-2.5 rounded-r-lg rounded-l-none border-l-[3px] border-l-transparent px-[5px] text-[13px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:border-l-primary data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:h-8! group-data-[collapsible=icon]:rounded-[8px] group-data-[collapsible=icon]:border-l-0 group-data-[collapsible=icon]:p-2!'
             >
               <Icon className='size-4' aria-hidden='true' />
               <span className='group-data-[collapsible=icon]:sr-only'>{content.nav[key]}</span>
@@ -123,17 +106,21 @@ const SidebarFoot = ({ pathname }: { pathname: string }) => {
     {
       to: '/admin/status' as const,
       label,
-      icon: <StatusDot aria-hidden='true' tone={dotTone} pulse={!isDown || isPending} />
+      icon: (
+        <span className='flex size-4 shrink-0 items-center justify-center' aria-hidden='true'>
+          <StatusDot tone={dotTone} pulse={!isDown || isPending} />
+        </span>
+      )
     },
     {
       to: '/admin/logs' as const,
       label: content.foot.logs.value,
-      icon: <List className='size-[13px]' aria-hidden='true' />
+      icon: <List className='size-4' aria-hidden='true' />
     },
     {
       to: '/admin' as const,
       label: content.foot.admin.value,
-      icon: <Wrench className='size-[13px]' aria-hidden='true' />
+      icon: <Wrench className='size-4' aria-hidden='true' />
     }
   ]
   const current = pathname.startsWith('/admin/status')
@@ -145,7 +132,7 @@ const SidebarFoot = ({ pathname }: { pathname: string }) => {
         : null
 
   return (
-    <SidebarFooter className='gap-0.5 px-0 py-0'>
+    <SidebarFooter className='gap-0.5 px-3 py-0'>
       <SidebarMenu className='gap-0.5'>
         {links.map(({ to, label: text, icon }) => (
           <SidebarMenuItem key={to}>
@@ -155,7 +142,7 @@ const SidebarFoot = ({ pathname }: { pathname: string }) => {
               aria-current={current === to ? 'page' : undefined}
               tooltip={text}
               className={cn(
-                'h-8 gap-1.5 px-2.5 text-[11px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:p-2!',
+                'h-8 gap-1.5 px-2 text-[11px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:p-2!',
                 to === '/admin/status' && isDown && !isPending && 'text-destructive'
               )}
             >
@@ -176,24 +163,23 @@ const DesktopSidebar = () => {
 
   return (
     <Sidebar collapsible='icon' className='border-border'>
-      <SidebarHeader className='px-3.5 pt-[18px] pb-3 group-data-[collapsible=icon]:px-2'>
+      <SidebarHeader className='px-3 pt-[18px] pb-3'>
         <div className='flex items-center gap-1'>
+          <SidebarTrigger
+            aria-label={open ? content.collapseLabel.value : content.expandLabel.value}
+            title={open ? content.collapseLabel.value : content.expandLabel.value}
+            className='size-8 shrink-0 border-0 p-2 text-muted-foreground'
+          />
           <Link
             to='/'
             aria-label='Nagisa'
             className='flex min-w-0 flex-1 items-center gap-2 px-1.5 text-[15px] font-bold tracking-[-0.01em] group-data-[collapsible=icon]:hidden'
           >
-            {logo}
-            <span className='group-data-[collapsible=icon]:sr-only'>Nagisa</span>
+            <span>Nagisa</span>
           </Link>
-          <SidebarTrigger
-            aria-label={open ? content.collapseLabel.value : content.expandLabel.value}
-            title={open ? content.collapseLabel.value : content.expandLabel.value}
-            className='shrink-0 text-muted-foreground group-data-[collapsible=icon]:mx-auto'
-          />
         </div>
       </SidebarHeader>
-      <SidebarContent className='gap-4 px-3.5 group-data-[collapsible=icon]:px-1'>
+      <SidebarContent className='gap-4 px-3 group-data-[collapsible=icon]:px-3'>
         <SidebarNavigation />
         <div id={SIDEBAR_SLOT_ID} className='group-data-[collapsible=icon]:hidden' />
       </SidebarContent>
@@ -208,7 +194,7 @@ const MobileNavigation = () => {
   return (
     <header className='sticky top-0 z-20 flex h-[49px] items-center gap-2.5 border-b border-border bg-sidebar px-3.5 sm:hidden'>
       <Link to='/' className='flex items-center gap-2 text-sm font-bold'>
-        {logo}Nagisa
+        Nagisa
       </Link>
       <nav aria-label={content.navAriaLabel.value} className='ml-auto flex gap-0.5'>
         {navItems.map(({ to, key, icon: Icon }) => (
