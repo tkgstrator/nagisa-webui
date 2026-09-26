@@ -431,7 +431,7 @@ svg { display: block; flex: none; }
         <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         Nagisa
       </a>
-      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
+      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする" aria-expanded="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
     </div>
     <nav class="side-nav" id="side-nav" aria-label="メインナビゲーション">
       <a href="#" aria-current="page" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
@@ -450,7 +450,7 @@ svg { display: block; flex: none; }
     </div>
     <div class="cat-item" data-story="常設版 / コンパクト (アイコン表示)"><span class="cat-label">コンパクト (アイコン表示)</span>
 <div class="cat-frame" style="height:560px;overflow:hidden"><aside class="side is-sticky is-compact">
-    <div class="side-top"><button type="button" class="side-toggle" aria-label="メニューを展開する" title="メニューを展開する"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button></div>
+    <div class="side-top"><button type="button" class="side-toggle" aria-label="メニューを展開する" title="メニューを展開する" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button></div>
     <nav class="side-nav" aria-label="メインナビゲーション">
       <a href="#" aria-current="page" aria-label="ホーム" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
       <a href="#" aria-label="アニメ一覧" title="アニメ一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>アニメ一覧</a>
@@ -472,7 +472,7 @@ svg { display: block; flex: none; }
         <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         Nagisa
       </a>
-      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
+      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする" aria-expanded="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
     </div>
     <nav class="side-nav" id="side-nav" aria-label="メインナビゲーション">
       <a href="#" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
@@ -499,5 +499,19 @@ svg { display: block; flex: none; }
   <p class="cat-note">ページでは <code>position: sticky</code> でブラウザの縦幅ぴったり (100vh) に表示する。左罫を持つ行は角丸を右側だけに揃える。</p>
 </section>
 </main>
+<script>
+document.addEventListener('click', (event) => {
+  if (!(event.target instanceof Element)) return
+  const toggle = event.target.closest('.side-toggle')
+  if (!toggle) return
+  const side = toggle.closest('.side')
+  if (!side) return
+  const compact = side.classList.toggle('is-compact')
+  const label = compact ? 'メニューを展開する' : 'メニューをコンパクトにする'
+  toggle.setAttribute('aria-label', label)
+  toggle.setAttribute('title', label)
+  toggle.setAttribute('aria-expanded', String(!compact))
+})
+</script>
 </body>
 </html>

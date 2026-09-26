@@ -711,7 +711,7 @@ svg { display: block; flex: none; }
         <span class="side-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         Nagisa
       </a>
-      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
+      <button type="button" class="side-toggle" aria-label="メニューをコンパクトにする" title="メニューをコンパクトにする" aria-expanded="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
     </div>
     <nav class="side-nav" id="side-nav" aria-label="メインナビゲーション">
       <a href="#" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>ホーム</a>
@@ -1024,5 +1024,19 @@ svg { display: block; flex: none; }
     </div>
   </main>
 </div>
+<script>
+document.addEventListener('click', (event) => {
+  if (!(event.target instanceof Element)) return
+  const toggle = event.target.closest('.side-toggle')
+  if (!toggle) return
+  const side = toggle.closest('.side')
+  if (!side) return
+  const compact = side.classList.toggle('is-compact')
+  const label = compact ? 'メニューを展開する' : 'メニューをコンパクトにする'
+  toggle.setAttribute('aria-label', label)
+  toggle.setAttribute('title', label)
+  toggle.setAttribute('aria-expanded', String(!compact))
+})
+</script>
 </body>
 </html>
