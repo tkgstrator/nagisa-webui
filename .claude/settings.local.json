@@ -67,8 +67,6 @@
       "Bash",
       "Bash(git push --force-if-includes:*)",
       "Bash(git push --force-with-lease:*)",
-      "Bash(terraform apply *.staging.tfplan:*)",
-      "Bash(terraform apply *staging*.tfplan:*)",
       "Bash(terraform apply tfplan.staging:*)",
       "Cd",
       "Edit",
@@ -105,6 +103,7 @@
       "mcp__tailwindcss__*",
       "mcp__terraform__*",
       "mcp__zod__*"
-    ]
+    ],
+    "defaultMode": "bypassPermissions"
   }
 }
