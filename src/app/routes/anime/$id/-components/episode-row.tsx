@@ -1,6 +1,5 @@
 import { Check } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
-import { Checkbox } from '@/app/components/ui/checkbox'
 import { StatusBadge } from '@/app/components/ui/status-badge'
 import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
@@ -43,15 +42,11 @@ export const EpisodeRow = ({
   episode,
   provider,
   sending,
-  selected,
-  onSelect,
   onRecord
 }: {
   episode: Episode
   provider: string
   sending: boolean
-  selected: boolean
-  onSelect: (episode: Episode, selected: boolean) => void
   onRecord: (episodeIds: string[]) => void
 }) => {
   const content = useIntlayer('anime-id-episode-grid')
@@ -81,30 +76,41 @@ export const EpisodeRow = ({
         : state === 'done'
           ? content.recordButton.doneTitle.value
           : content.state[state].value
+  const canRecord = !busy && (state === 'todo' || state === 'fail')
   const recordStyle = busy
     ? 'border-info/40 bg-info/10 text-info'
     : state === 'done'
-      ? 'border-success/40 bg-success/10 text-success hover:bg-success/15'
+      ? 'border-success/40 bg-success/10 text-success'
       : state === 'future'
-        ? 'cursor-default border-dashed border-border text-muted-foreground'
+        ? 'border-dashed border-border text-muted-foreground'
         : state === 'fail'
           ? 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/15'
           : 'border-border bg-background text-foreground hover:bg-secondary'
+  const recordClass = cn(
+    'inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold max-sm:w-[34px] max-sm:px-0',
+    canRecord && 'transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
+    recordStyle
+  )
+  const recordContent = (
+    <>
+      <span
+        aria-hidden='true'
+        className={cn('grid size-4 shrink-0 place-items-center rounded-full', busy ? markClass.rec : markClass[state])}
+      >
+        {state === 'done' && !busy && <Check className='size-2.5' strokeWidth={3} />}
+      </span>
+      <span className='max-sm:sr-only'>{recordLabel}</span>
+    </>
+  )
 
   return (
     <li
       id={`ep-${episode.id}`}
       className={cn(
-        'grid grid-cols-[16px_3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[16px_2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2',
+        'grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2',
         rowAccent[state]
       )}
     >
-      <Checkbox
-        aria-label={content.selectEpisodeLabel({ number: episode.episodeNumber }).value}
-        checked={selected}
-        disabled={state === 'future'}
-        onCheckedChange={(checked) => onSelect(episode, checked)}
-      />
       <span className='text-right text-sm font-semibold leading-[21px] text-muted-foreground tabular-nums'>
         {episode.episodeNumber}
       </span>
@@ -164,28 +170,21 @@ export const EpisodeRow = ({
         {episode.duration > 0 ? formatDuration(episode.duration) : '—'}
       </span>
 
-      <button
-        type='button'
-        aria-label={recordLabel}
-        title={stateLabel}
-        disabled={state === 'future' || sending}
-        onClick={() => onRecord([episode.id])}
-        className={cn(
-          'inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring max-sm:w-[34px] max-sm:px-0',
-          recordStyle
-        )}
-      >
-        <span
-          aria-hidden='true'
-          className={cn(
-            'grid size-4 shrink-0 place-items-center rounded-full',
-            busy ? markClass.rec : markClass[state]
-          )}
+      {canRecord ? (
+        <button
+          type='button'
+          aria-label={recordLabel}
+          title={stateLabel}
+          onClick={() => onRecord([episode.id])}
+          className={recordClass}
         >
-          {state === 'done' && !busy && <Check className='size-2.5' strokeWidth={3} />}
+          {recordContent}
+        </button>
+      ) : (
+        <span role='status' title={stateLabel} className={recordClass}>
+          {recordContent}
         </span>
-        <span className='max-sm:sr-only'>{recordLabel}</span>
-      </button>
+      )}
     </li>
   )
 }

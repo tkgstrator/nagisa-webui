@@ -16,7 +16,7 @@ const providerDot: Record<string, string> = {
 const PROVIDERS = ['amazon', 'hulu', 'crunchyroll', 'abema', 'netflix'] as const
 
 const checkClass =
-  'flex cursor-pointer items-center gap-2 rounded-[7px] px-2.5 py-1.5 text-[12.5px] leading-5 text-foreground hover:bg-muted focus-within:bg-muted focus-within:ring-2 focus-within:ring-ring'
+  'flex cursor-pointer items-center gap-2 rounded-[7px] px-2.5 py-1.5 text-[12.5px] leading-5 text-foreground hover:bg-muted focus-within:bg-muted focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring'
 
 const FilterGroup = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div>

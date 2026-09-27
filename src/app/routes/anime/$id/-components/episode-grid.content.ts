@@ -20,10 +20,7 @@ const episodeGridContent = {
         acceptedCount: insert('Nagisa が {{count}} 件のリクエストを受け付けました'),
         error: '録画リクエストに失敗しました'
       },
-      selectEpisodeLabel: insert('第{{number}}話を選択'),
-      selectAllLabel: '表示中のエピソードをすべて選択',
       freeBadge: '無料',
-      recordSelected: '選択したエピソードを録画',
       state: {
         todo: '未録画',
         done: '録画済み',
@@ -73,10 +70,7 @@ const episodeGridContent = {
         acceptedCount: insert('Requests accepted by Nagisa: {{count}}'),
         error: 'Failed to request recording'
       },
-      selectEpisodeLabel: insert('Select episode {{number}}'),
-      selectAllLabel: 'Select all visible episodes',
       freeBadge: 'Free',
-      recordSelected: 'Record selected episodes',
       state: {
         todo: 'Not recorded',
         done: 'Recorded',
