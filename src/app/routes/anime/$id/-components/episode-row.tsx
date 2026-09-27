@@ -1,6 +1,5 @@
 import { Check } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
-import { Checkbox } from '@/app/components/ui/checkbox'
 import { StatusBadge } from '@/app/components/ui/status-badge'
 import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
@@ -43,15 +42,11 @@ export const EpisodeRow = ({
   episode,
   provider,
   sending,
-  selected,
-  onSelect,
   onRecord
 }: {
   episode: Episode
   provider: string
   sending: boolean
-  selected: boolean
-  onSelect: (episode: Episode, selected: boolean) => void
   onRecord: (episodeIds: string[]) => void
 }) => {
   const content = useIntlayer('anime-id-episode-grid')
@@ -95,16 +90,10 @@ export const EpisodeRow = ({
     <li
       id={`ep-${episode.id}`}
       className={cn(
-        'grid grid-cols-[16px_3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[16px_2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2',
+        'grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2',
         rowAccent[state]
       )}
     >
-      <Checkbox
-        aria-label={content.selectEpisodeLabel({ number: episode.episodeNumber }).value}
-        checked={selected}
-        disabled={state === 'future'}
-        onCheckedChange={(checked) => onSelect(episode, checked)}
-      />
       <span className='text-right text-sm font-semibold leading-[21px] text-muted-foreground tabular-nums'>
         {episode.episodeNumber}
       </span>
