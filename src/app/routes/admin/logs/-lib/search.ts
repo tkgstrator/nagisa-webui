@@ -2,9 +2,15 @@ import type { QueryClient } from '@tanstack/react-query'
 import { getIntlayer } from 'intlayer'
 import { z } from 'zod'
 import { appLocale } from '@/app/lib/locale'
-import { logEntriesQueryOptions, recordingEventsQueryOptions, syncRunsQueryOptions } from '@/app/lib/query-options'
+import {
+  catalogEventsQueryOptions,
+  logEntriesQueryOptions,
+  recordingEventsQueryOptions,
+  syncRunsQueryOptions
+} from '@/app/lib/query-options'
 import { readSettings } from '@/app/routes/settings/-lib/settings'
 import {
+  CatalogEventKindEnum,
   LogLevelEnum,
   RecordingEventKindEnum,
   RecordingEventStatusEnum,
@@ -15,7 +21,7 @@ import { logLevelLabel, recordingKindLabel, recordingStatusLabel, runKindLabel, 
 
 const moduleContent = getIntlayer('admin-logs', appLocale)
 
-export const TabEnum = z.enum(['runs', 'entries', 'recordings'])
+export const TabEnum = z.enum(['runs', 'entries', 'recordings', 'catalog'])
 export type Tab = z.infer<typeof TabEnum>
 
 export const SearchSchema = z.object({
@@ -29,6 +35,8 @@ export const SearchSchema = z.object({
   // 録画の絞り込みは実行履歴の kind / status と意味が違うので別のキーで持つ。
   recKind: RecordingEventKindEnum.optional(),
   recStatus: RecordingEventStatusEnum.optional(),
+  catKind: CatalogEventKindEnum.optional(),
+  catProvider: z.string().nonempty().optional(),
   q: z.string().nonempty().optional()
 })
 
@@ -89,8 +97,14 @@ export const HOURS_OPTIONS: Record<Tab, Option<number>[]> = {
   entries: [
     { value: 24, label: hours.h24 },
     { value: 72, label: hours.h72 },
+    { value: 168, label: hours.h168 }
+  ],
+  catalog: [
+    { value: 24, label: hours.h24 },
+    { value: 72, label: hours.h72 },
     { value: 168, label: hours.h168 },
-    { value: 336, label: hours.h336 }
+    { value: 720, label: hours.h720 },
+    { value: 2160, label: hours.h2160 }
   ],
   recordings: [
     { value: 24, label: hours.h24 },
@@ -101,13 +115,14 @@ export const HOURS_OPTIONS: Record<Tab, Option<number>[]> = {
   ]
 }
 
-/** log_entries は 14 日しか持たないので、実行履歴側の広い期間をそのまま投げない。 */
-export const ENTRY_MAX_HOURS = 336
+/** 生ログは Workers Logs の保持期間 7 日まで。 */
+export const ENTRY_MAX_HOURS = 168
+export const CATALOG_MAX_HOURS = 2160
 
 /** sync_runs の保持期間は 90 日。録画タブから戻ってきた 180 日をそのまま投げない。 */
 export const RUN_MAX_HOURS = 2160
 
-/** 開いているタブのぶんだけ先に取る。3 本とも取ると表示しない 2 本まで待つことになる。 */
+/** 開いているタブのぶんだけ先に取る。全タブを取ると表示しない分まで待つことになる。 */
 export const ensureTabData = (queryClient: QueryClient, deps: Search) => {
   const limit = readSettings().pageSize
   if (deps.tab === 'entries')
@@ -122,6 +137,16 @@ export const ensureTabData = (queryClient: QueryClient, deps: Search) => {
         kind: deps.recKind,
         status: deps.recStatus,
         hours: deps.hours
+      })
+    )
+  if (deps.tab === 'catalog')
+    return queryClient.ensureQueryData(
+      catalogEventsQueryOptions({
+        page: 1,
+        limit,
+        kind: deps.catKind,
+        provider: deps.catProvider,
+        hours: Math.min(deps.hours, CATALOG_MAX_HOURS)
       })
     )
   return queryClient.ensureQueryData(

@@ -168,6 +168,7 @@ function SyncRunDetailPage() {
         <h2 className='text-sm font-semibold'>
           {content.entries.heading({ count: data.entries.length.toLocaleString(appLocale) })}
         </h2>
+        {data.entriesError !== null && <p className='text-sm text-destructive'>{data.entriesError}</p>}
         {data.entries.length === 0 ? (
           <p className='text-sm text-muted-foreground'>{content.entries.empty}</p>
         ) : (

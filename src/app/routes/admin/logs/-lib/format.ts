@@ -2,7 +2,13 @@ import dayjs from 'dayjs'
 import { getIntlayer } from 'intlayer'
 import type { RowTone } from '@/app/components/data-table'
 import { appLocale } from '@/app/lib/locale'
-import type { LogLevelEnum, RecordingEventSchema, SyncRunSchema } from '@/schemas/log.dto'
+import type {
+  CatalogEventFieldEnum,
+  CatalogEventSchema,
+  LogLevelEnum,
+  RecordingEventSchema,
+  SyncRunSchema
+} from '@/schemas/log.dto'
 
 const content = getIntlayer('admin-logs-format', appLocale)
 
@@ -75,9 +81,8 @@ export const recordingKindLabel: Record<RecordingEventSchema['kind'], string> = 
 }
 
 export const recordingSourceLabel: Record<RecordingEventSchema['source'], string> = {
-  ui: content.recordingSourceLabel.ui,
-  webhook: content.recordingSourceLabel.webhook,
-  cron: content.recordingSourceLabel.cron
+  cron: content.recordingSourceLabel.cron,
+  manual: content.recordingSourceLabel.manual
 }
 
 export const recordingStatusLabel: Record<RecordingEventSchema['status'], string> = {
@@ -142,4 +147,25 @@ export const formatDuration = (ms: number | null): string => {
   const minutes = Math.floor(ms / 60_000)
   const seconds = Math.floor((ms % 60_000) / 1000)
   return content.duration.minutesSeconds({ minutes, seconds: String(seconds).padStart(2, '0') })
+}
+
+export const catalogKindLabel: Record<CatalogEventSchema['kind'], string> = {
+  'title-added': content.catalogKindLabel.titleAdded,
+  'season-added': content.catalogKindLabel.seasonAdded,
+  'episodes-added': content.catalogKindLabel.episodesAdded,
+  'episodes-updated': content.catalogKindLabel.episodesUpdated
+}
+
+export const catalogFieldLabel: Record<CatalogEventFieldEnum, string> = {
+  image: content.catalogFieldLabel.image,
+  description: content.catalogFieldLabel.description,
+  duration: content.catalogFieldLabel.duration,
+  releaseDate: content.catalogFieldLabel.releaseDate
+}
+
+export const catalogAccent: Record<CatalogEventSchema['kind'], string> = {
+  'title-added': 'border-l-primary',
+  'season-added': 'border-l-info',
+  'episodes-added': 'border-l-success',
+  'episodes-updated': 'border-l-warning'
 }

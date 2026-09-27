@@ -29,9 +29,20 @@ const adminLogsFormatContent = {
         notFound: '見つかりません'
       },
       recordingSourceLabel: {
-        ui: '画面',
-        webhook: 'webhook',
-        cron: 'cron'
+        cron: 'Schedule',
+        manual: 'Manual'
+      },
+      catalogKindLabel: {
+        titleAdded: '作品追加',
+        seasonAdded: 'シーズン追加',
+        episodesAdded: 'エピソード追加',
+        episodesUpdated: 'エピソード更新'
+      },
+      catalogFieldLabel: {
+        image: '画像',
+        description: '説明',
+        duration: '長さ',
+        releaseDate: '配信日'
       },
       recordingStatusLabel: {
         ok: '成功',
@@ -81,9 +92,20 @@ const adminLogsFormatContent = {
         notFound: 'Not found'
       },
       recordingSourceLabel: {
-        ui: 'UI',
-        webhook: 'webhook',
-        cron: 'cron'
+        cron: 'Schedule',
+        manual: 'Manual'
+      },
+      catalogKindLabel: {
+        titleAdded: 'Title added',
+        seasonAdded: 'Season added',
+        episodesAdded: 'Episodes added',
+        episodesUpdated: 'Episodes updated'
+      },
+      catalogFieldLabel: {
+        image: 'Image',
+        description: 'Description',
+        duration: 'Duration',
+        releaseDate: 'Release date'
       },
       recordingStatusLabel: {
         ok: 'Succeeded',

@@ -19,7 +19,7 @@ export function EntriesTab({
 }) {
   const content = useIntlayer('admin-logs')
   const hours = Math.min(search.hours, ENTRY_MAX_HOURS)
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage, isError, error } = useInfiniteQuery({
     ...logEntriesQueryOptions({ limit, level: search.level, hours, q: search.q }),
     placeholderData: keepPreviousData
   })
@@ -44,7 +44,8 @@ export function EntriesTab({
           onSelect={(v) => updateSearch({ level: v })}
         />
       </PageToolbar>
-      {entries.length === 0 ? (
+      {isError && <PageNotice tone='err'>{error instanceof Error ? error.message : String(error)}</PageNotice>}
+      {!isError && entries.length === 0 ? (
         <PageNotice tone='mute'>{content.entriesTab.empty}</PageNotice>
       ) : (
         <EntriesTable entries={entries} />

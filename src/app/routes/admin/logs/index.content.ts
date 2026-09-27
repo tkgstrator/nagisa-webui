@@ -64,7 +64,8 @@ const adminLogsContent = {
         ariaLabel: '表示するログの種類',
         runs: '実行履歴',
         entries: '生ログ',
-        recordings: '録画'
+        recordings: '録画',
+        catalog: 'カタログ'
       },
       runsTab: {
         cronAriaLabel: 'cron の稼働状況',
@@ -80,6 +81,7 @@ const adminLogsContent = {
         loadMore: 'さらに読み込む',
         noMore: 'すべてのログを表示しました'
       },
+      catalogTab: { heading: insert('カタログ変化 ({{count}} 件)') },
       recordingsTab: {
         heading: insert('録画イベント ({{count}} 件)'),
         empty: 'この期間の録画イベントはありません'
@@ -146,7 +148,8 @@ const adminLogsContent = {
         ariaLabel: 'Log type to show',
         runs: 'Run history',
         entries: 'Raw logs',
-        recordings: 'Recordings'
+        recordings: 'Recordings',
+        catalog: 'Catalog'
       },
       runsTab: {
         cronAriaLabel: 'cron activity',
@@ -162,6 +165,7 @@ const adminLogsContent = {
         loadMore: 'Load more',
         noMore: 'No more logs'
       },
+      catalogTab: { heading: insert('Catalog changes ({{count}})') },
       recordingsTab: {
         heading: insert('Recording events ({{count}})'),
         empty: 'No recording events in this period'

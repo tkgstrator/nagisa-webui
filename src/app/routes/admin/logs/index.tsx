@@ -11,6 +11,7 @@ import { StatGrid, StatTile } from '@/app/components/stat-tile'
 import { appLocale } from '@/app/lib/locale'
 import { syncRunStatsQueryOptions } from '@/app/lib/query-options'
 import { useSettings } from '@/app/routes/settings/-lib/settings'
+import { CatalogTab } from './-components/catalog-tab'
 import { CronTable } from './-components/cron-table'
 import { EntriesTab } from './-components/entries-tab'
 import { RecordingsTab } from './-components/recordings-tab'
@@ -20,8 +21,14 @@ import { ensureTabData, type Search, SearchSchema, type Tab } from './-lib/searc
 export const Route = createFileRoute('/admin/logs/')({
   validateSearch: SearchSchema,
   loaderDeps: ({ search }) => search,
-  loader: ({ context: { queryClient }, deps }) =>
-    Promise.all([queryClient.ensureQueryData(syncRunStatsQueryOptions()), ensureTabData(queryClient, deps)]),
+  loader: async ({ context: { queryClient }, deps }) => {
+    await Promise.all([
+      queryClient.ensureQueryData(syncRunStatsQueryOptions()),
+      ensureTabData(queryClient, deps).catch((error: unknown) => {
+        if (deps.tab !== 'entries') throw error
+      })
+    ])
+  },
   pendingComponent: LoadingSpinner,
   component: LogsAdminPage
 })
@@ -42,7 +49,8 @@ function LogsAdminPage() {
   const tabOptions: { value: Tab; label: string }[] = [
     { value: 'runs', label: content.tabs.runs.value },
     { value: 'entries', label: content.tabs.entries.value },
-    { value: 'recordings', label: content.tabs.recordings.value }
+    { value: 'recordings', label: content.tabs.recordings.value },
+    { value: 'catalog', label: content.tabs.catalog.value }
   ]
   const tabProps = { search, updateSearch, page, setPage, limit: settings.pageSize }
 
@@ -111,6 +119,7 @@ function LogsAdminPage() {
           {search.tab === 'runs' && <RunsTab {...tabProps} />}
           {search.tab === 'entries' && <EntriesTab {...tabProps} />}
           {search.tab === 'recordings' && <RecordingsTab {...tabProps} />}
+          {search.tab === 'catalog' && <CatalogTab {...tabProps} />}
         </div>
       </div>
     </PageContainer>

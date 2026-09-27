@@ -2,9 +2,9 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { createPrismaClient } from '../lib/db'
 import { type LibrarySyncResult, syncLibrary } from '../lib/library-sync'
 import { SYNC_KEY } from '../lib/library-sync/limits'
-import { createStore, flushLogs, runWithCapture } from '../lib/log-capture'
 import { getAppLogger } from '../lib/logger'
 import { type NagisaEnv, proxyNagisaGet } from '../lib/nagisa-client'
+import { runWithContext } from '../lib/run-context'
 import { finishRun, startRun } from '../lib/sync-run'
 import { NagisaLibraryStatsSchema } from '../schemas/nagisa.dto'
 import {
@@ -73,11 +73,16 @@ recordingLibrary.openapi(
 
     // 状態の内訳は groupBy 1 文。**0 件の状態も必ず埋める**こと: 欠けたまま返すと
     // 「その状態が 0 件」と「集計が取れていない」が WebUI から区別できない。
-    const [state, grouped, tracked] = await Promise.all([
+    const [state, grouped, tracked, lastJobSync] = await Promise.all([
       prisma.syncState.findUnique({ where: { key: 'library' } }),
       prisma.episode.groupBy({ by: ['recordStatus'], _count: { _all: true } }),
       prisma.episode.count({
         where: { recordStatus: { in: ['pending', 'downloading'] }, recordJobId: { not: null } }
+      }),
+      prisma.syncRun.findFirst({
+        where: { kind: 'cron', trigger: 'job-sync', status: 'success' },
+        orderBy: { startedAt: 'desc' },
+        select: { startedAt: true }
       })
     ])
 
@@ -96,6 +101,7 @@ recordingLibrary.openapi(
         snapshotCursor: state?.snapshotCursor ?? null,
         snapshotStartedAt: iso(state?.snapshotStartedAt),
         lastSucceededAt: iso(state?.lastSucceededAt),
+        lastJobSyncAt: iso(lastJobSync?.startedAt),
         leaseUntil: iso(state?.leaseUntil),
         leaseOwner: state?.leaseOwner ?? null,
         counts,
@@ -132,19 +138,16 @@ recordingLibrary.openapi(
     const force = !(before?.snapshotCursor || before?.snapshotStartedAt)
 
     const runId = await startRun(prisma, { kind: 'manual', trigger: 'library-sync' })
-    const store = createStore(runId)
     let result: LibrarySyncResult | undefined
 
     try {
-      await runWithCapture(store, async () => {
+      await runWithContext(runId, async () => {
         result = await syncLibrary(prisma, c.env, { force })
         if (result.error) {
           logger.warn({ action: 'library-manual-sync-error', error: result.error })
         }
       })
     } finally {
-      // flushLogs → finishRun の順を守る (src/lib/db.ts のクライアント使い回し都合)。
-      const droppedLogs = await flushLogs(prisma, store)
       const touched = (result?.upserts ?? 0) + (result?.deletes ?? 0)
       // aborted (mass_delete / epoch 変更) は「落ちてはいないが適用していない」なので partial。
       const status = result?.error ? 'failed' : result?.aborted ? 'partial' : 'success'
@@ -152,7 +155,6 @@ recordingLibrary.openapi(
         total: touched,
         succeeded: touched,
         failed: result?.error ? 1 : 0,
-        droppedLogs,
         errorMessage: result?.error ?? result?.aborted ?? undefined,
         meta: {
           force,
