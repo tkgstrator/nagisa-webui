@@ -1,0 +1,109 @@
+TITLE: Nagisa — アニメ詳細
+SKELETON: astra
+USES: app-header breadcrumbs anime-hero episode-list anime-info related-providers app-footer
+---
+
+<div class="pg-shell">
+  <!-- @part app-header:sticky current=アニメ一覧 /-->
+
+  <main class="pg-main">
+    <div class="pg">
+
+      <nav class="crumb" aria-label="パンくずリスト">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>アニメ一覧</a>
+        <span>/</span>
+        <span class="cur">86－エイティシックス－</span>
+      </nav>
+
+      <div class="identity">
+        <div class="hero" role="img" aria-label="86－エイティシックス－ のサムネイル画像" style="--h: 355">
+          <div class="art"></div>
+          <span class="kanji">8</span>
+        </div>
+        <div class="identity-body">
+          <div class="hero-body">
+            <div class="id-badges">
+              <span class="badge b-crunchyroll">Crunchyroll</span>
+              <span class="badge b-finished">完結</span>
+            </div>
+            <h1 class="hero-title">86－エイティシックス－</h1>
+          </div>
+          <div class="pg-body">
+            <div class="id-facts">
+              <div><dt>放送</dt><dd class="num">2021年 春</dd></div>
+              <div><dt>話数</dt><dd class="num">23話</dd></div>
+              <div><dt>1 話あたり</dt><dd class="num">約24分</dd></div>
+              <div><dt>総再生時間</dt><dd class="num">9時間4分</dd></div>
+            </div>
+            <p class="id-syn">Unmanned combat drones, aka Juggernauts, are anything but unmanned. They’re piloted by the Eighty-Six—humans forced to be tools of war. Now given command of the Spearhead Squadron, Lena is seeing the humanity behind those who defend the republic.</p>
+            <div class="id-actions is-compact">
+              <button class="btn" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                録画を予約
+              </button>
+              <button class="btn" type="button" title="放送済みで未録画のエピソードを録画サーバーにリクエストする">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.7 3.05a.5.5 0 0 0-.68.63l2.84 7.62a2 2 0 0 1 0 1.4l-2.84 7.62a.5.5 0 0 0 .68.63l18-8.5a.5.5 0 0 0 0-.9z"/><path d="M6 12h16"/></svg>
+                今すぐ録画
+              </button>
+              <button class="btn btn-refresh" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+                再取得
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pg-cols">
+      <section aria-labelledby="ep-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="ep-heading">エピソード</h2></div>
+
+        <!-- @part episode-list:anime-detail /-->
+      </section>
+
+      <aside class="pg-aside">
+        <section aria-labelledby="rel-heading">
+          <h3 class="pg-eyebrow" id="rel-heading">他の配信元</h3>
+          <div class="rel-box is-rec">
+            <div class="rel-list">
+              <a class="rel" href="#">
+                <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-amazon">Prime Video</span>2021年 春</span></span>
+                <span class="rel-eps"><b>0</b>/23</span>
+                <span></span>
+              </a>
+              <a class="rel" href="#">
+                <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-hulu">Hulu</span>2021年 春</span></span>
+                <span class="rel-eps"><b>0</b>/23</span>
+                <span></span>
+              </a>
+              <a class="rel" href="#">
+                <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-abema">ABEMA</span>2021年 春</span></span>
+                <span class="rel-eps"><b>0</b>/23</span>
+                <span></span>
+              </a>
+              <a class="rel cur" href="#">
+                <span class="rel-main"><span class="rel-title">86－エイティシックス－</span><span class="rel-sub"><span class="pv pv-crunchyroll">Crunchyroll</span>2021年 春</span></span>
+                <span class="rel-eps"><b>0</b>/23</span>
+                <span></span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="info-heading">
+          <h3 class="pg-eyebrow" id="info-heading">作品情報</h3>
+          <div class="anime-info">
+            <div class="anime-info-row"><span class="k">AniList</span><span class="v"><a href="#anilist">#116589</a></span></div>
+            <div class="anime-info-row"><span class="k">配信元</span><span class="v"><a href="#">Crunchyroll</a></span></div>
+            <div class="anime-info-row"><span class="k">最終更新</span><span class="v">2026/09/21</span></div>
+            <div class="anime-info-row"><span class="k">識別子</span><span class="v mono">GVDHX8DM5</span></div>
+          </div>
+        </section>
+      </aside>
+      </div>
+
+      <!-- @part app-footer:fixed /-->
+
+    </div>
+  </main>
+</div>

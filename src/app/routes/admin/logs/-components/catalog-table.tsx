@@ -1,7 +1,9 @@
 import { Link } from '@tanstack/react-router'
+import { useIntlayer } from 'react-intlayer'
+import { providerColor, providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import type { CatalogEventSchema } from '@/schemas/log.dto'
 import { catalogAccent, catalogFieldLabel, catalogKindLabel, formatClock, formatDay } from '../-lib/format'
-import { EmptyRows, ProviderBadge, rowAccentClass, rowClass, SkeletonRows } from './recordings-table'
 
 const headClass =
   'px-2.5 py-2 text-left text-[11px] font-semibold tracking-[0.03em] text-muted-foreground max-sm:px-[5px] max-sm:py-[9px]'
@@ -36,40 +38,38 @@ const CatalogDetail = ({ event }: { event: CatalogEventSchema }) => {
  * エピソードの追加・更新は 1 回の同期につき作品単位 1 行で、どの話かは「内容」列に畳んで出す。
  */
 export const CatalogTable = ({ events }: { events: CatalogEventSchema[] | undefined }) => {
-  if (events === undefined)
-    return (
-      <SkeletonRows widths={['w-[74px]', 'flex-1', 'w-[92px] max-sm:hidden', 'w-24', 'w-32 max-sm:hidden', 'w-11']} />
-    )
-  if (events.length === 0) return <EmptyRows message='この期間のカタログ変化はありません' />
+  const content = useIntlayer('admin-logs-catalog-table')
+  if (events === undefined || events.length === 0)
+    return <p className='px-3 py-6 text-sm text-muted-foreground'>{content.empty}</p>
   return (
     <div className='overflow-x-auto'>
       <table className='w-full border-collapse text-[13px]'>
         <thead>
           <tr className='border-b border-border'>
             <th scope='col' className={`${headClass} pl-[13px]`}>
-              日時
+              {content.headers.dateTime}
             </th>
             <th scope='col' className={headClass}>
-              作品
+              {content.headers.anime}
             </th>
             <th scope='col' className={`${headClass} max-sm:hidden`}>
-              配信元
+              {content.headers.provider}
             </th>
             <th scope='col' className={headClass}>
-              種別
+              {content.headers.kind}
             </th>
             <th scope='col' className={`${headClass} max-sm:hidden`}>
-              内容
+              {content.headers.detail}
             </th>
             <th scope='col' className={numHeadClass}>
-              話数
+              {content.headers.episodes}
             </th>
           </tr>
         </thead>
         <tbody>
           {events.map((event) => (
-            <tr key={event.id} className={rowClass}>
-              <td className={`${cellClass} ${rowAccentClass(catalogAccent[event.kind])}`}>
+            <tr key={event.id} className='border-b border-border transition-colors hover:bg-muted'>
+              <td className={`${cellClass} ${catalogAccent[event.kind]}`}>
                 <div className='text-xs leading-tight whitespace-nowrap tabular-nums max-sm:text-[11px]'>
                   {formatClock(event.createdAt)}
                 </div>
@@ -85,14 +85,18 @@ export const CatalogTable = ({ events }: { events: CatalogEventSchema[] | undefi
                 </Link>
               </td>
               <td className={`${cellClass} max-sm:hidden`}>
-                <ProviderBadge provider={event.provider} />
+                <span
+                  className={`rounded px-1.5 py-0.5 text-[11px] ${providerColor[event.provider] ?? 'bg-muted text-muted-foreground'}`}
+                >
+                  {providerLabel[event.provider] ?? event.provider}
+                </span>
               </td>
               <td className={`${cellClass} text-[11.5px] whitespace-nowrap`}>{catalogKindLabel[event.kind]}</td>
               <td className={`${cellClass} max-sm:hidden`}>
                 <CatalogDetail event={event} />
               </td>
               <td className={`${numClass} ${event.episodeCount === null ? 'text-muted-foreground' : ''}`}>
-                {event.episodeCount === null ? '—' : event.episodeCount.toLocaleString('ja-JP')}
+                {event.episodeCount === null ? '—' : event.episodeCount.toLocaleString(appLocale)}
               </td>
             </tr>
           ))}

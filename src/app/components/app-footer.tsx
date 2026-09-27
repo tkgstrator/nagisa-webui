@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useIntlayer } from 'react-intlayer'
 
 /**
  * 決定稿の `.ftr`。画面下端に固定表示するので、各ページではなく
@@ -6,6 +7,7 @@ import { Link } from '@tanstack/react-router'
  * 高さ 44px は `<PageContainer />` の下余白 90px (= 46 + 44) と対になっている。
  */
 export const AppFooter = () => {
+  const content = useIntlayer('app-footer')
   return (
     <footer className='fixed right-0 bottom-0 left-[236px] z-30 flex h-11 items-center justify-between gap-3 border-border border-t bg-background px-9 text-[11px] text-muted-foreground max-sm:left-0 max-sm:gap-2.5 max-sm:px-4'>
       <span className='inline-flex items-center gap-2 tabular-nums'>
@@ -15,10 +17,10 @@ export const AppFooter = () => {
       </span>
       <span className='inline-flex items-center gap-3.5 max-sm:gap-3'>
         <Link to='/changelog' className='transition-colors hover:text-foreground'>
-          変更履歴
+          {content.changelog}
         </Link>
         <Link to='/admin' className='transition-colors hover:text-foreground'>
-          管理
+          {content.admin}
         </Link>
         <a
           href='https://github.com/tkgstrator/nagisa-webui'

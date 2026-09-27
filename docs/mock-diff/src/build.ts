@@ -9,6 +9,13 @@
  *   page モード: tokens + base + page-<author>.css + USES に挙げた部品CSS を結合し、
  *                mocks/<id>-<author>.html に出力する。ページはコンポーネントの組み合わせ
  *                なので、部品CSS を再定義せず comp/ のものをそのまま取り込む。
+ *                SKELETON: <name> で骨格を page-<name>.css に差し替えられ、USES の
+ *                <id>@<author> でその部品だけ別案を取り込める。
+ *   決定稿:      <id>-final.html は部品ごとに mock-diff.adopted.yaml の採用案を取り込み、
+ *                骨格は SKELETON: (astra | fable) に対応する page-final-<skeleton>.css、
+ *                最後に still.css (撮影用にアニメーションを止める) を重ねる。
+ *   @part:       ページもカタログも <!-- @part <id>:<name> --> でカタログの断片を取り込む
+ *                (src/part.ts)。ページが取り込めるのは USES に挙げた部品だけ。
  *
  * 使い方:
  *     bun run src/build.ts                 # 全部
@@ -17,6 +24,8 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { authorFor, components, parseUses, skeletonOf } from './dependencies'
+import { expandParts } from './part'
 import { mark } from './story'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
@@ -24,13 +33,13 @@ const MOCKS = join(ROOT, '..', 'mocks')
 const PARTS = join(ROOT, 'parts')
 const COMP = join(ROOT, 'comp')
 const PAGES = join(ROOT, 'pages')
+const ADOPTED = join(ROOT, '..', 'mock-diff.adopted.yaml')
+const GEIST = join(ROOT, '..', '..', '..', 'node_modules', '@fontsource-variable', 'geist')
 
 /** CSS コメント。プリリュード中の位置を保つため findall と sub の両方で使う。 */
 const commentRe = () => /\/\*[\s\S]*?\*\//g
 
-type Chunk =
-  | { kind: 'rule'; prelude: string; body: string }
-  | { kind: 'raw'; text: string }
+type Chunk = { kind: 'rule'; prelude: string; body: string } | { kind: 'raw'; text: string }
 
 /** 波括弧をバランス走査して「プリリュード + 本体」の並びに割る。 */
 function splitRules(css: string): Chunk[] {
@@ -95,6 +104,25 @@ function transform(css: string): string {
 const rstrip = (s: string) => s.replace(/\s+$/, '')
 const read = (p: string) => rstrip(readFileSync(p, 'utf-8'))
 
+/**
+ * アプリと同じ @fontsource-variable/geist を data: URI で埋め込む。モックは sidecar の
+ * Chromium で単体の HTML として開かれ、外部ファイルを引けないので、埋めないと欧文が
+ * 別フォントに落ちて実装との差がフォントだけで数 % 出る。和文は Geist に無いので
+ * latin / latin-ext の 2 面だけで足りる (base.css のフォールバックに IPAGothic)。
+ */
+const fonts = (() => {
+  const css = readFileSync(join(GEIST, 'index.css'), 'utf-8')
+  const faces = css.match(/\/\* geist-latin(?:-ext)?-wght-normal \*\/\s*@font-face\s*\{[^}]*\}/g) ?? []
+  return faces
+    .map((face) =>
+      face.replace(/url\(\.\/(files\/[^)]+)\)/, (_, file: string) => {
+        const data = readFileSync(join(GEIST, file)).toString('base64')
+        return `url(data:font/woff2;base64,${data})`
+      })
+    )
+    .join('\n')
+})()
+
 /** 先頭のメタ行と本文 (`---` だけの行で区切る) に割る。 */
 function metaSplit(frag: string): { meta: Record<string, string>; body: string } {
   const at = frag.indexOf('\n---\n')
@@ -109,35 +137,55 @@ function metaSplit(frag: string): { meta: Record<string, string>; body: string }
   return { meta, body: rstrip(body) }
 }
 
-const page = (title: string, css: string, bodyattr: string, body: string) => `<!doctype html>
+const componentScripts = (parts: { id: string; author: string }[]) =>
+  parts
+    .map(({ id, author }) => join(COMP, `${id}-${author}.js`))
+    .filter(existsSync)
+    .map((path) => `<script>\n${read(path)}\n</script>`)
+    .join('\n')
+
+const page = (title: string, css: string, bodyattr: string, body: string, scripts = '') => `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title}</title>
 <style>
+${fonts}
 ${css}
 </style>
 </head>
 <body${bodyattr}>
-${body}
+${body}${scripts ? `\n${scripts}` : ''}
 </body>
 </html>
 `
 
+/** 部品 id → その作者のカタログ本文。 */
+const catalog = (author: (id: string) => string) => (id: string) =>
+  metaSplit(readFileSync(join(COMP, `${id}-${author(id)}.html`), 'utf-8')).body
+
+/** 断片を取り込んだ後に残る目印の属性を落とす。 */
+const unmark = (html: string) => html.replace(/\sdata-part="[\w-]+"/g, '')
+
 function buildComp(cid: string, author: string): [string, string] {
-  const { meta, body } = metaSplit(readFileSync(join(COMP, `${cid}-${author}.html`), 'utf-8'))
+  const { meta, body: raw } = metaSplit(readFileSync(join(COMP, `${cid}-${author}.html`), 'utf-8'))
+  const body = unmark(expandParts(raw, catalog(() => author)))
   const css = [read(join(PARTS, 'tokens.css')), read(join(PARTS, 'base.css')), read(join(PARTS, 'harness.css'))]
   const stage = join(COMP, `${cid}-${author}.stage.css`)
   if (existsSync(stage)) css.push(`/* ---------- catalog stage: ${cid} ---------- */\n${read(stage)}`)
-  css.push(
-    `/* ---------- component: ${cid} ---------- */\n${transform(read(join(COMP, `${cid}-${author}.css`))).trim()}`,
-  )
+  const parts = components(COMP, author, [cid])
+  for (const dep of parts) {
+    css.push(
+      `/* ---------- component: ${dep.id} ---------- */\n${transform(read(join(COMP, `${dep.id}-${dep.author}.css`))).trim()}`
+    )
+  }
   const html = page(
     `${meta.TITLE} — ${author} 案 | Nagisa WebUI コンポーネントモック`,
     css.join('\n'),
     '',
     `<main class="cat">\n${mark(body)}\n</main>`,
+    componentScripts(parts)
   )
   const dst = join(MOCKS, 'components', `${cid}-${author}.html`)
   mkdirSync(dirname(dst), { recursive: true })
@@ -146,25 +194,30 @@ function buildComp(cid: string, author: string): [string, string] {
 }
 
 function buildPage(pid: string, author: string): [string, string] {
-  const { meta, body } = metaSplit(readFileSync(join(PAGES, `${pid}-${author}.html`), 'utf-8'))
+  const { meta, body: raw } = metaSplit(readFileSync(join(PAGES, `${pid}-${author}.html`), 'utf-8'))
+  const final = author === 'final'
   const css = [
     read(join(PARTS, 'tokens.css')),
     read(join(PARTS, 'base.css')),
-    read(join(PARTS, `page-${author}.css`)),
+    read(join(PARTS, `${skeletonOf(author, meta.SKELETON)}.css`))
   ]
-  for (const cid of (meta.USES ?? '').split(/\s+/).filter(Boolean)) {
-    const f = join(COMP, `${cid}-${author}.css`)
-    if (!existsSync(f)) {
-      console.error(`${pid}-${author}: USES に無い部品 ${cid}`)
-      process.exit(1)
-    }
-    css.push(`/* ---------- component: ${cid} ---------- */\n${read(f)}`)
+  const { ids, pinned } = parseUses(meta.USES ?? '')
+  const partAuthor = authorFor(author, ADOPTED, pinned)
+  const used = new Set<string>()
+  const body = unmark(expandParts(raw, catalog(partAuthor), used))
+  const stray = [...used].filter((id) => !ids.includes(id))
+  if (stray.length) throw new Error(`${pid}-${author}: USES に無い部品を @part で取り込んでいます: ${stray.join(' ')}`)
+  const parts = components(COMP, partAuthor, ids)
+  for (const c of parts) {
+    css.push(`/* ---------- component: ${c.id} ---------- */\n${read(join(COMP, `${c.id}-${c.author}.css`))}`)
   }
+  if (final) css.push(read(join(PARTS, 'still.css')))
   const html = page(
-    `${meta.TITLE} — ${author} 案 | Nagisa WebUI モック`,
+    `${meta.TITLE} — ${final ? '決定稿' : `${author} 案`} | Nagisa WebUI モック`,
     css.join('\n'),
     meta.BODY ?? '',
     body,
+    componentScripts(parts)
   )
   const dst = join(MOCKS, `${pid}-${author}.html`)
   writeFileSync(dst, html, 'utf-8')
@@ -174,9 +227,7 @@ function buildPage(pid: string, author: string): [string, string] {
 function build(target: string): string {
   const at = target.lastIndexOf('-')
   const [id, author] = [target.slice(0, at), target.slice(at + 1)]
-  const [dst, html] = existsSync(join(PAGES, `${target}.html`))
-    ? buildPage(id, author)
-    : buildComp(id, author)
+  const [dst, html] = existsSync(join(PAGES, `${target}.html`)) ? buildPage(id, author) : buildComp(id, author)
   return `${relative(join(MOCKS, '..'), dst)}  ${html.split('\n').length} lines`
 }
 

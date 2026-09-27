@@ -98,8 +98,8 @@ graph TD
   - `status`（`running` | `completed` | `failed`）
   - `queue.ts` の `queue()` 関数（バッチ処理完了時、`queue.ts:193-204` 付近）と `scheduled.ts` の cron 実行時に、既存の Discord 通知呼び出しの近くでこのテーブルへ記録を追加する想定。
   - Hono の Zod OpenAPI ルート（`OpenAPIHono` + `createRoute`、CLAUDE.md の規約に従う）で以下を新設する:
-    - `GET /api/admin/logs`（一覧、ページネーション。query パラメータは `schemas/*.dto.ts` にパスカルケースで定義した Zod スキーマで `createRoute({ request: { query } })` に宣言し、ハンドラでは `c.req.valid('query')` で受け取る）
-    - `GET /api/admin/logs/stats`（集計: 成功率、直近 N 件の傾向）
+    - `GET /api/admin/sync-runs`（一覧、ページネーション。query パラメータは `schemas/*.dto.ts` にパスカルケースで定義した Zod スキーマで `createRoute({ request: { query } })` に宣言し、ハンドラでは `c.req.valid('query')` で受け取る）
+    - `GET /api/admin/sync-runs/stats`（集計: 成功率、直近 N 件の傾向）
 - **フロントエンド**: TanStack Router のファイルベースルーティング規約（ディレクトリで分ける）に従い `src/app/routes/admin/logs/index.tsx` を新設する想定。既存の管理画面配下（`src/app/routes/admin/` には現状 `index.tsx`（ハブページ）、`nagisa/index.tsx`、`unidentified/index.tsx` が存在する。実態は Read で確認済み）と同じ階層に置き、`src/app/routes/admin/index.tsx` の `ADMIN_ITEMS` にも項目を追加する想定。表示内容は Cloudflare Metrics ダッシュボード風（直近の実行一覧テーブル + 成功率のサマリーカード）とする。
 - **既存の運用エラー通知は維持する**: `scheduled.ts:84-92` の cron 投入失敗時の Discord 通知（即時性が必要な重大失敗）はそのまま残す。これは「定期実行の結果を毎回可視化する」目的の通知（今回不採用にした案2）とは性質が異なり、緊急度の高い異常系のみを扱う経路として引き続き Discord を使う。
 
@@ -130,7 +130,7 @@ graph TD
 - [ ] `docs/research/lambda-fetch-counts.md` を現行実装に合わせて更新する（別チケットでも可）
 - [ ] `prisma/schema.prisma` に `SyncRun` モデルを追加する
 - [ ] `queue.ts`（バッチ完了時）・`scheduled.ts`（cron 実行時）に `SyncRun` への記録処理を追加する
-- [ ] `GET /api/admin/logs` / `GET /api/admin/logs/stats` を `OpenAPIHono` + `createRoute` で追加し、Zod スキーマを `schemas/*.dto.ts` にパスカルケースで定義する
+- [ ] `GET /api/admin/sync-runs` / `GET /api/admin/sync-runs/stats` を `OpenAPIHono` + `createRoute` で追加し、Zod スキーマを `schemas/*.dto.ts` にパスカルケースで定義する
 - [ ] `src/app/routes/admin/logs/index.tsx` を新設し、実行一覧テーブル + 成功率サマリーカードの UI を実装する（`src/app/routes/admin/index.tsx` の `ADMIN_ITEMS` にも項目を追加する）
 
 ### 優先度・依存関係
@@ -148,7 +148,7 @@ graph TD
 - 実装状況:
   - **Phase A: 一部のみ**。Nagisa 側は 202 + jobs 配列を返す形に更新済み（`docs/features/nagisa-api.md` 記載）だが、Workers 側 DB は今も `Episode.recorded: Boolean`（`prisma/schema.prisma:70`）、`Anime.recorded: Boolean`（`prisma/schema.prisma:26`）のまま。`recordStatus` enum は未導入。
   - **Phase B: 実装済み**。`src/routes/webhooks.ts:12-99` に `POST /api/webhooks/record-status` が存在。ただし `recorded: true/false` のboolean更新のみで、`completed` のときだけ `recorded = true` にする（`webhooks.ts:76-83`）。`downloading` の中間ステータス反映は行っていない。
-  - **Phase C: 未実装**。現行の `POST /api/anime/:id/record`（`src/routes/anime.ts:352-453`）は作品全体の未録画エピソードをまとめて 1 回の Nagisa リクエストに詰めて送るのみ（`anime.ts:387-417`）。
+  - **Phase C: 未実装**。現行の `POST /api/anime/{id}/recording-jobs`（`src/routes/anime/record.ts`）は作品全体の未録画エピソードをまとめて 1 回の Nagisa リクエストに詰めて送るのみ（`record.ts` の未録画エピソード収集部分）。
   - **Phase D（自動録画本体）: 完全に未実装**。`auto_record_check` / `record` 相当のコードはリポジトリに存在しない（設計書内の言及のみ）。`src/schemas/message.dto.ts:60-66` の discriminated union には `fetch`/`update`/`bulk_update`/`abema_archive`/`anilist_sync` の 5 種のみ。`src/scheduled.ts` の cron switch（`scheduled.ts:40-83`）にも該当 case はなく、`wrangler.toml:43` の crons にも該当 cron 式は無い。`src/queue.ts` の switch 文（`queue.ts:107-172`）にも `record` case はない。
   - `Anime.scheduled` フィールド（`prisma/schema.prisma:25`、「録画予約済み」コメント付き）は DB・API レベルで存在しフロントから予約可能だが、このフラグを実際に参照して自動ダウンロード指示を出す消費側ロジックが存在しない（**値をセットしても何も起きない、死んだフラグ**）。
 - 自動録画すべき対象の抽出条件は `Anime.scheduled = true` かつ `Episode.recorded = false` かつ `releaseDate <= now` の組み合わせで抽出可能（`recording-design.md` のクエリ案と一致）。
@@ -163,7 +163,7 @@ graph TD
 | 案 | 内容 | メリット | デメリット・コスト |
 |---|---|---|---|
 | 案A: フル実装（recording-design.md Phase A〜D） | `Episode.recordStatus` enum 化、Webhook の `downloading`/`completed`/`failed` 詳細反映、エピソード単位の録画指示 API、`auto_record_check`/`record` キューメッセージ型を新設し cron から起動。 | 将来のフロントエンド進捗表示（バッジ表示等、`recording-design.md` 章4）まで見据えた完成度の高い実装。エピソード単位の細かい制御が可能。 | 工数大（約 6.5 日、DB マイグレーション・Nagisa 側改修含む）。ユーザーの要望に対して明らかに過剰スコープ。 |
-| **案B: ミニマル実装（推奨）** | 既存 `Episode.recorded`（boolean）をそのまま維持。新規エピソード検知フック（`sync.ts:180-190` の `!existing` 分岐）から、既存の `POST /api/anime/:id/record` 相当のロジック（`anime.ts:387-417` の「未録画エピソード収集 → Nagisa へ 1 リクエスト」部分）を共通関数として切り出し、`Anime.scheduled = true` の作品であれば直接呼び出す。新規の DB マイグレーションや Webhook 改修は不要。 | 工数小。既存コードの再利用のみで「新規エピソードが来たら API を叩くだけ」というユーザー要望に正確に対応する。既存の Phase B（Webhook）はそのまま活かせる（`recorded=true` 反映は既存経路のまま機能する）。 | エピソード単位の細かい進捗管理（`queued`/`downloading` の区別）はできない。将来エピソード単位録画が必要になった場合は改修が必要（が、これは案A でも同様に別途工数がかかるため損失ではない）。 |
+| **案B: ミニマル実装（推奨）** | 既存 `Episode.recorded`（boolean）をそのまま維持。新規エピソード検知フック（`sync.ts:180-190` の `!existing` 分岐）から、既存の `POST /api/anime/{id}/recording-jobs` 相当のロジック（`src/routes/anime/record.ts` の「未録画エピソード収集 → Nagisa へ 1 リクエスト」部分）を共通関数として切り出し、`Anime.scheduled = true` の作品であれば直接呼び出す。新規の DB マイグレーションや Webhook 改修は不要。 | 工数小。既存コードの再利用のみで「新規エピソードが来たら API を叩くだけ」というユーザー要望に正確に対応する。既存の Phase B（Webhook）はそのまま活かせる（`recorded=true` 反映は既存経路のまま機能する）。 | エピソード単位の細かい進捗管理（`queued`/`downloading` の区別）はできない。将来エピソード単位録画が必要になった場合は改修が必要（が、これは案A でも同様に別途工数がかかるため損失ではない）。 |
 
 **結論**: ユーザー要望の文言（シンプルに「API を叩くだけ」）およびユーザー判断により、**案B を正式な実装方針として確定する**。ユーザーの意向により早期着手を優先する。将来的にエピソード単位の進捗表示が必要になった場合は、既に実装済みの Phase B（Webhook）を活かして Phase C・D 相当を段階的に追加すればよく、案B は案A への移行を妨げない。
 

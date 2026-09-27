@@ -9,11 +9,16 @@
     "src/schemas/nagisa.dto.ts",
     "src/schemas/recording.dto.ts",
     "src/schemas/message.dto.ts",
-    "src/schemas/unidentified.dto.ts"
+    "src/schemas/unidentified.dto.ts",
+    ".intlayer/**/*.ts"
   ],
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"]
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ]
   }
 }

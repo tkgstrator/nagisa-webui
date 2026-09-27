@@ -108,19 +108,21 @@ td.upd .abs { display: block; font-size: 11px; color: var(--muted-foreground); f
 .legend i.f { background: var(--destructive); }
 .legend i.p { box-shadow: inset 0 0 0 1px var(--border); }
 
+/* 列を畳む版。横スクロール版 (.tbl-wrap の中) には効かせない。
+   :where() で包んで特異度は素の .tbl / .poster のままにする。 */
 @media (max-width: 640px) {
-  .tbl th, .tbl td { padding: 9px 5px; }
-  .tbl .m-hide { display: none; }
-  .tbl col.c-chk { width: 30px; }
-  .tbl col.c-prov, .tbl col.c-stat, .tbl col.c-tot, .tbl col.c-upd { width: 0; }
-  .tbl col.c-rec { width: 40px; }
-  .tbl col.c-prog { width: 74px; }
-  .tbl col.c-act { width: 34px; }
-  .poster { width: 60px; }
-  .title-cell { gap: 8px; }
-  .pct { display: none; }
-  .unsch { padding: 0 6px; }
-  .unsch span { display: none; }
+  .tbl:where(:not(.tbl-wrap *)) th, .tbl:where(:not(.tbl-wrap *)) td { padding: 9px 5px; }
+  .tbl:where(:not(.tbl-wrap *)) .m-hide { display: none; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-chk { width: 30px; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-prov, .tbl:where(:not(.tbl-wrap *)) col.c-stat, .tbl:where(:not(.tbl-wrap *)) col.c-tot, .tbl:where(:not(.tbl-wrap *)) col.c-upd { width: 0; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-rec { width: 40px; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-prog { width: 74px; }
+  .tbl:where(:not(.tbl-wrap *)) col.c-act { width: 34px; }
+  .poster:where(:not(.tbl-wrap *)) { width: 60px; }
+  .title-cell:where(:not(.tbl-wrap *)) { gap: 8px; }
+  .pct:where(:not(.tbl-wrap *)) { display: none; }
+  .unsch:where(:not(.tbl-wrap *)) { padding: 0 6px; }
+  .unsch:where(:not(.tbl-wrap *)) span { display: none; }
 }
 
 /* ---------- 列の意味クラス ---------- */
@@ -154,3 +156,28 @@ td.exp .days { display: block; font-size: 11px; }
 /* 狭い画面でだけ出す話数の内訳 */
 td.upd .m-num { display: none; }
 td.upd .m-num .k { margin-left: 3px; color: var(--muted-foreground); }
+
+/* ポスター画像がある行。プレースホルダの模様とアイコンを消す。 */
+.poster.photo { background: var(--muted); background-size: cover; background-position: center; }
+.poster.photo::before, .poster.photo svg { display: none; }
+/* 画像が無い行。題名の頭文字を置く。 */
+.poster.na { background: var(--muted); }
+.poster.na::before { content: none; }
+.poster.na .init { font-size: 20px; font-weight: 600; line-height: 1; color: var(--muted-foreground); }
+
+.badge.done { background: var(--success); color: var(--success-foreground); }
+.badge.pending { background: var(--muted); color: var(--muted-foreground); }
+
+.legend i.w { background: var(--warning); }
+/* 未録画を罫線ではなく塗りで示す版。 */
+.legend.is-flat i.p { box-shadow: none; background: var(--border); }
+
+/* 横スクロール版。列を詰めずに desktop の並びのまま、表だけを横に流す。
+   通常版の 640px の列畳みは .tbl-wrap の中では打ち消す。 */
+.tbl-wrap { min-width: 0; }
+.tbl-wrap .tbl col.c-rec { width: 88px; }
+.tbl-wrap .tbl col.c-tot, .tbl-wrap .tbl col.c-prog { width: auto; }
+@media (max-width: 640px) {
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl-wrap .tbl { min-width: 860px; }
+}

@@ -156,7 +156,7 @@ const adminLogs = new OpenAPIHono<{ Bindings: Bindings }>()
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/runs',
+    path: '/sync-runs',
     tags: ['Admin'],
     summary: '同期ジョブの実行履歴 (cron / Queue バッチ / 手動)',
     request: { query: SyncRunListQuerySchema },
@@ -201,10 +201,11 @@ adminLogs.openapi(
   }
 )
 
+// `/sync-runs/{id}` より前に登録する。Hono は静的セグメントを優先するが、登録順に依存しない形にしておく
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/runs/{id}',
+    path: '/sync-runs/{id}',
     tags: ['Admin'],
     summary: '実行 1 件の詳細 (cron run なら子の Queue バッチも返す)',
     request: { params: z.object({ id: z.string().nonempty() }) },
@@ -261,7 +262,7 @@ adminLogs.openapi(
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/entries',
+    path: '/logs/entries',
     tags: ['Admin'],
     summary: '生ログ (level は「以上」/ カーソルページング)',
     description: 'Workers Logs (Telemetry API) から引く。保持は 7 日。',
@@ -295,7 +296,7 @@ adminLogs.openapi(
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/recordings',
+    path: '/recording-events',
     tags: ['Admin'],
     summary: '録画リクエストとその結末の時系列',
     description:
@@ -346,7 +347,7 @@ adminLogs.openapi(
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/catalog',
+    path: '/logs/catalog',
     tags: ['Admin'],
     summary: 'カタログに入った変化 (新規タイトル / シーズン / エピソード追加・更新) の時系列',
     description: 'バッジや配信終了の出入りは載せない。エピソードの追加・更新は 1 回の同期につき作品単位で 1 行。',
@@ -396,7 +397,7 @@ adminLogs.openapi(
 adminLogs.openapi(
   createRoute({
     method: 'get',
-    path: '/stats',
+    path: '/sync-runs/stats',
     tags: ['Admin'],
     summary: 'cron 式ごとの最終実行 (wrangler.toml の定義と突き合わせる)',
     responses: {

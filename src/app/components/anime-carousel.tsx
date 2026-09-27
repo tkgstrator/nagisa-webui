@@ -1,12 +1,17 @@
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { ChevronRight, Info } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/app/components/ui/carousel'
-import { providerColor, providerLabel, statusLabel } from '@/app/lib/constants'
+import { Carousel, CarouselContent, CarouselItem } from '@/app/components/ui/carousel'
+import { StatusDot } from '@/app/components/ui/status-dot'
+import { providerLabel, providerSolidColor, statusLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import { type AnimeSchema, QuarterLabel } from '@/schemas/anime.dto'
 
 type BadgeType = 'updatedAt' | 'nextEpisodeDate' | 'expiredAt'
+
+type AnimeCarouselContent = ReturnType<typeof useIntlayer<'anime-carousel'>>
 
 /** モックの `.car-badge` / `.poster .tag` のトーン。色は全てデザイントークン経由。 */
 type FlagTone = 'new' | 'added' | 'soon' | 'exp'
@@ -38,9 +43,7 @@ const ThumbFallback = ({ title }: { title: string }) => {
 const Rail = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <div className='relative min-w-0'>
     <Carousel opts={{ align: 'start', dragFree: true, loop: false }} className='w-full min-w-0'>
-      <CarouselContent className={`-mt-1 ml-0 gap-3.5 py-1 ${className ?? ''}`}>{children}</CarouselContent>
-      <CarouselPrevious className='-left-4 hidden sm:flex' />
-      <CarouselNext className='-right-4 hidden sm:flex' />
+      <CarouselContent className={cn('-mt-1 ml-0 gap-3.5 py-1', className)}>{children}</CarouselContent>
     </Carousel>
     <span
       aria-hidden='true'
@@ -49,23 +52,29 @@ const Rail = ({ children, className }: { children: React.ReactNode; className?: 
   </div>
 )
 
-const SectionHead = ({ title, subtitle, viewAllLink }: { title: string; subtitle?: string; viewAllLink?: string }) => (
-  <div className='mb-3 flex items-baseline justify-between gap-3'>
-    <h3 className='flex min-w-0 flex-wrap items-center gap-2.5 text-base font-semibold tracking-[-0.01em] max-sm:text-[15px]'>
-      {title}
-      {subtitle !== undefined && (
-        <span className='text-xs font-normal leading-[1.5] text-muted-foreground'>{subtitle}</span>
-      )}
-    </h3>
-    {viewAllLink !== undefined && <ViewAllLink to={viewAllLink} label='すべて見る' />}
-  </div>
-)
+const SectionHead = ({ title, subtitle, viewAllLink }: { title: string; subtitle?: string; viewAllLink?: string }) => {
+  const content = useIntlayer('anime-carousel')
+  return (
+    <div className='mb-3 flex items-baseline justify-between gap-3'>
+      <h3 className='flex min-w-0 flex-wrap items-center gap-2.5 text-base font-semibold tracking-[-0.01em] max-sm:text-[15px]'>
+        {title}
+        {subtitle !== undefined && (
+          <span className='text-xs font-normal leading-[1.5] text-muted-foreground'>{subtitle}</span>
+        )}
+      </h3>
+      {viewAllLink !== undefined && <ViewAllLink to={viewAllLink} label={content.viewAll.value} />}
+    </div>
+  )
+}
 
 /** モックの `.car-more` / `.more`。ホバーで矢印が少し右へ動く。 */
 export const ViewAllLink = ({ to, label, className }: { to: string; label: string; className?: string }) => (
   <Link
     to={to}
-    className={`group/more inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1.5 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground ${className ?? ''}`}
+    className={cn(
+      'group/more inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1.5 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground',
+      className
+    )}
   >
     {label}
     <ChevronRight className='size-3.5 transition-transform group-hover/more:translate-x-0.5' />
@@ -130,43 +139,44 @@ function roundTo10Min(d: dayjs.Dayjs): dayjs.Dayjs {
   return d.minute(Math.floor(d.minute() / 10) * 10).second(0)
 }
 
-function formatDateBadge(date: string, type: BadgeType): string {
+function formatDateBadge(date: string, type: BadgeType, content: AnimeCarouselContent): string {
   const d = roundTo10Min(dayjs(date))
   if (type === 'updatedAt') return d.format('M/D H:mm')
-  if (type === 'expiredAt') return `${d.format('M/D')}まで`
+  if (type === 'expiredAt') return content.dateBadge.until({ date: d.format('M/D') }).value
   const now = dayjs()
-  if (d.isSame(now, 'day')) return `今日 ${d.format('H:mm')}`
-  if (d.isSame(now.add(1, 'day'), 'day')) return `明日 ${d.format('H:mm')}`
+  if (d.isSame(now, 'day')) return content.dateBadge.today({ time: d.format('H:mm') }).value
+  if (d.isSame(now.add(1, 'day'), 'day')) return content.dateBadge.tomorrow({ time: d.format('H:mm') }).value
   return d.format('M/D H:mm')
 }
 
-function badgeDate(anime: AnimeSchema, badgeType?: BadgeType): string | null {
+function badgeDate(anime: AnimeSchema, badgeType: BadgeType | undefined, content: AnimeCarouselContent): string | null {
   if (badgeType === undefined) return null
   const value =
     badgeType === 'updatedAt' ? anime.updatedAt : badgeType === 'expiredAt' ? anime.expiredAt : anime.nextEpisodeDate
   if (!value) return null
-  return formatDateBadge(value, badgeType)
+  return formatDateBadge(value, badgeType, content)
 }
 
-function seasonLabel(anime: AnimeSchema): string {
-  return `${anime.year}年${QuarterLabel[anime.quarter] ?? ''}`
+function seasonLabel(anime: AnimeSchema, content: AnimeCarouselContent): string {
+  return content.season({ year: anime.year, quarter: QuarterLabel[anime.quarter] ?? '' }).value
 }
 
 /** サムネ右下の録画状態。API が持つのは scheduled / recorded の 2 値のみ。 */
 function RecordingState({ anime }: { anime: AnimeSchema }) {
+  const content = useIntlayer('anime-carousel')
   if (anime.recorded) {
     return (
       <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-success dark:text-overlay-foreground'>
-        <i className='size-1.5 rounded-full bg-success' />
-        録画済み
+        <StatusDot aria-hidden='true' tone='success' className='size-1.5' />
+        {content.recordingState.recorded}
       </span>
     )
   }
   if (anime.scheduled) {
     return (
       <span className='absolute right-2 bottom-2 inline-flex items-center gap-1 rounded bg-overlay px-1.5 py-0.5 text-[10.5px] font-semibold text-overlay-foreground'>
-        <i className='size-1.5 animate-pulse rounded-full bg-info' />
-        予約中
+        <StatusDot aria-hidden='true' tone='info' pulse className='size-1.5' />
+        {content.recordingState.scheduled}
       </span>
     )
   }
@@ -182,8 +192,9 @@ function CarouselCard({
   badgeType?: BadgeType
   flag?: { tone: FlagTone; label: string; pulse?: boolean }
 }) {
-  const time = badgeDate(anime, badgeType)
-  const season = seasonLabel(anime)
+  const content = useIntlayer('anime-carousel')
+  const time = badgeDate(anime, badgeType, content)
+  const season = seasonLabel(anime, content)
 
   return (
     <Link to='/anime/$id' params={{ id: anime.id }} className='group flex min-w-0 flex-col gap-2'>
@@ -197,14 +208,20 @@ function CarouselCard({
         />
         {flag !== undefined && (
           <span
-            className={`absolute top-2 left-2 z-1 inline-flex h-[18px] items-center gap-1 rounded px-1.5 text-[10px] font-semibold ${flagToneClass[flag.tone]}`}
+            className={cn(
+              'absolute top-2 left-2 z-1 inline-flex h-[18px] items-center gap-1 rounded px-1.5 text-[10px] font-semibold',
+              flagToneClass[flag.tone]
+            )}
           >
-            {flag.pulse === true && <i className='size-[5px] animate-pulse rounded-full bg-current' />}
+            {flag.pulse === true && <StatusDot aria-hidden='true' tone='info' pulse size='sm' className='bg-current' />}
             {flag.label}
           </span>
         )}
         <span
-          className={`absolute bottom-2 left-2 z-1 inline-flex h-[18px] items-center rounded px-1.5 text-[10px] font-semibold ${providerColor[anime.provider] ?? 'bg-secondary text-secondary-foreground'}`}
+          className={cn(
+            'absolute bottom-2 left-2 z-1 inline-flex h-[18px] items-center rounded px-1.5 text-[10px] font-semibold',
+            providerSolidColor[anime.provider] ?? 'bg-secondary text-secondary-foreground'
+          )}
         >
           {providerLabel[anime.provider] ?? anime.provider}
         </span>
@@ -233,8 +250,9 @@ function PosterTile({
   showMeta: boolean
   tag?: { tone: FlagTone; label: (anime: AnimeSchema) => string | null }
 }) {
+  const content = useIntlayer('anime-carousel')
   const tagLabel = tag?.label(anime) ?? null
-  const time = badgeDate(anime, badgeType)
+  const time = badgeDate(anime, badgeType, content)
   const status = statusLabel[anime.status] ?? null
 
   return (
@@ -250,7 +268,10 @@ function PosterTile({
         <span aria-hidden='true' className='absolute inset-0 bg-gradient-to-b from-transparent to-overlay' />
         {tagLabel !== null && (
           <span
-            className={`absolute top-2 left-2 z-1 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9.5px] font-bold ${flagToneClass[tag?.tone ?? 'new']}`}
+            className={cn(
+              'absolute top-2 left-2 z-1 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9.5px] font-bold',
+              flagToneClass[tag?.tone ?? 'new']
+            )}
           >
             {tagLabel}
           </span>
@@ -272,8 +293,8 @@ function PosterTile({
       {showMeta && (status !== null || time !== null) && (
         <div className='mt-1.5 flex items-center justify-between gap-1.5 text-[11px]'>
           {status !== null && (
-            <span className={`inline-flex items-center gap-1 font-semibold ${statusDotClass(anime.status)}`}>
-              <i className='size-[5px] rounded-full bg-current' />
+            <span className={cn('inline-flex items-center gap-1 font-semibold', statusDotClass(anime.status))}>
+              <StatusDot aria-hidden='true' size='sm' className='bg-current' />
               {status}
             </span>
           )}

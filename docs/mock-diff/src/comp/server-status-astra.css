@@ -1,0 +1,180 @@
+/* ---------- server status (astra) ---------- */
+/* いちばん上に「いま何が起きているか」を1行で言い切り、数えるべき数字だけを
+   やわらかい面に置く。Redis やシステム値は持たず、最下段の導線で詳細ページに送る。 */
+.srv-dlg {
+  width: 512px;
+  max-width: 100%;
+  margin-inline: auto;
+  position: relative;
+  overflow: hidden;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border-radius: 20px;
+  padding: 28px 26px 24px;
+  text-align: center;
+  box-shadow: 0 18px 44px -26px oklch(0.18 0.005 250 / 40%);
+}
+/* 上から淡い光を差して面を起こす */
+.srv-dlg::before {
+  content: '';
+  position: absolute; inset: 0 0 auto; height: 120px;
+  background: linear-gradient(to bottom, oklch(1 0 0 / 55%), transparent);
+  pointer-events: none;
+}
+@media (prefers-color-scheme: dark) {
+  .srv-dlg::before { background: linear-gradient(to bottom, oklch(1 0 0 / 7%), transparent); }
+  .srv-dlg { box-shadow: 0 18px 44px -26px oklch(0 0 0 / 60%); }
+}
+.srv-dlg > * { position: relative; }
+.srv-dlg + .srv-dlg { margin-top: 18px; }
+
+/* 56px の円章 */
+.srv-mark {
+  width: 56px; height: 56px; margin: 0 auto;
+  border-radius: 999px;
+  display: grid; place-items: center;
+  background: oklch(0.62 0.16 152 / 14%);
+  color: var(--success);
+}
+.srv-mark svg { width: 26px; height: 26px; }
+.srv-mark.is-busy { background: oklch(0.6 0.16 245 / 14%); color: var(--info); }
+.srv-mark.is-bad { background: oklch(0.58 0.2 25 / 14%); color: var(--destructive); }
+.srv-mark.is-idle { background: var(--muted); color: var(--muted-foreground); }
+.srv-mark .srv-spin { animation: srvSpin 1.1s linear infinite; }
+@keyframes srvSpin { to { transform: rotate(360deg); } }
+.srv-ring { position: absolute; inset: -6px; border-radius: 999px; border: 2px solid currentColor; opacity: .25; animation: srvRing 2s ease-out infinite; }
+@keyframes srvRing { 0% { transform: scale(.92); opacity: .35; } 100% { transform: scale(1.12); opacity: 0; } }
+.srv-mark { position: relative; }
+
+.srv-head { margin-top: 14px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.srv-lede { margin-top: 7px; font-size: 13px; line-height: 1.7; color: var(--muted-foreground); }
+.srv-lede code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11.5px; color: var(--foreground); }
+
+/* キューの 5 つ。fable 案と同じ並び (待機・実行中・完了・失敗・遅延) を
+   横 1 列に置く。1 枠 85px まで縮むが、出るのは 3 桁までの件数なので収まる。 */
+.srv-counts {
+  margin-top: 20px;
+  display: flex; gap: 10px;
+}
+.srv-count {
+  flex: 1; min-width: 0;
+  background: var(--muted);
+  border-radius: 14px;
+  padding: 13px 10px 11px;
+}
+.srv-count .n { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.srv-count .l { margin-top: 3px; font-size: 11px; color: var(--muted-foreground); }
+.srv-count.is-busy .n { color: var(--info); }
+.srv-count.is-bad { background: oklch(0.58 0.2 25 / 10%); }
+.srv-count.is-bad .n { color: var(--destructive); }
+.srv-count.is-zero .n { color: var(--muted-foreground); }
+
+/* ジョブ: やわらかい面に 1 件ずつ。罫線は引かない */
+.srv-jobs { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.srv-job {
+  background: var(--muted);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.srv-job-top { display: flex; align-items: center; gap: 10px; }
+.srv-job-title { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srv-tag { flex: none; font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+.srv-tag.abema { background: var(--brand-abema); color: var(--brand-abema-foreground); }
+.srv-tag.amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
+.srv-tag.crunchyroll { background: var(--brand-crunchyroll); color: var(--brand-crunchyroll-foreground); }
+.srv-job-meta { margin-top: 6px; display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.srv-job-meta .r { margin-left: auto; }
+.srv-bar { margin-top: 9px; height: 6px; border-radius: 999px; background: var(--background); overflow: hidden; }
+.srv-bar > span { display: block; height: 100%; border-radius: 999px; background: var(--info); transform-origin: left; animation: growX .7s cubic-bezier(.16,1,.3,1) both; }
+.srv-fail { margin-top: 8px; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11px; line-height: 1.6; color: var(--destructive); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 録画同期: Workers 側の cron がどこまで追いつけているか。
+   載せる項目は fable 案と同じで、面に包むか罫線で割るかだけが違う。 */
+.srv-sync {
+  margin-top: 16px;
+  background: var(--muted);
+  border-radius: 14px;
+  padding: 10px 14px 12px;
+  text-align: left;
+}
+.srv-sync-top { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
+.srv-sync-top .r { margin-left: auto; font-weight: 500; font-size: 11px; }
+.srv-kv-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 12px; }
+.srv-kv-row .k { color: var(--muted-foreground); }
+.srv-kv-row .v { margin-left: auto; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.srv-kv-row .v.is-ok { color: var(--success); font-family: inherit; font-size: 12px; font-weight: 600; }
+.srv-kv-row .v.is-bad { color: var(--destructive); font-family: inherit; font-size: 12px; font-weight: 700; }
+.srv-kv-row .v.is-warn { color: var(--status-not-yet-foreground); font-family: inherit; font-size: 12px; font-weight: 700; }
+.srv-kv-row .v.is-mute { color: var(--muted-foreground); font-family: inherit; font-size: 12px; }
+/* 取り込み進捗のメーター。幅は縮める側に倒しておかないと、
+   ラベルと件数が伸びたときに面からはみ出す。 */
+.srv-kv-row .m { flex: 0 1 84px; min-width: 28px; margin-left: auto; height: 4px; border-radius: 999px; background: var(--background); overflow: hidden; }
+.srv-kv-row .m > span { display: block; height: 100%; border-radius: 999px; background: var(--status-not-yet-foreground); }
+.srv-kv-row .m + .v { margin-left: 0; flex: none; }
+
+/* 詳細ページ (/admin/status) への導線。最下段に状態によらず同じ位置で置く。
+   Redis・CPU・メモリ・空き容量・台帳・カーソルはこの先にあり、ダイアログには持たせない。
+   畳んで抱えるより、開いた先に置いたほうがダイアログの丈が状態で伸び縮みしない。 */
+.srv-link {
+  margin-top: 14px;
+  background: var(--muted);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-align: left;
+  font-size: 12.5px;
+  color: inherit; text-decoration: none;
+}
+.srv-link .t { flex: none; font-weight: 600; }
+.srv-link .d { min-width: 0; font-size: 11.5px; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srv-link svg { width: 15px; height: 15px; margin-left: auto; color: var(--muted-foreground); transition: color .15s, transform .15s; }
+.srv-link:hover svg { color: var(--foreground); transform: translateX(2px); }
+
+/* 操作は 2 つまで。36px の丸ボタン */
+.srv-acts { margin-top: 18px; display: flex; justify-content: center; gap: 10px; }
+.srv-btn {
+  height: 36px; padding: 0 18px;
+  border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12.5px; font-weight: 600;
+  background: var(--muted); color: var(--foreground);
+}
+.srv-btn svg { width: 14px; height: 14px; }
+.srv-btn.is-primary { background: var(--primary); color: var(--primary-foreground); }
+
+.srv-skel { margin-top: 20px; display: flex; flex-direction: column; gap: 9px; align-items: center; }
+.srv-skel > i { display: block; height: 11px; border-radius: 999px; background: var(--muted); }
+.srv-skel > i:nth-child(1) { width: 56%; }
+.srv-skel > i:nth-child(2) { width: 38%; }
+
+/* 起動導線 */
+.srv-trigger {
+  width: 248px; max-width: 100%;
+  background: var(--sidebar);
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.srv-trigger .pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 28px; padding: 0 12px;
+  border-radius: 999px;
+  background: oklch(0.62 0.16 152 / 14%);
+  color: var(--success);
+  font-size: 11.5px; font-weight: 700;
+}
+.srv-trigger .pill .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+.srv-trigger.is-busy .pill { background: oklch(0.6 0.16 245 / 14%); color: var(--info); }
+.srv-trigger.is-busy .pill .dot { animation: srvPulse 1.6s ease-in-out infinite; }
+.srv-trigger.is-bad .pill { background: oklch(0.58 0.2 25 / 12%); color: var(--destructive); }
+@keyframes srvPulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+.srv-trigger .r { margin-left: auto; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 640px) {
+  .srv-dlg { width: 100%; padding: 24px 16px 18px; border-radius: 18px; }
+  .srv-head { font-size: 19px; }
+  .srv-counts { gap: 7px; }
+  .srv-count .n { font-size: 18px; }
+  .srv-link .d { display: none; }
+  .srv-acts { flex-direction: column; }
+  .srv-btn { justify-content: center; }
+}

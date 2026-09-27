@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { unidentifiedListQueryOptions } from '@/app/lib/query-options'
 import { cn } from '@/app/lib/utils'
 import { ChangelogIcon, JobIcon, UnidentifiedIcon } from './icons'
@@ -9,7 +10,7 @@ import { PgSec, SecMoreLabel, secMoreClass } from './section'
 const linkClass =
   'flex items-center gap-3 rounded-r-[10px] border-l-[3px] border-l-primary px-4 py-3.5 transition-[background-color,transform] duration-200 hover:translate-x-[3px] hover:bg-muted [&_svg]:text-primary'
 
-type AdminPath = '/admin/unidentified' | '/admin/nagisa' | '/changelog'
+type AdminPath = '/admin/unidentified' | '/admin/recorder' | '/changelog'
 
 /** 目次の件数表示に使う。実ルートがあるリンクだけを数える。 */
 export const ADMIN_LINK_COUNT = 3
@@ -34,14 +35,15 @@ const AdminLink = ({ to, icon, title, description, warn = false }: AdminLinkProp
 
 export const AdminSection = () => {
   const { data: unidentified } = useQuery(unidentifiedListQueryOptions({ page: 1, limit: 1 }))
+  const content = useIntlayer('settings-admin-section')
 
   return (
     <PgSec
       id='s-admin'
-      title='管理'
+      title={content.title.value}
       more={
         <Link to='/admin' className={secMoreClass}>
-          <SecMoreLabel>管理ハブを開く</SecMoreLabel>
+          <SecMoreLabel>{content.moreLabel}</SecMoreLabel>
         </Link>
       }
     >
@@ -52,22 +54,24 @@ export const AdminSection = () => {
           icon={<UnidentifiedIcon />}
           title={
             <>
-              未識別タイトル <span className='tabular-nums'>{unidentified?.total ?? '—'}</span> 件
+              {content.unidentified.titlePrefix}
+              <span className='tabular-nums'>{unidentified?.total ?? '—'}</span>
+              {content.unidentified.titleSuffix}
             </>
           }
-          description='AniList で照合できなかった作品を手当てする'
+          description={content.unidentified.description}
         />
         <AdminLink
-          to='/admin/nagisa'
+          to='/admin/recorder'
           icon={<JobIcon />}
-          title='Nagisa ジョブ投入'
-          description='provider / content_id を指定して直接依頼する'
+          title={content.nagisaJob.title}
+          description={content.nagisaJob.description}
         />
         <AdminLink
           to='/changelog'
           icon={<ChangelogIcon />}
-          title='変更履歴'
-          description='直近のデプロイとコミットを日付ごとに見る'
+          title={content.changelog.title}
+          description={content.changelog.description}
         />
       </div>
     </PgSec>

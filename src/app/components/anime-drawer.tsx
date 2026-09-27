@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { Circle, CircleCheck, ExternalLink, RefreshCw } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import { ProviderBadge, StatusBadge } from '@/app/components/anime-badges'
 import { ProxyImage } from '@/app/components/proxy-image'
@@ -19,8 +20,6 @@ type AnimeDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
-
-const EPISODE_PREVIEW_LIMIT = 5
 
 function getProviderTitleUrl(provider: string, contentId: string): string | null {
   if (!contentId) return null
@@ -64,6 +63,7 @@ export function AnimeDrawer({ animeId, open, onOpenChange }: AnimeDrawerProps) {
 }
 
 function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () => void }) {
+  const content = useIntlayer('anime-drawer')
   const queryClient = useQueryClient()
   const { data: anime, isLoading } = useQuery(animeDetailQueryOptions(animeId))
 
@@ -82,12 +82,12 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
     mutationFn: () => api.recordAnime(undefined, { params: { id: animeId } }),
     onSuccess: (data) => {
       if (data.count === 0) {
-        toast.info('録画対象のエピソードがありません')
+        toast.info(content.toasts.recordNoEpisodes.value)
         return
       }
-      toast.success('録画を開始しました')
+      toast.success(content.toasts.recordStarted.value)
     },
-    onError: () => toast.error('録画リクエストに失敗しました'),
+    onError: () => toast.error(content.toasts.recordFailed.value),
     // 失敗しても各話の録画状態は書き換わっているので読み直す
     onSettled: invalidateRelated
   })
@@ -97,22 +97,22 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
     onSuccess: (data) => {
       // 配信元の更新は済んでいる。nagisa との同期だけが落ちた場合は、そうと分かるように出す
       if (data.sync.jobs.error !== null || data.sync.library.error !== null) {
-        toast.warning('タイトル情報は更新しましたが、録画状態の同期に失敗しました', {
+        toast.warning(content.toasts.refreshPartialFailure.value, {
           description: data.sync.jobs.error ?? data.sync.library.error ?? undefined
         })
       } else {
-        toast.success('タイトル情報と録画状態を更新しました')
+        toast.success(content.toasts.refreshSuccess.value)
       }
       invalidateRelated()
-      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
     },
-    onError: (error) => toast.error(getApiErrorMessage(error, '情報の更新に失敗しました'))
+    onError: (error) => toast.error(getApiErrorMessage(error, content.toasts.refreshFailedFallback.value))
   })
 
   if (isLoading || !anime) {
     return (
       <div className='flex flex-1 items-center justify-center p-8'>
-        <p className='text-sm text-muted-foreground'>読み込み中…</p>
+        <p className='text-sm text-muted-foreground'>{content.loading}</p>
       </div>
     )
   }
@@ -121,9 +121,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
   const titleUrl = getProviderTitleUrl(anime.provider, anime.contentId)
   const providerName = providerLabel[anime.provider] ? providerLabel[anime.provider] : anime.provider
   const totalEpisodes = anime.seasons.reduce((sum, s) => sum + s.episodes.length, 0)
-  const firstSeason = anime.seasons[0]
-  const previewEpisodes = firstSeason ? firstSeason.episodes.slice(0, EPISODE_PREVIEW_LIMIT) : []
-  const remainingEpisodes = firstSeason ? Math.max(0, firstSeason.episodes.length - previewEpisodes.length) : 0
+  const seasons = anime.seasons.filter((s) => s.episodes.length > 0)
 
   const toggleScheduled = () => {
     updateAnimeMutation.mutate({ scheduled: !anime.scheduled })
@@ -140,13 +138,15 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
     <>
       <SheetHeader className='gap-2 px-4 pb-3 pt-4'>
         <SheetTitle className='text-base font-semibold tracking-tight'>{anime.title}</SheetTitle>
-        <SheetDescription className='sr-only'>{anime.title} の詳細</SheetDescription>
+        <SheetDescription className='sr-only'>{content.description({ title: anime.title })}</SheetDescription>
         <div className='flex flex-wrap items-center gap-1.5'>
           <ProviderBadge provider={anime.provider} />
           {anime.status && anime.status !== 'UNKNOWN' && <StatusBadge status={anime.status} />}
           {anime.year > 0 && (
             <Badge variant='secondary'>
-              {anime.year}年{anime.quarter != null ? ` ${QuarterLabel[anime.quarter]}` : ''}
+              {anime.year}
+              {content.yearSuffix}
+              {anime.quarter != null ? ` ${QuarterLabel[anime.quarter]}` : ''}
             </Badge>
           )}
         </div>
@@ -175,7 +175,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
               aria-pressed={anime.scheduled}
             >
               {anime.scheduled ? <CircleCheck /> : <Circle />}
-              {anime.scheduled ? '予約済み' : '予約'}
+              {anime.scheduled ? content.schedule.scheduled : content.schedule.unscheduled}
             </Button>
             <Button
               type='button'
@@ -187,7 +187,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
               className={anime.recorded ? 'bg-success text-success-foreground hover:bg-success/85' : undefined}
             >
               {anime.recorded ? <CircleCheck /> : <Circle />}
-              {anime.recorded ? '録画済み' : '録画'}
+              {anime.recorded ? content.record.recorded : content.record.unrecorded}
             </Button>
             <Button
               type='button'
@@ -195,7 +195,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
               variant='outline'
               onClick={() => refreshAnimeMutation.mutate()}
               disabled={updating}
-              aria-label='タイトル情報を再取得'
+              aria-label={content.refresh.ariaLabel.value}
             >
               <RefreshCw className={refreshAnimeMutation.isPending ? 'animate-spin' : undefined} />
             </Button>
@@ -203,27 +203,36 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
 
           {anime.description && <p className='text-sm leading-relaxed text-muted-foreground'>{anime.description}</p>}
 
-          {totalEpisodes > 0 && <p className='text-xs text-muted-foreground'>{totalEpisodes} エピソード</p>}
+          {totalEpisodes > 0 && (
+            <p className='text-xs text-muted-foreground'>{content.episodes.count({ count: totalEpisodes })}</p>
+          )}
 
-          {previewEpisodes.length > 0 && (
+          {/* 本文はシート内でスクロールするので、件数で切らずに全話を並べる */}
+          {seasons.length > 0 && (
             <section className='space-y-1.5 pt-1'>
               <h3 className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
-                エピソード(先頭 {previewEpisodes.length} 件)
+                {content.episodes.heading}
               </h3>
-              <ul className='space-y-1.5'>
-                {previewEpisodes.map((ep) => (
-                  <li key={ep.id} className='flex items-center gap-2 text-xs'>
-                    <span className='shrink-0 text-muted-foreground'>{ep.episodeNumber}.</span>
-                    <span className='truncate'>{ep.title}</span>
-                    {ep.releaseDate && (
-                      <span className='ml-auto shrink-0 text-muted-foreground'>
-                        {dayjs(ep.releaseDate).format('M/D')}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {remainingEpisodes > 0 && <p className='text-xs text-muted-foreground'>ほか {remainingEpisodes} 件</p>}
+              {seasons.map((season) => (
+                <div key={season.id} className='space-y-1.5'>
+                  {seasons.length > 1 && (
+                    <h4 className='pt-1 text-xs font-semibold text-muted-foreground'>{season.displayName}</h4>
+                  )}
+                  <ul className='space-y-1.5'>
+                    {season.episodes.map((ep) => (
+                      <li key={ep.id} className='flex items-center gap-2 text-xs'>
+                        <span className='shrink-0 tabular-nums text-muted-foreground'>{ep.episodeNumber}.</span>
+                        <span className='truncate'>{ep.title}</span>
+                        {ep.releaseDate && (
+                          <span className='ml-auto shrink-0 tabular-nums text-muted-foreground'>
+                            {dayjs(ep.releaseDate).format('M/D')}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </section>
           )}
         </div>
@@ -236,7 +245,7 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
           variant='outline'
           render={
             <Link to='/anime/$id' params={{ id: anime.id }} onClick={onClose}>
-              フルページで開く
+              {content.openFullPage}
               <ExternalLink data-icon='inline-end' />
             </Link>
           }
@@ -244,10 +253,9 @@ function AnimeDrawerBody({ animeId, onClose }: { animeId: string; onClose: () =>
         {titleUrl && (
           <Button
             size='sm'
-            variant='ghost'
             render={
               <a href={titleUrl} target='_blank' rel='noopener noreferrer'>
-                {providerName}で見る
+                {content.watchOn({ provider: providerName })}
                 <ExternalLink data-icon='inline-end' />
               </a>
             }
