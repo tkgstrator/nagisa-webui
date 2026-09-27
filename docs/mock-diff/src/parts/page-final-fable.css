@@ -1,0 +1,150 @@
+/* ---------- page skeleton (final / fable) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   衝突を避けるため骨格クラスは pg- 名前空間に統一する。 */
+
+/* 常設サイドバーと本文を横に並べる外枠。本文は残りを全部使う。 */
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  /* 幅の上限は持たない。236px の常設サイドバーを除いた残りを全部使い、
+     左右 36px の余白だけで内容を落ち着かせる。column flex の .pg-main の中では
+     width: 100% が無いと幅が max-content で確定してしまうのでこれは残す。
+     flex: 1 で .pg-main の縦の残りを埋める。
+     下余白の 90px は本来の 46px + 固定フッターの高さ 44px。
+     下の display / flex-direction / gap は fable 側の縦リズムなのでそのまま残す。 */
+  flex: 1;
+  width: 100%;
+  padding: 26px 36px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.pg > * { animation: fadeUp .5s ease both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .05s; }
+.pg > *:nth-child(3) { animation-delay: .1s; }
+.pg > *:nth-child(4) { animation-delay: .15s; }
+.pg > *:nth-child(5) { animation-delay: .2s; }
+.pg > *:nth-child(6) { animation-delay: .25s; }
+.pg > *:nth-child(7) { animation-delay: .3s; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+/* 見出しの右にサマリタイルを置くページ (ホーム) 用。
+   左＝見出しブロック / 右＝タイル の 2 カラム。1024px 以下では縦に落とす。 */
+.pg-head.pg-head-split {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: 0 40px;
+}
+.pg-headline { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pg-headline h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.pg-headdate { font-size: 12px; line-height: 1.5; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.pg-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 700; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- section ---------- */
+.pg-sec { display: flex; flex-direction: column; gap: 14px; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pg-sec-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.pg-sec-count { font-size: 13px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 40px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 68px;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.pg-link {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 3px 10px;
+  border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0; padding: 12px 14px;
+  transition: background .15s ease;
+}
+.pg-link:hover { background: var(--muted); }
+.pg-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.pg-link svg { width: 16px; height: 16px; color: var(--muted-foreground); transition: transform .15s ease; }
+.pg-link:hover svg { transform: translateX(2px); }
+.pg-lt { font-size: 13.5px; font-weight: 600; }
+.pg-ld { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted-foreground); }
+.pg-link.pg-warn { border-left-color: var(--warning); }
+
+@media (max-width: 1024px) {
+  .pg-head.pg-head-split { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 76px; gap: 30px; }
+  .pg-title { font-size: 20px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- 一覧ビューの節間隔 ---------- */
+/* #view-list は .pg の flex child なので、その中身には .pg の gap 40px が届かない。
+   先頭のサマリと操作列は別の節なので、ここで同じ間隔を作る (.ss の下 padding 2px ぶんを引いて 38px)。 */
+#view-list > section:first-child { margin-bottom: 38px; }

@@ -10,7 +10,19 @@ const adminLogsRecordingsTableContent = {
         kind: '種別',
         route: '経路',
         episode: '話数',
+        http: 'HTTP',
         result: '結果'
+      }
+    },
+    en: {
+      headers: {
+        dateTime: 'Date and time',
+        anime: 'titles',
+        kind: 'Type',
+        route: 'Source',
+        episode: 'Episodes',
+        http: 'HTTP',
+        result: 'Result'
       }
     }
   })

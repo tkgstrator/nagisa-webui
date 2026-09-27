@@ -1,13 +1,14 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { archiveMissingAbemaKeysForAnime } from '../../lib/abema-archive'
+import { autoRecordScheduled } from '../../lib/auto-record'
 import { createPrismaClient } from '../../lib/db'
 import { enqueueImageWarm } from '../../lib/image-warm'
 import { type JobSyncResult, syncJobs } from '../../lib/job-sync'
 import { createFetchClient } from '../../lib/lambda'
 import { type LibrarySyncResult, syncLibrary } from '../../lib/library-sync'
 import { localDetailFetchers } from '../../lib/local-detail-fetchers'
-import { createStore, flushLogs, runWithCapture } from '../../lib/log-capture'
 import { getAppLogger } from '../../lib/logger'
+import { runWithContext } from '../../lib/run-context'
 import { SyncService } from '../../lib/sync'
 import { finishRun, startRun } from '../../lib/sync-run'
 import { RefreshAnimeResponseSchema } from '../../schemas/anime.dto'
@@ -55,16 +56,15 @@ export const registerRefresh = (anime: AnimeApp) => {
       const service = new SyncService(prisma, lambda)
       const fetcher = localDetailFetchers[result.data]
 
-      // 手動操作も実行履歴に残す。ここで作った store のおかげで、この 1 リクエストの
-      // 中で出たログだけが runId 付きで溜まる (同時に叩かれても混ざらない)。
+      // 手動操作も実行履歴に残す。runWithContext の中で出たログだけが runId 付きになる
+      // (同時に叩かれても混ざらない)。
       const runId = await startRun(prisma, { kind: 'manual', trigger: 'refresh' })
-      const store = createStore(runId)
       let errorMessage: string | undefined
       let jobs: JobSyncResult | undefined
       let library: LibrarySyncResult | undefined
 
       try {
-        await runWithCapture(store, async () => {
+        await runWithContext(runId, async () => {
           try {
             // 新規に入った / URL が変わった画像は queue 経由で warm する。
             // SyncService は副作用を持たず URL を返すだけなので、送信はこの呼び出し元の責務。
@@ -116,15 +116,15 @@ export const registerRefresh = (anime: AnimeApp) => {
           if (jobs.error || library.error) {
             logger.warn({ action: 'refresh-recording-sync-error', id, jobs: jobs.error, library: library.error })
           }
+          // 手動の再取得で見つかった回も、予約済み作品なら自動録画に回す (経路は cron と同じ)。
+          // 台帳同期の後に置くのは、既に録れている回を completed にしてから選ぶため
+          await autoRecordScheduled(prisma, c.env, row.provider, row.contentId)
         })
       } finally {
-        // flushLogs → finishRun の順を守る (src/lib/db.ts のクライアント使い回し都合)。
-        const droppedLogs = await flushLogs(prisma, store)
         await finishRun(prisma, runId, errorMessage === undefined ? 'success' : 'failed', {
           total: 1,
           succeeded: errorMessage === undefined ? 1 : 0,
           failed: errorMessage === undefined ? 0 : 1,
-          droppedLogs,
           errorMessage,
           meta: {
             animeId: id,

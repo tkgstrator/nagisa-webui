@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import type { FetchMessage, UpdateMessage } from '@/schemas/message.dto.ts'
 import type { Episode, Season, TitleInfo } from '@/schemas/providers/common.dto.ts'
 import type { PrismaClient } from '../../generated/prisma/client.ts'
+import { type CatalogEventInput, recordCatalogEvents } from '../catalog-event'
 import { withD1Retry } from '../db'
 import type { FetchClient } from '../lambda'
 import { getAppLogger } from '../logger'
@@ -14,6 +15,86 @@ function isUniqueConstraintError(e: unknown): boolean {
 
 const syncLogger = getAppLogger('sync')
 const fetchLogger = getAppLogger('fetch')
+
+/** 既存エピソードで変わった項目。カタログログの「更新」行に載せる */
+type EpisodeField = 'image' | 'description' | 'duration' | 'releaseDate'
+
+interface EpisodeRef {
+  seasonNumber: number
+  episodeNumber: number
+}
+
+interface SyncSeasonsResult {
+  seasonsCreated: { seasonNumber: number; episodeCount: number }[]
+  /** 既存シーズンに足したエピソード。新規シーズンに含まれる分は seasonsCreated 側で数える */
+  episodesCreated: EpisodeRef[]
+  episodesUpdated: (EpisodeRef & { fields: EpisodeField[] })[]
+  /** 新規に入った / URL が変わったエピソード画像。warm は呼び出し元 (Queue consumer) が行う */
+  newImageUrls: string[]
+}
+
+/**
+ * 話数の並びを「S1 E5–7, 9 / S2 E1」の形に畳む。行数が膨らまないよう、
+ * エピソード単位ではなく作品単位 1 行にまとめて残すための表示用文字列。
+ */
+export function formatEpisodeRefs(refs: EpisodeRef[]): string {
+  const bySeason = new Map<number, number[]>()
+  for (const r of refs) {
+    const eps = bySeason.get(r.seasonNumber)
+    if (eps) eps.push(r.episodeNumber)
+    else bySeason.set(r.seasonNumber, [r.episodeNumber])
+  }
+  return [...bySeason.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([season, eps]) => {
+      const sorted = [...new Set(eps)].sort((a, b) => a - b)
+      const ranges: string[] = []
+      let start = sorted[0]
+      let prev = sorted[0]
+      for (const n of [...sorted.slice(1), Number.NaN]) {
+        if (n === prev + 1) {
+          prev = n
+          continue
+        }
+        ranges.push(start === prev ? `${start}` : `${start}–${prev}`)
+        start = n
+        prev = n
+      }
+      return `S${season} E${ranges.join(', ')}`
+    })
+    .join(' / ')
+}
+
+function toCatalogEvents(
+  anime: { id: string; provider: string; contentId: string; title: string },
+  stats: SyncSeasonsResult
+): CatalogEventInput[] {
+  const base = { animeId: anime.id, provider: anime.provider, contentId: anime.contentId, title: anime.title }
+  const events: CatalogEventInput[] = stats.seasonsCreated.map((s) => ({
+    ...base,
+    kind: 'season-added',
+    seasonNumber: s.seasonNumber,
+    episodeCount: s.episodeCount
+  }))
+  if (stats.episodesCreated.length > 0) {
+    events.push({
+      ...base,
+      kind: 'episodes-added',
+      episodeCount: stats.episodesCreated.length,
+      episodes: formatEpisodeRefs(stats.episodesCreated)
+    })
+  }
+  if (stats.episodesUpdated.length > 0) {
+    events.push({
+      ...base,
+      kind: 'episodes-updated',
+      episodeCount: stats.episodesUpdated.length,
+      episodes: formatEpisodeRefs(stats.episodesUpdated),
+      fields: [...new Set(stats.episodesUpdated.flatMap((e) => e.fields))]
+    })
+  }
+  return events
+}
 
 export class SyncService {
   constructor(
@@ -41,6 +122,7 @@ export class SyncService {
     )
 
     const stats = await this.syncSeasons(anime.id, provider, contentId, detail.seasons)
+    await recordCatalogEvents(this.prisma, toCatalogEvents(anime, stats))
 
     syncLogger.info({
       action: 'apply-detail-done',
@@ -48,9 +130,9 @@ export class SyncService {
       contentId,
       seasonCount: detail.seasons.length,
       episodeCount: detail.seasons.reduce((sum, s) => sum + s.episodes.length, 0),
-      seasonsCreated: stats.seasonsCreated,
-      episodesCreated: stats.episodesCreated,
-      episodesUpdated: stats.episodesUpdated
+      seasonsCreated: stats.seasonsCreated.length,
+      episodesCreated: stats.episodesCreated.length,
+      episodesUpdated: stats.episodesUpdated.length
     })
 
     return stats.newImageUrls
@@ -62,14 +144,12 @@ export class SyncService {
     provider: string,
     contentId: string,
     seasons: Season[]
-  ): Promise<{
-    seasonsCreated: number
-    episodesCreated: number
-    episodesUpdated: number
-    /** 新規に入った / URL が変わったエピソード画像。warm は呼び出し元 (Queue consumer) が行う */
-    newImageUrls: string[]
-  }> {
-    const stats = { seasonsCreated: 0, episodesCreated: 0, episodesUpdated: 0 }
+  ): Promise<SyncSeasonsResult> {
+    const stats: Omit<SyncSeasonsResult, 'newImageUrls'> = {
+      seasonsCreated: [],
+      episodesCreated: [],
+      episodesUpdated: []
+    }
     /** 新規に入った / URL が変わったエピソード画像。D1 書き込みが全部通った後に warm する */
     const newImageUrls: string[] = []
     const anime = await this.prisma.anime.findUniqueOrThrow({
@@ -116,7 +196,7 @@ export class SyncService {
       if (!existingEpisodes) {
         try {
           await withD1Retry(() => this.createSeason(animeId, provider, contentId, season))
-          stats.seasonsCreated += 1
+          stats.seasonsCreated.push({ seasonNumber: season.seasonNumber, episodeCount: season.episodes.length })
           newImageUrls.push(...season.episodes.map((e) => e.imageUrl))
           syncLogger.info({
             action: 'create-season',
@@ -153,7 +233,7 @@ export class SyncService {
         if (!existing) {
           try {
             await withD1Retry(() => this.createEpisode(dbSeason.id, provider, contentId, dbSeason.seasonId, episode))
-            stats.episodesCreated += 1
+            stats.episodesCreated.push({ seasonNumber: season.seasonNumber, episodeNumber: episode.episodeNumber })
             newImageUrls.push(episode.imageUrl)
           } catch (e) {
             if (!isUniqueConstraintError(e)) throw e
@@ -161,12 +241,12 @@ export class SyncService {
           continue
         }
         const nextReleaseDate = dayjs(episode.releaseDate).toDate()
-        if (
-          existing.imageUrl !== episode.imageUrl ||
-          existing.description !== episode.description ||
-          existing.duration !== episode.duration ||
-          existing.releaseDate.getTime() !== nextReleaseDate.getTime()
-        ) {
+        const fields: EpisodeField[] = []
+        if (existing.imageUrl !== episode.imageUrl) fields.push('image')
+        if (existing.description !== episode.description) fields.push('description')
+        if (existing.duration !== episode.duration) fields.push('duration')
+        if (existing.releaseDate.getTime() !== nextReleaseDate.getTime()) fields.push('releaseDate')
+        if (fields.length > 0) {
           await withD1Retry(() =>
             this.prisma.episode.update({
               where: { id: existing.id },
@@ -178,7 +258,11 @@ export class SyncService {
               }
             })
           )
-          stats.episodesUpdated += 1
+          stats.episodesUpdated.push({
+            seasonNumber: season.seasonNumber,
+            episodeNumber: episode.episodeNumber,
+            fields
+          })
           if (existing.imageUrl !== episode.imageUrl) newImageUrls.push(episode.imageUrl)
         }
       }

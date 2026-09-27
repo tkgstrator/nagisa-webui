@@ -2,7 +2,12 @@ import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { createPrismaClient } from '../lib/db'
 import { getAppLogger } from '../lib/logger'
 import { sendMessage } from '../lib/queue-routing'
-import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '../schemas/archive.dto'
+import {
+  ArchiveEnqueueResponseSchema,
+  ArchiveStatsSchema,
+  KeyArchiveRequestSchema,
+  KeyArchiveStatsQuerySchema
+} from '../schemas/archive.dto'
 import type { Message } from '../schemas/message.dto'
 import { PaginatedUnidentifiedSchema, UnidentifiedListQuerySchema } from '../schemas/unidentified.dto'
 
@@ -19,9 +24,13 @@ const admin = new OpenAPIHono<{ Bindings: Bindings }>()
 admin.openapi(
   createRoute({
     method: 'post',
-    path: '/abema/enqueue-archive',
+    path: '/key-archive-requests',
     tags: ['Admin'],
-    summary: '鍵未取得の ABEMA anime をすべて archive キューに投入する (cron を待たない手動キック)',
+    summary: '鍵未取得の anime をすべて HLS 鍵 archive キューに投入する (cron を待たない手動キック)',
+    description: '未対応の provider は 400。応答は投入件数のみ (SyncRun は作らない)。',
+    request: {
+      body: { content: { 'application/json': { schema: KeyArchiveRequestSchema } }, required: true }
+    },
     responses: {
       200: {
         description: 'キュー投入結果',
@@ -30,11 +39,12 @@ admin.openapi(
     }
   }),
   async (c) => {
+    const { provider } = c.req.valid('json')
     const prisma = createPrismaClient(c.env.DB)
     try {
       const animes = await prisma.anime.findMany({
         where: {
-          provider: 'abema',
+          provider,
           seasons: { some: { episodes: { some: { abemaKey: null } } } }
         },
         select: { id: true }
@@ -42,7 +52,7 @@ admin.openapi(
       for (const anime of animes) {
         await sendMessage(c.env, { type: 'abema_archive', message: { animeId: anime.id } })
       }
-      logger.info({ action: 'enqueue-abema-archive', count: animes.length })
+      logger.info({ action: 'enqueue-key-archive', provider, count: animes.length })
       return c.json({ enqueued: animes.length }, 200)
     } finally {
       await prisma.$disconnect()
@@ -53,9 +63,10 @@ admin.openapi(
 admin.openapi(
   createRoute({
     method: 'get',
-    path: '/abema/archive-stats',
+    path: '/key-archives/stats',
     tags: ['Admin'],
-    summary: 'ABEMA HLS 鍵 archive の進捗 (anime 単位 / episode 単位)',
+    summary: 'HLS 鍵 archive の進捗 (anime 単位 / episode 単位)',
+    request: { query: KeyArchiveStatsQuerySchema },
     responses: {
       200: {
         description: 'archive 進捗',
@@ -64,19 +75,20 @@ admin.openapi(
     }
   }),
   async (c) => {
+    const { provider } = c.req.valid('query')
     const prisma = createPrismaClient(c.env.DB)
     try {
       const [totalAnime, animeWithMissingKey, totalEpisodes, archivedEpisodes] = await Promise.all([
-        prisma.anime.count({ where: { provider: 'abema' } }),
+        prisma.anime.count({ where: { provider } }),
         prisma.anime.count({
           where: {
-            provider: 'abema',
+            provider,
             seasons: { some: { episodes: { some: { abemaKey: null } } } }
           }
         }),
-        prisma.episode.count({ where: { season: { anime: { provider: 'abema' } } } }),
+        prisma.episode.count({ where: { season: { anime: { provider } } } }),
         prisma.episode.count({
-          where: { season: { anime: { provider: 'abema' } }, abemaKey: { isNot: null } }
+          where: { season: { anime: { provider } }, abemaKey: { isNot: null } }
         })
       ])
       return c.json(
@@ -99,7 +111,7 @@ admin.openapi(
 admin.openapi(
   createRoute({
     method: 'get',
-    path: '/unidentified',
+    path: '/unidentified-anime',
     tags: ['Admin'],
     summary: 'AniList で識別できなかったタイトル一覧 (ページネーション + provider/title 検索)',
     request: { query: UnidentifiedListQuerySchema },

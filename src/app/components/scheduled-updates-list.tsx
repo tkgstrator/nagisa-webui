@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { providerColor, providerLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 
 type ScheduledUpdatesListProps = {
@@ -79,7 +80,10 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
             key={item.id}
             to='/anime/$id'
             params={{ id: item.id }}
-            className={`${rowGrid} border-b border-b-border/60 py-2 pr-2.5 pl-[13px] transition-colors hover:bg-muted`}
+            className={cn(
+              rowGrid,
+              'border-b border-b-border/60 py-2 pr-2.5 pl-[13px] transition-colors hover:bg-muted'
+            )}
           >
             <ProxyImage
               src={item.imageUrl}
@@ -91,7 +95,10 @@ export function ScheduledUpdatesList({ anime, subtitle }: ScheduledUpdatesListPr
               <span className='block truncate text-[13px] font-medium'>{item.title}</span>
               <span className='mt-[3px] flex flex-wrap items-center gap-[7px] text-[11px] text-muted-foreground'>
                 <span
-                  className={`inline-flex h-[17px] flex-none items-center rounded px-1.5 text-[10.5px] font-semibold ${providerColor[item.provider] ?? 'bg-secondary text-secondary-foreground'}`}
+                  className={cn(
+                    'inline-flex h-[17px] flex-none items-center rounded px-1.5 text-[10.5px] font-semibold',
+                    providerColor[item.provider] ?? 'bg-secondary text-secondary-foreground'
+                  )}
                 >
                   {providerLabel[item.provider] ?? item.provider}
                 </span>

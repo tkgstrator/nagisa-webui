@@ -1,11 +1,12 @@
 import { getIntlayer } from 'intlayer'
 import { useIntlayer } from 'react-intlayer'
+import { appLocale } from '@/app/lib/locale'
 import { EXPIRING_LEAD_DAY_OPTIONS, LANGUAGE_LABELS, type LanguagePreference, useSettings } from '../-lib/settings'
 import { StNote, StPanel, StRow, StSelect, StSwitch } from './controls'
 import { AutoIcon, ClockIcon, LanguageIcon, RecordIcon, WarnIcon } from './icons'
 import { PgSec } from './section'
 
-const recordingSectionModuleContent = getIntlayer('settings-recording-section')
+const recordingSectionModuleContent = getIntlayer('settings-recording-section', appLocale)
 
 const LEAD_DAY_SELECT = EXPIRING_LEAD_DAY_OPTIONS.map((days) => ({
   value: String(days),
@@ -85,7 +86,7 @@ export const RecordingSection = () => {
           />
         </StRow>
 
-        {/* admin/nagisa のジョブ投入フォームが language の初期値にこれを使う。 */}
+        {/* admin/recorder のジョブ投入フォームが language の初期値にこれを使う。 */}
         <StRow
           index={4}
           icon={<LanguageIcon />}

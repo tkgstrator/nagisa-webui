@@ -5,7 +5,7 @@ const animeIdContent = {
   content: t({
     ja: {
       breadcrumb: {
-        ariaLabel: 'パス',
+        ariaLabel: 'パンくずリスト',
         browse: 'アニメ一覧'
       },
       toast: {
@@ -15,6 +15,20 @@ const animeIdContent = {
         refreshedWithSyncError: 'タイトル情報は更新しましたが、録画状態の同期に失敗しました',
         refreshed: 'タイトル情報と録画状態を更新しました',
         refreshFailed: '情報の更新に失敗しました'
+      }
+    },
+    en: {
+      breadcrumb: {
+        ariaLabel: 'Breadcrumb',
+        browse: 'Browse anime'
+      },
+      toast: {
+        noRecordableEpisodes: 'No episodes available to record',
+        recordingStarted: 'Recording started',
+        recordingRequestFailed: 'Failed to request recording',
+        refreshedWithSyncError: 'Title information updated, but recording status could not be synced',
+        refreshed: 'Title information and recording status updated',
+        refreshFailed: 'Failed to refresh information'
       }
     }
   })

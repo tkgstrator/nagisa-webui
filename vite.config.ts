@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { cloudflare } from '@cloudflare/vite-plugin'
+import mockDiff from '@qtmleap/vite-plugin-mock-diff'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
@@ -22,10 +23,6 @@ const gitLog = execSync('git log --format="%h %aI %s" -50')
 
 // mock-diff-viewer sidecar。ブラウザを経由しない経路なので compose のサービス名で届く。
 const MOCK_DIFF_TARGET = 'http://mock-diff:3000'
-// viewer の client が出すルート相対 API。アプリ側 Worker が /api を先に掴むため
-// server.proxy では勝てない (@cloudflare/vite-plugin は configureServer の中で
-// middleware を直接 use するので、vite が proxy を挟むより前に並ぶ)。
-const MOCK_DIFF_API_PATHS = ['/api/screens', '/api/compare', '/api/workspace']
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -41,19 +38,6 @@ export default defineConfig(({ mode }) => ({
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Resource-Policy': 'same-origin',
     },
-    // viewer の UI はこの dev server に相乗りさせる。専用のポートを公開しないので
-    // mock-diff sidecar を持つ repo を何個同時に立てても衝突しない。
-    // client は /mock-diff 配下に居てもルート相対 URL を出すので /assets も要る。
-    // /api/* だけはここでは勝てない (後述の mock-diff-api-proxy を参照)。
-    proxy: {
-      '/mock-diff': {
-        target: MOCK_DIFF_TARGET,
-        changeOrigin: true,
-        ws: true,
-        rewrite: (path) => path.replace(/^\/mock-diff/, '') || '/',
-      },
-      '/assets': { target: MOCK_DIFF_TARGET, changeOrigin: true },
-    },
     // vite の既定の除外は .git / node_modules / test-results だけで .gitignore は見ない。
     // .cache (原本 ~100 万ファイル) を chokidar が舐めると inotify 90 万件・RSS 4GB で
     // CPU 100% に張り付くので、ソースを置かない巨大ディレクトリは明示的に外す。
@@ -62,46 +46,11 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    // viewer の /api/* をアプリ側 Worker より手前で横流しする。enforce: 'pre' が無いと
-    // Hono の 404 (text/plain) や SPA の index.html (200) が返り、404 にならないぶん
-    // 原因が見えにくい症状になる (Live が白いまま、など)。
-    {
-      name: 'mock-diff-api-proxy',
-      enforce: 'pre',
-      configureServer(server) {
-        for (const prefix of MOCK_DIFF_API_PATHS) {
-          server.middlewares.use(prefix, (req, res) => {
-            const target = new URL(req.originalUrl ?? prefix, MOCK_DIFF_TARGET)
-            const headers = new Headers()
-            for (const [key, value] of Object.entries(req.headers)) {
-              if (typeof value === 'string') headers.set(key, value)
-            }
-            headers.set('host', new URL(MOCK_DIFF_TARGET).host)
-            const hasBody = req.method !== 'GET' && req.method !== 'HEAD'
-            fetch(target, {
-              method: req.method,
-              headers,
-              body: hasBody ? (req as unknown as ReadableStream) : undefined,
-              duplex: 'half',
-            } as RequestInit & { duplex: 'half' })
-              .then(async (upstream) => {
-                res.statusCode = upstream.status
-                upstream.headers.forEach((value, key) => {
-                  // 再エンコードするので転送系のヘッダは引き継がない。
-                  if (!['content-encoding', 'content-length', 'transfer-encoding'].includes(key)) {
-                    res.setHeader(key, value)
-                  }
-                })
-                res.end(Buffer.from(await upstream.arrayBuffer()))
-              })
-              .catch((error) => {
-                res.statusCode = 502
-                res.end(`mock-diff proxy error: ${String(error)}`)
-              })
-          })
-        }
-      },
-    },
+    // viewer の UI はこの dev server の /mock-diff/ に相乗りさせる。専用のポートを公開
+    // しないので mock-diff sidecar を持つ repo を何個同時に立てても衝突しない。
+    // /mock-diff → 308 /mock-diff/、/mock-diff/... → prefix を外して sidecar へ、他は素通し。
+    // 中で enforce: 'pre' しているが @cloudflare/vite-plugin より前に並べておく。
+    mockDiff({ target: MOCK_DIFF_TARGET }),
     {
       name: 'build-info',
       buildStart() {

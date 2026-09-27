@@ -13,7 +13,6 @@ import { AnimeHero } from './-components/anime-hero'
 import { AnimeInfo } from './-components/anime-info'
 import { BroadcastSchedule } from './-components/broadcast-schedule'
 import { EpisodeGrid } from './-components/episode-grid'
-import { RecordingStatus } from './-components/recording-status'
 import { RelatedProviders } from './-components/related-providers'
 
 function getApiErrorMessage(error: unknown, fallback: string): string {
@@ -59,7 +58,6 @@ function AnimeDetailPage() {
   const invalidateRelated = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.detail(id) })
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
-    queryClient.invalidateQueries({ queryKey: queryKeys.anime.recordingStatus(id) })
   }
 
   const updateAnimeMutation = useMutation({
@@ -93,7 +91,7 @@ function AnimeDetailPage() {
         toast.success(content.toast.refreshed.value)
       }
       invalidateRelated()
-      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
     },
     onError: (error) => toast.error(getApiErrorMessage(error, content.toast.refreshFailed.value))
   })
@@ -152,7 +150,6 @@ function AnimeDetailPage() {
       <div className='grid grid-cols-[minmax(0,1fr)_280px] items-start gap-8 max-lg:grid-cols-[minmax(0,1fr)] max-lg:gap-7'>
         <EpisodeGrid anime={anime} />
         <aside className='sticky top-6 flex flex-col gap-6 max-lg:static'>
-          <RecordingStatus anime={anime} />
           <RelatedProviders anime={anime} />
           <AnimeInfo anime={anime} />
         </aside>

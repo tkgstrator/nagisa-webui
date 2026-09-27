@@ -19,22 +19,56 @@ const constantsContent = {
         HIATUS: '休止'
       },
       recordStatusLabel: {
-        none: '未指示',
+        none: '未リクエスト',
         pending: '待機中',
         downloading: 'ダウンロード中',
         completed: '録画済み',
         failed: '失敗',
-        stale: '見失い',
-        missing: '実体なし'
+        stale: '追跡不能',
+        missing: 'ファイルなし'
       },
       recordStatusNote: {
-        none: '録画を指示していない',
-        pending: '指示は通ったがキューで順番待ち',
-        downloading: 'キューで実行中',
-        completed: '台帳に実体を確認済み',
-        failed: 'キューが失敗として終えた',
-        stale: '30 分キューに現れず見失った (失敗とは限らない)',
-        missing: '台帳から実体が消えた'
+        none: '録画リクエストは送信されていません',
+        pending: 'リクエストは受け付けられ、キューで待機中です',
+        downloading: 'キューで実行中です',
+        completed: '録画台帳でファイルの存在を確認済みです',
+        failed: 'キューのジョブが失敗しました',
+        stale: '30 分間キューで確認できていません（失敗とは限りません）',
+        missing: '録画台帳からファイル情報が削除されました'
+      }
+    },
+    en: {
+      provider: {
+        amazon: 'Prime Video',
+        hulu: 'Hulu',
+        crunchyroll: 'Crunchyroll',
+        abema: 'ABEMA',
+        netflix: 'Netflix'
+      },
+      status: {
+        FINISHED: 'Finished',
+        RELEASING: 'Airing',
+        NOT_YET_RELEASED: 'Not yet aired',
+        CANCELLED: 'Cancelled',
+        HIATUS: 'On hiatus'
+      },
+      recordStatusLabel: {
+        none: 'Not requested',
+        pending: 'Pending',
+        downloading: 'Downloading',
+        completed: 'Recorded',
+        failed: 'Failed',
+        stale: 'Tracking lost',
+        missing: 'File missing'
+      },
+      recordStatusNote: {
+        none: 'No recording request has been sent',
+        pending: 'Request accepted and waiting in the queue',
+        downloading: 'Job is running in the queue',
+        completed: 'Recording file confirmed in the library',
+        failed: 'The queued job failed',
+        stale: 'Not seen in the queue for 30 minutes; this does not necessarily mean failure',
+        missing: 'Recording file is no longer listed in the library'
       }
     }
   })

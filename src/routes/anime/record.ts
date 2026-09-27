@@ -14,9 +14,9 @@ export const registerRecord = (anime: AnimeApp) => {
   anime.openapi(
     createRoute({
       method: 'post',
-      path: '/{id}/record',
+      path: '/{id}/recording-jobs',
       tags: ['Anime'],
-      summary: 'バックエンドに録画リクエストを送信',
+      summary: '作品の未録画エピソードに対する録画ジョブを投入',
       request: {
         params: z.object({ id: z.string() }),
         body: { required: false, content: { 'application/json': { schema: RecordAnimeRequestSchema } } }
@@ -79,10 +79,15 @@ export const registerRecord = (anime: AnimeApp) => {
       const seasons = [...seasonMap.entries()].map(([season_number, episodes]) => ({ season_number, episodes }))
 
       logger.info({ action: 'record-request', id, episodeCount: targets.length })
-      const result = await enqueueRecording(prisma, c.env, {
-        provider: provider.data,
-        items: [{ content_id: row.contentId, seasons }]
-      })
+      const result = await enqueueRecording(
+        prisma,
+        c.env,
+        {
+          provider: provider.data,
+          items: [{ content_id: row.contentId, seasons }]
+        },
+        'manual'
+      )
       if (!result.ok) return c.json({ error: result.error }, 502 as const)
       return c.json(result.data, 200)
     }

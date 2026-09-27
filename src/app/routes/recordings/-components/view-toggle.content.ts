@@ -4,10 +4,17 @@ const viewToggleContent = {
   key: 'recordings-view-toggle',
   content: t({
     ja: {
-      ariaLabel: '表示切替',
+      ariaLabel: '表示切り替え',
       views: {
         list: '一覧',
         schedule: '週間スケジュール'
+      }
+    },
+    en: {
+      ariaLabel: 'Switch view',
+      views: {
+        list: 'List',
+        schedule: 'Weekly schedule'
       }
     }
   })

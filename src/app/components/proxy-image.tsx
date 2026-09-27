@@ -1,5 +1,6 @@
 /** Image proxy component. Serves imageUrl via the proxy endpoint. */
 import { useState } from 'react'
+import { cn } from '@/app/lib/utils'
 
 /**
  * R2 に永続化する幅。src/routes/img.ts の PERSISTED_WIDTHS と同じ値でなければならない。
@@ -34,7 +35,10 @@ export function ProxyImage({ src, alt, className, slotWidth }: ProxyImageProps) 
       <div
         role='img'
         aria-label={alt}
-        className={`flex select-none items-center justify-center overflow-hidden bg-muted text-muted-foreground ${className ?? ''}`}
+        className={cn(
+          'flex select-none items-center justify-center overflow-hidden bg-muted text-muted-foreground',
+          className
+        )}
       >
         <span aria-hidden='true' className='text-2xl font-semibold leading-none'>
           {initial}
@@ -59,7 +63,7 @@ export function ProxyImage({ src, alt, className, slotWidth }: ProxyImageProps) 
       decoding='async'
       draggable={false}
       onError={() => setFailed(true)}
-      className={`select-none ${className ?? ''}`}
+      className={cn('select-none', className)}
     />
   )
 }

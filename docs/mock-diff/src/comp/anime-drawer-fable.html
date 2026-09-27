@@ -157,3 +157,49 @@ TITLE: 詳細ドロワー
   </div>
   <p class="cat-note">暗幕のクリックと <kbd>Esc</kbd> でも閉じる。ボタンはヒーロー画像の上に浮かせるので、背景に <code>--overlay</code> を敷いて画像の明暗に依らず読めるようにする。</p>
 </section>
+
+<section class="cat-sec">
+  <h2>ページに組む版 <span class="cat-hint">.drawer.is-page / .drawer-eps.is-flush</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full is-key"><span class="cat-label">.drawer.is-page (:target で開いた状態)</span>
+<div class="stage" style="transform:translateZ(0)"><div class="behind"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="scrim"></div><div id="drawer-cat" class="drawer is-page" style="transform:none;visibility:visible" role="dialog" aria-modal="true" aria-labelledby="drawer-cat-title">
+  <div class="drawer-hero" style="--h: 265">
+    <div class="art"></div>
+    <span class="kana">星</span>
+    <span class="prov">Prime Video</span>
+    <a class="drawer-close" href="#" aria-label="閉じる"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+  </div>
+  <div class="drawer-body">
+    <h2 id="drawer-cat-title">星降る夜のアストロノーツ</h2>
+    <div class="drawer-status"><span class="status s-releasing">放送中</span><span class="season">2026 春クール · 毎週土曜 22:30</span></div>
+    <p class="drawer-desc is-clamp">宇宙飛行士訓練校に入学した主人公が、仲間たちと共に未知の軌道ステーションの謎に挑む青春SF。第2クールでは新たな星域が舞台に。</p>
+    <dl class="drawer-facts">
+      <div><dt>話数 / 尺</dt><dd class="num">全 12 話 · 24 分</dd></div>
+      <div><dt>配信済み</dt><dd class="num">8 / 12 話</dd></div>
+      <div><dt>録画状態</dt><dd class="num">7 / 8 話 録画済み</dd></div>
+      <div><dt>配信元</dt><dd>Prime Video</dd></div>
+    </dl>
+    <div class="drawer-actions">
+      <a class="dbtn" href="#anime">詳細を見る</a>
+      <button class="dbtn outline">録画予約する</button>
+    </div>
+    <div class="drawer-eps is-flush">
+      <h3>直近のエピソード</h3>
+      <div class="epline is-done"><span class="n num">第 8 話</span><span class="t">静止軌道の向こう側</span><span class="rec">録画済み</span></div>
+      <div class="epline is-rec"><span class="n num">第 7 話</span><span class="t">流星のシグナル</span><span class="rec">録画中</span></div>
+      <div class="epline is-fail"><span class="n num">第 6 話</span><span class="t">月面基地の後輩</span><span class="rec">失敗</span></div>
+    </div>
+  </div>
+</div></div>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">.drawer-eps.is-flush</span>
+<div class="drawer-eps is-flush">
+      <h3>直近のエピソード</h3>
+      <div class="epline is-done"><span class="n num">第 8 話</span><span class="t">静止軌道の向こう側</span><span class="rec">録画済み</span></div>
+      <div class="epline is-rec"><span class="n num">第 7 話</span><span class="t">流星のシグナル</span><span class="rec">録画中</span></div>
+      <div class="epline is-fail"><span class="n num">第 6 話</span><span class="t">月面基地の後輩</span><span class="rec">失敗</span></div>
+    </div>
+    </div>
+  </div>
+  <p class="cat-note">ページでは <code>position: fixed</code> で画面右端に置き、<code>:target</code> のときだけ前面に出す。ここでは舞台に <code>transform</code> を掛けて fixed を枠内に閉じ込め、開いた状態を再現している。</p>
+</section>

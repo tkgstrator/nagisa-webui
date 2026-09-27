@@ -65,6 +65,9 @@
 .s-cancelled { color: var(--status-cancelled-foreground); }
 .s-hiatus { color: var(--status-hiatus-foreground); }
 .season { color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* 放送進捗 (n/m)。browse の .season (「2026年春」) とはスロットの意味が違うので
+   home では名前を分けておく。 */
+.prog { color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* 実際の並び (5 カラム) */
 .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; }
@@ -78,3 +81,7 @@
 .poster .pbar span { display: block; height: 100%; background: var(--primary); transform-origin: left center; animation: growX .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: .25s; }
 /* 録画中を示すタグ。tag-new などと同じ枠。 */
 .tag-rec { background: var(--warning); color: var(--warning-foreground); }
+
+/* 実画像ポスター (.grid.is-photo)。.art に background-image を載せるとき、
+   グラデーション用の既定値のままだと繰り返し・左上寄せになるので cover に揃える。 */
+.grid.is-photo .poster .art { background-size: cover; background-position: center; background-repeat: no-repeat; }

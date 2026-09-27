@@ -7,7 +7,13 @@ const broadcastScheduleContent = {
       heading: '放送スケジュール',
       episodeLabel: insert('第{{number}}話'),
       thisWeekSuffix: ' (今週)',
-      finalEpisode: insert('最終話 (全{{count}}話)')
+      finalEpisode: insert('最終話 (全 {{count}} 話)')
+    },
+    en: {
+      heading: 'Broadcast schedule',
+      episodeLabel: insert('Episode {{number}}'),
+      thisWeekSuffix: ' (this week)',
+      finalEpisode: insert('Final episode ({{count}} total)')
     }
   })
 } satisfies Dictionary

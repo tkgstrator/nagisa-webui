@@ -3,12 +3,14 @@ import { getDefaultStore } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
+import { appLocale } from '@/app/lib/locale'
 import { cn } from '@/app/lib/utils'
 import { AboutSection } from './-components/about-section'
 import { ADMIN_LINK_COUNT, AdminSection } from './-components/admin-section'
 import { DataSection } from './-components/data-section'
 import { DisplaySection } from './-components/display-section'
 import { CheckIcon } from './-components/icons'
+import { LibrarySyncSection } from './-components/library-sync-section'
 import { ProviderSection } from './-components/provider-section'
 import { RecordingSection } from './-components/recording-section'
 import { SettingsAside } from './-components/settings-aside'
@@ -20,7 +22,7 @@ const useLastSavedAt = () => {
 
   useEffect(() => getDefaultStore().sub(settingsAtom, () => setSavedAt(new Date())), [])
 
-  return savedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+  return savedAt.toLocaleTimeString(appLocale, { hour: '2-digit', minute: '2-digit' })
 }
 
 const SettingsPage = () => {
@@ -67,10 +69,11 @@ const SettingsPage = () => {
           enter(1)
         )}
       >
-        <div>
+        <div className='pt-8 pl-4 max-lg:pl-0'>
           <DisplaySection />
           <ProviderSection />
           <RecordingSection />
+          <LibrarySyncSection />
           <AdminSection />
           <DataSection />
           <AboutSection />

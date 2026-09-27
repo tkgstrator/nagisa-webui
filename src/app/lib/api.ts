@@ -2,17 +2,23 @@ import { Zodios } from '@qtmleap/zodios'
 import { z } from 'zod'
 import {
   AnimeInfoSchema,
-  AnimeRecordingStatusSchema,
   AnimeSchema,
   BadgedAnimeSchema,
   PaginatedAnimeSchema,
   RecordAnimeRequestSchema,
   RefreshAnimeResponseSchema
 } from '@/schemas/anime.dto'
-import { ArchiveEnqueueResponseSchema, ArchiveStatsSchema } from '@/schemas/archive.dto'
 import {
+  ArchiveEnqueueResponseSchema,
+  ArchiveStatsSchema,
+  KeyArchiveProviderEnum,
+  KeyArchiveRequestSchema
+} from '@/schemas/archive.dto'
+import {
+  CatalogEventKindEnum,
   CursoredLogEntrySchema,
   LogStatsSchema,
+  PaginatedCatalogEventSchema,
   PaginatedRecordingEventSchema,
   PaginatedSyncRunSchema,
   SyncRunDetailSchema
@@ -25,7 +31,12 @@ import {
   NagisaQueueSnapshotSchema,
   NagisaStatusSchema
 } from '@/schemas/nagisa.dto'
-import { BulkUpdateRecordingSchema, RecordingSyncStateSchema, UpdateRecordingSchema } from '@/schemas/recording.dto'
+import {
+  BulkUpdateEpisodeSchema,
+  LibraryManualSyncResponseSchema,
+  RecordingSyncStateSchema,
+  UpdateEpisodeSchema
+} from '@/schemas/recording.dto'
 import { PaginatedUnidentifiedSchema } from '@/schemas/unidentified.dto'
 
 const api = new Zodios('/api', [
@@ -40,6 +51,7 @@ const api = new Zodios('/api', [
       { name: 'year', type: 'Query', schema: z.number().int().optional() },
       { name: 'quarter', type: 'Query', schema: z.number().int().min(0).max(3).optional() },
       { name: 'status', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'excludeStatus', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'badge', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'aniListId', type: 'Query', schema: z.number().int().optional() },
       { name: 'scheduled', type: 'Query', schema: z.boolean().optional() },
@@ -64,7 +76,7 @@ const api = new Zodios('/api', [
   },
   {
     method: 'post',
-    path: '/anime/:id/record',
+    path: '/anime/:id/recording-jobs',
     alias: 'recordAnime',
     parameters: [{ name: 'body', type: 'Body', schema: RecordAnimeRequestSchema }],
     response: NagisaQueueResponseSchema
@@ -74,12 +86,6 @@ const api = new Zodios('/api', [
     path: '/anime/:id/refresh',
     alias: 'refreshAnime',
     response: RefreshAnimeResponseSchema
-  },
-  {
-    method: 'get',
-    path: '/anime/:id/recording-status',
-    alias: 'getAnimeRecordingStatus',
-    response: AnimeRecordingStatusSchema
   },
   {
     method: 'patch',
@@ -99,8 +105,9 @@ const api = new Zodios('/api', [
   },
   {
     method: 'get',
-    path: '/recordings',
-    alias: 'getRecordings',
+    path: '/episodes',
+    alias: 'getEpisodes',
+    parameters: [{ name: 'recorded', type: 'Query', schema: z.boolean().optional() }],
     response: z.array(
       z.object({
         id: z.string(),
@@ -120,46 +127,46 @@ const api = new Zodios('/api', [
     )
   },
   {
-    method: 'put',
-    path: '/recordings',
-    alias: 'updateRecording',
-    parameters: [{ name: 'body', type: 'Body', schema: UpdateRecordingSchema }],
+    method: 'patch',
+    path: '/episodes/:id',
+    alias: 'updateEpisode',
+    parameters: [{ name: 'body', type: 'Body', schema: UpdateEpisodeSchema }],
     response: z.object({ id: z.string(), recorded: z.boolean() })
   },
   {
-    method: 'put',
-    path: '/recordings/bulk',
-    alias: 'bulkUpdateRecording',
-    parameters: [{ name: 'body', type: 'Body', schema: BulkUpdateRecordingSchema }],
+    method: 'patch',
+    path: '/episodes',
+    alias: 'bulkUpdateEpisodes',
+    parameters: [{ name: 'body', type: 'Body', schema: BulkUpdateEpisodeSchema }],
     response: z.object({ updated: z.number() })
   },
   {
     method: 'get',
-    path: '/nagisa/status',
-    alias: 'getNagisaStatus',
+    path: '/recorder/status',
+    alias: 'getRecorderStatus',
     response: NagisaStatusSchema
   },
   {
     method: 'get',
-    path: '/nagisa/queue/snapshot',
-    alias: 'getNagisaQueueSnapshot',
+    path: '/recorder/queue/snapshot',
+    alias: 'getRecorderQueueSnapshot',
     response: NagisaQueueSnapshotSchema
   },
   {
     method: 'get',
-    path: '/nagisa/library/stats',
-    alias: 'getNagisaLibraryStats',
+    path: '/recording-library/stats',
+    alias: 'getRecordingLibraryStats',
     response: NagisaLibraryStatsSchema
   },
   {
     method: 'get',
-    path: '/nagisa/sync-state',
+    path: '/recording-library/sync-state',
     alias: 'getRecordingSyncState',
     response: RecordingSyncStateSchema
   },
   {
     method: 'get',
-    path: '/admin/unidentified',
+    path: '/admin/unidentified-anime',
     alias: 'getUnidentifiedList',
     parameters: [
       { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
@@ -172,19 +179,21 @@ const api = new Zodios('/api', [
   },
   {
     method: 'get',
-    path: '/admin/abema/archive-stats',
+    path: '/admin/key-archives/stats',
     alias: 'getArchiveStats',
+    parameters: [{ name: 'provider', type: 'Query', schema: KeyArchiveProviderEnum.optional() }],
     response: ArchiveStatsSchema
   },
   {
     method: 'post',
-    path: '/admin/abema/enqueue-archive',
+    path: '/admin/key-archive-requests',
     alias: 'enqueueArchive',
+    parameters: [{ name: 'body', type: 'Body', schema: KeyArchiveRequestSchema }],
     response: ArchiveEnqueueResponseSchema
   },
   {
     method: 'get',
-    path: '/admin/logs/runs',
+    path: '/admin/sync-runs',
     alias: 'getSyncRuns',
     parameters: [
       { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
@@ -197,7 +206,7 @@ const api = new Zodios('/api', [
   },
   {
     method: 'get',
-    path: '/admin/logs/runs/:id',
+    path: '/admin/sync-runs/:id',
     alias: 'getSyncRun',
     response: SyncRunDetailSchema
   },
@@ -207,19 +216,19 @@ const api = new Zodios('/api', [
     alias: 'getLogEntries',
     parameters: [
       { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(200).optional() },
-      { name: 'cursor', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'cursor', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'level', type: 'Query', schema: z.enum(['debug', 'info', 'warning', 'error', 'fatal']).optional() },
       { name: 'category', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'action', type: 'Query', schema: z.string().nonempty().optional() },
       { name: 'runId', type: 'Query', schema: z.string().nonempty().optional() },
-      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(336).optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(168).optional() },
       { name: 'q', type: 'Query', schema: z.string().nonempty().optional() }
     ],
     response: CursoredLogEntrySchema
   },
   {
     method: 'get',
-    path: '/admin/logs/recordings',
+    path: '/admin/recording-events',
     alias: 'getRecordingEvents',
     parameters: [
       { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
@@ -233,16 +242,36 @@ const api = new Zodios('/api', [
   },
   {
     method: 'get',
-    path: '/admin/logs/stats',
-    alias: 'getLogStats',
+    path: '/admin/logs/catalog',
+    alias: 'getCatalogEvents',
+    parameters: [
+      { name: 'page', type: 'Query', schema: z.number().int().min(1).optional() },
+      { name: 'limit', type: 'Query', schema: z.number().int().min(1).max(100).optional() },
+      { name: 'animeId', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'kind', type: 'Query', schema: CatalogEventKindEnum.optional() },
+      { name: 'provider', type: 'Query', schema: z.string().nonempty().optional() },
+      { name: 'hours', type: 'Query', schema: z.number().int().min(1).max(2160).optional() }
+    ],
+    response: PaginatedCatalogEventSchema
+  },
+  {
+    method: 'get',
+    path: '/admin/sync-runs/stats',
+    alias: 'getSyncRunStats',
     response: LogStatsSchema
   },
   {
     method: 'post',
-    path: '/nagisa/jobs',
-    alias: 'enqueueNagisaJob',
+    path: '/recording-jobs',
+    alias: 'enqueueRecordingJob',
     parameters: [{ name: 'body', type: 'Body', schema: NagisaEnqueueRequestSchema }],
     response: NagisaEnqueueResponseSchema
+  },
+  {
+    method: 'post',
+    path: '/recording-library/sync',
+    alias: 'syncRecordingLibrary',
+    response: LibraryManualSyncResponseSchema
   }
 ])
 

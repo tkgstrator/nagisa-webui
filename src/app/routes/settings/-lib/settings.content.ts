@@ -16,6 +16,20 @@ const settingsContent = {
       },
       quarterLabels: ['冬', '春', '夏', '秋'],
       seasonFormat: insert('{{year}}年 {{quarter}}')
+    },
+    en: {
+      sortLabels: {
+        titleAsc: 'Title (ascending)',
+        titleDesc: 'Title (descending)',
+        yearAsc: 'Release year (oldest first)',
+        yearDesc: 'Release year (newest first)'
+      },
+      languageLabels: {
+        sub: 'Subtitled (sub)',
+        dub: 'Dubbed (dub)'
+      },
+      quarterLabels: ['Winter', 'Spring', 'Summer', 'Fall'],
+      seasonFormat: insert('{{quarter}} {{year}}')
     }
   })
 } satisfies Dictionary

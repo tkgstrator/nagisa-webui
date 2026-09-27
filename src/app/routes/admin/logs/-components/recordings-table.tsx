@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useIntlayer } from 'react-intlayer'
 import { providerColor, providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import type { RecordingEventSchema } from '@/schemas/log.dto'
 import {
   formatClock,
@@ -54,7 +55,7 @@ export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] }) 
               {content.headers.episode}
             </th>
             <th scope='col' className={`${numHeadClass} max-sm:hidden`}>
-              HTTP
+              {content.headers.http}
             </th>
             <th scope='col' className={numHeadClass}>
               {content.headers.result}
@@ -94,7 +95,7 @@ export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] }) 
                 {recordingSourceLabel[event.source]}
               </td>
               <td className={`${numClass} ${event.episodeCount === null ? 'text-muted-foreground' : ''}`}>
-                {event.episodeCount === null ? '—' : event.episodeCount.toLocaleString('ja-JP')}
+                {event.episodeCount === null ? '—' : event.episodeCount.toLocaleString(appLocale)}
               </td>
               <td
                 className={`${numClass} max-sm:hidden ${event.httpStatus === null ? 'text-muted-foreground' : 'font-mono'}`}

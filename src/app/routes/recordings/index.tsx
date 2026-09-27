@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useAtom } from 'jotai'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
@@ -9,8 +9,6 @@ import { SmartPagination } from '@/app/components/smart-pagination'
 import { type RecordingsFilters, recordingsFiltersAtom } from '@/app/lib/atoms'
 import { animeListQueryOptions } from '@/app/lib/query-options'
 import { readSettings, useSettings } from '@/app/routes/settings/-lib/settings'
-import { BulkActionsBar } from './-components/bulk-actions-bar'
-import { ConfirmUnscheduleDialog } from './-components/confirm-unschedule-dialog'
 import { RecordingsEmpty } from './-components/recordings-empty'
 import { RecordingsHeader } from './-components/recordings-header'
 import { RecordingsSidebar } from './-components/recordings-sidebar'
@@ -20,11 +18,12 @@ import { SummaryStats } from './-components/summary-stats'
 import { ViewToggle } from './-components/view-toggle'
 import { WeeklySchedule } from './-components/weekly-schedule'
 import { activeFilterTerms, summarize } from './-lib/summary'
-import { useUnschedule } from './-lib/use-unschedule'
 
 export const Route = createFileRoute('/recordings/')({
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(animeListQueryOptions({ scheduled: true, page: 1, limit: readSettings().pageSize })),
+    queryClient.ensureQueryData(
+      animeListQueryOptions({ scheduled: true, excludeStatus: 'FINISHED', page: 1, limit: readSettings().pageSize })
+    ),
   pendingComponent: LoadingSpinner,
   component: RecordingsPage
 })
@@ -33,6 +32,7 @@ function RecordingsPage() {
   const content = useIntlayer('recordings')
   const [filters, setFilters] = useAtom(recordingsFiltersAtom)
   const { search, recorded: recordedFilter, expiringOnly, provider, sort, view, page } = filters
+  const showFinished = filters.showFinished ?? false
 
   /** 絞り込みを変えたら 1 ページ目へ戻す。ページ送りと表示モードの切替はページを保つ。 */
   const setFilter = useCallback(
@@ -46,12 +46,11 @@ function RecordingsPage() {
   const setSearch = setFilter('search')
   const setRecordedFilter = setFilter('recorded')
   const setExpiringOnly = setFilter('expiringOnly')
+  const setShowFinished = setFilter('showFinished')
   const setProvider = setFilter('provider')
   const setSort = setFilter('sort')
   const setView = setFilter('view')
 
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [confirmOpen, setConfirmOpen] = useState(false)
   const { settings } = useSettings()
   const pageSize = settings.pageSize
 
@@ -72,61 +71,35 @@ function RecordingsPage() {
   }, [page, pageSize, search, recordedFilter, expiringOnly, provider, sort])
 
   const { data } = useQuery({
-    ...animeListQueryOptions(queryFilters),
+    ...animeListQueryOptions({ ...queryFilters, excludeStatus: showFinished ? undefined : 'FINISHED' }),
     placeholderData: keepPreviousData
   })
   const anime = data?.data ?? []
   const totalPages = data?.totalPages ?? 0
   const total = data?.total ?? 0
 
-  const { unscheduleMutation, onUnschedule, bulkUnscheduleMutation } = useUnschedule({
-    onBulkDone: () => setSelected(new Set())
+  /** 一覧から外した完結作品の数。件数だけ要るので limit=1 で total を引く。 */
+  const { data: finishedData } = useQuery({
+    ...animeListQueryOptions({ ...queryFilters, status: 'FINISHED', page: 1, limit: 1 }),
+    enabled: !showFinished
   })
-
-  const runBulkUnschedule = () => {
-    setConfirmOpen(false)
-    bulkUnscheduleMutation.mutate(Array.from(selected))
-  }
-
-  /** 確認を挟むかは設定次第。挟まない設定ならその場で解除する。 */
-  const requestBulkUnschedule = () => {
-    if (settings.confirmBulkCancel) setConfirmOpen(true)
-    else runBulkUnschedule()
-  }
-
-  const toggleSelected = (id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  const toggleAllVisible = () => {
-    setSelected((prev) => {
-      const allSelected = anime.length > 0 && anime.every((item) => prev.has(item.id))
-      if (allSelected) {
-        const next = new Set(prev)
-        for (const item of anime) next.delete(item.id)
-        return next
-      }
-      const next = new Set(prev)
-      for (const item of anime) next.add(item.id)
-      return next
-    })
-  }
-
-  const allVisibleSelected = anime.length > 0 && anime.every((item) => selected.has(item.id))
-  const selectedCount = selected.size
+  const hiddenFinished = showFinished ? 0 : (finishedData?.total ?? 0)
 
   /** 並び順と表示モードは残したまま、絞り込みだけを既定へ戻す。 */
   const resetFilters = () => {
-    setFilters((prev) => ({ ...prev, search: '', recorded: 'all', expiringOnly: false, provider: undefined, page: 1 }))
+    setFilters((prev) => ({
+      ...prev,
+      search: '',
+      recorded: 'all',
+      expiringOnly: false,
+      showFinished: false,
+      provider: undefined,
+      page: 1
+    }))
   }
 
   const hasActiveFilters =
-    search.trim().length > 0 || recordedFilter !== 'all' || expiringOnly || provider !== undefined
+    search.trim().length > 0 || recordedFilter !== 'all' || expiringOnly || showFinished || provider !== undefined
 
   const stats = useMemo(() => summarize(anime, settings.expiringLeadDays), [anime, settings.expiringLeadDays])
 
@@ -147,7 +120,12 @@ function RecordingsPage() {
         onFilterChange={setRecordedFilter}
       />
 
-      <RecordingsHeader total={total} search={search} onSearchChange={setSearch} />
+      <RecordingsHeader
+        total={total + hiddenFinished}
+        hiddenFinished={hiddenFinished}
+        search={search}
+        onSearchChange={setSearch}
+      />
 
       <ViewToggle view={view} onViewChange={setView} />
 
@@ -173,6 +151,8 @@ function RecordingsPage() {
             onProviderChange={setProvider}
             expiringOnly={expiringOnly}
             onExpiringOnlyChange={setExpiringOnly}
+            showFinished={showFinished}
+            onShowFinishedChange={setShowFinished}
             sort={sort}
             onSortChange={setSort}
             hasActiveFilters={hasActiveFilters}
@@ -185,23 +165,7 @@ function RecordingsPage() {
             </div>
           ) : (
             <>
-              <BulkActionsBar
-                allVisibleSelected={allVisibleSelected}
-                onToggleAllVisible={toggleAllVisible}
-                selectedCount={selectedCount}
-                disabled={selectedCount === 0 || bulkUnscheduleMutation.isPending}
-                onBulkUnschedule={requestBulkUnschedule}
-              />
-
-              <RecordingsTable
-                items={anime}
-                selected={selected}
-                onToggleSelected={toggleSelected}
-                onUnschedule={(item) => onUnschedule(item.id)}
-                unschedulingId={unscheduleMutation.isPending ? (unscheduleMutation.variables ?? null) : null}
-                sort={sort}
-                onSortChange={setSort}
-              />
+              <RecordingsTable items={anime} sort={sort} onSortChange={setSort} />
 
               <div className='mt-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 text-xs text-muted-foreground'>
                 <ul className='inline-flex flex-wrap gap-x-3.5 gap-y-1' aria-label={content.legend.ariaLabel.value}>
@@ -229,13 +193,6 @@ function RecordingsPage() {
           )}
         </div>
       )}
-
-      <ConfirmUnscheduleDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        selectedCount={selectedCount}
-        onConfirm={runBulkUnschedule}
-      />
     </PageContainer>
   )
 }
