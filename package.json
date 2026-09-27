@@ -18,9 +18,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "intlayer build && tsc -b --noEmit && vite build --mode ${CLOUDFLARE_ENV:-staging}",
+    "build": "intlayer build && tsc -b --noEmit && CLOUDFLARE_ENV=${CLOUDFLARE_ENV:-staging} vite build --mode ${CLOUDFLARE_ENV:-staging}",
     "prebuild": "rimraf dist",
-    "predeploy": "intlayer build && tsc -b --noEmit && vite build --mode ${CLOUDFLARE_ENV:-staging}",
+    "predeploy": "intlayer build && tsc -b --noEmit && CLOUDFLARE_ENV=${CLOUDFLARE_ENV:-staging} vite build --mode ${CLOUDFLARE_ENV:-staging}",
     "deploy": "wrangler deploy --keep-vars --env=${CLOUDFLARE_ENV:-staging}",
     "deploy:lambda": "bun run lambda/fetch/build.ts",
     "typecheck": "intlayer build && tsc -b --noEmit",
