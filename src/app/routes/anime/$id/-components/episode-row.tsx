@@ -76,15 +76,32 @@ export const EpisodeRow = ({
         : state === 'done'
           ? content.recordButton.doneTitle.value
           : content.state[state].value
+  const canRecord = !busy && (state === 'todo' || state === 'fail')
   const recordStyle = busy
     ? 'border-info/40 bg-info/10 text-info'
     : state === 'done'
-      ? 'border-success/40 bg-success/10 text-success hover:bg-success/15'
+      ? 'border-success/40 bg-success/10 text-success'
       : state === 'future'
-        ? 'cursor-default border-dashed border-border text-muted-foreground'
+        ? 'border-dashed border-border text-muted-foreground'
         : state === 'fail'
           ? 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/15'
           : 'border-border bg-background text-foreground hover:bg-secondary'
+  const recordClass = cn(
+    'inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold max-sm:w-[34px] max-sm:px-0',
+    canRecord && 'transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
+    recordStyle
+  )
+  const recordContent = (
+    <>
+      <span
+        aria-hidden='true'
+        className={cn('grid size-4 shrink-0 place-items-center rounded-full', busy ? markClass.rec : markClass[state])}
+      >
+        {state === 'done' && !busy && <Check className='size-2.5' strokeWidth={3} />}
+      </span>
+      <span className='max-sm:sr-only'>{recordLabel}</span>
+    </>
+  )
 
   return (
     <li
@@ -153,28 +170,21 @@ export const EpisodeRow = ({
         {episode.duration > 0 ? formatDuration(episode.duration) : '—'}
       </span>
 
-      <button
-        type='button'
-        aria-label={recordLabel}
-        title={stateLabel}
-        disabled={state === 'future' || sending}
-        onClick={() => onRecord([episode.id])}
-        className={cn(
-          'inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring max-sm:w-[34px] max-sm:px-0',
-          recordStyle
-        )}
-      >
-        <span
-          aria-hidden='true'
-          className={cn(
-            'grid size-4 shrink-0 place-items-center rounded-full',
-            busy ? markClass.rec : markClass[state]
-          )}
+      {canRecord ? (
+        <button
+          type='button'
+          aria-label={recordLabel}
+          title={stateLabel}
+          onClick={() => onRecord([episode.id])}
+          className={recordClass}
         >
-          {state === 'done' && !busy && <Check className='size-2.5' strokeWidth={3} />}
+          {recordContent}
+        </button>
+      ) : (
+        <span role='status' title={stateLabel} className={recordClass}>
+          {recordContent}
         </span>
-        <span className='max-sm:sr-only'>{recordLabel}</span>
-      </button>
+      )}
     </li>
   )
 }
