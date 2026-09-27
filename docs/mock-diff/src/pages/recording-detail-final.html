@@ -1,0 +1,157 @@
+TITLE: Nagisa — 録画詳細
+SKELETON: astra
+USES: app-header breadcrumbs anime-hero episode-list recording-status anime-info recording-events settings-controls app-footer
+---
+
+<div class="pg-shell">
+  <!-- @part app-header:sticky current=録画一覧 /-->
+
+  <main class="pg-main">
+    <div class="pg">
+
+      <nav class="crumb" aria-label="パンくずリスト">
+        <a href="recordings-final.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>録画一覧</a>
+        <span>/</span>
+        <span class="cur">クラスで２番目に可愛い女の子と友だちになった</span>
+      </nav>
+
+      <div class="identity">
+        <div class="hero" role="img" aria-label="クラスで２番目に可愛い女の子と友だちになった のサムネイル画像" style="--h: 330">
+          <div class="art"></div>
+          <span class="kanji">ク</span>
+        </div>
+        <div class="identity-body">
+          <div class="hero-body">
+            <div class="id-badges">
+              <span class="badge b-crunchyroll">Crunchyroll</span>
+              <span class="badge b-releasing">放送中</span>
+            </div>
+            <h1 class="hero-title">クラスで２番目に可愛い女の子と友だちになった</h1>
+          </div>
+          <div class="pg-body">
+            <div class="id-facts">
+              <div><dt>予約登録日</dt><dd class="num">2026/04/02</dd></div>
+              <div><dt>録画済み</dt><dd class="num">7 / 9 話</dd></div>
+              <div><dt>最終録画</dt><dd class="num">2026/09/15</dd></div>
+              <div><dt>次回配信</dt><dd class="num">9/28 (日) 23:00</dd></div>
+            </div>
+            <div class="id-actions is-compact">
+              <button class="btn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+                作品ページを開く
+              </button>
+              <button class="btn btn-refresh" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+                再取得
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pg-cols">
+      <div>
+      <section aria-labelledby="ep-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="ep-heading">録画状況</h2></div>
+
+        <!-- @part episode-list:recording-detail /-->
+      </section>
+
+      <section class="pg-sec" aria-labelledby="ev-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="ev-heading">録画履歴</h2></div>
+        <div>
+          <div class="rev-cols">
+            <span>日時</span><span>対象</span><span>種別</span><span>経路</span><span class="rev-r">話数</span><span class="rev-r">HTTP</span><span class="rev-r">結果</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">03:24:10<small>今日</small></span>
+            <span class="rev-title"><span class="rev-name">ふたりの帰り道</span></span>
+            <span class="rev-kind">録画開始</span>
+            <span class="rev-src">cron</span>
+            <span class="rev-n">9</span>
+            <span class="rev-n">202</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+          <div class="rev-row is-err">
+            <span class="rev-ts">03:12:48<small>9/22</small></span>
+            <span class="rev-title"><span class="rev-name">夏服の季節</span>
+              <span class="rev-err">nagisa への接続に失敗: fetch failed (ECONNREFUSED)</span></span>
+            <span class="rev-kind">録画リクエスト</span>
+            <span class="rev-src">cron</span>
+            <span class="rev-n">8</span>
+            <span class="rev-n">503</span>
+            <span class="rev-res rev-ng">失敗</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">03:31:02<small>9/15</small></span>
+            <span class="rev-title"><span class="rev-name">テスト前夜</span></span>
+            <span class="rev-kind">録画完了</span>
+            <span class="rev-src">webhook</span>
+            <span class="rev-n">7</span>
+            <span class="rev-n rev-dim">—</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">03:10:15<small>9/15</small></span>
+            <span class="rev-title"><span class="rev-name">テスト前夜</span></span>
+            <span class="rev-kind">録画リクエスト</span>
+            <span class="rev-src">cron</span>
+            <span class="rev-n">7</span>
+            <span class="rev-n">202</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+          <div class="rev-row">
+            <span class="rev-ts">21:40:33<small>4/02</small></span>
+            <span class="rev-title"><span class="rev-name">クラスで２番目に可愛い女の子と友だちになった</span><span class="rev-prov rev-p-crunchyroll">Crunchyroll</span></span>
+            <span class="rev-kind">予約登録</span>
+            <span class="rev-src">画面</span>
+            <span class="rev-n rev-dim">—</span>
+            <span class="rev-n">201</span>
+            <span class="rev-res rev-ok">成功</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="pg-sec" aria-labelledby="rsv-heading">
+        <div class="pg-sec-head"><h2 class="pg-sec-title" id="rsv-heading">予約</h2></div>
+        <div class="st-panel">
+          <div class="st-row is-danger">
+            <div class="st-rt">
+              <span class="st-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span>
+              <div>
+                <p class="st-label">録画予約を取り消す</p>
+                <p class="st-desc">以降のエピソードは自動で録画されなくなります。録画済みの 7 話は削除されません。</p>
+              </div>
+            </div>
+            <div class="st-ctl">
+              <button type="button" class="st-btn is-danger">予約を取り消す</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <aside class="pg-aside">
+        <section aria-labelledby="recstat-heading">
+          <h3 class="pg-eyebrow" id="recstat-heading">録画サーバー</h3>
+          <p class="recstat-err">録画サーバーに問い合わせできませんでした<span class="msg">Nagisa config missing: CF_ACCESS_CLIENT_SECRET</span></p>
+        </section>
+
+        <section aria-labelledby="info-heading">
+          <h3 class="pg-eyebrow" id="info-heading">予約情報</h3>
+          <div class="anime-info">
+            <div class="anime-info-row"><span class="k">登録日</span><span class="v">2026/04/02 21:40</span></div>
+            <div class="anime-info-row"><span class="k">登録元</span><span class="v">画面</span></div>
+            <div class="anime-info-row"><span class="k">配信元</span><span class="v"><a href="#">Crunchyroll</a></span></div>
+            <div class="anime-info-row"><span class="k">AniList</span><span class="v"><a href="#anilist">#171018</a></span></div>
+            <div class="anime-info-row"><span class="k">予約 ID</span><span class="v mono">rsv_8f3a21c4</span></div>
+          </div>
+        </section>
+      </aside>
+      </div>
+
+      <!-- @part app-footer:fixed /-->
+
+    </div>
+  </main>
+</div>

@@ -71,3 +71,22 @@
   .tab { padding: 0 10px; font-size: 13.5px; }
   .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- radio で切り替える版 (.tabs-wrap.is-radio) ---------- */
+/* .tab の中に input.sr[type=radio] を入れ、選ばれた n 番目のタブに対応する n 番目の .panel だけを出す。
+   .tabs-wrap の子は .tabs, .panel, .panel ... の順なので、パネルは nth-child(n + 1)。実装側は state で出し分けてよい。 */
+.tabs-wrap.is-radio .tab:has(.sr:checked) { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+.tabs-wrap.is-radio .tab:has(.sr:checked):hover { background: none; }
+.tabs-wrap.is-radio .tab:has(.sr:checked) .c { color: var(--primary); font-weight: 600; }
+.tabs-wrap.is-radio > .panel { display: none; }
+.tabs-wrap.is-radio:has(.tab:nth-child(1) .sr:checked) > .panel:nth-child(2),
+.tabs-wrap.is-radio:has(.tab:nth-child(2) .sr:checked) > .panel:nth-child(3),
+.tabs-wrap.is-radio:has(.tab:nth-child(3) .sr:checked) > .panel:nth-child(4),
+.tabs-wrap.is-radio:has(.tab:nth-child(4) .sr:checked) > .panel:nth-child(5),
+.tabs-wrap.is-radio:has(.tab:nth-child(5) .sr:checked) > .panel:nth-child(6),
+.tabs-wrap.is-radio:has(.tab:nth-child(6) .sr:checked) > .panel:nth-child(7) { display: block; }
+
+/* 下罫をタブ列の内側の影で引く版。スクロールする .tabs と一緒に罫が動き、下にはみ出さない。 */
+.tabs-wrap.is-inset { border-bottom: 0; }
+.tabs-wrap.is-inset .tabs { box-shadow: inset 0 -1px 0 var(--border); }
+.tabs-wrap.is-inset .tab { margin-bottom: 0; }

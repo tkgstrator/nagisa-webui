@@ -1,0 +1,276 @@
+TITLE: サーバーステータス
+---
+<header class="cat-head">
+  <h1>サーバーステータス <span class="cat-id">server-status</span></h1>
+  <p>サイドバー最下段から開く録画サーバー (nagisa) の状態ダイアログ。「いま動いているか」「何を待っているか」「取りこぼしていないか」の 3 つだけを載せ、Redis・CPU・メモリ・ディスク・台帳といった数値は詳細ページ <code>/admin/status</code> に送る。</p>
+  <div class="cat-meta"><span>fable 案 = 縦一列・罫線区切り・情報密度高め</span><span>囲みカードは使わず左罫線と区切り線で階層を出す</span><span>ダイアログ幅 512px (<code>sm:max-w-lg</code>)</span><span>数値は tabular-nums</span><span>最下段の導線は状態によらず同じ位置</span></div>
+</header>
+
+<section class="cat-sec">
+  <h2>オンライン · 待機中 <span class="cat-hint">既定の状態。ジョブが無いときに何も出ないと「壊れている」と誤読されるので、空であることを明示する</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">/api/nagisa/status が 200、queue.active が 0 件</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot"></span>ONLINE</div>
+            <div class="srv-sub">稼働 3d 4h · 最終応答 12 秒前</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">キュー<span class="srv-h-note">直近 24 時間</span></div>
+        <div class="srv-q">
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">待機</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">実行中</div></div>
+          <div class="srv-q-cell"><div class="n num">42</div><div class="l">完了</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">失敗</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">遅延</div></div>
+        </div>
+        <p class="srv-quiet">実行中のジョブはありません。</p>
+
+        <div class="srv-h">録画同期<span class="srv-h-note">Workers 側 cron</span></div>
+        <div class="srv-kv">
+          <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-ok">42 秒前</span></div>
+          <div class="srv-kv-row"><span class="k">ライブラリ同期</span><span class="v is-ok">6 分前</span></div>
+        </div>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">バージョンは右上のピル。古い場合は <code>v1.5.2</code> のように警告色にして、API が生えていないことを示す。数値そのもの (Redis のメモリ・CPU 使用率・空き容量・カーソル位置) はダイアログに置かず <code>/admin/status</code> に送る。異常かどうかは状態の色で分かればよく、何 % かはここで判断する材料にならない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>稼働中 · ダウンロード実行中 <span class="cat-hint">進捗は話数 (current/total)。秒やバイトではない</span></h2>
+  <div class="cat-item cat-full is-key">
+    <span class="cat-label">queue.active に 2 件、うち 1 件は進捗不明</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id is-busy">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot is-live"></span>DOWNLOADING</div>
+            <div class="srv-sub">稼働 3d 4h · 2 件を処理中</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">キュー<span class="srv-h-note">直近 24 時間</span></div>
+        <div class="srv-q">
+          <div class="srv-q-cell"><div class="n num">7</div><div class="l">待機</div></div>
+          <div class="srv-q-cell is-busy"><div class="n num">2</div><div class="l">実行中</div></div>
+          <div class="srv-q-cell"><div class="n num">38</div><div class="l">完了</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">失敗</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">遅延</div></div>
+        </div>
+
+        <div class="srv-h">実行中のジョブ<span class="srv-h-note">2 件</span></div>
+        <div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">ダンジョン飯</span>
+              <span class="srv-tag abema">abema</span>
+            </div>
+            <div class="srv-job-meta"><span>S1 · 第 3 話</span><span class="r">09/23 13:41 開始</span></div>
+            <div class="srv-bar">
+              <span class="srv-bar-track"><span class="srv-bar-fill" style="width:25%"></span></span>
+              <span class="srv-bar-n">3 / 12</span>
+            </div>
+          </div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">葬送のフリーレン</span>
+              <span class="srv-tag amazon">amazon</span>
+            </div>
+            <div class="srv-job-meta"><span>S1</span><span class="r">09/23 13:44 開始</span></div>
+            <div class="srv-bar">
+              <span class="srv-bar-track"></span>
+              <span class="srv-bar-n">進捗待ち</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="srv-h">録画同期<span class="srv-h-note">Workers 側 cron</span></div>
+        <div class="srv-kv">
+          <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-ok">11 秒前</span></div>
+          <div class="srv-kv-row"><span class="k">ライブラリ同期</span><span class="v is-ok">2 分前</span></div>
+          <div class="srv-kv-row"><span class="k">反映待ち</span><span class="v is-mute">2 件 (録画中)</span></div>
+        </div>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">タイトルが未解決のジョブは <code>content_id</code> をそのまま出す。プロバイダ名は右端のピルに寄せて、長いタイトルを削らない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>失敗あり <span class="cat-hint">失敗件数が 0 でないときだけ理由を出す</span></h2>
+  <div class="cat-item cat-full">
+    <span class="cat-label">queue.failed に 2 件、失敗理由の 1 行目だけ見せる</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id is-bad">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot"></span>2 JOBS FAILED</div>
+            <div class="srv-sub">稼働 3d 4h · 直近の失敗 18 分前</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">キュー<span class="srv-h-note">直近 24 時間</span></div>
+        <div class="srv-q">
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">待機</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">実行中</div></div>
+          <div class="srv-q-cell"><div class="n num">36</div><div class="l">完了</div></div>
+          <div class="srv-q-cell is-bad"><div class="n num">2</div><div class="l">失敗</div></div>
+          <div class="srv-q-cell is-zero"><div class="n num">0</div><div class="l">遅延</div></div>
+        </div>
+
+        <div class="srv-h">失敗したジョブ<span class="srv-h-note">2 件</span></div>
+        <div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">B0DXXXXXXX</span>
+              <span class="srv-tag amazon">amazon</span>
+            </div>
+            <div class="srv-job-meta"><span>3 回試行</span><span class="r">09/23 13:26 終了</span></div>
+            <div class="srv-fail">RuntimeError: failed to acquire license (DRM)</div>
+          </div>
+          <div class="srv-job">
+            <div class="srv-job-top">
+              <span class="srv-job-title">よふかしのうた</span>
+              <span class="srv-tag crunchyroll">crunchyroll</span>
+            </div>
+            <div class="srv-job-meta"><span>1 回試行</span><span class="r">09/23 12:58 終了</span></div>
+            <div class="srv-fail">HTTPError: 403 Forbidden (region locked)</div>
+          </div>
+        </div>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">スタックトレース全文はここに出さない。1 行目だけを等幅で出し、詳細はログ画面に送る。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>接続中 / 到達不能 <span class="cat-hint">応答が無いときにダイアログを空にしない</span></h2>
+  <div class="cat-row">
+    <div class="cat-item cat-w320">
+      <span class="cat-label">読み込み中</span>
+      <div class="cat-frame">
+        <div class="srv-dlg">
+          <div class="srv-msg">
+            <svg class="srv-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+            <div><div class="t">接続しています</div><div class="d">録画サーバーの状態を取得中</div></div>
+          </div>
+          <div class="srv-skel"><i></i><i></i><i></i></div>
+          <a class="srv-link" href="/admin/status">
+            <span class="t">詳細とリソース</span>
+            <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="cat-item cat-w320">
+      <span class="cat-label">到達不能</span>
+      <div class="cat-frame">
+        <div class="srv-dlg">
+          <div class="srv-msg is-bad">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l20 20"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M5 12.86a10 10 0 0 1 3-2.06"/><path d="M16 10.8a10 10 0 0 1 3 2.06"/><path d="M2 8.82a15 15 0 0 1 4.17-2.65"/><path d="M10.66 5A15 15 0 0 1 22 8.82"/><path d="M12 20h.01"/></svg>
+            <div><div class="t">オフライン</div><div class="d">録画サーバーに接続できません</div></div>
+          </div>
+          <div class="srv-kv">
+            <div class="srv-kv-row"><span class="k">最終応答</span><span class="v">09/23 12:04</span></div>
+            <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-bad">1h 38m 停止</span></div>
+          </div>
+          <a class="srv-link" href="/admin/status">
+            <span class="t">詳細とリソース</span>
+            <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">到達不能でも「いつまでは見えていたか」を出す。前回成功時刻が無いと、落ちたのか一度も繋がっていないのか区別できない。導線は応答が無いときも同じ位置に残す。詳細ページは Nagisa が落ちていても WebUI 側の同期状態だけは必ず出せるので、行き先が無駄にならない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>録画同期が遅れている <span class="cat-hint">サーバーは生きているが Workers 側が追いつけていない場合</span></h2>
+  <div class="cat-item cat-full">
+    <span class="cat-label">全件スナップショット取り込み中 / ライブラリ同期の停滞</span>
+    <div class="cat-frame">
+      <div class="srv-dlg">
+        <div class="srv-top">
+          <div class="srv-id is-idle">
+            <div class="srv-name">Nagisa</div>
+            <div class="srv-state"><span class="dot is-live"></span>SYNCING</div>
+            <div class="srv-sub">稼働 12m · 台帳を取り込み中</div>
+          </div>
+          <span class="srv-ver">v1.6.0</span>
+        </div>
+
+        <div class="srv-h">録画同期<span class="srv-h-note">Workers 側 cron</span></div>
+        <div class="srv-kv">
+          <div class="srv-kv-row"><span class="k">ジョブ同期</span><span class="v is-ok">38 秒前</span></div>
+          <div class="srv-kv-row"><span class="k">ライブラリ同期</span><span class="v is-warn">24 分前</span></div>
+          <div class="srv-kv-row"><span class="k">取り込み</span><span class="srv-meter"><span class="is-warn" style="width:62%"></span></span><span class="v">3,840 / 6,204</span></div>
+          <div class="srv-kv-row"><span class="k">開始</span><span class="v">09/23 13:22</span></div>
+        </div>
+        <p class="srv-quiet">サーバー交換後の初回のみ全件を取り込みます。完了するまで一部の録画が「未確認」のままになります。</p>
+
+        <a class="srv-link" href="/admin/status">
+          <span class="t">詳細とリソース</span>
+          <span class="d">Redis · CPU · 台帳 · 同期ロック</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">bootstrap 中は差分カーソルではなく snapshot の進捗を出す。両者を混ぜると「差分の位置」と「復旧の途中」が区別できない。</p>
+</section>
+
+<section class="cat-sec">
+  <h2>起動導線 <span class="cat-hint">サイドバー最下段の行。ここを押すとダイアログが開く</span></h2>
+  <div class="cat-row">
+    <div class="cat-item">
+      <span class="cat-label">オンライン</span>
+      <div class="cat-frame">
+        <div class="srv-trigger"><span class="dot"></span><span class="t">Nagisa</span><span class="r">v1.6.0</span></div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <span class="cat-label">実行中</span>
+      <div class="cat-frame">
+        <div class="srv-trigger is-busy"><span class="dot"></span><span class="t">Nagisa</span><span class="r">2 件 実行中</span></div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <span class="cat-label">オフライン</span>
+      <div class="cat-frame">
+        <div class="srv-trigger is-bad"><span class="dot"></span><span class="t">Nagisa</span><span class="r">オフライン</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="cat-note">行の位置と幅は状態によらず固定。色と右端の文言だけが変わる。</p>
+</section>

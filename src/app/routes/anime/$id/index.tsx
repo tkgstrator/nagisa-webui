@@ -13,7 +13,6 @@ import { AnimeHero } from './-components/anime-hero'
 import { AnimeInfo } from './-components/anime-info'
 import { BroadcastSchedule } from './-components/broadcast-schedule'
 import { EpisodeGrid } from './-components/episode-grid'
-import { RecordingStatus } from './-components/recording-status'
 import { RelatedProviders } from './-components/related-providers'
 
 function getApiErrorMessage(error: unknown, fallback: string): string {
@@ -59,7 +58,6 @@ function AnimeDetailPage() {
   const invalidateRelated = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.detail(id) })
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
-    queryClient.invalidateQueries({ queryKey: queryKeys.anime.recordingStatus(id) })
   }
 
   const updateAnimeMutation = useMutation({
@@ -93,7 +91,7 @@ function AnimeDetailPage() {
         toast.success(content.toast.refreshed.value)
       }
       invalidateRelated()
-      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
     },
     onError: (error) => toast.error(getApiErrorMessage(error, content.toast.refreshFailed.value))
   })
@@ -124,19 +122,18 @@ function AnimeDetailPage() {
       <BroadcastSchedule anime={anime} />
 
       <nav
-        className='flex items-start gap-1.5 text-[12.5px] text-muted-foreground'
+        className='flex items-center gap-1.5 text-[12.5px] text-muted-foreground'
         aria-label={content.breadcrumb.ariaLabel.value}
       >
         <Link
           to='/browse'
-          className='inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
+          className='inline-flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
         >
           <ChevronLeft className='size-3' />
           {content.breadcrumb.browse}
         </Link>
-        <span className='py-[3px]'>/</span>
-        {/* 採用案 (breadcrumbs-astra) は省略記号を付けず、幅が足りなければ折り返す */}
-        <span className='min-w-0 py-[3px] font-semibold text-foreground'>{anime.title}</span>
+        <span>/</span>
+        <span className='truncate font-semibold text-foreground'>{anime.title}</span>
       </nav>
 
       <AnimeHero
@@ -153,7 +150,6 @@ function AnimeDetailPage() {
       <div className='grid grid-cols-[minmax(0,1fr)_280px] items-start gap-8 max-lg:grid-cols-[minmax(0,1fr)] max-lg:gap-7'>
         <EpisodeGrid anime={anime} />
         <aside className='sticky top-6 flex flex-col gap-6 max-lg:static'>
-          <RecordingStatus anime={anime} />
           <RelatedProviders anime={anime} />
           <AnimeInfo anime={anime} />
         </aside>

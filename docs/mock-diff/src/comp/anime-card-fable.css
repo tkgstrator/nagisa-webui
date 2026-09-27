@@ -80,3 +80,7 @@
 @media (max-width: 640px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
 }
+
+/* ステータスを一回り大きく (ドロワーの .drawer-status と同寸) 。一覧とドロワーで粒を揃えたいとき、親に付ける。 */
+.is-lg-status .status { height: 21px; padding: 0 8px; font-size: 11px; }
+.is-lg-status .status::before { width: 5px; height: 5px; }

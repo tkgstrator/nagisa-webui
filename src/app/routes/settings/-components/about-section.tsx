@@ -2,12 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { useIntlayer } from 'react-intlayer'
+import { appLocale } from '@/app/lib/locale'
 import { animeListQueryOptions, scheduledCountQueryOptions } from '@/app/lib/query-options'
 import { cn } from '@/app/lib/utils'
 import { PgSec, SecMoreLabel, secMoreClass } from './section'
 
 const Meta = ({ label, value, mono = false }: { label: string; value: ReactNode; mono?: boolean }) => (
-  <div className='min-w-0 border-l-[3px] border-l-border bg-background px-4 py-3.5'>
+  <div className='min-w-0 bg-background py-3.5 pr-4 pl-[19px]'>
     <dt className='text-[11px] text-muted-foreground'>{label}</dt>
     <dd
       className={cn(
@@ -38,8 +39,8 @@ export const AboutSection = () => {
       <dl className='grid grid-cols-4 gap-px overflow-hidden rounded-[14px] bg-border max-sm:grid-cols-2'>
         <Meta label={content.meta.version.value} value={`v${__APP_VERSION__}`} />
         <Meta label={content.meta.build.value} value={__GIT_HASH__} mono />
-        <Meta label={content.meta.animeCount.value} value={animeList?.total?.toLocaleString('ja-JP') ?? '—'} />
-        <Meta label={content.meta.scheduledCount.value} value={scheduled?.toLocaleString('ja-JP') ?? '—'} />
+        <Meta label={content.meta.animeCount.value} value={animeList?.total?.toLocaleString(appLocale) ?? '—'} />
+        <Meta label={content.meta.scheduledCount.value} value={scheduled?.toLocaleString(appLocale) ?? '—'} />
       </dl>
     </PgSec>
   )

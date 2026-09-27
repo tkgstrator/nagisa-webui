@@ -1,8 +1,9 @@
 import { getIntlayer } from 'intlayer'
 import { getDefaultStore, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
+import { appLocale } from '@/app/lib/locale'
 
-const settingsModuleContent = getIntlayer('settings-settings')
+const settingsModuleContent = getIntlayer('settings-settings', appLocale)
 
 export type ThemePreference = 'light' | 'dark' | 'system'
 export type CardDensity = 'comfortable' | 'default' | 'compact'
@@ -13,7 +14,7 @@ export type LanguagePreference = 'sub' | 'dub'
 export const PROVIDER_KEYS = ['amazon', 'hulu', 'crunchyroll', 'abema', 'netflix'] as const
 export type ProviderKey = (typeof PROVIDER_KEYS)[number]
 
-/** カタログ取得が実装されていないプロバイダ。行には「未連携」タグが出る。 */
+/** カタログ取得が実装されていないプロバイダ。行には「まだ対応していません」と出る。 */
 export const UNLINKED_PROVIDERS: readonly ProviderKey[] = ['netflix']
 
 export interface SeasonPin {

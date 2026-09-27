@@ -1,5 +1,8 @@
 import { useIntlayer } from 'react-intlayer'
+import { Chip } from '@/app/components/ui/chip'
+import { StatusDot } from '@/app/components/ui/status-dot'
 import { providerLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 
 /** プロバイダのドット色。バッジ用の providerColor と違い前景色だけが要る。 */
 const providerDot: Record<string, string> = {
@@ -11,9 +14,6 @@ const providerDot: Record<string, string> = {
 }
 
 const PROVIDERS = ['amazon', 'hulu', 'crunchyroll', 'abema', 'netflix'] as const
-
-const pillClass =
-  'inline-flex h-[26px] items-center rounded-full border border-border px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring active:scale-[0.94] aria-pressed:border-transparent aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground'
 
 const checkClass =
   'flex cursor-pointer items-center gap-2 rounded-[7px] px-2.5 py-1.5 text-[12.5px] leading-5 text-foreground hover:bg-muted focus-within:bg-muted focus-within:ring-2 focus-within:ring-ring'
@@ -98,7 +98,7 @@ export const BrowseFilterPanel = ({
                 checked={provider === key}
                 onChange={() => onChangeProvider(provider === key ? undefined : key)}
               />
-              <span aria-hidden='true' className={`size-2 shrink-0 rounded-full opacity-60 ${providerDot[key]}`} />
+              <StatusDot aria-hidden='true' className={cn('size-2 opacity-60', providerDot[key])} />
               {providerLabel[key]}
             </label>
           ))}
@@ -107,24 +107,24 @@ export const BrowseFilterPanel = ({
 
       <FilterGroup title={content.groups.year.value}>
         <div className='flex flex-wrap gap-1.5 px-2.5'>
-          <button
+          <Chip
             type='button'
-            className={pillClass}
+            className='h-[26px] active:scale-[0.94]'
             aria-pressed={year === undefined}
             onClick={() => onChangeYear(undefined)}
           >
             {content.allYears}
-          </button>
+          </Chip>
           {years.map((y) => (
-            <button
+            <Chip
               key={y}
               type='button'
-              className={pillClass}
+              className='h-[26px] active:scale-[0.94]'
               aria-pressed={year === y}
               onClick={() => onChangeYear(year === y ? undefined : y)}
             >
               {y}
-            </button>
+            </Chip>
           ))}
         </div>
       </FilterGroup>
@@ -132,15 +132,15 @@ export const BrowseFilterPanel = ({
       <FilterGroup title={content.groups.quarter.value}>
         <div className='flex flex-wrap gap-1.5 px-2.5'>
           {QUARTERS.map((q) => (
-            <button
+            <Chip
               key={q.value}
               type='button'
-              className={pillClass}
+              className='h-[26px] active:scale-[0.94]'
               aria-pressed={quarter === q.value}
               onClick={() => onChangeQuarter(quarter === q.value ? undefined : q.value)}
             >
               {q.label}
-            </button>
+            </Chip>
           ))}
         </div>
       </FilterGroup>
@@ -148,15 +148,15 @@ export const BrowseFilterPanel = ({
       <FilterGroup title={content.groups.status.value}>
         <div className='flex flex-wrap gap-1.5 px-2.5'>
           {STATUSES.map((s) => (
-            <button
+            <Chip
               key={s.value}
               type='button'
-              className={pillClass}
+              className='h-[26px] active:scale-[0.94]'
               aria-pressed={status === s.value}
               onClick={() => onChangeStatus(status === s.value ? undefined : s.value)}
             >
               {s.label}
-            </button>
+            </Chip>
           ))}
         </div>
       </FilterGroup>

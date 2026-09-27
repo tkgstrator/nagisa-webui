@@ -1,6 +1,9 @@
 import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
+import { SegmentedControl, type SegmentOption } from '@/app/components/segmented-control'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
+import { StatusBadge } from '@/app/components/ui/status-badge'
+import { Switch } from '@/app/components/ui/switch'
 import { cn } from '@/app/lib/utils'
 import { settingsAtom } from '../-lib/settings'
 
@@ -30,8 +33,7 @@ export const StRow = ({ icon, badge, label, description, tag, index = 0, danger 
   return (
     <div
       className={cn(
-        'group/row flex items-center justify-between gap-5 border-l-[3px] border-l-transparent bg-background px-[18px] py-3.5 transition-[background-color,border-color] duration-200 focus-within:border-l-primary hover:bg-muted hover:border-l-primary max-sm:flex-col max-sm:items-start max-sm:gap-3 max-sm:px-4',
-        danger && 'border-l-destructive',
+        'group/row flex items-center justify-between gap-5 bg-background py-3.5 pr-[18px] pl-[21px] transition-colors duration-200 focus-within:bg-muted hover:bg-muted max-sm:flex-col max-sm:items-start max-sm:gap-3 max-sm:pr-4 max-sm:pl-[19px]',
         animations &&
           'fill-mode-both animate-in fade-in-0 slide-in-from-bottom-2 duration-[420ms] motion-reduce:animate-none'
       )}
@@ -68,9 +70,9 @@ export const StRow = ({ icon, badge, label, description, tag, index = 0, danger 
 }
 
 export const StTag = ({ children }: { children: ReactNode }) => (
-  <span className='inline-flex h-[18px] items-center rounded-full bg-secondary px-2 text-[10px] font-bold tracking-[0.03em] text-secondary-foreground'>
+  <StatusBadge className='h-[18px] bg-secondary px-2 text-[10px] tracking-[0.03em] text-secondary-foreground'>
     {children}
-  </span>
+  </StatusBadge>
 )
 
 /** 右端の補足。数値が入るので tabular-nums 固定。 */
@@ -86,61 +88,17 @@ export const StSwitch = ({
   checked: boolean
   onCheckedChange: (next: boolean) => void
   label: string
-}) => (
-  <button
-    type='button'
-    role='switch'
-    aria-checked={checked}
-    aria-label={label}
-    onClick={() => onCheckedChange(!checked)}
-    className={cn(
-      'relative h-[23px] w-10 shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
-      checked ? 'bg-primary' : 'bg-input'
-    )}
-  >
-    <span
-      aria-hidden='true'
-      className={cn(
-        'absolute top-0.5 left-0.5 size-[19px] rounded-full transition-transform duration-[240ms] ease-[cubic-bezier(.16,1,.3,1)]',
-        checked ? 'translate-x-[17px] bg-primary-foreground' : 'bg-background'
-      )}
-    />
-  </button>
-)
+}) => <Switch checked={checked} aria-label={label} onCheckedChange={onCheckedChange} />
 
-export interface SegmentOption<T extends string> {
-  value: T
-  label: string
-}
+export type { SegmentOption }
 
-export const StSegment = <T extends string>({
-  value,
-  options,
-  onValueChange,
-  label
-}: {
+/** 設定行の右端に置く排他選択。モバイルでは行幅いっぱいに伸ばす。 */
+export const StSegment = <T extends string>(props: {
   value: T
   options: readonly SegmentOption<T>[]
   onValueChange: (next: T) => void
   label: string
-}) => (
-  <fieldset aria-label={label} className='flex min-w-0 shrink-0 gap-[3px] rounded-full bg-muted p-[3px] max-sm:w-full'>
-    {options.map((option) => (
-      <button
-        key={option.value}
-        type='button'
-        aria-pressed={value === option.value}
-        onClick={() => onValueChange(option.value)}
-        className={cn(
-          'h-[26px] shrink-0 rounded-full px-3 text-[12.5px] whitespace-nowrap text-muted-foreground transition-[background-color,color,transform] duration-200 hover:text-foreground active:scale-95 max-sm:flex-1 max-sm:px-2',
-          value === option.value && 'bg-primary font-bold text-primary-foreground'
-        )}
-      >
-        {option.label}
-      </button>
-    ))}
-  </fieldset>
-)
+}) => <SegmentedControl {...props} fill />
 
 /** モックの .st-sel。既存の Select をピル型に寄せただけで中身は共通。 */
 export const StSelect = <T extends string>({

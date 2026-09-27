@@ -12,14 +12,14 @@ const adminLogsContent = {
         kind: '種別',
         status: '状態',
         level: 'レベル',
-        result: '結果',
-        provider: '配信元'
+        result: '結果'
       },
       options: {
         hours: {
           h24: '直近 24 時間',
           h72: '直近 3 日',
           h168: '直近 7 日',
+          h336: '直近 14 日',
           h720: '直近 30 日',
           h2160: '直近 90 日',
           h4320: '直近 180 日'
@@ -35,20 +35,33 @@ const adminLogsContent = {
         ariaLabel: 'ログ本文で検索'
       },
       page: {
+        eyebrow: '管理',
         title: '同期ログ',
-        description:
-          'cron / Queue バッチ / 手動実行の履歴と、Worker の生ログ、録画リクエストの結果、カタログに入った変化'
+        description: 'cron・キューバッチ・手動実行の履歴、Worker の生ログ、録画リクエストの結果を確認します。'
       },
       stats: {
         unavailable: '集計を取得できませんでした',
         ariaLabel: '直近 24 時間の実行',
         unit: '件',
-        total: { label: '実行', note: '直近 24 時間' },
-        success: { label: '成功', note: '全件処理できた実行' },
-        partial: { label: '一部失敗', note: '一部のジョブが落ちた実行' },
-        failed: { label: '失敗', note: insert('実行中 {{count}} 件') }
+        total: {
+          label: '実行',
+          note: '直近 24 時間'
+        },
+        success: {
+          label: '成功',
+          note: '全件処理できた実行'
+        },
+        partial: {
+          label: '一部失敗',
+          note: '一部のジョブが失敗した実行'
+        },
+        failed: {
+          label: '失敗',
+          note: insert('実行中 {{count}} 件')
+        }
       },
       tabs: {
+        ariaLabel: '表示するログの種類',
         runs: '実行履歴',
         entries: '生ログ',
         recordings: '録画',
@@ -63,17 +76,99 @@ const adminLogsContent = {
       },
       entriesTab: {
         heading: '生ログ',
-        fetchError: 'Workers Logs から取得できませんでした (読み取り用の secret が未設定か、API が失敗しています)',
         empty: '該当するログはありません',
         loading: '読み込み中…',
         loadMore: 'さらに読み込む',
-        noMore: 'これ以上ありません'
+        noMore: 'すべてのログを表示しました'
       },
+      catalogTab: { heading: insert('カタログ変化 ({{count}} 件)') },
       recordingsTab: {
-        heading: insert('録画イベント ({{count}} 件)')
+        heading: insert('録画イベント ({{count}} 件)'),
+        empty: 'この期間の録画イベントはありません'
+      }
+    },
+    en: {
+      common: {
+        all: 'All'
       },
-      catalogTab: {
-        heading: insert('カタログ変化 ({{count}} 件)')
+      filters: {
+        period: 'Period',
+        kind: 'Type',
+        status: 'Status',
+        level: 'Level',
+        result: 'Result'
+      },
+      options: {
+        hours: {
+          h24: 'Last 24 hours',
+          h72: 'Last 3 days',
+          h168: 'Last 7 days',
+          h336: 'Last 14 days',
+          h720: 'Last 30 days',
+          h2160: 'Last 90 days',
+          h4320: 'Last 180 days'
+        },
+        level: {
+          infoAndAbove: insert('{{label}} and above (all)'),
+          andAbove: insert('{{label}} and above'),
+          onlyLabel: insert('{{label}} only')
+        }
+      },
+      search: {
+        placeholder: 'Search messages',
+        ariaLabel: 'Search log messages'
+      },
+      page: {
+        eyebrow: 'Admin',
+        title: 'Sync logs',
+        description: 'View cron, queue batch, and manual run history, raw Worker logs, and recording request results.'
+      },
+      stats: {
+        unavailable: 'Failed to load statistics',
+        ariaLabel: 'Runs in the last 24 hours',
+        unit: 'items',
+        total: {
+          label: 'Runs',
+          note: 'Last 24 hours'
+        },
+        success: {
+          label: 'Succeeded',
+          note: 'Runs that processed all items successfully'
+        },
+        partial: {
+          label: 'Partially failed',
+          note: 'Runs with some failed jobs'
+        },
+        failed: {
+          label: 'Failed',
+          note: insert('Running: {{count}}')
+        }
+      },
+      tabs: {
+        ariaLabel: 'Log type to show',
+        runs: 'Run history',
+        entries: 'Raw logs',
+        recordings: 'Recordings',
+        catalog: 'Catalog'
+      },
+      runsTab: {
+        cronAriaLabel: 'cron activity',
+        cronHeading: 'cron activity',
+        sectionAriaLabel: 'Run history',
+        heading: insert('Run history ({{count}})'),
+        empty: 'No matching runs'
+      },
+      entriesTab: {
+        heading: 'Raw logs',
+        empty: 'No matching logs',
+        loading: 'Loading…',
+        loadMore: 'Load more',
+        noMore: 'No more logs'
+      },
+      catalogTab: { heading: insert('Catalog changes ({{count}})') },
+      recordingsTab: {
+        heading: insert('Recording events ({{count}})'),
+        empty: 'No recording events in this period'
       }
     }
   })

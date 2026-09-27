@@ -1,10 +1,11 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { getIntlayer } from 'intlayer'
+import { appLocale } from '@/app/lib/locale'
 
 dayjs.extend(duration)
 
-const content = getIntlayer('anime-id-format')
+const content = getIntlayer('anime-id-format', appLocale)
 
 export function formatDuration(seconds: number): string {
   const d = dayjs.duration(seconds, 'seconds')

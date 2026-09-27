@@ -8,22 +8,26 @@ import { AppSidebar } from '@/app/components/app-sidebar'
 import { ErrorPage } from '@/app/components/error-page'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { NotFoundPage } from '@/app/components/not-found-page'
+import { SidebarProvider } from '@/app/components/ui/sidebar'
+import { TooltipProvider } from '@/app/components/ui/tooltip'
 
 const RootComponent = () => {
   return (
-    <div className='flex min-h-screen select-none bg-background max-sm:flex-col'>
-      <AppSidebar />
-      <div className='flex min-w-0 flex-1 flex-col'>
-        <main className='flex flex-1 select-text flex-col overflow-x-hidden'>
-          <Outlet />
-        </main>
-        {/* 画面下端に固定するので、ページではなくここで一度だけ描画する */}
-        <AppFooter />
-      </div>
-      <Toaster richColors position='top-right' />
-      <TanStackRouterDevtools position='bottom-right' />
-      <ReactQueryDevtools buttonPosition='bottom-left' />
-    </div>
+    <TooltipProvider>
+      <SidebarProvider className='select-none bg-background max-sm:flex-col'>
+        <AppSidebar />
+        <div className='flex min-w-0 flex-1 flex-col'>
+          <main className='flex flex-1 select-text flex-col overflow-x-hidden'>
+            <Outlet />
+          </main>
+          {/* 画面下端に固定するので、ページではなくここで一度だけ描画する */}
+          <AppFooter />
+        </div>
+        <Toaster richColors position='top-right' />
+        <TanStackRouterDevtools position='bottom-right' />
+        <ReactQueryDevtools buttonPosition='bottom-left' />
+      </SidebarProvider>
+    </TooltipProvider>
   )
 }
 

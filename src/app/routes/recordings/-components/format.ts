@@ -1,8 +1,9 @@
 import dayjs from 'dayjs'
 import { getIntlayer } from 'intlayer'
+import { appLocale } from '@/app/lib/locale'
 import { QuarterLabel } from '@/schemas/anime.dto'
 
-const content = getIntlayer('recordings-format')
+const content = getIntlayer('recordings-format', appLocale)
 
 /** 「12 分前」「1 週間前」のような相対表記。dayjs のロケールを全体で書き換えたくないので自前で組む。 */
 export const formatRelative = (value: string): string => {

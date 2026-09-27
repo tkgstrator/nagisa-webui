@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/app/components/ui/dialog'
+import { clearImageCache, measureImageCache } from '@/app/lib/image-cache'
 import { DEFAULT_SETTINGS, type Settings, useSettings } from '../-lib/settings'
 import { StButton, StNote, StPanel, StRow, stButtonClass } from './controls'
 import { ImageIcon, ResetIcon, TransferIcon } from './icons'
@@ -20,17 +21,14 @@ import { PgSec } from './section'
 const formatBytes = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`
 
 /**
- * Cache Storage の使用量。usageDetails を出さないブラウザではオリジン全体の推定値になる。
- * 数値が取れないときは「—」のままにする。
+ * Service Worker が溜めた画像キャッシュの実サイズ。
+ * Cache Storage が使えないときは「—」のままにする。
  */
 const useCacheUsage = () => {
   const [usage, setUsage] = useState<number | null>(null)
 
   const measure = useCallback(async () => {
-    if (typeof navigator === 'undefined' || navigator.storage?.estimate === undefined) return
-    const estimate = await navigator.storage.estimate()
-    const details = (estimate as { usageDetails?: Record<string, number> }).usageDetails
-    setUsage(details?.caches ?? estimate.usage ?? null)
+    setUsage(await measureImageCache())
   }, [])
 
   useEffect(() => {
@@ -51,8 +49,7 @@ export const DataSection = () => {
       toast.error(content.cache.unavailableError.value)
       return
     }
-    const keys = await caches.keys()
-    await Promise.all(keys.map((key) => caches.delete(key)))
+    await clearImageCache()
     await measure()
     toast.success(content.cache.deletedToast.value)
   }

@@ -13,6 +13,7 @@ import { PageContainer } from '@/app/components/page-container'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/app/components/ui/sheet'
 import { type BrowseFilters, browseFiltersAtom, browseFiltersDefaults } from '@/app/lib/atoms'
 import { animeListQueryOptions } from '@/app/lib/query-options'
+import { cn } from '@/app/lib/utils'
 import { type CardDensity, useSettings } from '@/app/routes/settings/-lib/settings'
 import { ProviderTypeEnum } from '@/schemas/message.dto'
 import { ActiveFilters } from './-components/active-filters'
@@ -215,7 +216,7 @@ function AnimeListPage() {
             )}
           </div>
         ) : (
-          <div className={`grid ${DENSITY_GRID[settings.density]}`}>
+          <div className={cn('grid', DENSITY_GRID[settings.density])}>
             {animeList.map((anime, index) => (
               <AnimeCard
                 key={anime.id}

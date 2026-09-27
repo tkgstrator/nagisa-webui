@@ -11,6 +11,15 @@ const recordingsContent = {
         pending: '未録画'
       },
       rangeText: insert('{{start}}–{{end}} / {{total}} 件')
+    },
+    en: {
+      legend: {
+        ariaLabel: 'Row color legend',
+        recorded: 'Recorded',
+        expiring: 'Leaving soon',
+        pending: 'Not recorded'
+      },
+      rangeText: insert('{{start}}–{{end}} / {{total}} items')
     }
   })
 } satisfies Dictionary

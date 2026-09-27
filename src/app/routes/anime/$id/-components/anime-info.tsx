@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { useIntlayer } from 'react-intlayer'
 import { providerLabel } from '@/app/lib/constants'
+import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
 import { getProviderTitleUrl } from '../-lib/format'
 
@@ -10,7 +11,7 @@ const Row = ({ label, children, mono }: { label: string; children: React.ReactNo
   <div className='grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-b-border/60 py-[7px] text-[13px] last:border-b-0'>
     <span className='whitespace-nowrap text-muted-foreground'>{label}</span>
     <span
-      className={`truncate text-right font-semibold ${mono === true ? 'font-mono text-xs leading-[18px]' : ''}`}
+      className={cn('truncate text-right font-semibold', mono === true && 'font-mono text-xs leading-[18px]')}
       title={typeof children === 'string' ? children : undefined}
     >
       {children}

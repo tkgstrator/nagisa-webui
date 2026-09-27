@@ -18,6 +18,9 @@ model Anime {
   maturityRating  Int?      @map("maturity_rating")
   imageUrl        String    @map("image_url")
   aniListId       Int       @map("anilist_id")
+  /// nagisa の台帳が教える TMDb id (フォルダ名の `[tmdbid-N]`)。台帳に episode_id が
+  /// 無い録画を (provider, tmdbId, シーズン, 話数) で引き当てるためだけに持つ
+  tmdbId          Int?      @map("tmdb_id")
   badge           String? // NEW_EPISODE | RECENTLY_ADDED | COMING_SOON
   nextEpisodeDate DateTime? @map("next_episode_date") // 次回エピソード配信日 (UTC)
   expiredAt       DateTime? @map("expired_at") // 配信終了日時 (UTC)
@@ -35,6 +38,7 @@ model Anime {
   @@index([title])
   @@index([provider])
   @@index([aniListId])
+  @@index([tmdbId])
   @@index([badge])
   @@map("anime")
 }

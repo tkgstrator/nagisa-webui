@@ -6,6 +6,10 @@ const smartPaginationContent = {
     ja: {
       previous: '前へ',
       next: '次へ'
+    },
+    en: {
+      previous: 'Previous',
+      next: 'Next'
     }
   })
 } satisfies Dictionary

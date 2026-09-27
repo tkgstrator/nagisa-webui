@@ -3,10 +3,6 @@ adopted:
   anime-detail: final
   recordings: final
   home: final
-  logs: final
-  logs-entries: final
-  logs-recordings: final
-  logs-catalog: final
   app-header: astra
   app-footer: astra
   pagination: fable
@@ -17,6 +13,8 @@ adopted:
   anime-hero: astra
   episode-list: fable
   related-providers: fable
+  recording-status: fable
+  anime-info: fable
   breadcrumbs: astra
   recording-row: fable
   recordings-toolbar: fable
@@ -27,8 +25,28 @@ adopted:
   scheduled-updates: fable
   home-tabs: fable
   settings: astra
+  settings-controls: astra
   recording-events: fable
   not-found: fable
   error-state: fable
   server-status: fable
-  catalog-events: fable
+  changelog: astra
+  recording-detail: final
+  admin: astra
+  admin-unidentified: astra
+  admin-recorder: astra
+  admin-abema: astra
+  admin-logs: astra
+  admin-log-detail: astra
+  admin-status: astra
+  tone-palette: astra
+  status-badge: astra
+  status-dot: astra
+  button: astra
+  nav-item: astra
+  stat-tile: astra
+  chip: astra
+  input: astra
+  toggle: astra
+  section-heading: astra
+  kbd: astra

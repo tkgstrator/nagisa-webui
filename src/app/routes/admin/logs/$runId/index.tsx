@@ -5,6 +5,7 @@ import { useIntlayer } from 'react-intlayer'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
 import { StatTile } from '@/app/components/stat-tile'
+import { appLocale } from '@/app/lib/locale'
 import { syncRunQueryOptions } from '@/app/lib/query-options'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
 import type { SyncRunSchema } from '@/schemas/log.dto'
@@ -88,21 +89,21 @@ function SyncRunDetailPage() {
           value={run.succeeded}
           unit={content.stats.unit.value}
           note={content.stats.succeeded.note.value}
-          tone='ok'
+          tone='success'
         />
         <StatTile
           label={content.stats.failed.label.value}
           value={run.failed}
           unit={content.stats.unit.value}
           note={content.stats.failed.note.value}
-          tone='err'
+          tone='destructive'
         />
         <StatTile
           label={content.stats.retried.label.value}
           value={run.retried}
           unit={content.stats.unit.value}
           note={content.stats.retried.note.value}
-          tone='warn'
+          tone='warning'
         />
       </section>
 
@@ -124,8 +125,8 @@ function SyncRunDetailPage() {
         <Row label={content.detail.animeLabel.value}>
           <span className='tabular-nums'>
             {content.detail.animeSummary({
-              created: run.animeCreated.toLocaleString('ja-JP'),
-              updated: run.animeUpdated.toLocaleString('ja-JP')
+              created: run.animeCreated.toLocaleString(appLocale),
+              updated: run.animeUpdated.toLocaleString(appLocale)
             })}
           </span>
         </Row>
@@ -154,7 +155,7 @@ function SyncRunDetailPage() {
 
       <section aria-label={content.children.ariaLabel.value} className='flex flex-col gap-2'>
         <h2 className='text-sm font-semibold'>
-          {content.children.heading({ count: data.children.length.toLocaleString('ja-JP') })}
+          {content.children.heading({ count: data.children.length.toLocaleString(appLocale) })}
         </h2>
         {data.children.length === 0 ? (
           <p className='text-sm text-muted-foreground'>{content.children.empty}</p>
@@ -165,11 +166,10 @@ function SyncRunDetailPage() {
 
       <section aria-label={content.entries.ariaLabel.value} className='flex flex-col gap-2'>
         <h2 className='text-sm font-semibold'>
-          {content.entries.heading({ count: data.entries.length.toLocaleString('ja-JP') })}
+          {content.entries.heading({ count: data.entries.length.toLocaleString(appLocale) })}
         </h2>
-        {data.entriesError !== null ? (
-          <p className='text-sm text-destructive'>{content.entries.fetchError({ error: data.entriesError })}</p>
-        ) : data.entries.length === 0 ? (
+        {data.entriesError !== null && <p className='text-sm text-destructive'>{data.entriesError}</p>}
+        {data.entries.length === 0 ? (
           <p className='text-sm text-muted-foreground'>{content.entries.empty}</p>
         ) : (
           <EntriesTable entries={data.entries} />

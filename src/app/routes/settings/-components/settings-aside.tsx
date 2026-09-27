@@ -1,15 +1,17 @@
 import { getIntlayer } from 'intlayer'
 import { useEffect, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
+import { appLocale } from '@/app/lib/locale'
 import { cn } from '@/app/lib/utils'
 import { PROVIDER_KEYS, useSettings } from '../-lib/settings'
 
-const settingsAsideModuleContent = getIntlayer('settings-settings-aside')
+const settingsAsideModuleContent = getIntlayer('settings-settings-aside', appLocale)
 
 const SECTIONS = [
   { id: 's-view', label: settingsAsideModuleContent.sections.view },
   { id: 's-provider', label: settingsAsideModuleContent.sections.provider },
   { id: 's-rec', label: settingsAsideModuleContent.sections.rec },
+  { id: 's-sync', label: settingsAsideModuleContent.sections.sync },
   { id: 's-admin', label: settingsAsideModuleContent.sections.admin },
   { id: 's-data', label: settingsAsideModuleContent.sections.data },
   { id: 's-about', label: settingsAsideModuleContent.sections.about }
@@ -49,6 +51,7 @@ export const SettingsAside = ({ adminLinkCount }: { adminLinkCount: number }) =>
     's-view': '5',
     's-provider': `${enabled} / ${PROVIDER_KEYS.length}`,
     's-rec': '5',
+    's-sync': undefined,
     's-admin': String(adminLinkCount),
     's-data': '3',
     's-about': undefined

@@ -1,0 +1,8 @@
+.a-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 10px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--muted-foreground); font-size: 12px; }
+.a-chip[aria-pressed="true"] { background: var(--tone-soft); color: var(--tone-ink); border-color: var(--tone-border); font-weight: 600; }
+.a-chip:not(:disabled):hover, .a-chip.is-hover { background: var(--muted); color: var(--foreground); }
+.a-chip:disabled { opacity: .45; }
+.a-chip svg { width: 12px; height: 12px; }
+
+:where(.a-chip) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:where(.a-chip):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }

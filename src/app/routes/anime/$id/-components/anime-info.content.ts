@@ -12,6 +12,16 @@ const animeInfoContent = {
         updatedAt: '最終更新',
         contentId: '識別子'
       }
+    },
+    en: {
+      heading: 'Anime details',
+      rows: {
+        aniList: 'AniList',
+        provider: 'Provider',
+        expiredAt: 'Available until',
+        updatedAt: 'Last updated',
+        contentId: 'Identifier'
+      }
     }
   })
 } satisfies Dictionary
