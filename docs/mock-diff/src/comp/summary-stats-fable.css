@@ -8,14 +8,15 @@
 
 .ss {
   display: flex; flex-direction: column; gap: 2px; min-width: 0;
-  border-left: 3px solid var(--primary); border-radius: 2px;
-  padding: 2px 8px 2px 14px;
+  border-radius: 8px;
+  padding: 4px 10px;
   transition: background .15s ease;
 }
-.ss.ok { border-left-color: var(--success); }
-.ss.warn { border-left-color: var(--warning); }
-.ss.err { border-left-color: var(--destructive); }
-.ss.mute { border-left-color: var(--border); }
+/* 状態色は値に載せる。左罫は角丸と喧嘩するので使わない。 */
+.ss.ok .val { color: var(--success); }
+.ss.warn .val { color: var(--warning-foreground); }
+.ss.err .val { color: var(--destructive); }
+.ss.mute .val { color: var(--muted-foreground); }
 
 a.ss:hover { background: var(--muted); }
 a.ss:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
@@ -33,11 +34,10 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
 .ss .note { font-size: 12px; color: var(--muted-foreground); }
 .ss.err .note { color: var(--destructive); }
 
-.ss.is-zero { border-left-color: var(--border); }
 .ss.is-zero .val { color: var(--muted-foreground); font-weight: 600; }
 
 /* 読み込み中 */
-.ss.is-load { border-left-color: var(--border); gap: 6px; padding-top: 4px; padding-bottom: 4px; }
+.ss.is-load { gap: 6px; padding-top: 4px; padding-bottom: 4px; }
 .ss-bar {
   border-radius: 3px; background-color: var(--muted);
   background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--foreground) 9%, transparent) 50%, transparent 100%);
@@ -55,9 +55,34 @@ a.ss:hover .lab .go { opacity: .8; transform: translateX(2px); }
   .ss .lab { font-size: 11.5px; }
 }
 
-/* 取得中を示す変種。info 色で左罫を引く。 */
-.ss.busy { border-left-color: var(--info); }
+/* 取得中を示す変種。info 色で値を塗る。 */
+.ss.busy .val { color: var(--info); }
 
 /* 達成率を添える細いバー。値の下に置く。 */
 .ss .bar { margin-top: 6px; height: 4px; border-radius: 2px; background: var(--muted); overflow: hidden; }
 .ss .bar > span { display: block; height: 100%; background: var(--success); }
+
+/* ---------- 左罫版 (.ss-grid.is-rule) ---------- */
+/* 状態色を値ではなく左罫に載せる。角丸は右側だけに残す。 */
+.is-rule .ss { border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0; padding: 2px 8px 2px 14px; }
+.is-rule .ss:where(.ok, .warn, .err, .mute, .busy):not(.is-zero) .val { color: inherit; }
+.is-rule .ss.ok { border-left-color: var(--success); }
+.is-rule .ss.warn { border-left-color: var(--warning); }
+.is-rule .ss.err { border-left-color: var(--destructive); }
+.is-rule .ss.mute { border-left-color: var(--border); }
+.is-rule .ss.is-zero { border-left-color: var(--border); }
+.is-rule .ss.is-load { border-left-color: var(--border); }
+.is-rule .ss.busy { border-left-color: var(--info); }
+/* 空の note でも高さを確保してタイルの底を揃える。 */
+.is-rule .ss .note { line-height: 1.5; min-height: 18px; }
+
+/* ---------- 右寄せ (.ss-grid.is-end) ---------- */
+/* 見出しの右に置くとき用。タイルを内容幅で右端に寄せる。均等割りだと最終列の右に空きが残り、
+   右揃えに見えない。見出しの下に落ちる幅 (1024px 以下) では均等割りに戻す。 */
+.ss-grid.is-end { grid-template-columns: repeat(4, max-content); justify-content: end; gap: 48px; }
+@media (max-width: 1024px) {
+  .ss-grid.is-end { grid-template-columns: repeat(4, minmax(0, 1fr)); justify-content: normal; gap: 24px; }
+}
+@media (max-width: 640px) {
+  .ss-grid.is-end { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 14px; }
+}

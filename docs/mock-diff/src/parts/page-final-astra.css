@@ -1,0 +1,147 @@
+/* ---------- page skeleton (final / astra) ---------- */
+/* ページ骨格だけを持つ。部品のクラスは一切定義しない (comp/*.css が正)。
+   astra はサイドバー (app-header の .side) と本文の 2 ペイン構成。 */
+
+.pg-shell { display: flex; min-height: 100vh; }
+.pg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.pg {
+  flex: 1;
+  /* 幅の上限は持たない。236px の常設サイドバーを除いた残りを全部使う。
+     下余白の 90px は本来の 46px + 固定フッターの高さ 44px。 */
+  width: 100%;
+  padding: 26px 36px 90px;
+  /* 節と節の間隔。astra 原案は margin も gap も持たず密着していたので、
+     fable 側 (home / recordings) と同じ縦リズムをここで入れて 4 画面を揃える。 */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.pg > * { animation: fadeUp .5s cubic-bezier(.16, 1, .3, 1) both; }
+.pg > *:nth-child(1) { animation-delay: 0s; }
+.pg > *:nth-child(2) { animation-delay: .06s; }
+.pg > *:nth-child(3) { animation-delay: .12s; }
+.pg > *:nth-child(4) { animation-delay: .18s; }
+.pg > *:nth-child(5) { animation-delay: .24s; }
+.pg > *:nth-child(6) { animation-delay: .3s; }
+.pg > *:nth-child(7) { animation-delay: .36s; }
+
+/* ---------- page head ---------- */
+.pg-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.pg-eyebrow {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.pg-eyebrow b { color: var(--foreground); font-weight: 600; }
+.pg-title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub b { color: var(--foreground); font-weight: 600; }
+.pg-headctl { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- page body ---------- */
+/* ヒーローの直下から始まる本文。セクションより詰める。 */
+.pg-body { margin-top: 22px; }
+
+/* ---------- section ---------- */
+.pg-sec { margin-top: 36px; }
+.pg-sec-title { font-size: 16px; font-weight: 700; }
+.pg-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.pg-sec-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.pg-sec-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.pg-sec-more:hover { color: var(--foreground); }
+.pg-sec-more svg { width: 12px; height: 12px; }
+
+/* ---------- two column ---------- */
+.pg-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.pg-cols > * { min-width: 0; }
+.pg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ---------- sidebar filter slot ---------- */
+/* astra はフィルタをサイドバー内に差す。中身は browse-filters が持つ。 */
+.pg-side-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- quick links ---------- */
+.pg-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1024px) {
+  .pg-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-aside { position: static; }
+  .pg-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pg-shell { flex-direction: column; }
+}
+@media (max-width: 640px) {
+  .pg { padding: 18px 16px 76px; gap: 30px; }
+  .pg-title { font-size: 20px; }
+  .pg-sec { margin-top: 28px; }
+  .pg-links { grid-template-columns: minmax(0, 1fr); }
+  .pg-headctl { width: 100%; flex-wrap: wrap; }
+}
+
+/* ---------- quick link ---------- */
+/* pg-links の中に並ぶ 1 枚。左罫の色で注意を促す。 */
+.pg-link {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0;
+  transition: background .18s ease, transform .18s ease;
+}
+.pg-link:hover { background: var(--muted); transform: translateX(3px); }
+.pg-link.pg-warn { border-left-color: var(--destructive); }
+.pg-link svg { width: 20px; height: 20px; color: var(--primary); flex: none; }
+.pg-link.pg-warn svg { color: var(--destructive); }
+
+/* ---------- header search ---------- */
+/* ページ見出しの右に置く検索欄。部品側のフィルタとは別物。 */
+.pg-search { position: relative; width: 260px; }
+.pg-search svg { position: absolute; left: 10px; top: 50%; translate: 0 -50%; width: 15px; height: 15px; color: var(--muted-foreground); }
+.pg-search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); }
+.pg-search input:focus-visible { outline: 2px solid var(--ring); }

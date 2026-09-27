@@ -111,3 +111,15 @@
 
 /* 一覧 / 週間スケジュールの切り替え。ツールバーの上に置く。 */
 .view-switch { margin-top: 18px; }
+
+/* 静かな版。押下中も文字色は muted のまま背景だけで状態を示し、ボタン間の隙間も持たない。
+   (ページネーションの .seg と同居したとき、そちらの gap を引き継がないよう明示する) */
+.seg.is-quiet { gap: 0; }
+.seg.is-quiet button[aria-pressed="true"] { color: var(--muted-foreground); }
+/* chip の字間を少し開く。折り返し位置 (3 件 + 2 件) を実装のフォントに揃える補正。 */
+.chips.is-loose .chip { letter-spacing: 0.4px; }
+
+/* 並べ替えの矢印を背景画像ではなく SVG で重ねる版。 */
+.sort-wrap { position: relative; display: inline-flex; }
+.sort-wrap select { width: 100%; background-image: none; }
+.sort-chevron { position: absolute; top: 50%; right: 10px; width: 10px; height: 10px; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; }

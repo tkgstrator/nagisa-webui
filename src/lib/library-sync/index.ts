@@ -41,7 +41,11 @@ type Prisma = ReturnType<typeof createPrismaClient>
  * `SyncRun` に記録する。同期が止まったことは `sync_state.last_succeeded_at` と
  * この記録の両方から分かる。
  */
-export async function syncLibrary(prisma: Prisma, env: Partial<NagisaEnv>): Promise<LibrarySyncResult> {
+export async function syncLibrary(
+  prisma: Prisma,
+  env: Partial<NagisaEnv> & { DB: D1Database },
+  options?: { force?: boolean }
+): Promise<LibrarySyncResult> {
   const result = emptyResult()
   const owner = crypto.randomUUID()
   const now = Date.now()
@@ -60,17 +64,27 @@ export async function syncLibrary(prisma: Prisma, env: Partial<NagisaEnv>): Prom
   }
 
   try {
+    if (options?.force) {
+      // 手動のフル同期。lease を握った直後、下の state 分岐に入る前に
+      // bootstrap の継続印と差分カーソルを消しておく。これで state 分岐は
+      // 必ず `bootstrapLibrary(..., 'initial', ...)` に合流し、台帳を頭から取り直す。
+      await prisma.syncState.updateMany({
+        where: leaseWhere(owner, new Date(now)),
+        data: { snapshotCursor: null, snapshotStartedAt: null, libraryCursor: null }
+      })
+    }
+
     const state = await prisma.syncState.findUnique({ where: { key: SYNC_KEY } })
     // bootstrap が終わっていない印は 2 つある。途中のページで止まったなら
     // `snapshotCursor`、最終ページの掃き出しを拒否して止まったなら
     // `snapshotStartedAt` だけが残る (1 ページで終わる台帳では前者が null)。
     // 片方しか見ないと、後者が差分同期に切り替わって削除を取りこぼす。
     if (state?.snapshotCursor || state?.snapshotStartedAt) {
-      await bootstrapLibrary(prisma, env as NagisaEnv, owner, 'resume', result)
+      await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, 'resume', result)
       return result
     }
     if (!state?.libraryCursor) {
-      await bootstrapLibrary(prisma, env as NagisaEnv, owner, 'initial', result)
+      await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, 'initial', result)
       return result
     }
 
@@ -83,7 +97,7 @@ export async function syncLibrary(prisma: Prisma, env: Partial<NagisaEnv>): Prom
       if (res.status === 410 || res.status === 409) {
         const code = await readErrorCode(res)
         logger.warn({ action: 'library-cursor-invalid', status: res.status, code })
-        await bootstrapLibrary(prisma, env as NagisaEnv, owner, code, result)
+        await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, code, result)
         return result
       }
       if (!res.ok) {
@@ -107,7 +121,7 @@ export async function syncLibrary(prisma: Prisma, env: Partial<NagisaEnv>): Prom
         break
       }
 
-      if (!(await applyChangesPage(prisma, body, owner, result))) break
+      if (!(await applyChangesPage(prisma, env.DB, body, owner, result))) break
       cursor = body.next_cursor
       if (!body.has_more) break
       // 文数の実測で打ち切る (ページ数だけでは抑えきれない。定数のコメント参照)。

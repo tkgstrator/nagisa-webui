@@ -5,20 +5,22 @@ export const queryKeys = {
     badged: ['anime', 'badged'] as const,
     detail: (id: string) => ['anime', 'detail', id] as const
   },
-  nagisa: {
-    status: ['nagisa', 'status'] as const,
-    queueSnapshot: ['nagisa', 'queue-snapshot'] as const,
-    libraryStats: ['nagisa', 'library-stats'] as const,
-    syncState: ['nagisa', 'sync-state'] as const
+  recorder: {
+    status: ['recorder', 'status'] as const,
+    queueSnapshot: ['recorder', 'queue-snapshot'] as const
+  },
+  recordingLibrary: {
+    stats: ['recording-library', 'stats'] as const,
+    syncState: ['recording-library', 'sync-state'] as const
   },
   changelog: ['changelog'] as const,
   admin: {
-    archiveStats: ['admin', 'archive-stats'] as const,
+    archiveStats: (provider: string) => ['admin', 'key-archives', 'stats', provider] as const,
     unidentified: (filters: Record<string, unknown>) => ['admin', 'unidentified', filters] as const,
     syncRuns: (filters: Record<string, unknown>) => ['admin', 'sync-runs', filters] as const,
     syncRun: (id: string) => ['admin', 'sync-run', id] as const,
     logEntries: (filters: Record<string, unknown>) => ['admin', 'log-entries', filters] as const,
     recordingEvents: (filters: Record<string, unknown>) => ['admin', 'recording-events', filters] as const,
-    logStats: ['admin', 'log-stats'] as const
+    syncRunStats: ['admin', 'sync-runs', 'stats'] as const
   }
 }

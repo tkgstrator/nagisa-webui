@@ -2,12 +2,15 @@ import { createRoute, z } from '@hono/zod-openapi'
 import { archiveMissingAbemaKeysForAnime } from '../../lib/abema-archive'
 import { createPrismaClient } from '../../lib/db'
 import { enqueueImageWarm } from '../../lib/image-warm'
+import { type JobSyncResult, syncJobs } from '../../lib/job-sync'
 import { createFetchClient } from '../../lib/lambda'
+import { type LibrarySyncResult, syncLibrary } from '../../lib/library-sync'
 import { localDetailFetchers } from '../../lib/local-detail-fetchers'
 import { createStore, flushLogs, runWithCapture } from '../../lib/log-capture'
 import { getAppLogger } from '../../lib/logger'
 import { SyncService } from '../../lib/sync'
 import { finishRun, startRun } from '../../lib/sync-run'
+import { RefreshAnimeResponseSchema } from '../../schemas/anime.dto'
 import { ProviderTypeEnum } from '../../schemas/message.dto'
 import type { AnimeApp } from './bindings'
 
@@ -24,7 +27,7 @@ export const registerRefresh = (anime: AnimeApp) => {
       responses: {
         200: {
           description: '再取得成功',
-          content: { 'application/json': { schema: z.object({ contentId: z.string(), provider: z.string() }) } }
+          content: { 'application/json': { schema: RefreshAnimeResponseSchema } }
         },
         404: {
           description: 'Not Found',
@@ -57,6 +60,8 @@ export const registerRefresh = (anime: AnimeApp) => {
       const runId = await startRun(prisma, { kind: 'manual', trigger: 'refresh' })
       const store = createStore(runId)
       let errorMessage: string | undefined
+      let jobs: JobSyncResult | undefined
+      let library: LibrarySyncResult | undefined
 
       try {
         await runWithCapture(store, async () => {
@@ -103,6 +108,14 @@ export const registerRefresh = (anime: AnimeApp) => {
               error: errorMessage
             })
           }
+
+          // 配信元の情報とは独立なので、上の再取得が落ちても録画状態は取りに行く。
+          // 追従 (進行中ジョブ) → 台帳 (completed) の順は cron と同じ。どちらも throw しない。
+          jobs = await syncJobs(prisma, c.env)
+          library = await syncLibrary(prisma, c.env)
+          if (jobs.error || library.error) {
+            logger.warn({ action: 'refresh-recording-sync-error', id, jobs: jobs.error, library: library.error })
+          }
         })
       } finally {
         // flushLogs → finishRun の順を守る (src/lib/db.ts のクライアント使い回し都合)。
@@ -113,12 +126,38 @@ export const registerRefresh = (anime: AnimeApp) => {
           failed: errorMessage === undefined ? 0 : 1,
           droppedLogs,
           errorMessage,
-          meta: { animeId: id, provider: row.provider, contentId: row.contentId }
+          meta: {
+            animeId: id,
+            provider: row.provider,
+            contentId: row.contentId,
+            jobSync: jobs ?? null,
+            librarySync: library ?? null
+          }
         })
       }
 
       if (errorMessage !== undefined) return c.json({ error: errorMessage }, 500)
-      return c.json({ contentId: row.contentId, provider: row.provider }, 200)
+      return c.json(
+        {
+          contentId: row.contentId,
+          provider: row.provider,
+          sync: {
+            jobs: {
+              downloading: jobs?.downloading ?? 0,
+              failed: jobs?.failed ?? 0,
+              stale: jobs?.stale ?? 0,
+              error: jobs?.error ?? null
+            },
+            library: {
+              skipped: library?.skipped ?? false,
+              upserts: library?.upserts ?? 0,
+              deletes: library?.deletes ?? 0,
+              error: library?.error ?? null
+            }
+          }
+        },
+        200
+      )
     }
   )
 }

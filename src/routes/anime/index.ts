@@ -4,6 +4,7 @@ import { flattenAnime, QUARTER_TO_SEASON } from '../../lib/anime-flatten'
 import { createPrismaClient } from '../../lib/db'
 import { getAppLogger } from '../../lib/logger'
 import { AnimeInfoSchema, AnimeListQuerySchema, AnimeSchema, PaginatedAnimeSchema } from '../../schemas/anime.dto'
+import { RecordStatusEnum } from '../../schemas/recording.dto'
 import { registerBadged } from './badged'
 import type { Bindings } from './bindings'
 import { registerRecord } from './record'
@@ -39,8 +40,22 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const { page, limit, provider, year, quarter, status, scheduled, recorded, badge, aniListId, sort, order, q } =
-      c.req.valid('query')
+    const {
+      page,
+      limit,
+      provider,
+      year,
+      quarter,
+      status,
+      excludeStatus,
+      scheduled,
+      recorded,
+      badge,
+      aniListId,
+      sort,
+      order,
+      q
+    } = c.req.valid('query')
 
     const anilistMediaFilter = {
       ...(year ? { OR: [{ seasonYear: year }, { AND: [{ seasonYear: null }, { startYear: year }] }] } : {}),
@@ -54,7 +69,8 @@ anime.openapi(
       ...(q ? { title: { contains: q } } : {}),
       ...(badge ? { badge } : {}),
       ...(aniListId ? { aniListId } : {}),
-      ...(Object.keys(anilistMediaFilter).length > 0 ? { anilistMedia: anilistMediaFilter } : {})
+      ...(Object.keys(anilistMediaFilter).length > 0 ? { anilistMedia: anilistMediaFilter } : {}),
+      ...(excludeStatus ? { NOT: { anilistMedia: { is: { status: excludeStatus } } } } : {})
     }
     const orderBy =
       sort === 'year'
@@ -82,7 +98,18 @@ anime.openapi(
       dbMs: Math.round(dbMs),
       rows: rows.length,
       total,
-      filters: { year, quarter, status, provider, scheduled, recorded, badge, aniListId, q: q ? 'yes' : 'no' }
+      filters: {
+        year,
+        quarter,
+        status,
+        excludeStatus,
+        provider,
+        scheduled,
+        recorded,
+        badge,
+        aniListId,
+        q: q ? 'yes' : 'no'
+      }
     })
     return c.json({ data, total, page, limit, totalPages })
   }
@@ -134,7 +161,12 @@ anime.openapi(
         ...flat,
         seasons: seasons.map((s) => ({
           ...s,
-          episodes: s.episodes.map(({ abemaKey, ...ep }) => ({ ...ep, hasLocalKey: abemaKey !== null }))
+          episodes: s.episodes.map(({ abemaKey, ...ep }) => ({
+            ...ep,
+            // DB 上はただの文字列なので、知らない値は none に畳む
+            recordStatus: RecordStatusEnum.catch('none').parse(ep.recordStatus),
+            hasLocalKey: abemaKey !== null
+          }))
         }))
       },
       200
