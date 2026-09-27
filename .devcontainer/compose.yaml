@@ -13,6 +13,7 @@ services:
       - ../:/home/vscode/app:cached
     environment:
       NODE_OPTIONS: "--no-deprecation"
+      CLAUDE_CODE_AUTO_MODE_SERVER: 0
     tty: true
     stdin_open: true
 
@@ -20,8 +21,8 @@ services:
     image: serjs/go-socks5-proxy:latest
     network_mode: service:vpn
     environment:
-      - PROXY_PORT=1080
-      - REQUIRE_AUTH=false
+      PROXY_PORT: 1080
+      REQUIRE_AUTH: false
 
   vpn:
     image: linuxserver/wireguard:latest
