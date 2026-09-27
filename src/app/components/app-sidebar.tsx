@@ -132,7 +132,7 @@ const SidebarFoot = ({ pathname }: { pathname: string }) => {
         : null
 
   return (
-    <SidebarFooter className='gap-0.5 px-3 py-0'>
+    <SidebarFooter className='gap-0.5 px-3 pt-0 pb-4'>
       <SidebarMenu className='gap-0.5'>
         {links.map(({ to, label: text, icon }) => (
           <SidebarMenuItem key={to}>
