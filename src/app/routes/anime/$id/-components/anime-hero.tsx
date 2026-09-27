@@ -26,7 +26,7 @@ export function AnimeHero({
   updating,
   refreshing,
   onToggleScheduled,
-  onToggleRecorded,
+  onRecordNow,
   onRefresh
 }: {
   anime: AnimeInfoSchema
@@ -35,15 +35,11 @@ export function AnimeHero({
   updating: boolean
   refreshing: boolean
   onToggleScheduled: () => void
-  onToggleRecorded: () => void
+  onRecordNow: () => void
   onRefresh: () => void
 }) {
   const content = useIntlayer('anime-id-anime-hero')
   const setFilters = useSetAtom(browseFiltersAtom)
-  const recordedCount = anime.seasons.reduce(
-    (sum, season) => sum + season.episodes.filter((episode) => episode.recorded).length,
-    0
-  )
 
   return (
     <div className='flex items-start gap-7 max-sm:flex-col max-sm:gap-3.5'>
@@ -129,7 +125,7 @@ export function AnimeHero({
           <div className='mt-[18px] flex flex-wrap items-center gap-2.5'>
             <Button
               type='button'
-              variant={anime.scheduled ? 'default' : 'outline'}
+              variant='outline'
               size='pill'
               className='h-[34px] px-[15px] max-sm:flex-auto'
               onClick={onToggleScheduled}
@@ -139,23 +135,18 @@ export function AnimeHero({
               {anime.scheduled ? <Check className='size-[14px]' /> : <Circle className='size-[14px]' />}
               {anime.scheduled ? content.scheduleButton.scheduled : content.scheduleButton.schedule}
             </Button>
-            {/* 録画を取り消す API がないので、録画済みになったら押せない。位置と見た目は保ったまま意味だけ変える。 */}
+            {/* 押すたびに放送済み・未録画の話を録画サーバーへ送る一回きりの操作なので、押下状態は持たない。 */}
             <Button
               type='button'
-              variant={anime.recorded ? 'success' : 'outline'}
+              variant='outline'
               size='pill'
               className='h-[34px] px-[15px] max-sm:flex-auto'
-              onClick={onToggleRecorded}
-              disabled={updating || anime.recorded}
-              aria-pressed={anime.recorded}
-              title={
-                anime.recorded ? content.recordButton.recordedTitle.value : content.recordButton.recordNowTitle.value
-              }
+              onClick={onRecordNow}
+              disabled={updating}
+              title={content.recordButton.recordNowTitle.value}
             >
-              {anime.recorded ? <Check className='size-[14px]' /> : <Send className='size-[14px]' />}
-              {anime.recorded
-                ? content.recordButton.recorded({ count: recordedCount })
-                : content.recordButton.recordNow}
+              <Send className='size-[14px]' />
+              {content.recordButton.recordNow}
             </Button>
             <Button
               type='button'

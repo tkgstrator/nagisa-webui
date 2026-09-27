@@ -38,36 +38,12 @@ const markClass: Record<RowState, string> = {
   fail: 'border-[1.5px] border-destructive'
 }
 
-export const EpisodeRow = ({
-  episode,
-  provider,
-  sending,
-  onRecord
-}: {
-  episode: Episode
-  provider: string
-  sending: boolean
-  onRecord: (episodeIds: string[]) => void
-}) => {
+export const EpisodeRow = ({ episode, provider }: { episode: Episode; provider: string }) => {
   const content = useIntlayer('anime-id-episode-grid')
   const state = rowStateOf(episode)
   const watchUrl = getWatchUrl(provider, episode.episodeId)
   const episodeLabel = content.episodeLabel({ number: episode.episodeNumber }).value
   const title = episode.title || episodeLabel
-  const busy = sending || state === 'rec'
-  const recordLabel = sending
-    ? content.recordButton.sending.value
-    : state === 'rec'
-      ? episode.recordStatus === 'pending'
-        ? content.recordButton.pending.value
-        : content.recordButton.downloading.value
-      : state === 'fail'
-        ? content.recordButton.retry.value
-        : state === 'done'
-          ? content.recordButton.done.value
-          : state === 'future'
-            ? content.recordButton.future.value
-            : content.recordButton.record.value
   const stateLabel =
     state === 'rec' && episode.recordStatus === 'pending'
       ? content.state.pending.value
@@ -76,38 +52,12 @@ export const EpisodeRow = ({
         : state === 'done'
           ? content.recordButton.doneTitle.value
           : content.state[state].value
-  const canRecord = !busy && (state === 'todo' || state === 'fail')
-  const recordStyle = busy
-    ? 'border-info/40 bg-info/10 text-info'
-    : state === 'done'
-      ? 'border-success/40 bg-success/10 text-success'
-      : state === 'future'
-        ? 'border-dashed border-border text-muted-foreground'
-        : state === 'fail'
-          ? 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/15'
-          : 'border-border bg-background text-foreground hover:bg-secondary'
-  const recordClass = cn(
-    'inline-flex h-8 w-[104px] items-center justify-center gap-[7px] whitespace-nowrap rounded-[7px] border px-2.5 text-[12.5px] font-semibold max-sm:w-[34px] max-sm:px-0',
-    canRecord && 'transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
-    recordStyle
-  )
-  const recordContent = (
-    <>
-      <span
-        aria-hidden='true'
-        className={cn('grid size-4 shrink-0 place-items-center rounded-full', busy ? markClass.rec : markClass[state])}
-      >
-        {state === 'done' && !busy && <Check className='size-2.5' strokeWidth={3} />}
-      </span>
-      <span className='max-sm:sr-only'>{recordLabel}</span>
-    </>
-  )
 
   return (
     <li
       id={`ep-${episode.id}`}
       className={cn(
-        'grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_104px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2',
+        'grid grid-cols-[3ch_96px_minmax(0,1fr)_84px_56px_20px] items-center gap-3.5 border-b border-b-border/60 border-l-[3px] px-3 py-2 text-sm transition-colors hover:bg-muted max-sm:grid-cols-[2.5ch_68px_minmax(0,1fr)_auto] max-sm:gap-2.5 max-sm:p-2',
         rowAccent[state]
       )}
     >
@@ -170,21 +120,14 @@ export const EpisodeRow = ({
         {episode.duration > 0 ? formatDuration(episode.duration) : '—'}
       </span>
 
-      {canRecord ? (
-        <button
-          type='button'
-          aria-label={recordLabel}
-          title={stateLabel}
-          onClick={() => onRecord([episode.id])}
-          className={recordClass}
-        >
-          {recordContent}
-        </button>
-      ) : (
-        <span role='status' title={stateLabel} className={recordClass}>
-          {recordContent}
-        </span>
-      )}
+      <span
+        role='img'
+        aria-label={stateLabel}
+        title={stateLabel}
+        className={cn('grid size-5 place-items-center justify-self-end rounded-full', markClass[state])}
+      >
+        {state === 'done' && <Check aria-hidden='true' className='size-3' strokeWidth={3} />}
+      </span>
     </li>
   )
 }

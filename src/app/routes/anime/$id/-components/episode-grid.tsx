@@ -1,14 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
-import { toast } from 'sonner'
 import { Chip } from '@/app/components/ui/chip'
 import { SectionHeading } from '@/app/components/ui/section-heading'
 import { StatusDot } from '@/app/components/ui/status-dot'
-import api from '@/app/lib/api'
-import { queryKeys } from '@/app/lib/query-keys'
 import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
 import { episodeStatus, formatRuntime } from '../-lib/format'
@@ -30,27 +26,8 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   const [activeSeasonId, setActiveSeasonId] = useState(seasons[0]?.id ?? '')
   const [filter, setFilter] = useState<Filter>('all')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-  const queryClient = useQueryClient()
 
   const season = seasons.find((item) => item.id === activeSeasonId) ?? seasons[0]
-
-  /** 録画は nagisa に送るだけ。実際に録れたかは refresh の同期で録画済みに変わる。 */
-  const record = useMutation({
-    mutationFn: (episodeIds: string[]) => api.recordAnime({ episodeIds }, { params: { id: anime.id } }),
-    onSuccess: (data, episodeIds) => {
-      toast.success(content.recordToast.success({ count: episodeIds.length }).value, {
-        description:
-          data.count === episodeIds.length ? undefined : content.recordToast.acceptedCount({ count: data.count }).value
-      })
-    },
-    onError: () => toast.error(content.recordToast.error.value),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
-    }
-  })
-
-  const sendingIds: ReadonlySet<string> = new Set(record.isPending ? record.variables : [])
 
   const stats = useMemo(() => {
     const episodes = season?.episodes ?? []
@@ -174,13 +151,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
 
       <ol>
         {visible.map((episode) => (
-          <EpisodeRow
-            key={episode.id}
-            episode={episode}
-            provider={anime.provider}
-            sending={sendingIds.has(episode.id)}
-            onRecord={(episodeIds) => record.mutate(episodeIds)}
-          />
+          <EpisodeRow key={episode.id} episode={episode} provider={anime.provider} />
         ))}
       </ol>
 
