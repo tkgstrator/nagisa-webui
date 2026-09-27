@@ -10,6 +10,7 @@ const adminLogsRecordingsTableContent = {
         kind: '種別',
         route: '経路',
         episode: '話数',
+        http: 'HTTP',
         result: '結果'
       }
     },
@@ -20,6 +21,7 @@ const adminLogsRecordingsTableContent = {
         kind: 'Type',
         route: 'Source',
         episode: 'Episodes',
+        http: 'HTTP',
         result: 'Result'
       }
     }

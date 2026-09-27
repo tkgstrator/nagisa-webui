@@ -16,6 +16,7 @@ import {
   Zap
 } from 'lucide-react'
 import type { ReactElement } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { cn } from '@/app/lib/utils'
 import type { NagisaStatusJob } from '@/schemas/nagisa.dto'
 import { Badge } from '../lib/../components/ui/badge'
@@ -74,6 +75,7 @@ const JobItem = ({ job }: { job: NagisaStatusJob }) => {
 /** 開くための要素は呼び出し側が渡す。サイドバー最下段のステータス行がそれを兼ねる。 */
 export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
   const { data: status, isPending, isError } = useAtomValue(recorderStatusAtom)
+  const content = useIntlayer('server-status-dialog')
 
   return (
     <Dialog>
@@ -85,14 +87,14 @@ export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
         {isPending ? (
           <div className='flex items-center gap-3 py-2'>
             <Loader2 className='size-5 animate-spin text-muted-foreground' />
-            <p className='text-sm text-muted-foreground'>Connecting...</p>
+            <p className='text-sm text-muted-foreground'>{content.connecting}</p>
           </div>
         ) : isError || !status ? (
           <div className='flex items-center gap-3 py-2'>
             <WifiOff className='size-5 text-destructive' />
             <div>
-              <p className='text-sm font-medium'>Offline</p>
-              <p className='text-xs text-muted-foreground'>Cannot reach Nagisa server</p>
+              <p className='text-sm font-medium'>{content.offline}</p>
+              <p className='text-xs text-muted-foreground'>{content.cannotReach}</p>
             </div>
           </div>
         ) : (
@@ -101,8 +103,10 @@ export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
               <div className='flex items-center gap-3'>
                 <Wifi className='size-5 text-success' />
                 <div>
-                  <p className='text-sm font-medium'>Online</p>
-                  <p className='text-xs text-muted-foreground'>Uptime: {formatUptime(status.uptime)}</p>
+                  <p className='text-sm font-medium'>{content.online}</p>
+                  <p className='text-xs text-muted-foreground'>
+                    {content.uptime({ time: formatUptime(status.uptime) })}
+                  </p>
                 </div>
               </div>
               <Badge variant='secondary' className='font-mono'>
@@ -111,23 +115,34 @@ export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
             </div>
 
             <div className='grid grid-cols-5 gap-1.5'>
-              <QueueStat icon={Clock} label='Wait' value={status.queue?.wait.count ?? 0} />
-              <QueueStat icon={Loader2} label='Active' value={status.queue?.active.count ?? 0} active />
-              <QueueStat icon={CheckCircle} label='Done' value={status.queue?.completed.count ?? 0} />
+              <QueueStat icon={Clock} label={content.queue.wait.value} value={status.queue?.wait.count ?? 0} />
+              <QueueStat
+                icon={Loader2}
+                label={content.queue.active.value}
+                value={status.queue?.active.count ?? 0}
+                active
+              />
+              <QueueStat
+                icon={CheckCircle}
+                label={content.queue.done.value}
+                value={status.queue?.completed.count ?? 0}
+              />
               <QueueStat
                 icon={AlertTriangle}
-                label='Fail'
+                label={content.queue.fail.value}
                 value={status.queue?.failed.count ?? 0}
                 error={(status.queue?.failed.count ?? 0) > 0}
               />
-              <QueueStat icon={Zap} label='Delay' value={status.queue?.delayed.count ?? 0} />
+              <QueueStat icon={Zap} label={content.queue.delay.value} value={status.queue?.delayed.count ?? 0} />
             </div>
 
             {(status.queue?.active.jobs.length ?? 0) > 0 && (
               <div className='space-y-2'>
                 <div className='flex items-center gap-3'>
                   <Activity className='size-5 text-info' />
-                  <p className='text-sm font-medium'>Active Jobs ({status.queue?.active.jobs.length})</p>
+                  <p className='text-sm font-medium'>
+                    {content.activeJobs({ count: status.queue?.active.jobs.length ?? 0 })}
+                  </p>
                 </div>
                 <div className='space-y-1.5'>
                   {status.queue?.active.jobs.map((job) => (
@@ -149,23 +164,23 @@ export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
                       <div className='flex items-center justify-between'>
                         <span className='inline-flex items-center gap-1 text-muted-foreground'>
                           <Power className='size-3' />
-                          Status
+                          {content.redis.status}
                         </span>
                         <span className={status.redis.connected ? 'text-success' : 'text-destructive'}>
-                          {status.redis.connected ? 'Connected' : 'Disconnected'}
+                          {status.redis.connected ? content.redis.connected : content.redis.disconnected}
                         </span>
                       </div>
                       <div className='flex items-center justify-between'>
                         <span className='inline-flex items-center gap-1 text-muted-foreground'>
                           <MemoryStick className='size-3' />
-                          Memory
+                          {content.redis.memory}
                         </span>
                         <span className='font-mono'>{status.redis.memory_used}</span>
                       </div>
                       <div className='flex items-center justify-between'>
                         <span className='inline-flex items-center gap-1 text-muted-foreground'>
                           <Clock className='size-3' />
-                          Uptime
+                          {content.redis.uptime}
                         </span>
                         <span>{formatUptime(status.redis.uptime)}</span>
                       </div>
@@ -176,7 +191,9 @@ export const ServerStatusDialog = ({ trigger }: { trigger: ReactElement }) => {
                   <div className='space-y-2 rounded-lg bg-muted/40 p-3'>
                     <div className='flex items-center gap-2'>
                       <Cpu className='size-3.5 text-muted-foreground' />
-                      <p className='text-xs font-medium uppercase tracking-wider text-muted-foreground'>System</p>
+                      <p className='text-xs font-medium uppercase tracking-wider text-muted-foreground'>
+                        {content.system}
+                      </p>
                     </div>
                     <div className='space-y-1 text-xs'>
                       <div className='flex items-center justify-between'>

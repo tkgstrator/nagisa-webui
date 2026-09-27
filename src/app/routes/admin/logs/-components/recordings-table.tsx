@@ -55,7 +55,7 @@ export const RecordingsTable = ({ events }: { events: RecordingEventSchema[] }) 
               {content.headers.episode}
             </th>
             <th scope='col' className={`${numHeadClass} max-sm:hidden`}>
-              HTTP
+              {content.headers.http}
             </th>
             <th scope='col' className={numHeadClass}>
               {content.headers.result}
