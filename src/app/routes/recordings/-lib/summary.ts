@@ -1,7 +1,11 @@
+import { getIntlayer } from 'intlayer'
 import { providerLabel } from '@/app/lib/constants'
+import { appLocale } from '@/app/lib/locale'
 import type { AnimeSchema } from '@/schemas/anime.dto'
 import { daysUntil } from '../-components/format'
 import { RECORDED_OPTIONS, type RecordedFilter } from '../-components/recordings-toolbar'
+
+const content = getIntlayer('recordings-summary', appLocale)
 
 export type RecordingsSummary = {
   recorded: number
@@ -41,11 +45,11 @@ export const activeFilterTerms = ({
   expiringOnly
 }: ActiveFilterTermsParams): string[] => {
   const terms: string[] = []
-  if (search.trim().length > 0) terms.push(`検索: ${search.trim()}`)
+  if (search.trim().length > 0) terms.push(content.searchTerm({ search: search.trim() }))
   if (provider !== undefined) terms.push(providerLabel[provider] ?? provider)
   if (recordedFilter !== 'all') {
     terms.push(RECORDED_OPTIONS.find((opt) => opt.value === recordedFilter)?.label ?? recordedFilter)
   }
-  if (expiringOnly) terms.push('配信終了予定のみ')
+  if (expiringOnly) terms.push(content.expiringOnly)
   return terms
 }

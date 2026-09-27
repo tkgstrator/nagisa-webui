@@ -1,3 +1,6 @@
+import { getIntlayer, getLocaleName, locales } from 'intlayer'
+import { useIntlayer, useLocale } from 'react-intlayer'
+import { appLocale } from '@/app/lib/locale'
 import {
   type CardDensity,
   PAGE_SIZE_OPTIONS,
@@ -7,22 +10,30 @@ import {
   useSettings
 } from '../-lib/settings'
 import { StNote, StPanel, StRow, StSegment, StSelect, StSwitch } from './controls'
-import { BoltIcon, DensityIcon, PageSizeIcon, SortIcon, ThemeIcon } from './icons'
+import { BoltIcon, DensityIcon, LanguageIcon, PageSizeIcon, SortIcon, ThemeIcon } from './icons'
 import { PgSec } from './section'
 
+const displaySectionModuleContent = getIntlayer('settings-display-section', appLocale)
+
 const THEME_OPTIONS = [
-  { value: 'light', label: 'ライト' },
-  { value: 'dark', label: 'ダーク' },
-  { value: 'system', label: 'システム' }
+  { value: 'light', label: displaySectionModuleContent.themeOptions.light },
+  { value: 'dark', label: displaySectionModuleContent.themeOptions.dark },
+  { value: 'system', label: displaySectionModuleContent.themeOptions.system }
 ] as const satisfies readonly { value: ThemePreference; label: string }[]
 
 const DENSITY_OPTIONS = [
-  { value: 'comfortable', label: 'ゆったり' },
-  { value: 'default', label: '標準' },
-  { value: 'compact', label: '詰める' }
+  { value: 'comfortable', label: displaySectionModuleContent.densityOptions.comfortable },
+  { value: 'default', label: displaySectionModuleContent.densityOptions.default },
+  { value: 'compact', label: displaySectionModuleContent.densityOptions.compact }
 ] as const satisfies readonly { value: CardDensity; label: string }[]
 
-const PAGE_SIZE_SELECT = PAGE_SIZE_OPTIONS.map((size) => ({ value: String(size), label: `${size} 件` }))
+/** 言語名はその言語自身で書く (English に切り替えた人が「日本語」を読めるとは限らない)。 */
+const LANGUAGE_OPTIONS = locales.map((locale) => ({ value: String(locale), label: getLocaleName(locale, locale) }))
+
+const PAGE_SIZE_SELECT = PAGE_SIZE_OPTIONS.map((size) => ({
+  value: String(size),
+  label: displaySectionModuleContent.pageSizeOption({ size })
+}))
 
 const SORT_SELECT = (Object.keys(SORT_LABELS) as SortPreference[]).map((value) => ({
   value,
@@ -31,28 +42,51 @@ const SORT_SELECT = (Object.keys(SORT_LABELS) as SortPreference[]).map((value) =
 
 export const DisplaySection = () => {
   const { settings, update } = useSettings()
+  const content = useIntlayer('settings-display-section')
+  const { locale, setLocale } = useLocale()
+
+  // モジュールスコープの辞書は起動時の言語で固まっているので、保存してから読み直す。
+  const changeLocale = (next: string) => {
+    if (next === locale) return
+    setLocale(next as typeof locale)
+    window.location.reload()
+  }
 
   return (
-    <PgSec id='s-view' title='表示' count='一覧とカードの見え方'>
+    <PgSec id='s-view' title={content.title.value} count={content.count}>
       <StPanel>
-        <StRow index={0} icon={<ThemeIcon />} label='テーマ' description='「システム」は OS の外観設定に追従する。'>
+        <StRow index={0} icon={<ThemeIcon />} label={content.theme.label.value} description={content.theme.description}>
           <StSegment
-            label='テーマ'
+            label={content.theme.label.value}
             value={settings.theme}
             options={THEME_OPTIONS}
             onValueChange={(next) => update('theme', next)}
           />
         </StRow>
 
-        {/* browse / recordings / admin/unidentified の一覧がこの件数で取得する。 */}
         <StRow
           index={1}
+          icon={<LanguageIcon />}
+          label={content.language.label.value}
+          description={content.language.description}
+        >
+          <StSegment
+            label={content.language.label.value}
+            value={String(locale)}
+            options={LANGUAGE_OPTIONS}
+            onValueChange={changeLocale}
+          />
+        </StRow>
+
+        {/* browse / recordings / admin/unidentified の一覧がこの件数で取得する。 */}
+        <StRow
+          index={2}
           icon={<PageSizeIcon />}
-          label='1 ページの表示件数'
-          description='アニメ一覧・録画一覧・未識別タイトルに適用される。'
+          label={content.pageSize.label.value}
+          description={content.pageSize.description}
         >
           <StSelect
-            label='1 ページの表示件数'
+            label={content.pageSize.label.value}
             value={String(settings.pageSize)}
             options={PAGE_SIZE_SELECT}
             onValueChange={(next) => update('pageSize', Number(next))}
@@ -60,9 +94,14 @@ export const DisplaySection = () => {
         </StRow>
 
         {/* browse の絞り込み初期値と「すべて解除」後の並び順になる。 */}
-        <StRow index={2} icon={<SortIcon />} label='既定の並び順' description='URL に指定があればそちらが優先される。'>
+        <StRow
+          index={3}
+          icon={<SortIcon />}
+          label={content.defaultSort.label.value}
+          description={content.defaultSort.description}
+        >
           <StSelect
-            label='既定の並び順'
+            label={content.defaultSort.label.value}
             value={settings.defaultSort}
             options={SORT_SELECT}
             onValueChange={(next) => update('defaultSort', next)}
@@ -71,13 +110,13 @@ export const DisplaySection = () => {
 
         {/* browse のカードグリッドの列数と余白がこの値で変わる。 */}
         <StRow
-          index={3}
+          index={4}
           icon={<DensityIcon />}
-          label='カードの密度'
-          description='1 行あたりの枚数とサムネイルの大きさが変わる。'
+          label={content.density.label.value}
+          description={content.density.description}
         >
           <StSegment
-            label='カードの密度'
+            label={content.density.label.value}
             value={settings.density}
             options={DENSITY_OPTIONS}
             onValueChange={(next) => update('density', next)}
@@ -85,14 +124,14 @@ export const DisplaySection = () => {
         </StRow>
 
         <StRow
-          index={4}
+          index={5}
           icon={<BoltIcon />}
-          label='アニメーション'
-          description='OS で「視差を減らす」が有効なときは、この設定によらず抑制される。'
+          label={content.animations.label.value}
+          description={content.animations.description}
         >
-          <StNote>{settings.animations ? '有効' : '無効'}</StNote>
+          <StNote>{settings.animations ? content.animations.on : content.animations.off}</StNote>
           <StSwitch
-            label='アニメーション'
+            label={content.animations.label.value}
             checked={settings.animations}
             onCheckedChange={(next) => update('animations', next)}
           />

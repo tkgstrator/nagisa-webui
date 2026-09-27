@@ -95,15 +95,27 @@ const NagisaJobProgressSchema = z.object({
   total: z.number().int()
 })
 
+/**
+ * `episodes: null` は「そのシーズンの全話」(投入時の `NagisaSeasonFilterSchema` と同じ意味)。
+ * 必須にすると全話指定のジョブが 1 件でもキューに居るだけで応答全体の parse が落ちる。
+ */
 const NagisaStatusJobSeasonSchema = z.object({
   season_number: z.number().int(),
-  episodes: z.array(z.number().int())
+  episodes: z.array(z.number().int()).nullable()
 })
+
+/**
+ * キューには録画ジョブ以外も積まれる。台帳の reindex ジョブは
+ * `provider` / `content_id` が null (ライブラリ全体が対象)。ここを必須にすると
+ * nightly の reindex が走っているあいだ job-sync が毎分落ち続ける。
+ */
+const JobProviderSchema = ProviderEnum.nullable()
+const JobContentIdSchema = z.string().nullable()
 
 export const NagisaStatusJobSchema = z.object({
   job_id: z.string().nonempty(),
-  provider: ProviderEnum,
-  content_id: z.string().nonempty(),
+  provider: JobProviderSchema,
+  content_id: JobContentIdSchema,
   title: z.string().nullable(),
   seasons: z.array(NagisaStatusJobSeasonSchema).nullable(),
   marketplace: MarketplaceEnum.nullable(),
@@ -165,8 +177,8 @@ export type NagisaJobState = z.infer<typeof NagisaJobStateEnum>
 export const NagisaQueueSnapshotJobSchema = z.object({
   job_id: z.string().nonempty(),
   state: NagisaJobStateEnum,
-  provider: ProviderEnum,
-  content_id: z.string().nonempty(),
+  provider: JobProviderSchema,
+  content_id: JobContentIdSchema,
   title: z.string().nullable(),
   seasons: z.array(NagisaStatusJobSeasonSchema).nullable(),
   progress: NagisaJobProgressSchema.nullable(),
@@ -203,7 +215,12 @@ export const NagisaLibraryItemSchema = z.object({
   /** ライブラリルートからの相対パス */
   path: z.string().nonempty(),
   size: z.number().int(),
-  mtime: z.string().nullable()
+  mtime: z.string().nullable(),
+  /**
+   * フォルダ名の `[tmdbid-N]`。TMDb で解決できなかったフォルダは null、
+   * この列を持たない古い nagisa は送ってこない
+   */
+  tmdb_id: z.number().int().nullish()
 })
 export type NagisaLibraryItem = z.infer<typeof NagisaLibraryItemSchema>
 
@@ -260,50 +277,3 @@ export const NagisaLibraryErrorSchema = z.object({
   message: z.string().nonempty()
 })
 export type NagisaLibraryError = z.infer<typeof NagisaLibraryErrorSchema>
-
-// --- AniList 作品ごとの録画状況 (Nagisa 1.7.x〜) ---
-//
-// Nagisa は (provider, content_id) → anilist_id の対応を台帳に持つ。対応は投入時の
-// `anilist_id` か `PUT /api/library/titles` でしか入らず、Nagisa 側で推測はしない。
-
-export const NagisaTitleMappingSchema = z.object({
-  provider: ProviderEnum,
-  content_id: z.string().nonempty(),
-  anilist_id: z.number().int().positive()
-})
-export type NagisaTitleMapping = z.infer<typeof NagisaTitleMappingSchema>
-
-export const NagisaTitlesRequestSchema = z.object({
-  titles: z.array(NagisaTitleMappingSchema)
-})
-export type NagisaTitlesRequest = z.infer<typeof NagisaTitlesRequestSchema>
-
-export const NagisaAnilistRecordingSchema = z.object({
-  recording_id: z.string().nonempty(),
-  episode_id: z.string().nullable(),
-  season_number: z.number().int().nullable(),
-  episode_number: z.number().int().nullable(),
-  /** ライブラリルートからの相対パス */
-  path: z.string().nonempty(),
-  size: z.number().int(),
-  mtime: z.string().nullable()
-})
-export type NagisaAnilistRecording = z.infer<typeof NagisaAnilistRecordingSchema>
-
-export const NagisaAnilistTitleSchema = z.object({
-  provider: z.string().nonempty(),
-  content_id: z.string().nonempty(),
-  updated_at: z.string().nonempty(),
-  /** 台帳の行。対応はあるが何も録れていない作品は空配列 */
-  recordings: z.array(NagisaAnilistRecordingSchema),
-  /** 待機中・実行中のジョブ。キューが読めなかったときは null (空配列とは別物) */
-  jobs: z.array(NagisaQueueSnapshotJobSchema).nullable()
-})
-export type NagisaAnilistTitle = z.infer<typeof NagisaAnilistTitleSchema>
-
-export const NagisaAnilistLookupSchema = z.object({
-  anilist_id: z.number().int(),
-  queue_available: z.boolean(),
-  titles: z.array(NagisaAnilistTitleSchema)
-})
-export type NagisaAnilistLookup = z.infer<typeof NagisaAnilistLookupSchema>

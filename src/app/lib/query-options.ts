@@ -1,4 +1,5 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
+import type { KeyArchiveProviderEnum } from '@/schemas/archive.dto'
 import api from './api'
 import { queryKeys } from './query-keys'
 
@@ -21,34 +22,26 @@ export const badgedAnimeQueryOptions = () =>
 export const animeDetailQueryOptions = (id: string) =>
   queryOptions({ queryKey: queryKeys.anime.detail(id), queryFn: () => api.getAnime({ params: { id } }) })
 
-/** 上流が落ちていても 200 + error で返るので、再試行は要らない。 */
-export const animeRecordingStatusQueryOptions = (id: string) =>
-  queryOptions({
-    queryKey: queryKeys.anime.recordingStatus(id),
-    queryFn: () => api.getAnimeRecordingStatus({ params: { id } }),
-    retry: false
-  })
-
-export const nagisaStatusQueryOptions = () =>
-  queryOptions({ queryKey: queryKeys.nagisa.status, queryFn: () => api.getNagisaStatus(), refetchInterval: 15_000 })
+export const recorderStatusQueryOptions = () =>
+  queryOptions({ queryKey: queryKeys.recorder.status, queryFn: () => api.getRecorderStatus(), refetchInterval: 15_000 })
 
 /**
- * 上流 (nagisa) を叩く 2 本は落ちていることが正常系なので、**失敗しても再試行しない**。
+ * 上流 (録画サーバー) を叩く 2 本は落ちていることが正常系なので、**失敗しても再試行しない**。
  * 15 秒ごとのポーリングがそのまま次の試行になるし、ここで retry を積むと
  * 上流が落ちている間だけ画面が「読み込み中」のまま固まる。
  */
-export const nagisaQueueSnapshotQueryOptions = () =>
+export const recorderQueueSnapshotQueryOptions = () =>
   queryOptions({
-    queryKey: queryKeys.nagisa.queueSnapshot,
-    queryFn: () => api.getNagisaQueueSnapshot(),
+    queryKey: queryKeys.recorder.queueSnapshot,
+    queryFn: () => api.getRecorderQueueSnapshot(),
     refetchInterval: 15_000,
     retry: false
   })
 
-export const nagisaLibraryStatsQueryOptions = () =>
+export const recordingLibraryStatsQueryOptions = () =>
   queryOptions({
-    queryKey: queryKeys.nagisa.libraryStats,
-    queryFn: () => api.getNagisaLibraryStats(),
+    queryKey: queryKeys.recordingLibrary.stats,
+    queryFn: () => api.getRecordingLibraryStats(),
     refetchInterval: 30_000,
     retry: false
   })
@@ -56,7 +49,7 @@ export const nagisaLibraryStatsQueryOptions = () =>
 /** こちらはローカル D1 だけを見るので、上流が落ちていても必ず返る。 */
 export const recordingSyncStateQueryOptions = () =>
   queryOptions({
-    queryKey: queryKeys.nagisa.syncState,
+    queryKey: queryKeys.recordingLibrary.syncState,
     queryFn: () => api.getRecordingSyncState(),
     refetchInterval: 30_000
   })
@@ -99,11 +92,18 @@ export const recordingEventsQueryOptions = (filters: Record<string, unknown>) =>
     refetchInterval: 30_000
   })
 
-export const logStatsQueryOptions = () =>
-  queryOptions({ queryKey: queryKeys.admin.logStats, queryFn: () => api.getLogStats(), refetchInterval: 30_000 })
+export const syncRunStatsQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.admin.syncRunStats,
+    queryFn: () => api.getSyncRunStats(),
+    refetchInterval: 30_000
+  })
 
-export const archiveStatsQueryOptions = () =>
-  queryOptions({ queryKey: queryKeys.admin.archiveStats, queryFn: () => api.getArchiveStats() })
+export const archiveStatsQueryOptions = (provider: KeyArchiveProviderEnum) =>
+  queryOptions({
+    queryKey: queryKeys.admin.archiveStats(provider),
+    queryFn: () => api.getArchiveStats({ queries: { provider } })
+  })
 
 export type ChangelogEntry = { hash: string; date: string; message: string }
 

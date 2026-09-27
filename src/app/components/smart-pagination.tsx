@@ -1,3 +1,4 @@
+import { useIntlayer } from 'react-intlayer'
 import {
   Pagination,
   PaginationContent,
@@ -41,6 +42,8 @@ export function SmartPagination({
   totalPages: number
   onPageChange: (page: number) => void
 }) {
+  const content = useIntlayer('smart-pagination')
+
   if (totalPages <= 1) return null
 
   return (
@@ -48,7 +51,7 @@ export function SmartPagination({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            text='前へ'
+            text={content.previous.value}
             onClick={() => onPageChange(Math.max(1, page - 1))}
             className={page === 1 ? 'pointer-events-none opacity-30' : 'cursor-pointer'}
           />
@@ -68,7 +71,7 @@ export function SmartPagination({
         )}
         <PaginationItem>
           <PaginationNext
-            text='次へ'
+            text={content.next.value}
             onClick={() => onPageChange(Math.min(totalPages, page + 1))}
             className={page === totalPages ? 'pointer-events-none opacity-30' : 'cursor-pointer'}
           />

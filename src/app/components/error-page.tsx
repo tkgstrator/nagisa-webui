@@ -2,6 +2,7 @@ import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { ChevronDown, Home, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
 import { StatusHero, StatusMeta, type StatusMetaRow, type StatusTone } from '@/app/components/status-page'
 import { Button } from '@/app/components/ui/button'
@@ -59,8 +60,13 @@ const statusLabels: Record<number, string> = {
   504: 'Gateway Timeout'
 }
 
+type ErrorPageContent = ReturnType<typeof useIntlayer<'error-page'>>
+
 /** ステータスから見出しの深刻度と文面を決める。ステータス不明はネットワーク到達不能として扱う。 */
-function describe(statusCode: number | undefined): {
+function describe(
+  statusCode: number | undefined,
+  content: ErrorPageContent
+): {
   tone: StatusTone
   eyebrow: string
   title: string
@@ -71,10 +77,9 @@ function describe(statusCode: number | undefined): {
     return {
       tone: 'warn',
       eyebrow: 'NETWORK ERROR',
-      title: 'サーバーに接続できません',
-      description:
-        'ネットワークに接続されていないか、サーバーに到達できませんでした。接続を確認してから再度お試しください。',
-      statusValue: '応答なし'
+      title: content.variants.network.title.value,
+      description: content.variants.network.description.value,
+      statusValue: content.variants.network.statusValue.value
     }
   }
 
@@ -85,8 +90,8 @@ function describe(statusCode: number | undefined): {
     return {
       tone: 'mute',
       eyebrow: `404 ${label.toUpperCase()}`,
-      title: 'ページが見つかりません',
-      description: 'お探しのページは存在しないか、移動した可能性があります。',
+      title: content.variants.notFound.title.value,
+      description: content.variants.notFound.description.value,
       statusValue
     }
   }
@@ -95,8 +100,8 @@ function describe(statusCode: number | undefined): {
     return {
       tone: 'warn',
       eyebrow: `${statusCode} ${label.toUpperCase()}`,
-      title: '一時的に利用できません',
-      description: 'メンテナンス中か、アクセスが集中しています。時間をおいてから再度お試しください。',
+      title: content.variants.unavailable.title.value,
+      description: content.variants.unavailable.description.value,
       statusValue
     }
   }
@@ -105,8 +110,8 @@ function describe(statusCode: number | undefined): {
     return {
       tone: 'warn',
       eyebrow: `${statusCode} ${label.toUpperCase()}`,
-      title: 'サーバーの応答がありません',
-      description: '上流のサーバーが応答しませんでした。時間をおいてから再度お試しください。',
+      title: content.variants.gateway.title.value,
+      description: content.variants.gateway.description.value,
       statusValue
     }
   }
@@ -114,9 +119,8 @@ function describe(statusCode: number | undefined): {
   return {
     tone: 'danger',
     eyebrow: `${statusCode} ${label.toUpperCase()}`,
-    title: 'データの取得に失敗しました',
-    description:
-      'サーバー側で予期しないエラーが発生しました。データは失われていません。しばらく待ってから再読み込みしてください。',
+    title: content.variants.generic.title.value,
+    description: content.variants.generic.description.value,
     statusValue
   }
 }
@@ -126,15 +130,16 @@ export function ErrorPage({ error }: { error: unknown }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   // 描画のたびに動くと落ち着かないので、マウント時刻で固定する
   const [occurredAt] = useState(() => dayjs().format('YYYY-MM-DD HH:mm:ss'))
+  const content = useIntlayer('error-page')
 
   const statusCode = getStatusCode(error)
-  const { tone, eyebrow, title, description, statusValue } = describe(statusCode)
+  const { tone, eyebrow, title, description, statusValue } = describe(statusCode, content)
   const raw = getRawMessage(error)
 
   const rows: StatusMetaRow[] = [
-    { label: 'リクエスト', value: getRequestLine(error, pathname) },
-    { label: 'ステータス', value: statusValue, tone: tone === 'mute' ? undefined : tone },
-    { label: '発生時刻', value: occurredAt }
+    { label: content.meta.request.value, value: getRequestLine(error, pathname) },
+    { label: content.meta.status.value, value: statusValue, tone: tone === 'mute' ? undefined : tone },
+    { label: content.meta.occurredAt.value, value: occurredAt }
   ]
 
   return (
@@ -147,7 +152,7 @@ export function ErrorPage({ error }: { error: unknown }) {
         <div className='mt-[18px] flex flex-wrap items-center gap-2'>
           <Button className='h-[34px] gap-[7px] rounded-md px-3.5 text-[12.5px]' onClick={() => router.invalidate()}>
             <RotateCcw className='size-[15px]' />
-            再読み込み
+            {content.actions.reload}
           </Button>
           <Button
             variant='outline'
@@ -155,7 +160,7 @@ export function ErrorPage({ error }: { error: unknown }) {
             render={<Link to='/' />}
           >
             <Home className='size-[15px]' />
-            ホームに戻る
+            {content.actions.home}
           </Button>
         </div>
 
@@ -163,7 +168,7 @@ export function ErrorPage({ error }: { error: unknown }) {
           <details className='group mt-[18px]'>
             <summary className='inline-flex cursor-pointer list-none items-center gap-1.5 text-[11.5px] text-muted-foreground transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden'>
               <ChevronDown className='size-[13px] transition-transform group-open:rotate-180' />
-              技術的な詳細
+              {content.details}
             </summary>
             <pre className='mt-2.5 overflow-x-auto whitespace-pre-wrap break-all rounded-r-md border-border border-l-[3px] bg-muted px-3.5 py-3 font-mono text-[11px] text-muted-foreground leading-[1.7]'>
               {raw}

@@ -6,7 +6,7 @@
 
 ## 現状の課題
 
-- 録画ボタンを押すと `POST /api/anime/:id/record` → nagisa に HTTP リクエストを送信し、即座に `{ success: true }` を返す
+- 録画ボタンを押すと `POST /api/anime/{id}/recording-jobs` → nagisa に HTTP リクエストを送信し、即座に `{ success: true }` を返す
 - ダウンロードが実際に進んでいるのか、完了したのか、失敗したのかをフロントエンドから知る手段がない
 - ユーザーは「本当に動いてる？」という不安を抱える
 

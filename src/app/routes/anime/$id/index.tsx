@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
@@ -12,7 +13,6 @@ import { AnimeHero } from './-components/anime-hero'
 import { AnimeInfo } from './-components/anime-info'
 import { BroadcastSchedule } from './-components/broadcast-schedule'
 import { EpisodeGrid } from './-components/episode-grid'
-import { RecordingStatus } from './-components/recording-status'
 import { RelatedProviders } from './-components/related-providers'
 
 function getApiErrorMessage(error: unknown, fallback: string): string {
@@ -49,6 +49,7 @@ export const Route = createFileRoute('/anime/$id/')({
 })
 
 function AnimeDetailPage() {
+  const content = useIntlayer('anime-id')
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
   const { data: anime } = useSuspenseQuery(animeDetailQueryOptions(id))
@@ -57,7 +58,6 @@ function AnimeDetailPage() {
   const invalidateRelated = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.detail(id) })
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.all })
-    queryClient.invalidateQueries({ queryKey: queryKeys.anime.recordingStatus(id) })
   }
 
   const updateAnimeMutation = useMutation({
@@ -69,12 +69,12 @@ function AnimeDetailPage() {
     mutationFn: () => api.recordAnime(undefined, { params: { id } }),
     onSuccess: (data) => {
       if (data.count === 0) {
-        toast.info('録画対象のエピソードがありません')
+        toast.info(content.toast.noRecordableEpisodes.value)
         return
       }
-      toast.success('録画を開始しました')
+      toast.success(content.toast.recordingStarted.value)
     },
-    onError: () => toast.error('録画リクエストに失敗しました'),
+    onError: () => toast.error(content.toast.recordingRequestFailed.value),
     // 失敗しても各話の録画状態は書き換わっているので読み直す
     onSettled: invalidateRelated
   })
@@ -84,16 +84,16 @@ function AnimeDetailPage() {
     onSuccess: (data) => {
       // 配信元の更新は済んでいる。nagisa との同期だけが落ちた場合は、そうと分かるように出す
       if (data.sync.jobs.error !== null || data.sync.library.error !== null) {
-        toast.warning('タイトル情報は更新しましたが、録画状態の同期に失敗しました', {
+        toast.warning(content.toast.refreshedWithSyncError.value, {
           description: data.sync.jobs.error ?? data.sync.library.error ?? undefined
         })
       } else {
-        toast.success('タイトル情報と録画状態を更新しました')
+        toast.success(content.toast.refreshed.value)
       }
       invalidateRelated()
-      queryClient.invalidateQueries({ queryKey: queryKeys.nagisa.syncState })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recordingLibrary.syncState })
     },
-    onError: (error) => toast.error(getApiErrorMessage(error, '情報の更新に失敗しました'))
+    onError: (error) => toast.error(getApiErrorMessage(error, content.toast.refreshFailed.value))
   })
 
   const updating = updateAnimeMutation.isPending || recordAnimeMutation.isPending || refreshAnimeMutation.isPending
@@ -121,13 +121,16 @@ function AnimeDetailPage() {
     <PageContainer className='gap-10 max-sm:gap-[30px]'>
       <BroadcastSchedule anime={anime} />
 
-      <nav className='flex items-center gap-1.5 text-[12.5px] text-muted-foreground' aria-label='パス'>
+      <nav
+        className='flex items-center gap-1.5 text-[12.5px] text-muted-foreground'
+        aria-label={content.breadcrumb.ariaLabel.value}
+      >
         <Link
           to='/browse'
           className='inline-flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors hover:bg-muted hover:text-foreground'
         >
           <ChevronLeft className='size-3' />
-          アニメ一覧
+          {content.breadcrumb.browse}
         </Link>
         <span>/</span>
         <span className='truncate font-semibold text-foreground'>{anime.title}</span>
@@ -147,7 +150,6 @@ function AnimeDetailPage() {
       <div className='grid grid-cols-[minmax(0,1fr)_280px] items-start gap-8 max-lg:grid-cols-[minmax(0,1fr)] max-lg:gap-7'>
         <EpisodeGrid anime={anime} />
         <aside className='sticky top-6 flex flex-col gap-6 max-lg:static'>
-          <RecordingStatus anime={anime} />
           <RelatedProviders anime={anime} />
           <AnimeInfo anime={anime} />
         </aside>

@@ -1,5 +1,9 @@
+import { getIntlayer } from 'intlayer'
 import { getDefaultStore, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
+import { appLocale } from '@/app/lib/locale'
+
+const settingsModuleContent = getIntlayer('settings-settings', appLocale)
 
 export type ThemePreference = 'light' | 'dark' | 'system'
 export type CardDensity = 'comfortable' | 'default' | 'compact'
@@ -10,7 +14,7 @@ export type LanguagePreference = 'sub' | 'dub'
 export const PROVIDER_KEYS = ['amazon', 'hulu', 'crunchyroll', 'abema', 'netflix'] as const
 export type ProviderKey = (typeof PROVIDER_KEYS)[number]
 
-/** カタログ取得が実装されていないプロバイダ。行には「未連携」タグが出る。 */
+/** カタログ取得が実装されていないプロバイダ。行には「まだ対応していません」と出る。 */
 export const UNLINKED_PROVIDERS: readonly ProviderKey[] = ['netflix']
 
 export interface SeasonPin {
@@ -38,15 +42,15 @@ export const PAGE_SIZE_OPTIONS = [12, 24, 48, 96] as const
 export const EXPIRING_LEAD_DAY_OPTIONS = [3, 7, 14, 30] as const
 
 export const SORT_LABELS: Record<SortPreference, string> = {
-  'title-asc': 'タイトル (昇順)',
-  'title-desc': 'タイトル (降順)',
-  'year-asc': '放送年 (古い順)',
-  'year-desc': '放送年 (新しい順)'
+  'title-asc': settingsModuleContent.sortLabels.titleAsc,
+  'title-desc': settingsModuleContent.sortLabels.titleDesc,
+  'year-asc': settingsModuleContent.sortLabels.yearAsc,
+  'year-desc': settingsModuleContent.sortLabels.yearDesc
 }
 
 export const LANGUAGE_LABELS: Record<LanguagePreference, string> = {
-  sub: '字幕 (sub)',
-  dub: '吹き替え (dub)'
+  sub: settingsModuleContent.languageLabels.sub,
+  dub: settingsModuleContent.languageLabels.dub
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -113,9 +117,10 @@ export const parseSortPreference = (value: SortPreference): { sort: 'title' | 'y
   return { sort, order }
 }
 
-export const QUARTER_LABELS = ['冬', '春', '夏', '秋'] as const
+export const QUARTER_LABELS = settingsModuleContent.quarterLabels
 
-export const formatSeason = (season: SeasonPin) => `${season.year}年 ${QUARTER_LABELS[season.quarter - 1] ?? ''}`
+export const formatSeason = (season: SeasonPin) =>
+  settingsModuleContent.seasonFormat({ year: season.year, quarter: QUARTER_LABELS[season.quarter - 1] ?? '' })
 
 const prefersDark = () => typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
 

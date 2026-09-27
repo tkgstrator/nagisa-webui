@@ -64,7 +64,7 @@ anime (scheduled, recorded) = (0,1): 43 件 / (1,1): 13 件
 ```
 
 作品レベルで 56 件 `recorded` が立っているのに話レベルは 1 件。
-しかも `recorded` は `PATCH /api/recordings/...`（`src/routes/recordings.ts`）から手動でも立つ。
+しかも `recorded` は `PATCH /api/episodes/{id}`（`src/routes/episodes.ts`）から手動でも立つ。
 **webhook 由来で記録された成功はゼロ**である。
 
 ---
@@ -729,7 +729,7 @@ export const EpisodeRecordState = z.object({
 
 進捗率（0-100%）は BullMQ の `job.progress` を②の snapshot 経由で取れるが、
 **D1 には保存しない**。書き込み量が跳ね上がるため、進捗が要るなら
-詳細画面表示中だけ `GET /api/recordings/inflight`（Workers が nagisa を都度中継）で引く。
+詳細画面表示中だけ `GET /api/recordings/inflight`（構想。未実装のため、[api-restful-renaming.md](../plans/api-restful-renaming.md) の改名対象外。Workers が nagisa を都度中継）で引く。
 これが実質の「即時層」であり、webhook の代わりになる。
 
 ---

@@ -1,87 +1,98 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { KeyRound } from 'lucide-react'
+import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
+import { PageBottomBar } from '@/app/components/page-bottom-bar'
 import { PageContainer } from '@/app/components/page-container'
-import { StatTile } from '@/app/components/stat-tile'
+import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
+import { StatGrid, StatTile } from '@/app/components/stat-tile'
 import { Button } from '@/app/components/ui/button'
 import api from '@/app/lib/api'
+import { appLocale } from '@/app/lib/locale'
 import { queryKeys } from '@/app/lib/query-keys'
 import { archiveStatsQueryOptions } from '@/app/lib/query-options'
+
+/** この画面は ABEMA 専用。API 側は provider を受けるが、ここでは固定 */
+const PROVIDER = 'abema'
 
 export const Route = createFileRoute('/admin/abema/')({
   component: AbemaArchivePage
 })
 
 function AbemaArchivePage() {
+  const content = useIntlayer('admin-abema')
   const queryClient = useQueryClient()
-  const { data: stats, isPending } = useQuery(archiveStatsQueryOptions())
+  const { data: stats, isPending } = useQuery(archiveStatsQueryOptions(PROVIDER))
 
   const enqueueMutation = useMutation({
-    mutationFn: () => api.enqueueArchive(undefined),
+    mutationFn: () => api.enqueueArchive({ provider: PROVIDER }),
     onSuccess: ({ enqueued }) => {
       if (enqueued === 0) {
-        toast.info('鍵が未取得の作品はありません')
+        toast.info(content.toast.nothingToEnqueue.value)
       } else {
-        toast.success(`${enqueued} 作品をキューに投入しました`)
+        toast.success(content.toast.enqueued({ enqueued }).value)
       }
-      queryClient.invalidateQueries({ queryKey: queryKeys.admin.archiveStats })
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.archiveStats(PROVIDER) })
     },
-    onError: () => toast.error('キューへの投入に失敗しました')
+    onError: () => toast.error(content.toast.enqueueFailed.value)
   })
 
   return (
-    <PageContainer className='gap-6'>
-      <header>
-        <h1 className='text-2xl font-bold tracking-tight'>ABEMA 鍵アーカイブ</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>
-          復号鍵が未取得の ABEMA 作品を洗い出し、取得ジョブをキューに投入する
-        </p>
-      </header>
+    <PageContainer className='gap-[22px]'>
+      <PageHeader
+        eyebrow={<PageEyebrowTrail parent={content.eyebrow.value} current={content.title.value} />}
+        title={content.title.value}
+        sub={content.description.value}
+      />
 
-      {stats === undefined ? (
-        <p className='border-l-[3px] border-border px-3.5 py-3 text-sm text-muted-foreground'>
-          {isPending ? '集計を読み込んでいます…' : '集計を取得できませんでした'}
-        </p>
-      ) : (
-        <section aria-label='アーカイブ状況' className='grid grid-cols-3 gap-6 max-lg:grid-cols-2 max-sm:grid-cols-1'>
-          <StatTile
-            label='ABEMA 作品'
-            value={stats.totalAnime}
-            unit='作品'
-            note={`うち ${stats.animeFullyArchived.toLocaleString('ja-JP')} 作品が取得済み`}
-            tone='primary'
-          />
-          <StatTile
-            label='鍵が未取得の作品'
-            value={stats.animeWithMissingKey}
-            unit='作品'
-            note='投入すると 1 作品 1 ジョブで処理する'
-            tone='warn'
-          />
-          <StatTile
-            label='エピソード総数'
-            value={stats.totalEpisodes}
-            unit='話'
-            note={`取得済み ${stats.archivedEpisodes.toLocaleString('ja-JP')} 話 · 未取得 ${stats.pendingEpisodes.toLocaleString('ja-JP')} 話`}
-            tone='ok'
-          />
-        </section>
-      )}
+      <div>
+        {stats === undefined ? (
+          <p className='border-l-[3px] border-border px-3.5 py-3 text-sm text-muted-foreground'>
+            {isPending ? content.loading.value : content.loadError.value}
+          </p>
+        ) : (
+          <StatGrid label={content.sectionLabel.value}>
+            <StatTile
+              label={content.stats.totalAnime.label.value}
+              value={stats.totalAnime}
+              unit={content.stats.totalAnime.unit.value}
+              note={content.stats.totalAnime.note({ count: stats.animeFullyArchived.toLocaleString(appLocale) }).value}
+              tone='primary'
+            />
+            <StatTile
+              label={content.stats.missingKey.label.value}
+              value={stats.animeWithMissingKey}
+              unit={content.stats.missingKey.unit.value}
+              note={content.stats.missingKey.note.value}
+              tone='warning'
+            />
+            <StatTile
+              label={content.stats.totalEpisodes.label.value}
+              value={stats.totalEpisodes}
+              unit={content.stats.totalEpisodes.unit.value}
+              note={
+                content.stats.totalEpisodes.note({
+                  archived: stats.archivedEpisodes.toLocaleString(appLocale),
+                  pending: stats.pendingEpisodes.toLocaleString(appLocale)
+                }).value
+              }
+              tone='success'
+            />
+          </StatGrid>
+        )}
 
-      <div className='flex flex-wrap items-center gap-3 border-t border-border pt-4'>
-        <Button
-          type='button'
-          disabled={enqueueMutation.isPending}
-          onClick={() => enqueueMutation.mutate()}
-          className='gap-2'
-        >
-          <KeyRound className='size-4' />
-          {enqueueMutation.isPending ? '投入中…' : '鍵取得ジョブを投入'}
-        </Button>
-        <span className='text-xs text-muted-foreground'>
-          鍵が未取得の ABEMA 作品をすべてキューに送る。処理はキュー側で順次進む。
-        </span>
+        <PageBottomBar note={content.footerNote.value}>
+          <Button
+            type='button'
+            size='pill'
+            disabled={enqueueMutation.isPending}
+            onClick={() => enqueueMutation.mutate()}
+          >
+            <KeyRound />
+            {enqueueMutation.isPending ? content.enqueueButton.pending.value : content.enqueueButton.idle.value}
+          </Button>
+        </PageBottomBar>
       </div>
     </PageContainer>
   )

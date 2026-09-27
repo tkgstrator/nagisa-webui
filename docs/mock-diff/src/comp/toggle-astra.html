@@ -1,0 +1,55 @@
+TITLE: 選択コントロール — astra 案 | Nagisa WebUI 原子カタログ
+USES:
+---
+<main class="cat">
+<header class="cat-head">
+<h1>選択コントロール <span class="cat-id">toggle</span></h1>
+<p>settings-controls の switch 40×23px・セグメント 26px をそのまま切り出し、一覧の一括選択用チェックと単一選択ラジオを補う。</p>
+<div class="cat-meta"><span>astra / 共通 (原子)</span><span>switch 8 + checkbox 12 + radio 8 + segment 8 = 36 見本</span><span>tone-palette 共通契約 / OS テーマ追従</span><span>全状態を固定表示</span></div>
+</header>
+<section class="cat-sec"><h2>基本 / switch</h2><div class="matrix">
+<div class="cat-item is-key"><div class="cat-label">switch / off / 通常</div><div class="sample"><button type="button" class="a-switch is-default" role="switch" aria-checked="false" aria-label="自動録画予約"></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / off / hover</div><div class="sample"><button type="button" class="a-switch is-hover" role="switch" aria-checked="false" aria-label="自動録画予約"></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / off / focus</div><div class="sample"><button type="button" class="a-switch is-focus" role="switch" aria-checked="false" aria-label="自動録画予約"></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / off / 無効</div><div class="sample"><button type="button" class="a-switch is-disabled" role="switch" aria-checked="false" aria-label="自動録画予約" disabled></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / on / 通常</div><div class="sample"><button type="button" class="a-switch is-default" role="switch" aria-checked="true" aria-label="自動録画予約"></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / on / hover</div><div class="sample"><button type="button" class="a-switch is-hover" role="switch" aria-checked="true" aria-label="自動録画予約"></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / on / focus</div><div class="sample"><button type="button" class="a-switch is-focus" role="switch" aria-checked="true" aria-label="自動録画予約"></button><span>自動録画予約</span></div></div>
+<div class="cat-item"><div class="cat-label">switch / on / 無効</div><div class="sample"><button type="button" class="a-switch is-disabled" role="switch" aria-checked="true" aria-label="自動録画予約" disabled></button><span>自動録画予約</span></div></div>
+</div></section>
+<section class="cat-sec"><h2>checkbox</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">checkbox / off / 通常</div><div class="sample"><label class="a-control-label"><input class="a-check is-default" type="checkbox" name="checkbox-off-default">録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / off / hover</div><div class="sample"><label class="a-control-label"><input class="a-check is-hover" type="checkbox" name="checkbox-off-hover">録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / off / focus</div><div class="sample"><label class="a-control-label"><input class="a-check is-focus" type="checkbox" name="checkbox-off-focus">録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / off / 無効</div><div class="sample"><label class="a-control-label"><input class="a-check is-disabled" type="checkbox" name="checkbox-off-disabled" disabled>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / on / 通常</div><div class="sample"><label class="a-control-label"><input class="a-check is-default" type="checkbox" name="checkbox-on-default" checked>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / on / hover</div><div class="sample"><label class="a-control-label"><input class="a-check is-hover" type="checkbox" name="checkbox-on-hover" checked>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / on / focus</div><div class="sample"><label class="a-control-label"><input class="a-check is-focus" type="checkbox" name="checkbox-on-focus" checked>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / on / 無効</div><div class="sample"><label class="a-control-label"><input class="a-check is-disabled" type="checkbox" name="checkbox-on-disabled" checked disabled>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / mixed / 通常</div><div class="sample"><button type="button" role="checkbox" aria-checked="mixed" aria-label="録画作品を一括選択" class="a-check a-mixed is-default"></button><span>一部選択</span></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / mixed / hover</div><div class="sample"><button type="button" role="checkbox" aria-checked="mixed" aria-label="録画作品を一括選択" class="a-check a-mixed is-hover"></button><span>一部選択</span></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / mixed / focus</div><div class="sample"><button type="button" role="checkbox" aria-checked="mixed" aria-label="録画作品を一括選択" class="a-check a-mixed is-focus"></button><span>一部選択</span></div></div>
+<div class="cat-item"><div class="cat-label">checkbox / mixed / 無効</div><div class="sample"><button type="button" role="checkbox" aria-checked="mixed" aria-label="録画作品を一括選択" class="a-check a-mixed is-disabled" disabled></button><span>一部選択</span></div></div>
+</div></section>
+<section class="cat-sec"><h2>radio</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">radio / off / 通常</div><div class="sample"><label class="a-control-label"><input class="a-check is-default" type="radio" name="radio-off-default">録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / off / hover</div><div class="sample"><label class="a-control-label"><input class="a-check is-hover" type="radio" name="radio-off-hover">録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / off / focus</div><div class="sample"><label class="a-control-label"><input class="a-check is-focus" type="radio" name="radio-off-focus">録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / off / 無効</div><div class="sample"><label class="a-control-label"><input class="a-check is-disabled" type="radio" name="radio-off-disabled" disabled>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / on / 通常</div><div class="sample"><label class="a-control-label"><input class="a-check is-default" type="radio" name="radio-on-default" checked>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / on / hover</div><div class="sample"><label class="a-control-label"><input class="a-check is-hover" type="radio" name="radio-on-hover" checked>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / on / focus</div><div class="sample"><label class="a-control-label"><input class="a-check is-focus" type="radio" name="radio-on-focus" checked>録画作品を選択</label></div></div>
+<div class="cat-item"><div class="cat-label">radio / on / 無効</div><div class="sample"><label class="a-control-label"><input class="a-check is-disabled" type="radio" name="radio-on-disabled" checked disabled>録画作品を選択</label></div></div>
+</div></section>
+<section class="cat-sec"><h2>segment</h2><div class="matrix">
+<div class="cat-item"><div class="cat-label">segment / off / 通常</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-default" aria-pressed="false">ライト</button><button type="button" class="is-default" aria-pressed="true">ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / off / hover</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-hover" aria-pressed="false">ライト</button><button type="button" class="is-default" aria-pressed="true">ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / off / focus</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-focus" aria-pressed="false">ライト</button><button type="button" class="is-default" aria-pressed="true">ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / off / 無効</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-disabled" aria-pressed="false" disabled>ライト</button><button type="button" class="is-default" aria-pressed="true" disabled>ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / on / 通常</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-default" aria-pressed="true">ライト</button><button type="button" class="is-default" aria-pressed="false">ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / on / hover</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-hover" aria-pressed="true">ライト</button><button type="button" class="is-default" aria-pressed="false">ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / on / focus</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-focus" aria-pressed="true">ライト</button><button type="button" class="is-default" aria-pressed="false">ダーク</button></div></div></div>
+<div class="cat-item"><div class="cat-label">segment / on / 無効</div><div class="sample"><div class="a-segments" role="group" aria-label="外観"><button type="button" class="is-disabled" aria-pressed="true" disabled>ライト</button><button type="button" class="is-default" aria-pressed="false" disabled>ダーク</button></div></div></div>
+</div></section>
+<p class="cat-note">全4種で通常 / hover / focus / disabled。checkbox は off / on / mixed、他は off / on。固定見本のためスイッチ・セグメント・mixed の状態更新スクリプトは持たない。</p>
+</main>

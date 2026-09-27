@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useIntlayer } from 'react-intlayer'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
 import type { LogEntrySchema } from '@/schemas/log.dto'
 import { logLevelAccent, logLevelBadge, logLevelLabel } from '../-lib/format'
@@ -25,72 +26,75 @@ const prettyProps = (props: string): string => {
 }
 
 /** 生ログの一覧 (新しい順)。level は行頭のアクセントとバッジの両方で示す。 */
-export const EntriesTable = ({ entries }: { entries: LogEntrySchema[] }) => (
-  <div className='overflow-x-auto'>
-    <table className='w-full border-collapse text-[13px]'>
-      <thead>
-        <tr className='border-b border-border'>
-          <th scope='col' className={`${headClass} pl-[13px]`}>
-            時刻
-          </th>
-          <th scope='col' className={headClass}>
-            レベル
-          </th>
-          <th scope='col' className={headClass}>
-            カテゴリ
-          </th>
-          <th scope='col' className={headClass}>
-            アクション
-          </th>
-          <th scope='col' className={`${headClass} w-full`}>
-            内容
-          </th>
-          <th scope='col' className={headClass}>
-            <span className='sr-only'>実行</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {entries.map((entry) => (
-          <tr key={entry.id} className='border-b border-border transition-colors hover:bg-muted'>
-            <td className={`${cellClass} border-l-[3px] ${logLevelAccent[entry.level]}`}>
-              <div className='whitespace-nowrap font-medium'>{formatRelative(entry.ts)}</div>
-              <div className='whitespace-nowrap text-[11px] text-muted-foreground'>{formatAbsolute(entry.ts)}</div>
-            </td>
-            <td className={cellClass}>
-              <LogLevelBadge level={entry.level} />
-            </td>
-            <td className={`${cellClass} whitespace-nowrap font-mono text-[11px] text-muted-foreground`}>
-              {entry.category}
-            </td>
-            <td className={`${cellClass} whitespace-nowrap font-mono text-[11px]`}>{entry.action ?? '—'}</td>
-            <td className={cellClass}>
-              <div className='break-all'>{entry.summary ?? '—'}</div>
-              {entry.props === null ? null : (
-                <details className='mt-1'>
-                  <summary className='cursor-pointer text-[11px] text-muted-foreground'>props</summary>
-                  <pre className='mt-1 overflow-x-auto rounded bg-muted p-2 font-mono text-[11px] whitespace-pre-wrap'>
-                    {prettyProps(entry.props)}
-                  </pre>
-                </details>
-              )}
-            </td>
-            <td className={`${cellClass} text-right`}>
-              {entry.runId === null ? (
-                <span className='text-[11px] text-muted-foreground'>—</span>
-              ) : (
-                <Link
-                  to='/admin/logs/$runId'
-                  params={{ runId: entry.runId }}
-                  className='inline-flex h-7 items-center rounded-md border border-border px-2.5 text-[12px] font-medium transition-colors hover:bg-background'
-                >
-                  実行
-                </Link>
-              )}
-            </td>
+export const EntriesTable = ({ entries }: { entries: LogEntrySchema[] }) => {
+  const content = useIntlayer('admin-logs-entries-table')
+  return (
+    <div className='overflow-x-auto'>
+      <table className='w-full border-collapse text-[13px]'>
+        <thead>
+          <tr className='border-b border-border'>
+            <th scope='col' className={`${headClass} pl-[13px]`}>
+              {content.headers.time}
+            </th>
+            <th scope='col' className={headClass}>
+              {content.headers.level}
+            </th>
+            <th scope='col' className={headClass}>
+              {content.headers.category}
+            </th>
+            <th scope='col' className={headClass}>
+              {content.headers.action}
+            </th>
+            <th scope='col' className={`${headClass} w-full`}>
+              {content.headers.content}
+            </th>
+            <th scope='col' className={headClass}>
+              <span className='sr-only'>{content.run}</span>
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)
+        </thead>
+        <tbody>
+          {entries.map((entry) => (
+            <tr key={entry.id} className='border-b border-border transition-colors hover:bg-muted'>
+              <td className={`${cellClass} border-l-[3px] ${logLevelAccent[entry.level]}`}>
+                <div className='whitespace-nowrap font-medium'>{formatRelative(entry.ts)}</div>
+                <div className='whitespace-nowrap text-[11px] text-muted-foreground'>{formatAbsolute(entry.ts)}</div>
+              </td>
+              <td className={cellClass}>
+                <LogLevelBadge level={entry.level} />
+              </td>
+              <td className={`${cellClass} whitespace-nowrap font-mono text-[11px] text-muted-foreground`}>
+                {entry.category}
+              </td>
+              <td className={`${cellClass} whitespace-nowrap font-mono text-[11px]`}>{entry.action ?? '—'}</td>
+              <td className={cellClass}>
+                <div className='break-all'>{entry.summary ?? '—'}</div>
+                {entry.props === null ? null : (
+                  <details className='mt-1'>
+                    <summary className='cursor-pointer text-[11px] text-muted-foreground'>props</summary>
+                    <pre className='mt-1 overflow-x-auto rounded bg-muted p-2 font-mono text-[11px] whitespace-pre-wrap'>
+                      {prettyProps(entry.props)}
+                    </pre>
+                  </details>
+                )}
+              </td>
+              <td className={`${cellClass} text-right`}>
+                {entry.runId === null ? (
+                  <span className='text-[11px] text-muted-foreground'>—</span>
+                ) : (
+                  <Link
+                    to='/admin/logs/$runId'
+                    params={{ runId: entry.runId }}
+                    className='inline-flex h-7 items-center rounded-md border border-border px-2.5 text-[12px] font-medium transition-colors hover:bg-background'
+                  >
+                    {content.run}
+                  </Link>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}

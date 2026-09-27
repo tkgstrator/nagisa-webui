@@ -16,9 +16,9 @@
 
 | 要素 | 実体 | 状態 |
 |---|---|---|
-| 録画リクエスト送信 | `src/routes/anime.ts:352-453` `POST /api/anime/:id/record` | ✅ 実装済み（手動・作品単位） |
-| Nagisa への単体ジョブ投入 | `src/routes/nagisa.ts` `POST /api/nagisa/jobs` | ✅ 実装済み |
-| Nagisa 疎通確認 | `src/routes/nagisa.ts` `GET /api/nagisa/status` | ✅ 実装済み |
+| 録画リクエスト送信 | `src/routes/anime/record.ts` `POST /api/anime/{id}/recording-jobs` | ✅ 実装済み（手動・作品単位） |
+| Nagisa への単体ジョブ投入 | `src/routes/recording-jobs.ts` `POST /api/recording-jobs` | ✅ 実装済み |
+| Nagisa 疎通確認 | `src/routes/recorder.ts` `GET /api/recorder/status` | ✅ 実装済み |
 | 完了 Webhook 受信 | `src/routes/webhooks.ts` `POST /api/webhooks/record-status` | ✅ 実装済み（`completed` のみ DB 反映） |
 | Nagisa API の型 | `src/schemas/nagisa.dto.ts` / `src/schemas/webhook.dto.ts` | ✅ 実装済み |
 | CF Access 認証情報 | `wrangler.toml` `[vars]` の `BACKEND_URL` / `CF_ACCESS_CLIENT_ID` + secret の `CF_ACCESS_CLIENT_SECRET` | ✅ Worker 全体に配布済み |

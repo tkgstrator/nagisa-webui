@@ -8,7 +8,6 @@ import { RecordStatusEnum } from '../../schemas/recording.dto'
 import { registerBadged } from './badged'
 import type { Bindings } from './bindings'
 import { registerRecord } from './record'
-import { registerRecordingStatus } from './recording-status'
 import { registerRefresh } from './refresh'
 
 const logger = getAppLogger('routes')
@@ -41,8 +40,22 @@ anime.openapi(
   }),
   async (c) => {
     const prisma = createPrismaClient(c.env.DB)
-    const { page, limit, provider, year, quarter, status, scheduled, recorded, badge, aniListId, sort, order, q } =
-      c.req.valid('query')
+    const {
+      page,
+      limit,
+      provider,
+      year,
+      quarter,
+      status,
+      excludeStatus,
+      scheduled,
+      recorded,
+      badge,
+      aniListId,
+      sort,
+      order,
+      q
+    } = c.req.valid('query')
 
     const anilistMediaFilter = {
       ...(year ? { OR: [{ seasonYear: year }, { AND: [{ seasonYear: null }, { startYear: year }] }] } : {}),
@@ -56,7 +69,8 @@ anime.openapi(
       ...(q ? { title: { contains: q } } : {}),
       ...(badge ? { badge } : {}),
       ...(aniListId ? { aniListId } : {}),
-      ...(Object.keys(anilistMediaFilter).length > 0 ? { anilistMedia: anilistMediaFilter } : {})
+      ...(Object.keys(anilistMediaFilter).length > 0 ? { anilistMedia: anilistMediaFilter } : {}),
+      ...(excludeStatus ? { NOT: { anilistMedia: { is: { status: excludeStatus } } } } : {})
     }
     const orderBy =
       sort === 'year'
@@ -84,7 +98,18 @@ anime.openapi(
       dbMs: Math.round(dbMs),
       rows: rows.length,
       total,
-      filters: { year, quarter, status, provider, scheduled, recorded, badge, aniListId, q: q ? 'yes' : 'no' }
+      filters: {
+        year,
+        quarter,
+        status,
+        excludeStatus,
+        provider,
+        scheduled,
+        recorded,
+        badge,
+        aniListId,
+        q: q ? 'yes' : 'no'
+      }
     })
     return c.json({ data, total, page, limit, totalPages })
   }
@@ -201,7 +226,6 @@ anime.openapi(
 )
 
 registerRecord(anime)
-registerRecordingStatus(anime)
 registerRefresh(anime)
 
 export default anime

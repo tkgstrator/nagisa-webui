@@ -1,3 +1,4 @@
+import { useIntlayer } from 'react-intlayer'
 import { SmartPagination } from '@/app/components/smart-pagination'
 
 /** 表示件数の選択肢。決定稿モックの .perpage と同じ 3 段。 */
@@ -24,18 +25,20 @@ export const BrowsePagination = ({
   onChangePageSize,
   onPageChange
 }: BrowsePaginationProps) => {
+  const content = useIntlayer('browse-browse-pagination')
+
   if (total === 0) return null
   return (
-    <nav aria-label='ページネーション' className='flex flex-wrap items-center gap-4 max-sm:gap-2.5'>
+    <nav aria-label={content.ariaLabel.value} className='flex flex-wrap items-center gap-4 max-sm:gap-2.5'>
       <div className='text-xs text-muted-foreground tabular-nums'>
         <b className='font-semibold text-foreground'>
           {rangeStart}–{rangeEnd}
         </b>{' '}
-        / {total} 件
+        {content.rangeOf({ total })}
       </div>
       <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-        表示件数
-        <fieldset aria-label='表示件数' className='inline-flex gap-0.5 rounded-[7px] bg-muted p-0.5'>
+        {content.pageSizeLabel}
+        <fieldset aria-label={content.pageSizeLabel.value} className='inline-flex gap-0.5 rounded-[7px] bg-muted p-0.5'>
           {PAGE_SIZE_OPTIONS.map((size) => (
             <button
               key={size}

@@ -7,12 +7,12 @@ Prime Video / Hulu / Crunchyroll / ABEMA の今期アニメを管理し、録画
 1. **アニメ一覧** — 各プロバイダ (amazon, hulu, crunchyroll, abema) のアニメをブラウザで一覧表示
 2. **録画チェック** — 一覧からアニメを選択し録画済みチェックマークを付ける
 3. **話数管理** — 何話まで録画済みかを D1 で管理
-4. **録画リスト API** — `GET /api/recordings` でプロバイダ名・コンテンツ ID 付きの録画一覧を返す
+4. **録画リスト API** — `GET /api/episodes?recorded=true` でプロバイダ名・コンテンツ ID 付きの録画済みエピソード一覧を返す
 
 ## 現状（実装済み）
 
 - [x] Prisma + D1 スキーマ (`prisma/schema.prisma`, `prisma/migrations/`)
-- [x] Backend API (`src/routes/*.ts`) — anime / recordings / nagisa / queues / webhooks / admin / img
+- [x] Backend API (`src/routes/*.ts`) — anime / episodes / recorder / recording-library / recording-jobs / admin / img
 - [x] Zod スキーマ (`src/schemas/*.dto.ts`, `src/schemas/providers/*.dto.ts`) — バリデーション定義
 - [x] OpenAPI ドキュメント (`/docs`, `/openapi.json`)
 - [x] Vite + Cloudflare Workers ビルド設定
@@ -44,12 +44,13 @@ src/
 │       ├── crunchyroll/           # Crunchyroll (US IP 必須)
 │       └── abema/                 # ABEMA
 ├── routes/                        # Hono ルート (Backend API)
-│   ├── anime.ts                   # /api/anime
-│   ├── recordings.ts              # /api/recordings
-│   ├── nagisa.ts                  # /api/nagisa (Nagisa との連携)
-│   ├── queues.ts                  # /api/queues (管理画面手動トリガー)
-│   ├── webhooks.ts                # /api/webhooks (Nagisa からのダウンロード進捗)
+│   ├── anime/                     # /api/anime (一覧・詳細・/{id}/recording-jobs・/{id}/refresh)
+│   ├── episodes.ts                # /api/episodes (recorded フラグの参照・PATCH 更新)
+│   ├── recorder.ts                # /api/recorder (録画サーバーの status / queue snapshot)
+│   ├── recording-library.ts       # /api/recording-library (録画台帳の stats / sync-state / sync)
+│   ├── recording-jobs.ts          # /api/recording-jobs (単体録画ジョブ投入)
 │   ├── admin.ts                   # /api/admin (Cloudflare Access 保護)
+│   ├── admin-logs.ts              # /api/admin 配下の観測系 (sync-runs / recording-events / logs/entries)
 │   └── img.ts                     # /img (画像プロキシ + WebP 最適化)
 ├── schemas/                       # Zod スキーマ
 │   ├── anime.dto.ts

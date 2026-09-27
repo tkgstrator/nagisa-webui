@@ -53,7 +53,7 @@ def send_webhook(...) -> None:
 つまり webhook は実装完了以来 1 件も送信されていない。
 
 Workers 側の staging D1 では `episodes.recorded = 1` が **1 件 / 260,328 件**。
-その 1 件も手動 PATCH (`PATCH /api/recordings/:id`) で立つため、
+その 1 件も手動 PATCH (`PATCH /api/episodes/{id}`) で立つため、
 webhook 由来の成功記録はゼロ。実測値と完全に整合する。
 
 > **これが webhook を廃止する決定打**。環境変数を入れれば今日は直るが、

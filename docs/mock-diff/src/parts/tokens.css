@@ -38,6 +38,17 @@
   --brand-abema-foreground: oklch(0.4 0.16 130);
   --brand-netflix: oklch(0.62 0.22 27 / 16%);
   --brand-netflix-foreground: oklch(0.45 0.2 27);
+  /* 画像の上に載せるバッジ用。背景が透けないよう不透明にする。 */
+  --brand-amazon-solid: oklch(0.52 0.15 245);
+  --brand-amazon-solid-foreground: oklch(0.99 0 0);
+  --brand-hulu-solid: oklch(0.5 0.14 152);
+  --brand-hulu-solid-foreground: oklch(0.99 0 0);
+  --brand-crunchyroll-solid: oklch(0.6 0.18 45);
+  --brand-crunchyroll-solid-foreground: oklch(0.99 0 0);
+  --brand-abema-solid: oklch(0.82 0.18 130);
+  --brand-abema-solid-foreground: oklch(0.22 0.04 130);
+  --brand-netflix-solid: oklch(0.53 0.21 27);
+  --brand-netflix-solid-foreground: oklch(0.99 0 0);
   --status-releasing: oklch(0.65 0.16 145 / 18%);
   --status-releasing-foreground: oklch(0.4 0.14 145);
   --status-finished: oklch(0.6 0.005 250 / 18%);

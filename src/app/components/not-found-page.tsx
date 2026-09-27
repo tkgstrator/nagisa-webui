@@ -2,6 +2,7 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { Disc, Home, LayoutGrid } from 'lucide-react'
 import { useState } from 'react'
+import { useIntlayer } from 'react-intlayer'
 import { PageContainer } from '@/app/components/page-container'
 import { StatusHero, StatusMeta, type StatusMetaRow, StatusSection } from '@/app/components/status-page'
 
@@ -46,16 +47,16 @@ export function NotFoundPage({ data }: { data?: unknown }) {
   // 描画のたびに動くと落ち着かないので、マウント時刻で固定する
   const [occurredAt] = useState(() => dayjs().format('YYYY-MM-DD HH:mm:ss'))
   const animeId = getAnimeId(data)
+  const content = useIntlayer('not-found-page')
+  const variant = animeId ? content.anime : content.page
 
   const rows: StatusMetaRow[] = [
-    { label: 'リクエスト', value: `GET ${pathname}` },
-    ...(animeId ? [{ label: '作品 ID', value: animeId, tone: 'danger' as const }] : []),
-    { label: '発生時刻', value: occurredAt }
+    { label: content.meta.request.value, value: content.meta.requestValue({ pathname }).value },
+    ...(animeId ? [{ label: content.meta.animeId.value, value: animeId, tone: 'danger' as const }] : []),
+    { label: content.meta.occurredAt.value, value: occurredAt }
   ]
 
-  const causes = animeId
-    ? ['作品が削除され、参照だけが残っている', '古いブックマークや共有リンクから開いた', 'URL の ID を手で書き換えた']
-    : ['URL を打ち間違えた', 'ページが移動または削除された', '古いブックマークや共有リンクから開いた']
+  const causes = variant.causes.map((cause) => cause.value)
 
   return (
     <PageContainer>
@@ -63,17 +64,13 @@ export function NotFoundPage({ data }: { data?: unknown }) {
         <StatusHero
           tone='danger'
           eyebrow='404 NOT FOUND'
-          title={animeId ? 'この作品は見つかりませんでした' : 'ページが見つかりません'}
-          description={
-            animeId
-              ? '指定された ID に一致する作品がデータベースにありません。削除されたか、URL が間違っている可能性があります。'
-              : 'お探しのページは存在しないか、移動した可能性があります。URL をご確認ください。'
-          }
+          title={variant.title.value}
+          description={variant.description.value}
         />
 
         <StatusMeta rows={rows} />
 
-        <StatusSection title='考えられる原因'>
+        <StatusSection title={content.causesTitle.value}>
           <ul className='mt-2.5'>
             {causes.map((cause) => (
               <li
@@ -86,21 +83,26 @@ export function NotFoundPage({ data }: { data?: unknown }) {
           </ul>
         </StatusSection>
 
-        <StatusSection title='次にできること'>
+        <StatusSection title={content.nextTitle.value}>
           <div className='mt-2.5 flex flex-col gap-0.5'>
             <NextLink
               to='/browse'
               icon={LayoutGrid}
-              title='アニメ一覧から探す'
-              description='登録済みの作品をすべて表示します'
+              title={content.next.browse.title.value}
+              description={content.next.browse.description.value}
             />
             <NextLink
               to='/recordings'
               icon={Disc}
-              title='録画を確認する'
-              description='予約済み・録画済みの一覧を表示します'
+              title={content.next.recordings.title.value}
+              description={content.next.recordings.description.value}
             />
-            <NextLink to='/' icon={Home} title='ホームに戻る' description='今期の更新状況を確認します' />
+            <NextLink
+              to='/'
+              icon={Home}
+              title={content.next.home.title.value}
+              description={content.next.home.description.value}
+            />
           </div>
         </StatusSection>
       </div>
