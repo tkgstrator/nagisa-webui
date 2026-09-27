@@ -8,7 +8,6 @@ import { PageContainer } from '@/app/components/page-container'
 import api from '@/app/lib/api'
 import { queryKeys } from '@/app/lib/query-keys'
 import { animeDetailQueryOptions } from '@/app/lib/query-options'
-import { useSettings } from '@/app/routes/settings/-lib/settings'
 import { AnimeHero } from './-components/anime-hero'
 import { AnimeInfo } from './-components/anime-info'
 import { BroadcastSchedule } from './-components/broadcast-schedule'
@@ -53,7 +52,6 @@ function AnimeDetailPage() {
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
   const { data: anime } = useSuspenseQuery(animeDetailQueryOptions(id))
-  const { settings } = useSettings()
 
   const invalidateRelated = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.anime.detail(id) })
@@ -61,7 +59,7 @@ function AnimeDetailPage() {
   }
 
   const updateAnimeMutation = useMutation({
-    mutationFn: (body: { scheduled?: boolean; recorded?: boolean }) => api.updateAnime(body, { params: { id } }),
+    mutationFn: (body: { scheduled: boolean }) => api.updateAnime(body, { params: { id } }),
     onSuccess: invalidateRelated
   })
 
@@ -102,18 +100,6 @@ function AnimeDetailPage() {
     updateAnimeMutation.mutate({ scheduled: !anime.scheduled })
   }
 
-  /**
-   * 録画済みに印を付けるとき、設定次第で未録画エピソードの録画リクエストも同時に送る。
-   * 録画を削除する API がないので、録画済みからは戻せない (ボタン側も押せなくしてある)。
-   */
-  const markRecorded = async () => {
-    if (anime.recorded) return
-    if (settings.requestRecordingOnMark) {
-      await recordAnimeMutation.mutateAsync()
-    }
-    updateAnimeMutation.mutate({ recorded: true })
-  }
-
   const totalEpisodes = anime.seasons.reduce((sum, s) => sum + s.episodes.length, 0)
   const totalDuration = anime.seasons.reduce((sum, s) => sum + s.episodes.reduce((es, e) => es + e.duration, 0), 0)
 
@@ -143,7 +129,7 @@ function AnimeDetailPage() {
         updating={updating}
         refreshing={refreshAnimeMutation.isPending}
         onToggleScheduled={toggleScheduled}
-        onToggleRecorded={markRecorded}
+        onRecordNow={() => recordAnimeMutation.mutate()}
         onRefresh={() => refreshAnimeMutation.mutate()}
       />
 
