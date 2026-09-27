@@ -4,7 +4,6 @@ import { ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { toast } from 'sonner'
-import { Checkbox } from '@/app/components/ui/checkbox'
 import { Chip } from '@/app/components/ui/chip'
 import { SectionHeading } from '@/app/components/ui/section-heading'
 import { StatusDot } from '@/app/components/ui/status-dot'
@@ -13,7 +12,7 @@ import { queryKeys } from '@/app/lib/query-keys'
 import { cn } from '@/app/lib/utils'
 import type { AnimeInfoSchema } from '@/schemas/anime.dto'
 import { episodeStatus, formatRuntime } from '../-lib/format'
-import { type Episode, EpisodeRow, type RowState, rowStateOf } from './episode-row'
+import { EpisodeRow, type RowState, rowStateOf } from './episode-row'
 
 type Filter = 'all' | 'todo' | 'free'
 
@@ -31,7 +30,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   const [activeSeasonId, setActiveSeasonId] = useState(seasons[0]?.id ?? '')
   const [filter, setFilter] = useState<Filter>('all')
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-  const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(new Set())
   const queryClient = useQueryClient()
 
   const season = seasons.find((item) => item.id === activeSeasonId) ?? seasons[0]
@@ -44,7 +42,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
         description:
           data.count === episodeIds.length ? undefined : content.recordToast.acceptedCount({ count: data.count }).value
       })
-      setSelectedIds(new Set())
     },
     onError: () => toast.error(content.recordToast.error.value),
     onSettled: () => {
@@ -54,15 +51,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
   })
 
   const sendingIds: ReadonlySet<string> = new Set(record.isPending ? record.variables : [])
-
-  const selectEpisode = (episode: Episode, selected: boolean) => {
-    setSelectedIds((current) => {
-      const next = new Set(current)
-      if (selected) next.add(episode.id)
-      else next.delete(episode.id)
-      return next
-    })
-  }
 
   const stats = useMemo(() => {
     const episodes = season?.episodes ?? []
@@ -84,15 +72,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
       .sort((a, b) => a.episodeNumber - b.episodeNumber)
     return order === 'asc' ? episodes : episodes.reverse()
   }, [season, filter, order])
-
-  /** 選択は表示中のシーズンの話だけを数える。 */
-  const selectable = visible.filter((episode) => episodeStatus(episode) !== 'future')
-  const selected = (season?.episodes ?? []).filter((episode) => selectedIds.has(episode.id))
-  const allSelected = selectable.length > 0 && selectable.every((episode) => selectedIds.has(episode.id))
-
-  const selectAll = (checked: boolean) => {
-    setSelectedIds(checked ? new Set(selectable.map((episode) => episode.id)) : new Set())
-  }
 
   if (season === undefined) {
     return (
@@ -132,10 +111,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             type='button'
             role='tab'
             aria-selected={item.id === season.id}
-            onClick={() => {
-              setActiveSeasonId(item.id)
-              setSelectedIds(new Set())
-            }}
+            onClick={() => setActiveSeasonId(item.id)}
             className='inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm leading-[21px] text-muted-foreground transition-colors aria-selected:border-b-primary aria-selected:font-semibold aria-selected:text-foreground'
           >
             {item.displayName}
@@ -181,14 +157,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
         className='mb-3 flex flex-wrap items-center gap-1.5 border-0 p-0'
         aria-label={content.filterFieldsetLabel.value}
       >
-        <span className='inline-flex h-7 items-center gap-2 pr-1.5 pl-[15px] text-[12.5px] text-muted-foreground max-sm:pl-[11px]'>
-          <Checkbox
-            aria-label={content.selectAllLabel.value}
-            checked={allSelected}
-            disabled={selectable.length === 0}
-            onCheckedChange={selectAll}
-          />
-        </span>
         <Chip type='button' aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>
           {content.filterChips.all} <span className='opacity-80 tabular-nums'>{season.episodes.length}</span>
         </Chip>
@@ -199,15 +167,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
           {content.filterChips.free} <span className='opacity-80 tabular-nums'>{stats.free}</span>
         </Chip>
         <span className='flex-1' />
-        <Chip
-          type='button'
-          tone='primary'
-          disabled={selected.length === 0 || record.isPending}
-          onClick={() => record.mutate(selected.map((episode) => episode.id))}
-          className='border-primary/40 font-semibold text-primary enabled:hover:bg-primary/10 disabled:cursor-default disabled:border-border disabled:font-normal disabled:text-muted-foreground disabled:hover:bg-transparent'
-        >
-          {content.recordSelected} <span className='opacity-80 tabular-nums'>{selected.length}</span>
-        </Chip>
         <Chip type='button' tone='primary' onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
           {content.orderButton} {order === 'asc' ? '↑' : '↓'}
         </Chip>
@@ -220,8 +179,6 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             episode={episode}
             provider={anime.provider}
             sending={sendingIds.has(episode.id)}
-            selected={selectedIds.has(episode.id)}
-            onSelect={selectEpisode}
             onRecord={(episodeIds) => record.mutate(episodeIds)}
           />
         ))}

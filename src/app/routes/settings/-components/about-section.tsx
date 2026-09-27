@@ -12,8 +12,8 @@ const Meta = ({ label, value, mono = false }: { label: string; value: ReactNode;
     <dt className='text-[11px] text-muted-foreground'>{label}</dt>
     <dd
       className={cn(
-        'mt-[5px] tabular-nums',
-        mono ? 'font-mono text-sm font-bold' : 'text-[19px] font-extrabold tracking-[-0.02em] max-sm:text-[17px]'
+        'mt-[5px] text-[19px] font-extrabold tabular-nums max-sm:text-[17px]',
+        mono ? 'font-mono' : 'tracking-[-0.02em]'
       )}
     >
       {value}
