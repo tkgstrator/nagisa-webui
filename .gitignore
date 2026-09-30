@@ -289,3 +289,6 @@ playwright-mcp.config.json
 
 # intlayer
 .intlayer
+
+# Local Codex configuration, credentials, and session state.
+/.codex/
