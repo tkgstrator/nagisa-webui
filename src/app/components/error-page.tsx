@@ -63,7 +63,7 @@ const statusLabels: Record<number, string> = {
 type ErrorPageContent = ReturnType<typeof useIntlayer<'error-page'>>
 
 /** ステータスから見出しの深刻度と文面を決める。ステータス不明はネットワーク到達不能として扱う。 */
-function describe(
+function describeErrorStatus(
   statusCode: number | undefined,
   content: ErrorPageContent
 ): {
@@ -133,7 +133,7 @@ export function ErrorPage({ error }: { error: unknown }) {
   const content = useIntlayer('error-page')
 
   const statusCode = getStatusCode(error)
-  const { tone, eyebrow, title, description, statusValue } = describe(statusCode, content)
+  const { tone, eyebrow, title, description, statusValue } = describeErrorStatus(statusCode, content)
   const raw = getRawMessage(error)
 
   const rows: StatusMetaRow[] = [
