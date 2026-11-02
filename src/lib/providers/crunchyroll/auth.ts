@@ -2,8 +2,8 @@ import dayjs from 'dayjs'
 import { TokenResponseSchema } from '../../../schemas/providers/crunchyroll.dto'
 
 const TOKEN_URL = 'https://beta-api.crunchyroll.com/auth/v1/token'
-/** Android TV アプリの公開クライアント資格情報 (base64 の client_id:client_secret) */
-const BASIC_AUTH_TOKEN = 'ZXI5bmdnMmtvNW9oaXJsYTUxaTI6VmwxVDBQbjhRWko2d3o0NnhYRGxIekRGUDV0Wlgxb3E='
+/** Android TV アプリの公開クライアント資格情報 (base64 の client_id:client_secret。秘密情報ではない) */
+const BASIC_AUTH_TOKEN = 'ZXI5bmdnMmtvNW9oaXJsYTUxaTI6VmwxVDBQbjhRWko2d3o0NnhYRGxIekRGUDV0Wlgxb3E=' // ggignore
 /** Android TV アプリ相当の User-Agent (www は Cloudflare に弾かれるため beta-api と併用) */
 export const CR_USER_AGENT =
   'Crunchyroll/ANDROIDTV/3.76.0_22366 (Android 12; en-US; SHIELD Android TV Build/SR1A.220624.014)'
