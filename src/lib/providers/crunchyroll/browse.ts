@@ -1,8 +1,8 @@
 import type { Title } from '../../../schemas/providers/common.dto'
 import { type BrowseItem, BrowseResponseSchema, getBestImageUrl } from '../../../schemas/providers/crunchyroll.dto'
-import { getAccessToken } from './auth'
+import { CR_USER_AGENT, getAccessToken } from './auth'
 
-const CR_BASE = 'https://www.crunchyroll.com'
+const CR_BASE = 'https://beta-api.crunchyroll.com'
 const BROWSE_PATH = '/content/v2/discover/browse'
 const PAGE_SIZE = 50
 
@@ -19,7 +19,8 @@ export async function crunchyrollGet(path: string, params: Record<string, string
   const res = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Accept-Language': 'ja-JP'
+      'Accept-Language': 'ja-JP',
+      'User-Agent': CR_USER_AGENT
     }
   })
   if (!res.ok) {
