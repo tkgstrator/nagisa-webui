@@ -8,7 +8,7 @@ import { ChangelogIcon, JobIcon, UnidentifiedIcon } from './icons'
 import { PgSec, SecMoreLabel, secMoreClass } from './section'
 
 const linkClass =
-  'flex items-center gap-3 rounded-r-[10px] border-l-[3px] border-l-primary px-4 py-3.5 transition-[background-color,transform] duration-200 hover:translate-x-[3px] hover:bg-muted [&_svg]:text-primary'
+  'flex items-center gap-3 rounded-r-[10px] border-l-[3px] border-l-primary px-4 py-3.5 transition-colors duration-200 hover:bg-muted [&_svg]:text-primary'
 
 type AdminPath = '/admin/unidentified' | '/admin/recorder' | '/changelog'
 
