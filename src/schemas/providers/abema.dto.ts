@@ -82,8 +82,18 @@ export const GenreCardSchema = z.object({
 })
 export type GenreCard = z.infer<typeof GenreCardSchema>
 
+/**
+ * cards は必須。キー名/構造が変わったときに空配列へ化けて「0 件成功」にならないよう default を置かない。
+ * 要素は個別にパースしたいので、ここでは unknown のまま受けて fetchCards が 1 件ずつ GenreCardSchema で検証する。
+ */
 export const GenreCardsResponseSchema = z.object({
-  cards: z.array(GenreCardSchema).default([]),
+  cards: z.array(z.unknown()),
+  // サブジャンル ID を動的に拾うための任意フィールド。無くても cards の取得は成立させる
+  genre: z
+    .object({
+      subGenres: z.array(z.object({ id: z.string().nonempty() })).optional()
+    })
+    .optional(),
   paging: z
     .object({
       next: z.string().nonempty().optional()
