@@ -23,6 +23,8 @@ export function cleanTitle(raw: string): string {
     bracketCleaned
       // 全角ASCII（英数・記号）を半角に変換
       .replace(/^.*$/, (s) => jaconv.toHanAscii(s))
+      // 波ダッシュ U+301C は toHanAscii の対象外なので、全角チルダ由来の ~ と同じ扱いに揃える
+      .replace(/\u301c/g, '~')
       // 半角中黒を全角に統一
       .replace(/\uff65/g, '・')
       // (字幕版) (吹替版) 等を除去
@@ -41,7 +43,7 @@ export function cleanTitle(raw: string): string {
         const t = str.trim()
         return (t.startsWith('＜') || t.startsWith('<')) && (t.endsWith('＞') || t.endsWith('>')) ? inner : ''
       })
-      // ~...~ 注釈を除去（半角チルダ）
+      // ~...~ 注釈を除去（半角チルダ。全角チルダ ～ と波ダッシュ 〜 は上で ~ に変換済み）
       .replace(/~[^~]+~/g, '')
       // プレフィックスを除去
       .replace(/^(?:TVアニメ|テレビアニメ|アニメ|新劇場版|劇場版|劇場アニメーション|映画|Animatica|OVA|OAD)\s*/g, '')
@@ -70,8 +72,8 @@ export function cleanTitle(raw: string): string {
       .replace(/(.+)\s+[-－][^-－]+[-－]\s*$/, '$1')
       // 全体が -タイトル- / ーFOOー の場合は中身を残す
       .replace(/^[-－]([^-－]+)[-－]$/, '$1')
-      // サブタイトル装飾を除去: ～...～
-      .replace(/～[^～]+～/g, '')
+      // サブタイトル装飾を除去: ～...～ / 〜...〜
+      .replace(/([～〜])[^～〜]+\1/g, '')
       // 先頭の # を除去
       .replace(/^#/, '')
       // OVA / OAD / HDリマスター / SPECIAL EDITED VERSION 等のサフィックス

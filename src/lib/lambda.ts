@@ -4,6 +4,10 @@ import {
   ExpiringResponseSchema,
   type FetchAbemaArchiveRequestSchema,
   FetchAbemaArchiveResponseSchema,
+  type FetchAnilistStatusRequestSchema,
+  FetchAnilistStatusResponseSchema,
+  type FetchAnilistYearRequestSchema,
+  FetchAnilistYearResponseSchema,
   type FetchExpiringRequestSchema,
   type FetchImageRequestSchema,
   FetchImageResponseSchema,
@@ -37,6 +41,18 @@ function getBaseUrl(env: FetchClientEnv, provider: string): string {
  * queue consumer から呼ばれた場合は無期限待機が message の再配信に直結する。
  */
 const REQUEST_TIMEOUT_MS = 120_000
+
+/** Lambda が 2xx 以外を返した。body には Lambda 側が返した `{ error }` 文字列がそのまま入る。 */
+export class LambdaInvocationError extends Error {
+  constructor(
+    readonly path: string,
+    readonly status: number,
+    readonly body: string
+  ) {
+    super(`Lambda invocation failed: ${status} ${body}`)
+    this.name = 'LambdaInvocationError'
+  }
+}
 
 /**
  * Lambda Function URL に SigV4 署名付き POST リクエストを送る。
@@ -80,7 +96,7 @@ async function post<T>(
 
     const text = await response.text()
     logger.error({ action: 'lambda-invoke', path, status: response.status, elapsedMs })
-    throw new Error(`Lambda invocation failed: ${response.status} ${text}`)
+    throw new LambdaInvocationError(path, response.status, text)
   }
 }
 
@@ -106,6 +122,12 @@ export function createFetchClient(env: FetchClientEnv) {
       post(aws, getBaseUrl(env, 'abema'), '/abema_archive', body, FetchAbemaArchiveResponseSchema),
     identifyTitles: (body: { titles: string[] }) =>
       post(aws, env.LAMBDA_FUNCTION_URL, '/identify', body, IdentifyResponseSchema),
+    /** AniList の年単位取得。Workers は AniList に 403 でブロックされるので Lambda 経由で取る */
+    fetchAnilistYear: (body: z.input<typeof FetchAnilistYearRequestSchema>) =>
+      post(aws, env.LAMBDA_FUNCTION_URL, '/anilist_year', body, FetchAnilistYearResponseSchema),
+    /** AniList の id_in 取得 (放送中ステータスの再取得)。同じく Lambda 経由 */
+    fetchAnilistStatus: (body: z.infer<typeof FetchAnilistStatusRequestSchema>) =>
+      post(aws, env.LAMBDA_FUNCTION_URL, '/anilist_status', body, FetchAnilistStatusResponseSchema),
     fetchImage: (body: z.infer<typeof FetchImageRequestSchema>) =>
       post(aws, getBaseUrl(env, body.provider), '/image', body, FetchImageResponseSchema)
   }

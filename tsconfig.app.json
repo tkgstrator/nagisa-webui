@@ -5,10 +5,12 @@
     "src/app/**/*.tsx",
     "src/schemas/anime.dto.ts",
     "src/schemas/archive.dto.ts",
+    "src/schemas/jellyfin.dto.ts",
     "src/schemas/log.dto.ts",
     "src/schemas/nagisa.dto.ts",
     "src/schemas/recording.dto.ts",
     "src/schemas/message.dto.ts",
+    "src/schemas/settings.dto.ts",
     "src/schemas/unidentified.dto.ts",
     ".intlayer/**/*.ts"
   ],

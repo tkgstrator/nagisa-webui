@@ -83,12 +83,14 @@ export const StNote = ({ children }: { children: ReactNode }) => (
 export const StSwitch = ({
   checked,
   onCheckedChange,
-  label
+  label,
+  disabled
 }: {
   checked: boolean
   onCheckedChange: (next: boolean) => void
   label: string
-}) => <Switch checked={checked} aria-label={label} onCheckedChange={onCheckedChange} />
+  disabled?: boolean
+}) => <Switch checked={checked} aria-label={label} disabled={disabled} onCheckedChange={onCheckedChange} />
 
 export type { SegmentOption }
 
@@ -132,7 +134,7 @@ export const StSelect = <T extends string>({
 /** モックの .st-btn。Dialog の render に素の button を渡したいので class だけ切り出す。 */
 export const stButtonClass = (danger = false) =>
   cn(
-    'h-[30px] shrink-0 rounded-full border border-input px-3.5 text-[12.5px] font-bold whitespace-nowrap transition-[background-color,border-color,transform] duration-200 hover:bg-muted active:scale-[0.96]',
+    'h-[30px] shrink-0 rounded-full border border-input px-3.5 text-[12.5px] font-bold whitespace-nowrap transition-colors duration-200 hover:bg-muted',
     danger && 'border-destructive/45 text-destructive hover:bg-destructive/10'
   )
 

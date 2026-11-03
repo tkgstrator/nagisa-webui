@@ -2,6 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
 import { logger } from 'hono/logger'
 import { createPrismaClient } from './lib/db'
+import type { JellyfinEnv } from './lib/jellyfin/client'
 import { setupLogger } from './lib/logger'
 import { queue } from './queue'
 import adminRoutes from './routes/admin'
@@ -9,9 +10,11 @@ import adminLogRoutes from './routes/admin-logs'
 import animeRoutes from './routes/anime'
 import episodesRoutes from './routes/episodes'
 import imgRoutes from './routes/img'
+import jellyfinRoutes from './routes/jellyfin'
 import recorderRoutes from './routes/recorder'
 import recordingJobsRoutes from './routes/recording-jobs'
 import recordingLibraryRoutes from './routes/recording-library'
+import settingsRoutes from './routes/settings'
 import { scheduled } from './scheduled'
 
 type Bindings = {
@@ -27,7 +30,7 @@ type Bindings = {
   AWS_SECRET_ACCESS_KEY: string
   LAMBDA_FUNCTION_URL: string
   LAMBDA_FUNCTION_URL_US: string
-}
+} & Partial<JellyfinEnv>
 
 setupLogger()
 
@@ -40,28 +43,19 @@ app.route('/api/admin', adminRoutes)
 app.route('/api/admin', adminLogRoutes)
 app.route('/api/anime', animeRoutes)
 app.route('/api/img', imgRoutes)
+app.route('/api/jellyfin', jellyfinRoutes)
 app.route('/api/recorder', recorderRoutes)
 app.route('/api/recording-library', recordingLibraryRoutes)
 app.route('/api/recording-jobs', recordingJobsRoutes)
 app.route('/api/episodes', episodesRoutes)
+app.route('/api/settings', settingsRoutes)
 
-// デバッグ用: Falcor API / AniList のレスポンスを直接確認する
+// デバッグ用: Falcor API のレスポンスを直接確認する。AniList は Workers から 403 になるため Lambda 経由でのみ叩く
 app.get('/api/debug/falcor/:slug', async (c) => {
   const slug = c.req.param('slug')
   const paths = JSON.stringify([['titleSlug', slug, ['name', 'slug', 'description', 'thumbnailUrl', 'service']]])
   const url = `https://www.hulu.jp/anon/ja/webp/path?paths=${encodeURIComponent(paths)}&method=get`
   const res = await fetch(url)
-  return c.json({ status: res.status, body: await res.json() })
-})
-
-app.get('/api/debug/anilist/:title', async (c) => {
-  const title = c.req.param('title')
-  const query = `query { Page(perPage: 5) { media(search: ${JSON.stringify(title)}, type: ANIME) { id title { native } countryOfOrigin status season seasonYear } } }`
-  const res = await fetch('https://graphql.anilist.co', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query })
-  })
   return c.json({ status: res.status, body: await res.json() })
 })
 

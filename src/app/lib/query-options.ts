@@ -54,6 +54,21 @@ export const recordingSyncStateQueryOptions = () =>
     refetchInterval: 30_000
   })
 
+/** 環境変数の読み取り専用表示 + デバウンス状態。ローカル D1 だけを見る。 */
+export const jellyfinRefreshStateQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.jellyfin.refreshState,
+    queryFn: () => api.getJellyfinRefreshState(),
+    refetchInterval: 30_000
+  })
+
+/** サーバー保存の録画設定 (自動録画の ON/OFF)。 */
+export const recordingSettingsQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.settings.recording,
+    queryFn: () => api.getRecordingSettings()
+  })
+
 export const unidentifiedListQueryOptions = (filters: Record<string, unknown>) =>
   queryOptions({
     queryKey: queryKeys.admin.unidentified(filters),

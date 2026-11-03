@@ -346,6 +346,25 @@ export class SyncService {
       provider: message.provider,
       category: message.category
     })
-    return fetchTitleList(this.prisma, message.provider, message.category, result)
+    const targets = await fetchTitleList(this.prisma, message.provider, message.category, result, this.lambda)
+    if (message.category !== 'new_episode') return targets
+    // 予約済み作品は一覧のバッジに関係なく毎時 update する (自動録画の取りこぼし防止。docs/plans/04)
+    const scheduled = await this.prisma.anime.findMany({
+      where: {
+        provider: message.provider,
+        scheduled: true,
+        NOT: { anilistMedia: { is: { status: 'FINISHED' } } }
+      },
+      select: { contentId: true }
+    })
+    const merged = [...new Set([...targets, ...scheduled.map((a) => a.contentId)])]
+    fetchLogger.info({
+      action: 'fetch-merge-scheduled',
+      provider: message.provider,
+      listed: targets.length,
+      scheduled: scheduled.length,
+      updateTargets: merged.length
+    })
+    return merged
   }
 }

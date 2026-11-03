@@ -1,10 +1,15 @@
 import dayjs from 'dayjs'
+import { autoRecordSweep } from './lib/auto-record'
 import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
+import type { JellyfinEnv } from './lib/jellyfin/client'
+import { runJellyfinRefresh } from './lib/jellyfin/refresh'
 import { syncJobs } from './lib/job-sync'
 import { syncLibrary } from './lib/library-sync'
 import { collectLogGarbage } from './lib/log-gc'
 import { getAppLogger } from './lib/logger'
+import { notifyIfAnilistStale } from './lib/metadata/anilist-staleness'
+import { listActiveAnilistIdChunks } from './lib/metadata/anilist-sync'
 import { sendMessage } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { finishRun, type RunStatus, startRun } from './lib/sync-run'
@@ -12,7 +17,7 @@ import type { Message } from './schemas/message.dto'
 
 const logger = getAppLogger('scheduled')
 
-interface Env {
+interface Env extends Partial<JellyfinEnv> {
   DB: D1Database
   AMAZON_QUEUE: Queue<Message>
   SYNC_QUEUE: Queue<Message>
@@ -36,6 +41,16 @@ async function enqueueAbemaArchive(env: Env, prisma: ReturnType<typeof createPri
   return animes.length
 }
 
+/** RELEASING / NOT_YET_RELEASED の anilist_media を 50 件ずつの anilist_status メッセージにして投入する */
+async function enqueueAnilistStatus(env: Env, prisma: ReturnType<typeof createPrismaClient>, runId: string | null) {
+  const chunks = await listActiveAnilistIdChunks(prisma)
+  for (const ids of chunks) {
+    await sendMessage(env, { type: 'anilist_status', runId: runId ?? undefined, message: { ids } })
+  }
+  logger.info({ action: 'enqueue-anilist-status', chunks: chunks.length })
+  return chunks.length
+}
+
 /**
  * ② ジョブ追従 (docs/features/recording-sync.md §6)。毎分走るので、
  * 追跡中のジョブが無い tick は SyncRun を 1 行も残さない
@@ -54,6 +69,27 @@ async function runJobSync(prisma: ReturnType<typeof createPrismaClient>, env: En
     failed: result.error ? 1 : 0,
     errorMessage: result.error ?? undefined,
     meta: { downloading: result.downloading, failed: result.failed, stale: result.stale }
+  })
+}
+
+/**
+ * ②' Jellyfin のライブラリ更新 (docs/plans/06-jellyfin-refresh.md)。毎分走るので、
+ * 送信しなかった tick (無効・dirty でない・静穏期間中・バックオフ中) は SyncRun を残さない。
+ * 失敗しても throw しない (台帳同期や job-sync を巻き込まない)。
+ */
+async function runJellyfinRefreshTick(prisma: ReturnType<typeof createPrismaClient>, env: Env): Promise<void> {
+  const startedAt = new Date()
+  const r = await runJellyfinRefresh(prisma, env)
+  if (!r.attempted) return
+
+  const runId = await startRun(prisma, { kind: 'cron', trigger: 'jellyfin-refresh', startedAt })
+  const ok = r.outcome === 'success'
+  await finishRun(prisma, runId, ok ? 'success' : 'failed', {
+    total: 1,
+    succeeded: ok ? 1 : 0,
+    failed: ok ? 0 : 1,
+    errorMessage: r.error ?? undefined,
+    meta: { status: r.status, attempt: r.attempt, generation: r.generation, outcome: r.outcome }
   })
 }
 
@@ -100,8 +136,10 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
   // 記録しない都合で startRun をハンドラ側に持つため、switch の前で分岐する。
   if (event.cron === '* * * * *' || event.cron === '*/15 * * * *') {
     try {
-      if (event.cron === '* * * * *') await runJobSync(prisma, env)
-      else await runLibrarySync(prisma, env)
+      if (event.cron === '* * * * *') {
+        await runJobSync(prisma, env)
+        await runJellyfinRefreshTick(prisma, env)
+      } else await runLibrarySync(prisma, env)
     } finally {
       await prisma.$disconnect()
     }
@@ -128,6 +166,8 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
                 enqueued++
               }
             }
+            // update を待たずに、予約済み作品の配信済み未録画回を送る (DB と nagisa のみ。OFF なら何もしない)
+            await autoRecordSweep(prisma, env)
             break
           case '0 0 * * *':
             for (const provider of providers) {
@@ -150,17 +190,30 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
               logger.info({ action: 'enqueue', provider, category: 'catalog' })
               enqueued++
             }
+            // 放送中・放送予定の AniList 行を id_in で再取得 (cron は上限 5 本なので毎朝の枠に相乗り)
+            enqueued += await enqueueAnilistStatus(env, prisma, runId)
             break
           case '0 4 * * *': {
             enqueued = await enqueueAbemaArchive(env, prisma, runId)
             logger.info({ action: 'enqueue-abema-archive', count: enqueued })
             // cron は Worker あたり 5 本が上限で空きが無いので、ログの GC はここに相乗りさせる。
             await collectLogGarbage(prisma)
+            // unidentified_anime の一括再識別も相乗り。以降のチャンクは queue 側が自分で続きを積む。
+            await sendMessage(env, {
+              type: 'reidentify_unidentified',
+              runId: runId ?? undefined,
+              message: { limit: 100 }
+            })
+            enqueued += 1
             break
           }
           // wrangler.toml の crons に書いた文字列がそのまま event.cron に来る。
           // "0 5 * * 0" と書くと一致せず default に落ちるので、定義と同じ SUN 表記にする。
           case '0 5 * * SUN': {
+            // 先に前回までの同期が止まっていないか確認する (通知失敗で enqueue を止めない)
+            await notifyIfAnilistStale(prisma, env.DISCORD_WEBHOOK_URL).catch((e: unknown) =>
+              logger.error({ action: 'anilist-stale-check-failed', error: e instanceof Error ? e.message : String(e) })
+            )
             const fromYear = 2000
             const toYear = dayjs().year() + 1
             const years = Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i)
