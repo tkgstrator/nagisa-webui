@@ -41,7 +41,7 @@ const adminLogsFormatContent = {
       catalogFieldLabel: {
         image: '画像',
         description: '説明',
-        duration: '長さ',
+        duration: '再生時間',
         releaseDate: '配信日'
       },
       recordingStatusLabel: {

@@ -23,11 +23,11 @@ export const ProviderTag = ({ provider }: { provider: string }) => (
 
 /** `.pg-poster-meta`。サムネ下の補足行。 */
 export const PosterMeta = ({ children }: { children: ReactNode }) => (
-  <div className='flex flex-wrap items-center gap-1.5 text-[10.5px] text-muted-foreground'>{children}</div>
+  <div className='flex min-w-0 items-center gap-1.5 text-[10.5px] text-muted-foreground'>{children}</div>
 )
 
 /**
- * `.pg-poster`。16:9 のサムネと 2 行までのタイトル、その下に補足行を並べる。
+ * `.pg-poster`。16:9 のサムネと 1 行のタイトル、その下に補足行を並べる。
  * `href` があれば外部リンクとして開く。
  */
 export const PosterCard = ({
@@ -41,7 +41,7 @@ export const PosterCard = ({
   href?: string | null
   children?: ReactNode
 }) => {
-  const body = (
+  const media = (
     <>
       <div className='relative grid aspect-video place-items-center overflow-hidden rounded-[10px] bg-muted text-muted-foreground'>
         {imageUrl ? (
@@ -55,16 +55,21 @@ export const PosterCard = ({
           <ImageIcon className='size-[22px]' aria-hidden='true' />
         )}
       </div>
-      <p className='line-clamp-2 text-[12.5px]/[1.35] font-semibold'>{title}</p>
-      {children}
+      <p className='truncate text-[12.5px]/[1.35] font-semibold'>{title}</p>
     </>
   )
-  const className = 'group flex min-w-0 flex-col gap-1.5'
-  return href ? (
-    <a href={href} target='_blank' rel='noopener noreferrer' className={className}>
-      {body}
-    </a>
-  ) : (
-    <div className={className}>{body}</div>
+  const mediaClass = 'group flex min-w-0 flex-col gap-1.5'
+  // 補足行はリンクの外に置く。中にさらにリンク (コンテンツ ID) を入れられるようにするため
+  return (
+    <div className='flex min-w-0 flex-col gap-1.5'>
+      {href ? (
+        <a href={href} target='_blank' rel='noopener noreferrer' className={mediaClass}>
+          {media}
+        </a>
+      ) : (
+        <div className={mediaClass}>{media}</div>
+      )}
+      {children}
+    </div>
   )
 }

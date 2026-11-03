@@ -28,7 +28,7 @@ const NextLink = ({
 }) => (
   <Link
     to={to}
-    className='flex items-center gap-3 rounded-r-lg border-primary border-l-[3px] px-4 py-3.5 transition-[background-color,transform] duration-200 hover:translate-x-[3px] hover:bg-muted'
+    className='flex items-center gap-3 rounded-r-lg border-primary border-l-[3px] px-4 py-3.5 transition-colors duration-200 hover:bg-muted'
   >
     <Icon className='size-5 flex-none text-primary' />
     <div className='min-w-0'>

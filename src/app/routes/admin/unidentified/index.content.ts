@@ -17,8 +17,7 @@ const adminUnidentifiedContent = {
         desc: '新しい順',
         asc: '古い順'
       },
-      emptyState: '該当するタイトルはありません',
-      updatedPrefix: '更新'
+      emptyState: '該当するタイトルはありません'
     },
     en: {
       eyebrow: 'Admin',
@@ -34,8 +33,7 @@ const adminUnidentifiedContent = {
         desc: 'Newest first',
         asc: 'Oldest first'
       },
-      emptyState: 'No matching titles',
-      updatedPrefix: 'Updated'
+      emptyState: 'No matching titles'
     }
   })
 } satisfies Dictionary

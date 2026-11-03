@@ -79,7 +79,7 @@ const SidebarNavigation = () => {
               isActive={active(to)}
               aria-current={active(to) ? 'page' : undefined}
               tooltip={content.nav[key].value}
-              className='h-9 gap-2.5 rounded-r-lg rounded-l-none border-l-[3px] border-l-transparent px-[5px] text-[13px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:border-l-primary data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:h-8! group-data-[collapsible=icon]:rounded-[8px] group-data-[collapsible=icon]:border-l-0 group-data-[collapsible=icon]:p-2!'
+              className='h-9 gap-2.5 rounded-r-lg rounded-l-none border-l-[3px] border-l-transparent px-[5px] text-[13px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:border-l-primary data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:h-9! group-data-[collapsible=icon]:rounded-[8px] group-data-[collapsible=icon]:border-l-0 group-data-[collapsible=icon]:p-2!'
             >
               <Icon className='size-4' aria-hidden='true' />
               <span className='group-data-[collapsible=icon]:sr-only'>{content.nav[key]}</span>

@@ -8,20 +8,20 @@ const adminLogsEntriesTableContent = {
         time: '時刻',
         level: 'レベル',
         category: 'カテゴリ',
-        action: 'アクション',
+        action: 'イベント',
         content: '内容'
       },
-      run: '実行'
+      run: '詳細'
     },
     en: {
       headers: {
         time: 'Time',
         level: 'Level',
         category: 'Category',
-        action: 'Action',
+        action: 'Event',
         content: 'Content'
       },
-      run: 'Run'
+      run: 'Details'
     }
   })
 } satisfies Dictionary

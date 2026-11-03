@@ -1,12 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { useIntlayer } from 'react-intlayer'
+import { DataSub, DataTable, DataTd, DataTh, DataTr, type RowTone } from '@/app/components/data-table'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
 import type { LogEntrySchema } from '@/schemas/log.dto'
-import { logLevelAccent, logLevelBadge, logLevelLabel } from '../-lib/format'
-
-const headClass =
-  'px-2.5 py-2 text-left text-[11px] font-semibold tracking-[0.03em] text-muted-foreground max-sm:px-[5px] max-sm:py-[9px]'
-const cellClass = 'p-2.5 align-top max-sm:px-[5px] max-sm:py-[9px]'
+import { logLevelBadge, logLevelLabel } from '../-lib/format'
 
 export const LogLevelBadge = ({ level }: { level: LogEntrySchema['level'] }) => (
   <span
@@ -25,76 +22,72 @@ const prettyProps = (props: string): string => {
   }
 }
 
-/** 生ログの一覧 (新しい順)。level は行頭のアクセントとバッジの両方で示す。 */
+/** 行頭のトーン。debug / info は付けず、warning 以上だけ色で拾えるようにする。 */
+const levelTone: Record<LogEntrySchema['level'], RowTone | undefined> = {
+  debug: undefined,
+  info: undefined,
+  warning: 'warn',
+  error: 'err',
+  fatal: 'err'
+}
+
+/** 生ログの一覧 (新しい順)。実行履歴と同じ表で、level は行頭のトーンとバッジの両方で示す。 */
 export const EntriesTable = ({ entries }: { entries: LogEntrySchema[] }) => {
   const content = useIntlayer('admin-logs-entries-table')
   return (
-    <div className='overflow-x-auto'>
-      <table className='w-full border-collapse text-[13px]'>
-        <thead>
-          <tr className='border-b border-border'>
-            <th scope='col' className={`${headClass} pl-[13px]`}>
-              {content.headers.time}
-            </th>
-            <th scope='col' className={headClass}>
-              {content.headers.level}
-            </th>
-            <th scope='col' className={headClass}>
-              {content.headers.category}
-            </th>
-            <th scope='col' className={headClass}>
-              {content.headers.action}
-            </th>
-            <th scope='col' className={`${headClass} w-full`}>
-              {content.headers.content}
-            </th>
-            <th scope='col' className={headClass}>
-              <span className='sr-only'>{content.run}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {entries.map((entry) => (
-            <tr key={entry.id} className='border-b border-border transition-colors hover:bg-muted'>
-              <td className={`${cellClass} border-l-[3px] ${logLevelAccent[entry.level]}`}>
-                <div className='whitespace-nowrap font-medium'>{formatRelative(entry.ts)}</div>
-                <div className='whitespace-nowrap text-[11px] text-muted-foreground'>{formatAbsolute(entry.ts)}</div>
-              </td>
-              <td className={cellClass}>
-                <LogLevelBadge level={entry.level} />
-              </td>
-              <td className={`${cellClass} whitespace-nowrap font-mono text-[11px] text-muted-foreground`}>
-                {entry.category}
-              </td>
-              <td className={`${cellClass} whitespace-nowrap font-mono text-[11px]`}>{entry.action ?? '—'}</td>
-              <td className={cellClass}>
-                <div className='break-all'>{entry.summary ?? '—'}</div>
-                {entry.props === null ? null : (
-                  <details className='mt-1'>
-                    <summary className='cursor-pointer text-[11px] text-muted-foreground'>props</summary>
-                    <pre className='mt-1 overflow-x-auto rounded bg-muted p-2 font-mono text-[11px] whitespace-pre-wrap'>
-                      {prettyProps(entry.props)}
-                    </pre>
-                  </details>
-                )}
-              </td>
-              <td className={`${cellClass} text-right`}>
-                {entry.runId === null ? (
-                  <span className='text-[11px] text-muted-foreground'>—</span>
-                ) : (
-                  <Link
-                    to='/admin/logs/$runId'
-                    params={{ runId: entry.runId }}
-                    className='inline-flex h-7 items-center rounded-md border border-border px-2.5 text-[12px] font-medium transition-colors hover:bg-background'
-                  >
-                    {content.run}
-                  </Link>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      head={
+        <>
+          <DataTh>{content.headers.time}</DataTh>
+          <DataTh>{content.headers.level}</DataTh>
+          <DataTh>{content.headers.category}</DataTh>
+          <DataTh>{content.headers.action}</DataTh>
+          <DataTh>{content.headers.content}</DataTh>
+          <DataTh right>{content.run}</DataTh>
+        </>
+      }
+    >
+      {entries.map((entry) => (
+        <DataTr key={entry.id} tone={levelTone[entry.level]}>
+          <DataTd>
+            <div className='whitespace-nowrap'>{formatRelative(entry.ts)}</div>
+            <DataSub>{formatAbsolute(entry.ts)}</DataSub>
+          </DataTd>
+          <DataTd>
+            <LogLevelBadge level={entry.level} />
+          </DataTd>
+          <DataTd mono className='whitespace-nowrap text-muted-foreground'>
+            {entry.category}
+          </DataTd>
+          <DataTd mono className='whitespace-nowrap'>
+            {entry.action ?? '—'}
+          </DataTd>
+          <DataTd className='w-full'>
+            <div className='break-all'>{entry.summary ?? '—'}</div>
+            {entry.props === null ? null : (
+              <details className='mt-1'>
+                <summary className='cursor-pointer text-[11px] text-muted-foreground'>props</summary>
+                <pre className='mt-1 overflow-x-auto rounded bg-muted p-2 font-mono text-[11px] whitespace-pre-wrap'>
+                  {prettyProps(entry.props)}
+                </pre>
+              </details>
+            )}
+          </DataTd>
+          <DataTd right className='whitespace-nowrap'>
+            {entry.runId === null ? (
+              <span className='text-muted-foreground'>—</span>
+            ) : (
+              <Link
+                to='/admin/logs/$runId'
+                params={{ runId: entry.runId }}
+                className='font-semibold text-primary hover:underline'
+              >
+                {content.run}
+              </Link>
+            )}
+          </DataTd>
+        </DataTr>
+      ))}
+    </DataTable>
   )
 }
