@@ -1,7 +1,7 @@
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, mock, test } from 'bun:test'
 import { LogStatsSchema } from '../../src/schemas/log.dto'
 
-vi.mock('../../src/lib/db', () => ({
+mock.module('../../src/lib/db', () => ({
   createPrismaClient: () => ({
     syncRun: {
       findUnique: async () => null,
@@ -28,6 +28,7 @@ describe('admin-logs route order', () => {
   test('GET /sync-runs/{存在しない id} は 404', async () => {
     const res = await adminLogs.request('/sync-runs/nonexistent', {}, env)
     expect(res.status).toBe(404)
-    expect(await res.json()).toEqual({ message: 'run not found' })
+    const body: unknown = await res.json()
+    expect(body).toEqual({ message: 'run not found' })
   })
 })
