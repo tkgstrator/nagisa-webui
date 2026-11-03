@@ -3,6 +3,9 @@ import { sortBy, uniqBy } from 'lodash-es'
 import { parse as parseHtml } from 'node-html-parser'
 import { DetailPageJsonSchema, type PageData, WidgetResponseSchema } from '../../../schemas/providers/amazon.dto'
 import { type Episode, EpisodeSchema, type Season, type TitleInfo } from '../../../schemas/providers/common.dto'
+import { getAppLogger } from '../../logger'
+
+const logger = getAppLogger('amazon-detail')
 
 const AMAZON_DETAIL_BASE = 'https://www.amazon.co.jp/gp/video/detail'
 const AMAZON_WIDGETS_API = 'https://www.amazon.co.jp/gp/video/api/getDetailWidgets'
@@ -170,8 +173,23 @@ async function buildSeasons(contentId: string, page: PageData): Promise<Season[]
     ]
   }
 
+  // atf.state.seasons が空 ({}) のページは、そのページ自身を 1 シーズンとして扱う
+  const seasonEntries =
+    page.seasons.length > 0
+      ? page.seasons
+      : [
+          {
+            seasonId: contentId,
+            displayName: `シーズン${page.seasonNumber ?? 1}`,
+            seasonNumber: page.seasonNumber ?? 1
+          }
+        ]
+  if (page.seasons.length === 0 && page.episodePageTokens.length === 0) {
+    logger.warn({ action: 'no-seasons-no-episode-tokens', contentId })
+  }
+
   const results: Season[] = []
-  for (const rs of page.seasons) {
+  for (const rs of seasonEntries) {
     if (results.length > 0) await sleep(500)
     const tokens =
       rs.seasonId === contentId

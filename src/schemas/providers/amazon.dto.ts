@@ -216,6 +216,7 @@ const HeaderSchema = z
     subtitles: z.array(z.string()).default([]),
     audioTracks: z.array(z.string()).default([]),
     duration: z.number().nonnegative().optional(),
+    seasonNumber: z.number().int().positive().optional(),
     releaseDate: JapaneseDateSchema
   })
   .transform((v) => ({
@@ -230,6 +231,7 @@ const HeaderSchema = z
     hasSubtitles: v.subtitles.length > 0,
     hasDub: v.audioTracks.length > 1,
     duration: v.duration,
+    seasonNumber: v.seasonNumber,
     releaseDate: v.releaseDate
   }))
 
@@ -249,6 +251,8 @@ export const PageDataSchema = z.object({
   hasDub: z.boolean(),
   duration: z.number().nonnegative().optional(),
   releaseDate: z.string().optional(),
+  // headerDetail.seasonNumber。atf.state.seasons が空のページで自身を 1 シーズンとして扱うために使う
+  seasonNumber: z.number().int().positive().optional(),
   seasons: z.array(
     z.object({
       seasonId: z.string().nonempty(),
