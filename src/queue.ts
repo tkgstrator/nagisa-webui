@@ -5,13 +5,14 @@ import { COLOR_SUCCESS, COLOR_WARN, notify } from './lib/discord'
 import { enqueueImageWarm, warmImages } from './lib/image-warm'
 import { createFetchClient, LambdaInvocationError } from './lib/lambda'
 import { getAppLogger } from './lib/logger'
-import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
-import { resolveQueueForProvider } from './lib/queue-routing'
+import { syncAnilistMediaStatus, syncAnilistMediaYear } from './lib/metadata/anilist-sync'
+import { resolveQueueForProvider, sendMessage } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { SyncService } from './lib/sync'
+import { reidentifyUnidentified } from './lib/sync/reidentify'
 import { finishRun, propagateChildFailures, resolveStatus, startRun } from './lib/sync-run'
 
-import type { Message } from './schemas/message.dto'
+import { type Message, ProviderTypeEnum } from './schemas/message.dto'
 
 const logger = getAppLogger('queue')
 
@@ -71,6 +72,7 @@ function isPermanentFailure(e: unknown): boolean {
 /** 失敗一覧に出すラベル */
 async function failureLabel(prisma: ReturnType<typeof createPrismaClient>, body: Message): Promise<string> {
   if (body.type === 'anilist_sync') return `[anilist_sync ${body.message.year}]`
+  if (body.type === 'anilist_status') return `[anilist_status ${body.message.ids.length}件]`
   const anime = await findAnimeForMessage(prisma, body).catch(() => null)
   return anime ? anime.title : `[${body.type}]`
 }
@@ -148,6 +150,10 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
       meta.animeId = body.message.animeId
     } else if (body.type === 'anilist_sync') {
       meta.year = body.message.year
+    } else if (body.type === 'reidentify_unidentified') {
+      meta.cursor = body.message.cursor
+    } else if (body.type === 'anilist_status') {
+      meta.count = body.message.ids.length
     } else if (body.type === 'image_warm') {
       meta.provider = body.message.provider
       meta.count = body.message.urls.length
@@ -192,6 +198,41 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
             pages: result.pages,
             elapsedMs: result.elapsedMs
           })
+          break
+        }
+        case 'reidentify_unidentified': {
+          const { cursor, limit } = message.body.message
+          const result = await reidentifyUnidentified(prisma, lambda, { cursor, limit })
+          // 昇格した anime は episodes がまだ無いので update ジョブを積む (fetch case と同じ形・同じ振り分け)
+          for (const provider of ProviderTypeEnum.options) {
+            const items = result.promoted.filter((p) => p.provider === provider)
+            const targetQueue = resolveQueueForProvider(env, provider)
+            for (let i = 0; i < items.length; i += SEND_BATCH_SIZE) {
+              await targetQueue.sendBatch(
+                items.slice(i, i + SEND_BATCH_SIZE).map(({ contentId }) => ({
+                  body: { type: 'update' as const, runId: message.body.runId, message: { provider, contentId } }
+                }))
+              )
+            }
+          }
+          if (result.nextCursor) {
+            // 続きを自分で積む。Lambda/AniList を burst で叩かないよう少し間隔を空ける
+            await sendMessage(
+              env,
+              {
+                type: 'reidentify_unidentified',
+                runId: message.body.runId,
+                message: { cursor: result.nextCursor, limit }
+              },
+              { delaySeconds: 30 }
+            )
+          }
+          break
+        }
+        case 'anilist_status': {
+          const { ids } = message.body.message
+          const result = await syncAnilistMediaStatus({ prisma, lambda, ids })
+          logger.info({ action: 'anilist-status-done', ...result })
           break
         }
         case 'abema_archive': {

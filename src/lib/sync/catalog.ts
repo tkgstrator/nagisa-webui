@@ -2,13 +2,13 @@ import dayjs from 'dayjs'
 import type { ExpiringResponse, TitleListResponse } from '@/schemas/lambda.dto.ts'
 import type { PrismaClient } from '../../generated/prisma/client.ts'
 import { recordCatalogEvents } from '../catalog-event'
-import type { FetchClient } from '../lambda'
 import { getAppLogger } from '../logger'
 import { cleanTitle } from '../metadata/anilist'
 import { identifyTitlesViaD1 } from '../metadata/local-anilist'
+import { type MediaLambda, requireAnilistMedia } from './ensure-media'
 import { fillFromLambda } from './identify'
 import { animeUuid } from './ids'
-import { D1_VARIABLE_LIMIT, findExistingContentIds, findKnownContentIds } from './queries'
+import { D1_VARIABLE_LIMIT, findExistingContentIds, findKnownContentIds, findUnidentifiedContentIds } from './queries'
 
 /** ISO 8601 文字列を Date に変換し、過去なら null を返す */
 export function parseFutureDate(dateStr: string | null | undefined): Date | null {
@@ -16,6 +16,9 @@ export function parseFutureDate(dateStr: string | null | undefined): Date | null
   const d = dayjs(dateStr)
   return d.isAfter(dayjs()) ? d.toDate() : null
 }
+
+/** 1 回の fetchTitleList で Lambda /identify に再問い合わせする unidentified 既存タイトルの上限 (残りは日次の再識別ジョブが処理) */
+const RETRY_LAMBDA_CAP = 40
 
 const syncLogger = getAppLogger('sync')
 const fetchLogger = getAppLogger('fetch')
@@ -26,7 +29,7 @@ export async function fetchTitleList(
   providerName: string,
   category: string,
   result: TitleListResponse,
-  lambda?: Pick<FetchClient, 'identifyTitles'>
+  lambda?: MediaLambda
 ): Promise<string[]> {
   // new_episode の場合、COMING_SOON タイトル（nextEpisodeDate あり）を除外して上書きを防ぐ
   const comingSoonContentIds =
@@ -45,6 +48,7 @@ export async function fetchTitleList(
 
   const existingIds = await findExistingContentIds(
     prisma,
+    providerName,
     titles.map((t) => t.contentId)
   )
   const knownIds = await findKnownContentIds(
@@ -52,14 +56,28 @@ export async function fetchTitleList(
     providerName,
     titles.map((t) => t.contentId)
   )
+  // unidentified は「既知」に含めない: 毎回識別を再試行し、成功したら anime に昇格する
+  const unidentifiedIds = await findUnidentifiedContentIds(
+    prisma,
+    providerName,
+    titles.map((t) => t.contentId)
+  )
   const newTitles = titles.filter((t) => !knownIds.has(t.contentId))
+  // 初見のタイトルは必ず Lambda に聞く。再試行分は件数を絞る (catalog で数千件が一度に Lambda へ行かないように)
+  const retryBudget = { remaining: RETRY_LAMBDA_CAP }
+  const allowLambda = newTitles.map((t) => {
+    if (!unidentifiedIds.has(t.contentId)) return true
+    if (retryBudget.remaining <= 0) return false
+    retryBudget.remaining -= 1
+    return true
+  })
   fetchLogger.info({
     action: 'check-titles',
     provider: providerName,
     category,
     total: titles.length,
     existing: existingIds.size,
-    unidentified: knownIds.size - existingIds.size,
+    unidentified: unidentifiedIds.size,
     new: newTitles.length
   })
 
@@ -81,7 +99,7 @@ export async function fetchTitleList(
     for (let i = 0; i < idsToReset.length; i += D1_VARIABLE_LIMIT) {
       const chunk = idsToReset.slice(i, i + D1_VARIABLE_LIMIT)
       const { count } = await prisma.anime.updateMany({
-        where: { contentId: { in: chunk } },
+        where: { provider: providerName, contentId: { in: chunk } },
         data: { badge: null, nextEpisodeDate: null }
       })
       resetCount += count
@@ -117,7 +135,14 @@ export async function fetchTitleList(
       prisma,
       batch.map((t) => t.title)
     )
-    const results = lambda ? await fillFromLambda(prisma, lambda, batch, d1Results, providerName) : d1Results
+    // anime 作成前に anilist_media の行を保証する (Lambda 識別分は行が無い)。取れなければ未識別のまま残す
+    const results = lambda
+      ? await requireAnilistMedia(
+          prisma,
+          lambda,
+          await fillFromLambda(lambda, batch, d1Results, providerName, allowLambda.slice(i, i + BATCH_SIZE))
+        )
+      : d1Results
 
     for (let j = 0; j < batch.length; j++) {
       const meta = results[j]
@@ -157,8 +182,13 @@ export async function fetchTitleList(
             kind: 'title-added'
           }
         ])
+        // 以前 unidentified だった場合は昇格として行を消す (無ければ no-op)
+        if (unidentifiedIds.has(t.contentId)) {
+          await prisma.unidentifiedAnime.deleteMany({ where: { provider: providerName, contentId: t.contentId } })
+        }
         identifiedContentIds.push(t.contentId)
-      } else {
+      } else if (!unidentifiedIds.has(t.contentId)) {
+        // 既に unidentified の行は書き直さない (毎回の catalog で数千件の無駄な write を避ける)
         await prisma.unidentifiedAnime.upsert({
           where: { provider_contentId: { provider: providerName, contentId: t.contentId } },
           create: { provider: providerName, contentId: t.contentId, title: t.title, imageUrl: t.imageUrl ?? null },
@@ -224,6 +254,7 @@ export async function fetchExpiring(
 
   const existingIds = await findExistingContentIds(
     prisma,
+    providerName,
     entries.map((e) => e.contentId)
   )
 
@@ -264,7 +295,7 @@ export async function fetchExpiring(
   for (let i = 0; i < expiringIdsToReset.length; i += D1_VARIABLE_LIMIT) {
     const chunk = expiringIdsToReset.slice(i, i + D1_VARIABLE_LIMIT)
     const { count } = await prisma.anime.updateMany({
-      where: { contentId: { in: chunk } },
+      where: { provider: providerName, contentId: { in: chunk } },
       data: { badge: null, expiredAt: null, expiringSeason: null }
     })
     expiringResetCount += count

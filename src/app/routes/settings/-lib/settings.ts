@@ -34,7 +34,6 @@ export interface Settings {
   requestRecordingOnMark: boolean
   confirmBulkCancel: boolean
   expiringLeadDays: number
-  autoScheduleNewEpisodes: boolean
   defaultLanguage: LanguagePreference
 }
 
@@ -63,7 +62,6 @@ export const DEFAULT_SETTINGS: Settings = {
   requestRecordingOnMark: true,
   confirmBulkCancel: true,
   expiringLeadDays: 14,
-  autoScheduleNewEpisodes: false,
   defaultLanguage: 'sub'
 }
 

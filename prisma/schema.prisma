@@ -157,6 +157,14 @@ model AnilistMedia {
   status          String  @default("UNKNOWN")
   startYear       Int?    @map("start_year")
   startMonth      Int?    @map("start_month")
+  /// 終了日・話数・次回放送。放送中の導出ステータス (anime-flatten.ts) の入力。いずれも AniList が持たなければ null
+  endYear         Int?    @map("end_year")
+  endMonth        Int?    @map("end_month")
+  endDay          Int?    @map("end_day")
+  episodes        Int?
+  /// nextAiringEpisode.airingAt (UTC)
+  nextAiringAt    DateTime? @map("next_airing_at")
+  nextAiringEpisode Int?  @map("next_airing_episode")
   countryOfOrigin String  @default("JP") @map("country_of_origin") // JP / CN / KR
   /// 正規化済みタイトル (lowercase, strip whitespace/punctuation)、indexed lookup 用
   nativeNorm      String? @map("native_norm")
@@ -235,6 +243,34 @@ model SyncState {
   @@map("sync_state")
 }
 
+/// 録画完了時の Jellyfin ライブラリ更新 (POST /Library/Refresh) のデバウンス状態。
+/// key = 'jellyfin' の 1 行だけ。設計は docs/plans/06-jellyfin-refresh.md
+model JellyfinRefreshState {
+  /// 'jellyfin'
+  key                 String    @id
+  /// 新規 completed を検知するたびに +1。送信成功時に「送信開始時に読んだ値」と
+  /// 一致するときだけ dirty を落とし、送信中に立った dirty を消さない
+  dirtyGeneration     Int       @default(0) @map("dirty_generation")
+  /// 現在の dirty 期間の起点。NULL = 送るものが無い
+  dirtySince          DateTime? @map("dirty_since")
+  /// 最後に新規 completed を検知した時刻 (静穏期間の起点)
+  lastChangeAt        DateTime? @map("last_change_at")
+  lastAttemptAt       DateTime? @map("last_attempt_at")
+  lastSucceededAt     DateTime? @map("last_succeeded_at")
+  /// バックオフ。この時刻までは送らない
+  nextAttemptAt       DateTime? @map("next_attempt_at")
+  consecutiveFailures Int       @default(0) @map("consecutive_failures")
+  lastError           String?   @map("last_error")
+  /// Discord 通知を出した時刻。非 null の間は同じ障害で再通知しない
+  lastNotifiedAt      DateTime? @map("last_notified_at")
+  /// 毎分 cron の重複送信よけ
+  leaseUntil          DateTime? @map("lease_until")
+  leaseOwner          String?   @map("lease_owner")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@map("jellyfin_refresh_state")
+}
+
 /// 録画リクエストとその結末の時系列。生ログ (Workers Logs) に相乗りさせないのは、
 /// 保持期間が違う (180 日) / animeId で引きたい / 送信と結果通知を
 /// 1 本の時系列にまとめたいため。
@@ -292,4 +328,14 @@ model CatalogEvent {
   @@index([createdAt])
   @@index([animeId])
   @@map("catalog_events")
+}
+
+/// サーバー保存のアプリ設定 (key-value)。端末ローカルでなくバックエンドが参照する設定だけを置く。
+/// 現状のキー: 'autoScheduleNewEpisodes' ('true' | 'false'。行が無ければ true = 自動録画 ON)
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("app_setting")
 }

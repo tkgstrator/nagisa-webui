@@ -28,6 +28,7 @@
     "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached,readonly",
     "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.codex,target=/home/vscode/.codex,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gemini,target=/home/vscode/.gemini,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached,readonly",
     "source=${localEnv:HOME}/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached,readonly"
   ],
@@ -44,6 +45,7 @@
     "ghcr.io/stu-bell/devcontainer-features/claude-code:0": {
       "version": "latest"
     },
+    "ghcr.io/orianna-ai/devcontainer-features/antigravity:1": {},
     "ghcr.io/thamaji/devcontainer-features/codex-cli:1": {
       "VERSION": "latest"
     },

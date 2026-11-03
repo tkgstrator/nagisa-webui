@@ -2,6 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
 import { logger } from 'hono/logger'
 import { createPrismaClient } from './lib/db'
+import type { JellyfinEnv } from './lib/jellyfin/client'
 import { setupLogger } from './lib/logger'
 import { queue } from './queue'
 import adminRoutes from './routes/admin'
@@ -9,9 +10,11 @@ import adminLogRoutes from './routes/admin-logs'
 import animeRoutes from './routes/anime'
 import episodesRoutes from './routes/episodes'
 import imgRoutes from './routes/img'
+import jellyfinRoutes from './routes/jellyfin'
 import recorderRoutes from './routes/recorder'
 import recordingJobsRoutes from './routes/recording-jobs'
 import recordingLibraryRoutes from './routes/recording-library'
+import settingsRoutes from './routes/settings'
 import { scheduled } from './scheduled'
 
 type Bindings = {
@@ -27,7 +30,7 @@ type Bindings = {
   AWS_SECRET_ACCESS_KEY: string
   LAMBDA_FUNCTION_URL: string
   LAMBDA_FUNCTION_URL_US: string
-}
+} & Partial<JellyfinEnv>
 
 setupLogger()
 
@@ -40,10 +43,12 @@ app.route('/api/admin', adminRoutes)
 app.route('/api/admin', adminLogRoutes)
 app.route('/api/anime', animeRoutes)
 app.route('/api/img', imgRoutes)
+app.route('/api/jellyfin', jellyfinRoutes)
 app.route('/api/recorder', recorderRoutes)
 app.route('/api/recording-library', recordingLibraryRoutes)
 app.route('/api/recording-jobs', recordingJobsRoutes)
 app.route('/api/episodes', episodesRoutes)
+app.route('/api/settings', settingsRoutes)
 
 // デバッグ用: Falcor API のレスポンスを直接確認する。AniList は Workers から 403 になるため Lambda 経由でのみ叩く
 app.get('/api/debug/falcor/:slug', async (c) => {

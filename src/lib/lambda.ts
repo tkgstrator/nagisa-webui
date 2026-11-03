@@ -4,6 +4,8 @@ import {
   ExpiringResponseSchema,
   type FetchAbemaArchiveRequestSchema,
   FetchAbemaArchiveResponseSchema,
+  type FetchAnilistStatusRequestSchema,
+  FetchAnilistStatusResponseSchema,
   type FetchAnilistYearRequestSchema,
   FetchAnilistYearResponseSchema,
   type FetchExpiringRequestSchema,
@@ -123,6 +125,9 @@ export function createFetchClient(env: FetchClientEnv) {
     /** AniList の年単位取得。Workers は AniList に 403 でブロックされるので Lambda 経由で取る */
     fetchAnilistYear: (body: z.input<typeof FetchAnilistYearRequestSchema>) =>
       post(aws, env.LAMBDA_FUNCTION_URL, '/anilist_year', body, FetchAnilistYearResponseSchema),
+    /** AniList の id_in 取得 (放送中ステータスの再取得)。同じく Lambda 経由 */
+    fetchAnilistStatus: (body: z.infer<typeof FetchAnilistStatusRequestSchema>) =>
+      post(aws, env.LAMBDA_FUNCTION_URL, '/anilist_status', body, FetchAnilistStatusResponseSchema),
     fetchImage: (body: z.infer<typeof FetchImageRequestSchema>) =>
       post(aws, getBaseUrl(env, body.provider), '/image', body, FetchImageResponseSchema)
   }
