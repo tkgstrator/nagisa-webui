@@ -329,3 +329,13 @@ model CatalogEvent {
   @@index([animeId])
   @@map("catalog_events")
 }
+
+/// サーバー保存のアプリ設定 (key-value)。端末ローカルでなくバックエンドが参照する設定だけを置く。
+/// 現状のキー: 'autoScheduleNewEpisodes' ('true' | 'false'。行が無ければ true = 自動録画 ON)
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("app_setting")
+}

@@ -14,6 +14,7 @@ import jellyfinRoutes from './routes/jellyfin'
 import recorderRoutes from './routes/recorder'
 import recordingJobsRoutes from './routes/recording-jobs'
 import recordingLibraryRoutes from './routes/recording-library'
+import settingsRoutes from './routes/settings'
 import { scheduled } from './scheduled'
 
 type Bindings = {
@@ -47,6 +48,7 @@ app.route('/api/recorder', recorderRoutes)
 app.route('/api/recording-library', recordingLibraryRoutes)
 app.route('/api/recording-jobs', recordingJobsRoutes)
 app.route('/api/episodes', episodesRoutes)
+app.route('/api/settings', settingsRoutes)
 
 // デバッグ用: Falcor API のレスポンスを直接確認する。AniList は Workers から 403 になるため Lambda 経由でのみ叩く
 app.get('/api/debug/falcor/:slug', async (c) => {

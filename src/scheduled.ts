@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { autoRecordSweep } from './lib/auto-record'
 import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
 import type { JellyfinEnv } from './lib/jellyfin/client'
@@ -165,6 +166,8 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
                 enqueued++
               }
             }
+            // update を待たずに、予約済み作品の配信済み未録画回を送る (DB と nagisa のみ。OFF なら何もしない)
+            await autoRecordSweep(prisma, env)
             break
           case '0 0 * * *':
             for (const provider of providers) {

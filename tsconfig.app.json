@@ -10,6 +10,7 @@
     "src/schemas/nagisa.dto.ts",
     "src/schemas/recording.dto.ts",
     "src/schemas/message.dto.ts",
+    "src/schemas/settings.dto.ts",
     "src/schemas/unidentified.dto.ts",
     ".intlayer/**/*.ts"
   ],

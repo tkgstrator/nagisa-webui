@@ -16,6 +16,9 @@ export const queryKeys = {
   jellyfin: {
     refreshState: ['jellyfin', 'refresh-state'] as const
   },
+  settings: {
+    recording: ['settings', 'recording'] as const
+  },
   changelog: ['changelog'] as const,
   admin: {
     archiveStats: (provider: string) => ['admin', 'key-archives', 'stats', provider] as const,
