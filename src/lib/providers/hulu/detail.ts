@@ -3,7 +3,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import type { Episode, Season, TitleInfo } from '../../../schemas/providers/common.dto'
 import {
-  EpisodesSchema,
+  EpisodeSchema,
   type FalcorMeta,
   FalcorMetaResponseSchema,
   type Episode as HuluEpisode
@@ -103,9 +103,20 @@ function groupIntoSeasons(slug: string, episodes: HuluEpisode[]): Season[] {
  */
 export function parseEpisodesFromHtml(html: string): HuluEpisode[] {
   const raw = extractMetasArray(html)
-  const result = EpisodesSchema.safeParse(raw)
-  if (!result.success) throw result.error
-  return result.data
+  const results = raw.map((r) => EpisodeSchema.safeParse(r))
+  const episodes = results.flatMap((r) => (r.success ? [r.data] : []))
+  const failed = results.flatMap((r) => (r.success ? [] : [r.error]))
+  if (failed.length > 0) {
+    logger.warn({
+      action: 'skip-invalid-episodes',
+      skipped: failed.length,
+      total: raw.length,
+      error: failed[0].message
+    })
+  }
+  // 全件不正なら握りつぶさず呼び出し側 (fetchEpisodesFromRsc) の parse-rsc-failed に載せる
+  if (episodes.length === 0 && failed.length > 0) throw failed[0]
+  return episodes
 }
 
 /**

@@ -131,12 +131,13 @@ const AdditionalInfoSchema = z.object({
   short_name: z.string().nullable()
 })
 
-const EpisodeSchema = z.object({
+export const EpisodeSchema = z.object({
   id: z.number().int().positive(),
   id_in_schema: z.number().int().positive(),
   title: z.string().nonempty(),
   description: z.string().nonempty(),
-  slug: z.string().nonempty(),
+  // 放送前/一部作品では null。エピソード単位の slug は参照していない
+  slug: z.string().nonempty().nullable(),
   imageUrl: ImageUrlSchema,
   rental: z.boolean(),
   startAt: z.string().nonempty(),
@@ -151,8 +152,6 @@ const EpisodeSchema = z.object({
 })
 
 export type Episode = z.infer<typeof EpisodeSchema>
-
-export const EpisodesSchema = z.array(EpisodeSchema).nonempty()
 
 const ValueSchema = z
   .object({
