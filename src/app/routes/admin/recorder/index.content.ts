@@ -44,7 +44,7 @@ const adminNagisaContent = {
       prefilledHint: '未識別タイトル一覧から入力済み',
       episodesHint: 'カンマ・スペース・改行で区切って入力してください。season_number の指定も必要です。',
       forceHint: {
-        prefix: '— 出力ファイルが存在する場合も、スキップせずに再ダウンロードします（Nagisa の',
+        prefix: '— 出力済みでも再ダウンロードします（Nagisa の',
         suffix: 'に相当）'
       },
       submit: '投入',
@@ -96,7 +96,7 @@ const adminNagisaContent = {
       prefilledHint: 'Prefilled from the unidentified titles list',
       episodesHint: 'Separate with commas, spaces, or line breaks. Requires season_number.',
       forceHint: {
-        prefix: "— Download again even if output files exist (equivalent to Nagisa's",
+        prefix: "— Download again even if output exists (Nagisa's",
         suffix: 'flag)'
       },
       submit: 'Submit',
