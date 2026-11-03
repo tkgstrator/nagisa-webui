@@ -117,6 +117,7 @@ function RecordingsPage() {
         total={total}
         recorded={stats.recorded}
         pending={stats.pending}
+        recordedFilter={recordedFilter}
         onFilterChange={setRecordedFilter}
       />
 
@@ -145,8 +146,6 @@ function RecordingsPage() {
           </div>
 
           <RecordingsToolbar
-            recordedFilter={recordedFilter}
-            onRecordedFilterChange={setRecordedFilter}
             provider={provider}
             onProviderChange={setProvider}
             expiringOnly={expiringOnly}

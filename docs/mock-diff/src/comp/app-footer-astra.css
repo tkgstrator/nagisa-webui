@@ -16,12 +16,15 @@
 .ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
 .ftr .dot.is-down { background: var(--destructive); }
-/* 画面下端に常時固定する版。左端は常設サイドバー (236px) の右から。
+/* 画面下端に常時固定する版。左端は常設サイドバー (展開 236px / 折りたたみ 56px) の右から。
    高さ 44px は決定稿骨格の .pg の下余白 90px (= 46 + 44) と対になっている。 */
 .ftr.is-fixed {
   position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
   padding: 0 36px; background: var(--background); flex-wrap: nowrap;
+  transition: left .2s linear;
 }
+/* サイドバーを畳むと左端も 56px (--sidebar-width-icon) へ同じ 200ms linear で追従する */
+.ftr.is-fixed.is-collapsed { left: 56px; }
 @media (max-width: 640px) {
   .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
   .ftr .r { gap: 12px; }

@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2, Send } from 'lucide-react'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { z } from 'zod'
-import { FormField, FormHint, FormRow, formControlClass, MonoText, PreBlock } from '@/app/components/form-field'
+import { FormField, FormHint, FormRow, MonoText, PreBlock } from '@/app/components/form-field'
 import { PageContainer } from '@/app/components/page-container'
 import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
 import { PageSection } from '@/app/components/page-section'
@@ -33,6 +33,13 @@ type Provider = NagisaEnqueueRequest['provider']
 type Marketplace = NonNullable<NagisaEnqueueRequest['marketplace']>
 type Language = NonNullable<NagisaEnqueueRequest['language']>
 
+const FormGroup = ({ title, children }: { title: string; children: ReactNode }) => (
+  <section className='flex flex-col gap-3 border-t border-border pt-3.5'>
+    <p className='text-[11px] font-bold text-muted-foreground'>{title}</p>
+    {children}
+  </section>
+)
+
 const PROVIDERS: Provider[] = ['amazon', 'crunchyroll', 'hulu', 'abema']
 
 /** Select の value で「未指定」を表すセンチネル（空文字は base-ui で扱いづらい） */
@@ -45,6 +52,7 @@ function NagisaJobEditorPage() {
   const content = useIntlayer('admin-nagisa')
   const { settings } = useSettings()
   const search = Route.useSearch()
+  const prefilled = search.provider !== undefined || search.contentId !== undefined
   const [provider, setProvider] = useState<Provider>(search.provider ?? 'amazon')
   const [contentId, setContentId] = useState(search.contentId ?? '')
   const [seasonNumberText, setSeasonNumberText] = useState('')
@@ -166,99 +174,106 @@ function NagisaJobEditorPage() {
         }
       />
 
-      <div>
-        <div className='flex max-w-[580px] flex-col gap-[18px]'>
-          <FormField label='provider' htmlFor='provider'>
-            <Select value={provider} onValueChange={(v) => setProvider(v as Provider)}>
-              <SelectTrigger id='provider' className={formControlClass}>
-                <SelectValue>{providerValueLabel}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {PROVIDERS.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {providerLabel[p] ?? p}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormField>
+      <div className='grid items-start gap-10 max-lg:gap-7 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)]'>
+        <div className='flex min-w-0 flex-col gap-[22px]'>
+          <FormGroup title={content.groups.target.value}>
+            <FormRow>
+              <FormField label='provider' htmlFor='provider' required>
+                <Select value={provider} onValueChange={(v) => setProvider(v as Provider)}>
+                  <SelectTrigger id='provider' aria-required='true' className='w-full'>
+                    <SelectValue>{providerValueLabel}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROVIDERS.map((p) => (
+                      <SelectItem key={p} value={p}>
+                        {providerLabel[p] ?? p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label='content_id' htmlFor='contentId' required>
+                <Input
+                  id='contentId'
+                  aria-required='true'
+                  placeholder={content.placeholders.contentId.value}
+                  value={contentId}
+                  onChange={(e) => setContentId(e.target.value)}
+                />
+              </FormField>
+            </FormRow>
+            {prefilled && <FormHint>{content.prefilledHint.value}</FormHint>}
+          </FormGroup>
 
-          <FormField label='content_id' htmlFor='contentId'>
-            <Input
-              id='contentId'
-              className={formControlClass}
-              placeholder={content.placeholders.contentId.value}
-              value={contentId}
-              onChange={(e) => setContentId(e.target.value)}
-            />
-          </FormField>
+          <FormGroup title={content.groups.range.value}>
+            <FormRow>
+              <FormField label={content.labels.seasonNumber.value} htmlFor='seasonNumber'>
+                <Input
+                  id='seasonNumber'
+                  placeholder={content.placeholders.seasonNumber.value}
+                  value={seasonNumberText}
+                  onChange={(e) => setSeasonNumberText(e.target.value)}
+                />
+              </FormField>
+              <FormField label={content.labels.episodes.value} htmlFor='episodes'>
+                <Input
+                  id='episodes'
+                  placeholder={content.placeholders.episodes.value}
+                  value={episodesText}
+                  onChange={(e) => setEpisodesText(e.target.value)}
+                />
+              </FormField>
+            </FormRow>
+            <FormHint>{content.episodesHint.value}</FormHint>
+          </FormGroup>
 
-          <FormRow>
-            <FormField label={content.labels.seasonNumber.value} htmlFor='seasonNumber'>
-              <Input
-                id='seasonNumber'
-                className={formControlClass}
-                placeholder={content.placeholders.seasonNumber.value}
-                value={seasonNumberText}
-                onChange={(e) => setSeasonNumberText(e.target.value)}
+          <FormGroup title={content.groups.options.value}>
+            <FormRow>
+              <FormField label={content.labels.marketplace.value} htmlFor='marketplace'>
+                <Select value={marketplace} onValueChange={(v) => setMarketplace(v as Marketplace | typeof UNSET)}>
+                  <SelectTrigger id='marketplace' className='w-full'>
+                    <SelectValue>{marketplaceValueLabel}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
+                    {MARKETPLACES.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>
+                        {m.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={content.labels.language.value} htmlFor='language'>
+                <Select value={language} onValueChange={(v) => setLanguage(v as Language | typeof UNSET)}>
+                  <SelectTrigger id='language' className='w-full'>
+                    <SelectValue>{languageValueLabel}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
+                    {LANGUAGES.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>
+                        {l.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+            </FormRow>
+
+            <label htmlFor='force' className='flex items-start gap-2'>
+              <Checkbox
+                id='force'
+                checked={force}
+                onCheckedChange={(v) => setForce(v === true)}
+                className='size-[18px]'
               />
-            </FormField>
-            <FormField label={content.labels.episodes.value} htmlFor='episodes' hint={content.episodesHint.value}>
-              <Input
-                id='episodes'
-                className={formControlClass}
-                placeholder={content.placeholders.episodes.value}
-                value={episodesText}
-                onChange={(e) => setEpisodesText(e.target.value)}
-              />
-            </FormField>
-          </FormRow>
-
-          <FormRow>
-            <FormField label={content.labels.marketplace.value} htmlFor='marketplace'>
-              <Select value={marketplace} onValueChange={(v) => setMarketplace(v as Marketplace | typeof UNSET)}>
-                <SelectTrigger id='marketplace' className={formControlClass}>
-                  <SelectValue>{marketplaceValueLabel}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
-                  {MARKETPLACES.map((m) => (
-                    <SelectItem key={m.value} value={m.value}>
-                      {m.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormField>
-            <FormField label={content.labels.language.value} htmlFor='language'>
-              <Select value={language} onValueChange={(v) => setLanguage(v as Language | typeof UNSET)}>
-                <SelectTrigger id='language' className={formControlClass}>
-                  <SelectValue>{languageValueLabel}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={UNSET}>{content.unset.value}</SelectItem>
-                  {LANGUAGES.map((l) => (
-                    <SelectItem key={l.value} value={l.value}>
-                      {l.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormField>
-          </FormRow>
-
-          <label htmlFor='force' className='flex items-start gap-2'>
-            <Checkbox
-              id='force'
-              checked={force}
-              onCheckedChange={(v) => setForce(v === true)}
-              className='size-[18px]'
-            />
-            <FormHint className='mt-0.5'>
-              <b className='font-bold'>force</b> {content.forceHint.prefix.value} <MonoText>-F</MonoText>{' '}
-              {content.forceHint.suffix.value}
-            </FormHint>
-          </label>
+              <FormHint className='leading-[18px] [&_code]:leading-none'>
+                <b className='font-bold'>force</b> {content.forceHint.prefix.value} <MonoText>-F</MonoText>{' '}
+                {content.forceHint.suffix.value}
+              </FormHint>
+            </label>
+          </FormGroup>
 
           {validationError && <p className='text-xs text-destructive'>{validationError}</p>}
 
@@ -271,55 +286,58 @@ function NagisaJobEditorPage() {
           </div>
         </div>
 
-        {preview && (
-          <PageSection title={content.previewTitle.value}>
-            <PreBlock>{JSON.stringify(preview, null, 2)}</PreBlock>
-          </PageSection>
-        )}
-
-        {mutation.isError && (
-          <PageSection title={content.errorTitle.value}>
-            <PreBlock error>{mutation.error.message}</PreBlock>
-          </PageSection>
-        )}
-
-        {mutation.isSuccess && (
-          <>
-            <PageSection title={content.enqueuedCount({ count: mutation.data.count })}>
-              <div className='flex flex-col gap-2.5'>
-                {mutation.data.jobs.map((job) => (
-                  <div
-                    key={job.job_id}
-                    className='flex flex-col gap-[3px] rounded-r-lg border-l-[3px] border-success bg-background px-3 py-2.5'
-                  >
-                    <p className='text-[13px] font-bold'>
-                      {job.name} ({job.status}) — {job.job_id}
-                    </p>
-                    {job.preview && (
-                      <>
-                        <div className='text-[11.5px] text-muted-foreground'>{job.preview.title}</div>
-                        {job.preview.title_en && (
-                          <div className='text-[11.5px] text-muted-foreground'>{job.preview.title_en}</div>
-                        )}
-                        <div className='text-[11.5px] text-muted-foreground tabular-nums'>
-                          {content.jobPreviewMeta({
-                            contentType: job.preview.content_type,
-                            selected: job.preview.selected_episodes,
-                            total: job.preview.total_episodes,
-                            marketplace: job.preview.marketplace
-                          })}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
+        <div className='flex min-w-0 flex-col gap-[22px] lg:sticky lg:top-6 [&>section]:mt-0'>
+          {preview && (
+            <FormGroup title={content.previewTitle.value}>
+              <div className='mt-6'>
+                <PreBlock>{JSON.stringify(preview, null, 2)}</PreBlock>
               </div>
+            </FormGroup>
+          )}
+          {mutation.isError && (
+            <PageSection title={content.errorTitle.value}>
+              <PreBlock error>{mutation.error.message}</PreBlock>
             </PageSection>
-            <PageSection title={content.responseTitle.value}>
-              <PreBlock>{JSON.stringify(mutation.data, null, 2)}</PreBlock>
-            </PageSection>
-          </>
-        )}
+          )}
+
+          {mutation.isSuccess && (
+            <>
+              <PageSection title={content.enqueuedCount({ count: mutation.data.count })}>
+                <div className='flex flex-col gap-2.5'>
+                  {mutation.data.jobs.map((job) => (
+                    <div
+                      key={job.job_id}
+                      className='flex flex-col gap-[3px] rounded-r-lg border-l-[3px] border-success bg-background px-3 py-2.5'
+                    >
+                      <p className='text-[13px] font-bold'>
+                        {job.name} ({job.status}) — {job.job_id}
+                      </p>
+                      {job.preview && (
+                        <>
+                          <div className='text-[11.5px] text-muted-foreground'>{job.preview.title}</div>
+                          {job.preview.title_en && (
+                            <div className='text-[11.5px] text-muted-foreground'>{job.preview.title_en}</div>
+                          )}
+                          <div className='text-[11.5px] text-muted-foreground tabular-nums'>
+                            {content.jobPreviewMeta({
+                              contentType: job.preview.content_type,
+                              selected: job.preview.selected_episodes,
+                              total: job.preview.total_episodes,
+                              marketplace: job.preview.marketplace
+                            })}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </PageSection>
+              <PageSection title={content.responseTitle.value}>
+                <PreBlock>{JSON.stringify(mutation.data, null, 2)}</PreBlock>
+              </PageSection>
+            </>
+          )}
+        </div>
       </div>
     </PageContainer>
   )

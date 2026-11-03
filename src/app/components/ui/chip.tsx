@@ -12,7 +12,7 @@ function Chip({ className, tone = "muted", ...props }: ButtonPrimitive.Props & {
     <ButtonPrimitive
       data-slot="chip"
       className={cn(
-        "inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-full border border-border bg-transparent px-2.5 text-xs whitespace-nowrap text-muted-foreground outline-none transition-colors select-none hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-45 aria-pressed:border-(--tone-border) aria-pressed:bg-(--tone-soft) aria-pressed:font-semibold aria-pressed:text-(--tone-ink) [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0",
+        "inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-full border border-border bg-transparent px-2.5 text-xs whitespace-nowrap text-muted-foreground outline-none transition-colors select-none hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-45 aria-pressed:border-(--tone-border) aria-pressed:bg-(--tone-soft) aria-pressed:text-(--tone-ink) [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0",
         toneClassName[tone],
         className,
       )}

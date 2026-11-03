@@ -39,10 +39,15 @@ const PROVIDER_DOT: Record<string, string> = {
 }
 
 export const SORT_OPTIONS = [
-  { value: 'title-asc', label: content.sort.titleAsc, sort: 'title' as const, order: 'asc' as const },
-  { value: 'title-desc', label: content.sort.titleDesc, sort: 'title' as const, order: 'desc' as const },
-  { value: 'year-desc', label: content.sort.yearDesc, sort: 'year' as const, order: 'desc' as const },
-  { value: 'year-asc', label: content.sort.yearAsc, sort: 'year' as const, order: 'asc' as const }
+  { value: 'title-asc', sort: 'title' as const, order: 'asc' as const },
+  { value: 'title-desc', sort: 'title' as const, order: 'desc' as const },
+  { value: 'year-desc', sort: 'year' as const, order: 'desc' as const },
+  { value: 'year-asc', sort: 'year' as const, order: 'asc' as const }
+] as const
+
+export const SORT_KEYS = [
+  { value: 'title', label: content.sort.title },
+  { value: 'year', label: content.sort.year }
 ] as const
 
 export type SortValue = (typeof SORT_OPTIONS)[number]['value']

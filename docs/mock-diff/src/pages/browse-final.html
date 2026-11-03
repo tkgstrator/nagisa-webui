@@ -1,6 +1,6 @@
 TITLE: Nagisa — アニメ一覧
 SKELETON: astra
-USES: app-header anime-card browse-filters filter-chips anime-drawer pagination app-footer
+USES: input toggle app-header anime-card browse-filters filter-chips anime-drawer pagination app-footer
 ---
 
 <div class="pg-shell">
@@ -78,15 +78,14 @@ USES: app-header anime-card browse-filters filter-chips anime-drawer pagination 
             <input type="search" placeholder="タイトルで検索">
           </label>
           <div class="sort">
-            <div class="sel">
+            <div class="a-select a-pill a-fit">
               <select aria-label="並べ替え">
-                <option selected>タイトル (昇順)</option>
-                <option>タイトル (降順)</option>
-                <option>放送年 (新しい順)</option>
-                <option>放送年 (古い順)</option>
+                <option selected>タイトル</option>
+                <option>放送年</option>
               </select>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </div>
+            <div class="a-segments" role="group" aria-label="並び順の向き"><button type="button" aria-pressed="true">昇順</button><button type="button" aria-pressed="false">降順</button></div>
           </div>
         </div>
       </div>

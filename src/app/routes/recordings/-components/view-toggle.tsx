@@ -24,9 +24,7 @@ export const ViewToggle = ({ view, onViewChange }: ViewToggleProps) => {
             onClick={() => onViewChange(value)}
             className={cn(
               'inline-flex h-7 items-center rounded-md px-2.5 text-xs whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring',
-              view === value
-                ? 'bg-accent font-semibold text-accent-foreground'
-                : 'text-muted-foreground hover:text-foreground'
+              view === value ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
             )}
           >
             {label}

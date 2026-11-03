@@ -209,7 +209,6 @@ function StatusAdminPage() {
                 value={`seq ${stats.data.last_seq.toLocaleString(appLocale)}`}
                 note={`epoch ${stats.data.epoch}`}
                 tone='muted'
-                mono
               />
             </StatGrid>
           )}

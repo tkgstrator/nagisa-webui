@@ -43,7 +43,8 @@ export function SearchBar({ value, onChange }: { value: string; onChange: (value
         placeholder={content.placeholder.value}
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
-        className='h-[34px] rounded-full bg-background pr-3 pl-8 text-[12.5px] focus-visible:border-primary md:text-[12.5px]'
+        size='sm'
+        search
         aria-label={content.placeholder.value}
       />
     </div>

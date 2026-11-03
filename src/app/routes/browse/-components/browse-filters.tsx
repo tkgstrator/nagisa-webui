@@ -1,4 +1,5 @@
 import { useIntlayer } from 'react-intlayer'
+import { Checkbox } from '@/app/components/ui/checkbox'
 import { Chip } from '@/app/components/ui/chip'
 import { StatusDot } from '@/app/components/ui/status-dot'
 import { providerLabel } from '@/app/lib/constants'
@@ -91,12 +92,12 @@ export const BrowseFilterPanel = ({
       <FilterGroup title={content.groups.provider.value}>
         <div className='flex flex-col gap-px'>
           {PROVIDERS.map((key) => (
+            // biome-ignore lint/a11y/noLabelWithoutControl: 共通 Checkbox (base-ui) の button が label 内の操作対象になる
             <label key={key} className={checkClass}>
-              <input
-                type='checkbox'
-                className='ml-1 mr-[3px] size-3.5 shrink-0 accent-primary'
+              <Checkbox
+                className='ml-1 mr-[3px]'
                 checked={provider === key}
-                onChange={() => onChangeProvider(provider === key ? undefined : key)}
+                onCheckedChange={() => onChangeProvider(provider === key ? undefined : key)}
               />
               <StatusDot aria-hidden='true' className={cn('size-2 opacity-60', providerDot[key])} />
               {providerLabel[key]}
@@ -164,12 +165,12 @@ export const BrowseFilterPanel = ({
       <FilterGroup title={content.groups.badge.value}>
         <div className='flex flex-col gap-px'>
           {BADGES.map((b) => (
+            // biome-ignore lint/a11y/noLabelWithoutControl: 共通 Checkbox (base-ui) の button が label 内の操作対象になる
             <label key={b.value} className={checkClass}>
-              <input
-                type='checkbox'
-                className='ml-1 mr-[3px] size-3.5 shrink-0 accent-primary'
+              <Checkbox
+                className='ml-1 mr-[3px]'
                 checked={badge === b.value}
-                onChange={() => onChangeBadge(badge === b.value ? undefined : b.value)}
+                onCheckedChange={() => onChangeBadge(badge === b.value ? undefined : b.value)}
               />
               {b.label}
             </label>

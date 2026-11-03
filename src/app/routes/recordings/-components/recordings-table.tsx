@@ -3,26 +3,20 @@ import { Fragment } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { ProxyImage } from '@/app/components/proxy-image'
 import { StatusBadge } from '@/app/components/ui/status-badge'
-import { providerColor, providerLabel, statusColor, statusLabel } from '@/app/lib/constants'
+import { providerColor, providerLabel } from '@/app/lib/constants'
 import { cn } from '@/app/lib/utils'
-import { useSettings } from '@/app/routes/settings/-lib/settings'
+import { deriveAnimeStatus } from '@/lib/anime-status'
 import type { AnimeSchema } from '@/schemas/anime.dto'
-import { daysUntil, formatAbsolute, formatDate, formatRelative, seasonLabel } from './format'
+import { accentClassName } from '../-lib/status-accent'
+import { formatAbsolute, formatDate, formatRelative, seasonLabel } from './format'
 import type { SortValue } from './recordings-toolbar'
-
-/** 行頭のアクセント色。録画済み → success、配信終了予定 → warning、それ以外 → border。 */
-const rowAccent = (anime: AnimeSchema): string => {
-  if (anime.recorded) return 'border-l-success'
-  if (anime.expiredAt !== null) return 'border-l-warning'
-  return 'border-l-border'
-}
 
 type SortKey = 'title' | 'updatedAt'
 
 /** 並べ替え select の値から、その列が昇順/降順のどちらで並んでいるかを引く。 */
 const sortStateOf = (key: SortKey, sort: SortValue): 'ascending' | 'descending' | undefined => {
-  if (key === 'title') return sort === 'title-asc' ? 'ascending' : undefined
-  return sort === 'updatedAt-desc' ? 'descending' : sort === 'updatedAt-asc' ? 'ascending' : undefined
+  if (!sort.startsWith(`${key}-`)) return undefined
+  return sort.endsWith('-asc') ? 'ascending' : 'descending'
 }
 
 const headClass =
@@ -39,8 +33,13 @@ type SortableHeadProps = {
 
 const SortableHead = ({ label, sortKey, sort, onSortChange, className = '' }: SortableHeadProps) => {
   const state = sortStateOf(sortKey, sort)
+  // 今の列をもう一度押すと向きが反転する。別の列からは従来どおり title は昇順、updatedAt は降順で始める。
   const next: SortValue =
-    sortKey === 'title' ? 'title-asc' : sort === 'updatedAt-desc' ? 'updatedAt-asc' : 'updatedAt-desc'
+    state === undefined
+      ? sortKey === 'title'
+        ? 'title-asc'
+        : 'updatedAt-desc'
+      : `${sortKey}-${state === 'ascending' ? 'desc' : 'asc'}`
   return (
     <th scope='col' aria-sort={state} className={cn(headClass, state !== undefined && 'text-foreground', className)}>
       <button
@@ -58,13 +57,12 @@ const SortableHead = ({ label, sortKey, sort, onSortChange, className = '' }: So
 }
 
 const Row = ({ anime }: { anime: AnimeSchema }) => {
-  const { settings } = useSettings()
   const content = useIntlayer('recordings-recordings-table')
   const season = seasonLabel(anime.year, anime.quarter)
-  const remaining = anime.expiredAt === null ? null : daysUntil(anime.expiredAt)
+  const status = deriveAnimeStatus(anime)
   return (
     <tr className='border-b border-border transition-colors focus-within:bg-muted hover:bg-muted'>
-      <td className={cn(cellClass, 'border-l-[3px]', rowAccent(anime))}>
+      <td className={cn(cellClass, 'border-l-[3px]', accentClassName[status.tone])}>
         <div className='flex min-w-0 items-center gap-3 max-sm:gap-2'>
           <div className='group relative aspect-video w-[88px] shrink-0 overflow-hidden rounded-md max-sm:w-[60px]'>
             <ProxyImage
@@ -100,34 +98,13 @@ const Row = ({ anime }: { anime: AnimeSchema }) => {
         </StatusBadge>
       </td>
       <td className={cellClass}>
-        <StatusBadge size='sm' className={statusColor[anime.status] ?? 'bg-muted text-muted-foreground'}>
-          {statusLabel[anime.status] ?? anime.status}
-        </StatusBadge>
-      </td>
-      <td className={cellClass}>
-        <StatusBadge size='sm' variant='solid' tone={anime.recorded ? 'success' : 'muted'}>
-          {anime.recorded ? content.recordedBadge.recorded : content.recordedBadge.pending}
+        <StatusBadge size='sm' variant='solid' tone={status.tone}>
+          {status.key === null ? status.raw : content.statuses[status.key]}
         </StatusBadge>
       </td>
       <td className={cellClass}>
         <span className='block text-[12.5px]'>{formatRelative(anime.updatedAt)}</span>
         <span className='block text-[11px] text-muted-foreground tabular-nums'>{formatAbsolute(anime.updatedAt)}</span>
-      </td>
-      <td className={cn(cellClass, 'text-xs text-muted-foreground tabular-nums max-sm:px-[5px] max-sm:py-[9px]')}>
-        {anime.expiredAt === null ? (
-          '—'
-        ) : (
-          <>
-            <span
-              className={
-                remaining !== null && remaining <= settings.expiringLeadDays ? 'font-semibold text-destructive' : ''
-              }
-            >
-              {formatDate(anime.expiredAt)}
-            </span>
-            <span className='block text-[11px]'>{content.remainingDays({ days: remaining })}</span>
-          </>
-        )}
       </td>
     </tr>
   )
@@ -138,7 +115,7 @@ const GroupRow = ({ label, count, hint }: { label: string; count: number; hint: 
   return (
     <tr>
       <th
-        colSpan={6}
+        colSpan={4}
         scope='colgroup'
         className='border-b border-border px-2.5 pt-[18px] pb-1.5 pl-[13px] text-left text-xs font-semibold text-muted-foreground'
       >
@@ -174,14 +151,12 @@ export const RecordingsTable = ({ items, sort, onSortChange }: RecordingsTablePr
 
   return (
     <div className='min-w-0 max-sm:overflow-x-auto'>
-      <table className='w-full table-fixed border-collapse text-sm max-sm:min-w-[656px]'>
+      <table className='w-full table-fixed border-collapse text-sm max-sm:min-w-[560px]'>
         <colgroup>
           <col />
           <col className='w-[104px]' />
-          <col className='w-[76px]' />
-          <col className='w-[88px]' />
           <col className='w-[112px]' />
-          <col className='w-24' />
+          <col className='w-[112px]' />
         </colgroup>
         <thead>
           <tr className='border-b border-border'>
@@ -190,10 +165,7 @@ export const RecordingsTable = ({ items, sort, onSortChange }: RecordingsTablePr
               {content.columns.provider}
             </th>
             <th scope='col' className={headClass}>
-              {content.columns.airing}
-            </th>
-            <th scope='col' className={headClass}>
-              {content.columns.recorded}
+              {content.columns.status}
             </th>
             <SortableHead
               label={content.columns.updatedAt.value}
@@ -201,9 +173,6 @@ export const RecordingsTable = ({ items, sort, onSortChange }: RecordingsTablePr
               sort={sort}
               onSortChange={onSortChange}
             />
-            <th scope='col' className={headClass}>
-              {content.columns.expiresAt}
-            </th>
           </tr>
         </thead>
         <tbody>

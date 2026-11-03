@@ -200,11 +200,11 @@ svg { display: block; flex: none; }
 .search svg { position: absolute; left: 10px; top: 50%; width: 15px; height: 15px; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; fill: none; stroke: currentColor; stroke-width: 2; }
 .search input {
   width: 100%; height: 34px; padding: 0 30px 0 32px;
-  border: 1px solid var(--input); border-radius: 8px;
-  background: var(--background); color: var(--foreground); font: inherit; font-size: 13px;
+  border: 1px solid var(--input); border-radius: 999px;
+  background: var(--background); color: var(--foreground); font: inherit; font-size: 12.5px;
 }
 .search input::placeholder { color: var(--muted-foreground); }
-.search input:focus-visible, .search input.is-focus { outline: 2px solid var(--ring); outline-offset: 0; border-color: var(--primary); }
+.search input:focus-visible, .search input.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
 .search .clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 4px; display: grid; place-items: center; color: var(--muted-foreground); }
 .search .clear svg { position: static; transform: none; width: 11px; height: 11px; stroke-width: 2.4; }
 .search .clear:hover, .search .clear.is-hover { background: var(--muted); color: var(--foreground); }
@@ -213,7 +213,7 @@ svg { display: block; flex: none; }
 .seg button { height: 28px; padding: 0 10px; border-radius: 6px; font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; }
 .seg button:hover, .seg button.is-hover { color: var(--foreground); }
 .seg button:focus-visible, .seg button.is-focus { outline: 2px solid var(--ring); outline-offset: -1px; }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); }
 .seg button .n { font-size: 11px; opacity: .8; font-variant-numeric: tabular-nums; }
 
 /* プロバイダ chip */.chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
@@ -225,7 +225,8 @@ svg { display: block; flex: none; }
 .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .55; flex: none; }
 .chip:hover, .chip.is-hover { background: var(--muted); color: var(--foreground); }
 .chip:focus-visible, .chip.is-focus { outline: 2px solid var(--ring); outline-offset: 1px; }
-.chip[aria-pressed="true"] { border-color: transparent; font-weight: 600; }
+.chip[aria-pressed="true"] { border-color: transparent; }
+.chip.is-warn[aria-pressed="true"] { background: var(--warning); color: var(--warning-foreground); }
 .chip[aria-pressed="true"] .dot { opacity: 1; }
 .chip[aria-pressed="true"].amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
 .chip[aria-pressed="true"].hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
@@ -241,20 +242,21 @@ svg { display: block; flex: none; }
 
 /* 並べ替え */.sort { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
 .sort select {
-  height: 30px; padding: 0 28px 0 10px; border: 1px solid var(--input); border-radius: 8px;
-  background-color: var(--background); color: var(--foreground); font: inherit; font-size: 12px;
+  height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--input); border-radius: 999px;
+  background-color: var(--background); color: var(--foreground); font: inherit; font-size: 12.5px;
   appearance: none; -webkit-appearance: none;
   background-image: linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%), linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
-  background-position: calc(100% - 15px) 13px, calc(100% - 10px) 13px;
+  background-position: calc(100% - 17px) 15px, calc(100% - 12px) 15px;
   background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
 }
-.sort select:focus-visible, .sort select.is-focus { outline: 2px solid var(--ring); border-color: var(--primary); }
+.sort select:focus-visible, .sort select.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
 
-/* 絞り込みリセット */.reset { font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px; border-radius: 6px; }
-.reset svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+/* 絞り込みリセット */.reset { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex: none; padding: 0; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--muted-foreground); }
+.reset svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .reset:hover, .reset.is-hover { background: var(--muted); color: var(--foreground); }
-.reset:focus-visible, .reset.is-focus { outline: 2px solid var(--ring); outline-offset: 1px; }
-.reset[disabled] { opacity: .45; cursor: default; }
+.reset:focus-visible, .reset.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+.reset[disabled] { opacity: .5; cursor: default; }
+.reset[disabled]:hover, .reset[disabled].is-hover { background: var(--background); color: var(--muted-foreground); }
 
 /* 選択バー */.selbar {
   padding: 8px 0; border-bottom: 1px solid var(--border);
@@ -303,6 +305,16 @@ svg { display: block; flex: none; }
 /* 並べ替えの矢印を背景画像ではなく SVG で重ねる版。 */.sort-wrap { position: relative; display: inline-flex; }
 .sort-wrap select { width: 100%; background-image: none; }
 .sort-chevron { position: absolute; top: 50%; right: 10px; width: 10px; height: 10px; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; }
+
+/* 並べ替え: キーの select と向きの切り替えを同じ行に並べる。向きは常に表示し、高さは select (34px) に揃える。 */.sort-group { display: inline-flex; align-items: center; gap: 8px; }
+.sort-group .a-segments, .sort-dir { height: 34px; align-items: center; box-sizing: border-box; }
+.sort-dir { display: inline-flex; gap: 3px; padding: 3px; border-radius: 999px; background: var(--muted); }
+.sort-dir button { height: 26px; padding: 0 12px; border: 0; border-radius: 999px; font-size: 12.5px; color: var(--muted-foreground); background: transparent; }
+.sort-dir button:hover, .sort-dir button.is-hover { color: var(--foreground); }
+.sort-dir button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); }
+@media (max-width: 640px) {
+  .sort-group { width: 100%; }
+  .sort-group .sort { flex: 1; min-width: 0; width: auto; }}
 </style>
 </head>
 <body>
@@ -322,17 +334,13 @@ svg { display: block; flex: none; }
         <button type="button" aria-pressed="false">未録画 <span class="n">1</span></button>
         <button type="button" aria-pressed="false">録画済み <span class="n">5</span></button>
       </div>
-      <div class="chips" role="group" aria-label="配信元">
-        <button type="button" class="chip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button>
-        <button type="button" class="chip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button>
-        <button type="button" class="chip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button>
-        <button type="button" class="chip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button>
-        <button type="button" class="chip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button>
-      </div>
-      <button type="button" class="toggle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button>
-      <button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット</button>
+      <label class="sort">
+        <span class="sort-wrap"><select aria-label="配信元"><option selected>全配信元</option><option>Prime Video</option><option>Hulu</option><option>Crunchyroll</option><option>ABEMA</option><option>Netflix</option></select><svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+      </label>
+      <button type="button" class="chip is-warn" aria-pressed="false">配信終了予定のみ</button>
+      <button type="button" class="reset" aria-label="絞り込みをリセット" title="絞り込みをリセット"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></button>
       <span class="spacer"></span>
-      <label class="sort">並べ替え
+      <label class="sort">
         <select>
           <option>最終更新が新しい順</option>
           <option>進捗が低い順</option>
@@ -396,10 +404,10 @@ svg { display: block; flex: none; }
 <section class="cat-sec">
   <h2>並べ替えと絞り込みリセット</h2>
   <div class="cat-row">
-    <div class="cat-item is-key" data-story="並べ替えと絞り込みリセット / 並べ替え"><span class="cat-label">並べ替え</span><label class="sort">並べ替え<select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select></label></div>
-    <div class="cat-item" data-story="並べ替えと絞り込みリセット / フォーカス"><span class="cat-label">フォーカス</span><label class="sort">並べ替え<select class="is-focus"><option>進捗が低い順</option></select></label></div>
-    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット <span class="num">3</span></button></div>
-    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット 2"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット</button></div>
+    <div class="cat-item is-key" data-story="並べ替えと絞り込みリセット / 並べ替え"><span class="cat-label">並べ替え</span><label class="sort"><select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select></label></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / フォーカス"><span class="cat-label">フォーカス</span><label class="sort"><select class="is-focus"><option>進捗が低い順</option></select></label></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset" aria-label="絞り込みをリセット" title="絞り込みをリセット"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></button></div>
+    <div class="cat-item" data-story="並べ替えと絞り込みリセット / リセット 2"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset" disabled aria-label="絞り込みをリセット" title="絞り込みをリセット"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></button></div>
   </div>
 </section>
 
@@ -470,16 +478,17 @@ svg { display: block; flex: none; }
         </div>
     </div>
     <div class="cat-item cat-full is-key" data-story="ページ用の修飾 / .sort-wrap"><span class="cat-label">.sort-wrap</span>
+<span class="sort-group">
 <span class="sort-wrap">
-            <select>
-              <option>最終更新が新しい順</option>
-              <option>最終更新が古い順</option>
-              <option>タイトル順</option>
-              <option>放送年 (新しい順)</option>
-              <option>放送年 (古い順)</option>
+            <select aria-label="並べ替え">
+              <option selected>最終更新</option>
+              <option>タイトル</option>
+              <option>放送年</option>
             </select>
             <svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </span>
+<span class="sort-dir" role="group" aria-label="並び順の向き"><button type="button" aria-pressed="false">昇順</button><button type="button" aria-pressed="true">降順</button></span>
+</span>
     </div>
   </div>
   <p class="cat-note">録画一覧 (決定稿) で使う修飾。部品の既定値はそのままで、ページ側がクラスを足したときだけ効く。</p>

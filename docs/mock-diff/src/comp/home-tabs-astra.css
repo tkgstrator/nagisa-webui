@@ -18,7 +18,7 @@
 .seg:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
 .seg:active { transform: scale(.95); }
 .seg[aria-selected="true"] {
-  background: var(--primary); color: var(--primary-foreground); font-weight: 700;
+  background: var(--primary); color: var(--primary-foreground);
   box-shadow: 0 6px 14px -10px var(--overlay);
 }
 .seg[aria-selected="true"]:hover { background: var(--primary); color: var(--primary-foreground); }
