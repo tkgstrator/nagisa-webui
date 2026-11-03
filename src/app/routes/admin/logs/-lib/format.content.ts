@@ -11,9 +11,9 @@ const adminLogsFormatContent = {
         failed: '失敗'
       },
       runKindLabel: {
-        cron: 'Schedule',
-        queue: 'Queue',
-        manual: 'Manual'
+        cron: '定期実行',
+        queue: 'キュー',
+        manual: '手動'
       },
       logLevelLabel: {
         debug: 'DEBUG',
@@ -29,8 +29,8 @@ const adminLogsFormatContent = {
         notFound: '見つかりません'
       },
       recordingSourceLabel: {
-        cron: 'Schedule',
-        manual: 'Manual'
+        cron: '定期実行',
+        manual: '手動'
       },
       catalogKindLabel: {
         titleAdded: '作品追加',
