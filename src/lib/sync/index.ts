@@ -17,7 +17,7 @@ const syncLogger = getAppLogger('sync')
 const fetchLogger = getAppLogger('fetch')
 
 /** 既存エピソードで変わった項目。カタログログの「更新」行に載せる */
-type EpisodeField = 'image' | 'description' | 'duration' | 'releaseDate'
+type EpisodeField = 'title' | 'image' | 'description' | 'duration' | 'releaseDate'
 
 interface EpisodeRef {
   seasonNumber: number
@@ -161,10 +161,16 @@ export class SyncService {
               select: {
                 id: true,
                 episodeNumber: true,
+                episodeId: true,
+                title: true,
                 imageUrl: true,
                 description: true,
                 duration: true,
-                releaseDate: true
+                releaseDate: true,
+                maturityRating: true,
+                hasSubtitles: true,
+                hasDub: true,
+                benefitId: true
               }
             }
           }
@@ -173,21 +179,7 @@ export class SyncService {
     })
 
     const existingSeasons = new Map(
-      anime.seasons.map((s) => [
-        s.seasonNumber,
-        new Map(
-          s.episodes.map((e) => [
-            e.episodeNumber,
-            {
-              id: e.id,
-              imageUrl: e.imageUrl,
-              description: e.description,
-              duration: e.duration,
-              releaseDate: e.releaseDate
-            }
-          ])
-        )
-      ])
+      anime.seasons.map((s) => [s.seasonNumber, new Map(s.episodes.map((e) => [e.episodeNumber, e]))])
     )
 
     for (const season of seasons) {
@@ -242,27 +234,43 @@ export class SyncService {
         }
         const nextReleaseDate = dayjs(episode.releaseDate).toDate()
         const fields: EpisodeField[] = []
+        if (existing.title !== episode.title) fields.push('title')
         if (existing.imageUrl !== episode.imageUrl) fields.push('image')
         if (existing.description !== episode.description) fields.push('description')
         if (existing.duration !== episode.duration) fields.push('duration')
         if (existing.releaseDate.getTime() !== nextReleaseDate.getTime()) fields.push('releaseDate')
-        if (fields.length > 0) {
+        // ログに出さない項目 (ID・年齢区分・字幕/吹替・特典) も、変わっていれば書き戻す
+        const silentChanged =
+          existing.episodeId !== episode.episodeId ||
+          existing.maturityRating !== episode.maturityRating ||
+          existing.hasSubtitles !== episode.hasSubtitles ||
+          existing.hasDub !== episode.hasDub ||
+          existing.benefitId !== episode.benefitId
+        if (fields.length > 0 || silentChanged) {
           await withD1Retry(() =>
             this.prisma.episode.update({
               where: { id: existing.id },
               data: {
+                episodeId: episode.episodeId,
+                title: episode.title,
                 imageUrl: episode.imageUrl,
                 description: episode.description,
                 duration: episode.duration,
-                releaseDate: nextReleaseDate
+                releaseDate: nextReleaseDate,
+                maturityRating: episode.maturityRating,
+                hasSubtitles: episode.hasSubtitles,
+                hasDub: episode.hasDub,
+                benefitId: episode.benefitId
               }
             })
           )
-          stats.episodesUpdated.push({
-            seasonNumber: season.seasonNumber,
-            episodeNumber: episode.episodeNumber,
-            fields
-          })
+          if (fields.length > 0) {
+            stats.episodesUpdated.push({
+              seasonNumber: season.seasonNumber,
+              episodeNumber: episode.episodeNumber,
+              fields
+            })
+          }
           if (existing.imageUrl !== episode.imageUrl) newImageUrls.push(episode.imageUrl)
         }
       }

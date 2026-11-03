@@ -148,6 +148,7 @@ export const catalogKindLabel: Record<CatalogEventSchema['kind'], string> = {
 }
 
 export const catalogFieldLabel: Record<CatalogEventFieldEnum, string> = {
+  title: content.catalogFieldLabel.title,
   image: content.catalogFieldLabel.image,
   description: content.catalogFieldLabel.description,
   duration: content.catalogFieldLabel.duration,

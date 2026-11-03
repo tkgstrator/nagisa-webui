@@ -39,6 +39,7 @@ const adminLogsFormatContent = {
         episodesUpdated: 'エピソード更新'
       },
       catalogFieldLabel: {
+        title: 'タイトル',
         image: '画像',
         description: '説明',
         duration: '再生時間',
@@ -102,6 +103,7 @@ const adminLogsFormatContent = {
         episodesUpdated: 'Episodes updated'
       },
       catalogFieldLabel: {
+        title: 'Title',
         image: 'Image',
         description: 'Description',
         duration: 'Duration',
