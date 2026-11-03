@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Loader2, Send } from 'lucide-react'
 import { useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
+import { z } from 'zod'
 import { FormField, FormHint, FormRow, formControlClass, MonoText, PreBlock } from '@/app/components/form-field'
 import { PageContainer } from '@/app/components/page-container'
 import { PageEyebrowTrail, PageHeader } from '@/app/components/page-header'
@@ -14,9 +15,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import api from '@/app/lib/api'
 import { providerLabel } from '@/app/lib/constants'
 import { useSettings } from '@/app/routes/settings/-lib/settings'
+import { ProviderTypeEnum } from '@/schemas/message.dto'
 import type { NagisaEnqueueRequest, NagisaEnqueueResponse } from '@/schemas/nagisa.dto'
 
+/** 未識別タイトル一覧などから、配信元とコンテンツ ID を埋めた状態で開くための入口。 */
+const SearchSchema = z.object({
+  provider: ProviderTypeEnum.optional(),
+  contentId: z.string().nonempty().optional()
+})
+
 export const Route = createFileRoute('/admin/recorder/')({
+  validateSearch: SearchSchema,
   component: NagisaJobEditorPage
 })
 
@@ -35,8 +44,9 @@ const providerValueLabel = (v: unknown) => (typeof v === 'string' ? (providerLab
 function NagisaJobEditorPage() {
   const content = useIntlayer('admin-nagisa')
   const { settings } = useSettings()
-  const [provider, setProvider] = useState<Provider>('amazon')
-  const [contentId, setContentId] = useState('')
+  const search = Route.useSearch()
+  const [provider, setProvider] = useState<Provider>(search.provider ?? 'amazon')
+  const [contentId, setContentId] = useState(search.contentId ?? '')
   const [seasonNumberText, setSeasonNumberText] = useState('')
   const [episodesText, setEpisodesText] = useState('')
   const [marketplace, setMarketplace] = useState<Marketplace | typeof UNSET>(UNSET)

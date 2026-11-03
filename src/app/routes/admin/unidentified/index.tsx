@@ -1,6 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import dayjs from 'dayjs'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { List } from 'lucide-react'
 import { useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
@@ -134,10 +133,13 @@ function UnidentifiedAdminPage() {
               >
                 <PosterMeta>
                   <ProviderTag provider={item.provider} />
-                  <span className='truncate font-[ui-monospace,SFMono-Regular,Menlo,monospace]'>{item.contentId}</span>
-                </PosterMeta>
-                <PosterMeta>
-                  {content.updatedPrefix.value} {dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm')}
+                  <Link
+                    to='/admin/recorder'
+                    search={{ provider: ProviderTypeEnum.safeParse(item.provider).data, contentId: item.contentId }}
+                    className='min-w-0 truncate font-[ui-monospace,SFMono-Regular,Menlo,monospace] font-semibold text-primary hover:underline'
+                  >
+                    {item.contentId}
+                  </Link>
                 </PosterMeta>
               </PosterCard>
             ))}
