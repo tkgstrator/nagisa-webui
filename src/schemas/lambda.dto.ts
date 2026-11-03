@@ -104,7 +104,15 @@ export const AnilistYearEntrySchema = z.object({
   season: AnilistNullableString,
   seasonYear: z.number().int().nullable(),
   status: AnilistNullableString,
-  startDate: z.object({ year: z.number().int().nullable(), month: z.number().int().nullable() })
+  startDate: z.object({ year: z.number().int().nullable(), month: z.number().int().nullable() }),
+  countryOfOrigin: z.string().nullish(),
+  // 以下は Lambda が古い image のままでも Worker が壊れないよう optional。
+  // 欠落 (undefined) は「取得していない」なので upsert では列を触らない。null は「AniList が持たない」。
+  endDate: z
+    .object({ year: z.number().int().nullable(), month: z.number().int().nullable(), day: z.number().int().nullable() })
+    .nullish(),
+  episodes: z.number().int().nullish(),
+  nextAiringEpisode: z.object({ airingAt: z.number().int(), episode: z.number().int() }).nullish()
 })
 
 /** 1 回の呼び出しで取得するページ数の上限。1 ページ約 1.5s なので Lambda のタイムアウトに収まる範囲に抑える */
@@ -123,6 +131,19 @@ export const FetchAnilistYearResponseSchema = z.object({
   pages: z.number().int(),
   /** 続きがあれば次に取得すべきページ番号、年内を取り切ったら null */
   nextPage: z.number().int().nullable()
+})
+
+// ---- anilist_status ----
+
+/** id_in 1 回の上限。AniList の perPage 上限 50 に合わせる */
+export const ANILIST_STATUS_MAX_IDS = 50
+
+export const FetchAnilistStatusRequestSchema = z.object({
+  ids: z.array(z.number().int().positive()).min(1).max(ANILIST_STATUS_MAX_IDS)
+})
+
+export const FetchAnilistStatusResponseSchema = z.object({
+  entries: z.array(AnilistYearEntrySchema)
 })
 
 // ---- image ----

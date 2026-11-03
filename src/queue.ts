@@ -5,7 +5,7 @@ import { COLOR_SUCCESS, COLOR_WARN, notify } from './lib/discord'
 import { enqueueImageWarm, warmImages } from './lib/image-warm'
 import { createFetchClient, LambdaInvocationError } from './lib/lambda'
 import { getAppLogger } from './lib/logger'
-import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
+import { syncAnilistMediaStatus, syncAnilistMediaYear } from './lib/metadata/anilist-sync'
 import { resolveQueueForProvider, sendMessage } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { SyncService } from './lib/sync'
@@ -72,6 +72,7 @@ function isPermanentFailure(e: unknown): boolean {
 /** 失敗一覧に出すラベル */
 async function failureLabel(prisma: ReturnType<typeof createPrismaClient>, body: Message): Promise<string> {
   if (body.type === 'anilist_sync') return `[anilist_sync ${body.message.year}]`
+  if (body.type === 'anilist_status') return `[anilist_status ${body.message.ids.length}件]`
   const anime = await findAnimeForMessage(prisma, body).catch(() => null)
   return anime ? anime.title : `[${body.type}]`
 }
@@ -151,6 +152,8 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
       meta.year = body.message.year
     } else if (body.type === 'reidentify_unidentified') {
       meta.cursor = body.message.cursor
+    } else if (body.type === 'anilist_status') {
+      meta.count = body.message.ids.length
     } else if (body.type === 'image_warm') {
       meta.provider = body.message.provider
       meta.count = body.message.urls.length
@@ -224,6 +227,12 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
               { delaySeconds: 30 }
             )
           }
+          break
+        }
+        case 'anilist_status': {
+          const { ids } = message.body.message
+          const result = await syncAnilistMediaStatus({ prisma, lambda, ids })
+          logger.info({ action: 'anilist-status-done', ...result })
           break
         }
         case 'abema_archive': {

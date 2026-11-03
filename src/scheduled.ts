@@ -8,6 +8,7 @@ import { syncLibrary } from './lib/library-sync'
 import { collectLogGarbage } from './lib/log-gc'
 import { getAppLogger } from './lib/logger'
 import { notifyIfAnilistStale } from './lib/metadata/anilist-staleness'
+import { listActiveAnilistIdChunks } from './lib/metadata/anilist-sync'
 import { sendMessage } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { finishRun, type RunStatus, startRun } from './lib/sync-run'
@@ -37,6 +38,16 @@ async function enqueueAbemaArchive(env: Env, prisma: ReturnType<typeof createPri
     await sendMessage(env, { type: 'abema_archive', runId: runId ?? undefined, message: { animeId: anime.id } })
   }
   return animes.length
+}
+
+/** RELEASING / NOT_YET_RELEASED の anilist_media を 50 件ずつの anilist_status メッセージにして投入する */
+async function enqueueAnilistStatus(env: Env, prisma: ReturnType<typeof createPrismaClient>, runId: string | null) {
+  const chunks = await listActiveAnilistIdChunks(prisma)
+  for (const ids of chunks) {
+    await sendMessage(env, { type: 'anilist_status', runId: runId ?? undefined, message: { ids } })
+  }
+  logger.info({ action: 'enqueue-anilist-status', chunks: chunks.length })
+  return chunks.length
 }
 
 /**
@@ -176,6 +187,8 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
               logger.info({ action: 'enqueue', provider, category: 'catalog' })
               enqueued++
             }
+            // 放送中・放送予定の AniList 行を id_in で再取得 (cron は上限 5 本なので毎朝の枠に相乗り)
+            enqueued += await enqueueAnilistStatus(env, prisma, runId)
             break
           case '0 4 * * *': {
             enqueued = await enqueueAbemaArchive(env, prisma, runId)
