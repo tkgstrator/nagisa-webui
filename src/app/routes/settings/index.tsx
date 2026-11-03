@@ -10,6 +10,7 @@ import { ADMIN_LINK_COUNT, AdminSection } from './-components/admin-section'
 import { DataSection } from './-components/data-section'
 import { DisplaySection } from './-components/display-section'
 import { CheckIcon } from './-components/icons'
+import { JellyfinSection } from './-components/jellyfin-section'
 import { LibrarySyncSection } from './-components/library-sync-section'
 import { ProviderSection } from './-components/provider-section'
 import { RecordingSection } from './-components/recording-section'
@@ -74,6 +75,7 @@ const SettingsPage = () => {
           <ProviderSection />
           <RecordingSection />
           <LibrarySyncSection />
+          <JellyfinSection />
           <AdminSection />
           <DataSection />
           <AboutSection />

@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import { createPrismaClient } from './lib/db'
 import { notify } from './lib/discord'
+import type { JellyfinEnv } from './lib/jellyfin/client'
+import { runJellyfinRefresh } from './lib/jellyfin/refresh'
 import { syncJobs } from './lib/job-sync'
 import { syncLibrary } from './lib/library-sync'
 import { collectLogGarbage } from './lib/log-gc'
@@ -13,7 +15,7 @@ import type { Message } from './schemas/message.dto'
 
 const logger = getAppLogger('scheduled')
 
-interface Env {
+interface Env extends Partial<JellyfinEnv> {
   DB: D1Database
   AMAZON_QUEUE: Queue<Message>
   SYNC_QUEUE: Queue<Message>
@@ -55,6 +57,27 @@ async function runJobSync(prisma: ReturnType<typeof createPrismaClient>, env: En
     failed: result.error ? 1 : 0,
     errorMessage: result.error ?? undefined,
     meta: { downloading: result.downloading, failed: result.failed, stale: result.stale }
+  })
+}
+
+/**
+ * ②' Jellyfin のライブラリ更新 (docs/plans/06-jellyfin-refresh.md)。毎分走るので、
+ * 送信しなかった tick (無効・dirty でない・静穏期間中・バックオフ中) は SyncRun を残さない。
+ * 失敗しても throw しない (台帳同期や job-sync を巻き込まない)。
+ */
+async function runJellyfinRefreshTick(prisma: ReturnType<typeof createPrismaClient>, env: Env): Promise<void> {
+  const startedAt = new Date()
+  const r = await runJellyfinRefresh(prisma, env)
+  if (!r.attempted) return
+
+  const runId = await startRun(prisma, { kind: 'cron', trigger: 'jellyfin-refresh', startedAt })
+  const ok = r.outcome === 'success'
+  await finishRun(prisma, runId, ok ? 'success' : 'failed', {
+    total: 1,
+    succeeded: ok ? 1 : 0,
+    failed: ok ? 0 : 1,
+    errorMessage: r.error ?? undefined,
+    meta: { status: r.status, attempt: r.attempt, generation: r.generation, outcome: r.outcome }
   })
 }
 
@@ -101,8 +124,10 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
   // 記録しない都合で startRun をハンドラ側に持つため、switch の前で分岐する。
   if (event.cron === '* * * * *' || event.cron === '*/15 * * * *') {
     try {
-      if (event.cron === '* * * * *') await runJobSync(prisma, env)
-      else await runLibrarySync(prisma, env)
+      if (event.cron === '* * * * *') {
+        await runJobSync(prisma, env)
+        await runJellyfinRefreshTick(prisma, env)
+      } else await runLibrarySync(prisma, env)
     } finally {
       await prisma.$disconnect()
     }

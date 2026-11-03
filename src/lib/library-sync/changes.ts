@@ -1,9 +1,11 @@
 import { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
 import type { NagisaLibraryChange } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
+import { buildDirtyWrite } from '../jellyfin/dirty'
 import { getAppLogger } from '../logger'
 import { chunk, type LedgerRow, learnTmdbIds, resolveEpisodes, sqlDate } from './ledger'
 import { IN_CHUNK, MASS_DELETE_MIN, MASS_DELETE_RATIO, MAX_WRITES_PER_PAGE } from './limits'
+import { hasNewCompleted } from './new-completed'
 import { applyBatched, fenced, holdsLease, type LibrarySyncResult, stateWrite } from './run'
 import { buildDeleteWrite, buildUpsertWrites } from './writes'
 
@@ -17,7 +19,9 @@ export async function applyChangesPage(
   db: D1Database,
   body: { changes: NagisaLibraryChange[]; next_cursor: string },
   owner: string,
-  result: LibrarySyncResult
+  result: LibrarySyncResult,
+  /** Jellyfin 連携が有効か。有効なときだけ、新規 completed に dirty の印を立てる */
+  markJellyfin: boolean
 ): Promise<boolean> {
   const now = new Date()
 
@@ -62,6 +66,8 @@ export async function applyChangesPage(
   // 作品の tmdbId を先に覚えておくと、同じページの id を持たない行がそれで当たる。
   result.tmdbLearned += await learnTmdbIds(prisma, db, upsertRows)
   const resolved = await resolveEpisodes(prisma, upsertRows)
+  // 適用 **前** の状態と比べる (適用後だと全部 completed に見える)。tombstone は対象外。
+  const newCompleted = markJellyfin && (await hasNewCompleted(prisma, upsertRows, resolved))
   const { writes, unmatched } = buildUpsertWrites(upsertRows, resolved, now, owner, false)
   const deleteWrites = deleteIds.map((id) => buildDeleteWrite(id, now, owner))
 
@@ -92,6 +98,9 @@ export async function applyChangesPage(
     db,
     [...writes, ...deleteWrites],
     [
+      // dirty の印は stateWrite の **直前** に置く。`fenced` は最後の文の changes を見るので、
+      // 最後は従来どおり stateWrite のままにする。
+      ...(newCompleted ? [buildDirtyWrite(owner, now)] : []),
       // fencing: lease を失った run はここで 0 件更新になり、カーソルを進められない。
       // 同じ条件を上の各文にも `leaseGuard` として載せてあるので、エピソード側も
       // 同時に 0 行になる。「書かないなら進めない」が 1 バッチの中で揃う。
