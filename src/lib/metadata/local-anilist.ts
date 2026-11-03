@@ -9,11 +9,9 @@
  */
 import type { PrismaClient } from '../../generated/prisma/client.ts'
 import type { TitleMetadata } from '../../schemas/providers/metadata.dto'
+import { D1_VARIABLE_LIMIT } from '../sync/queries'
 import { cleanTitle } from './anilist'
 import { normalizeTitle } from './normalize'
-
-/** D1 の bound parameter 上限。`IN (...)` で chunk する単位 */
-const D1_VARIABLE_LIMIT = 100
 
 const SEASON_TO_QUARTER: Record<string, number> = { WINTER: 0, SPRING: 1, SUMMER: 2, FALL: 3 }
 const MONTH_TO_QUARTER = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] as const
@@ -62,7 +60,7 @@ export function pickMetadata(rows: AnilistRow[] | undefined): TitleMetadata | un
 }
 
 /**
- * 全 titles の normalized 形を一括収集し、100 件 chunk で
+ * 全 titles の normalized 形を一括収集し、D1_VARIABLE_LIMIT 件 chunk で
  * anilist_media を batched lookup して norm → 候補行 (新しい年が先頭) のマップを返す。
  */
 async function buildLookup(prisma: PrismaClient, titles: string[]): Promise<Map<string, AnilistRow[]>> {
@@ -88,7 +86,7 @@ async function buildLookup(prisma: PrismaClient, titles: string[]): Promise<Map<
     englishNorm: true
   } as const
 
-  // 各 norm 列ごとに pass を分け、列ごとに 100 件 chunk で IN クエリ
+  // 各 norm 列ごとに pass を分け、列ごとに D1_VARIABLE_LIMIT 件 chunk で IN クエリ (findMany は LIMIT ? OFFSET ? で +2 変数)
   for (const column of ['nativeNorm', 'romajiNorm', 'englishNorm'] as const) {
     for (const chunk of chunkArray([...norms], D1_VARIABLE_LIMIT)) {
       const rows = await prisma.anilistMedia.findMany({
