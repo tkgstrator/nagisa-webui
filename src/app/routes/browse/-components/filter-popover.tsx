@@ -28,7 +28,7 @@ export function FilterPopover<T extends string | number | boolean | undefined>({
       <PopoverTrigger
         render={
           outline ? (
-            <Button type='button' variant='outline' size='pill-sm' className='bg-transparent' />
+            <Button type='button' variant='outline' size='pill-sm' />
           ) : (
             <Button
               type='button'

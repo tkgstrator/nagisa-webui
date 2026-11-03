@@ -89,7 +89,7 @@ export function EpisodeGrid({ anime }: { anime: AnimeInfoSchema }) {
             role='tab'
             aria-selected={item.id === season.id}
             onClick={() => setActiveSeasonId(item.id)}
-            className='inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm leading-[21px] text-muted-foreground transition-colors aria-selected:border-b-primary aria-selected:font-semibold aria-selected:text-foreground'
+            className='inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm leading-[21px] text-muted-foreground transition-colors aria-selected:border-b-primary aria-selected:text-foreground'
           >
             {item.displayName}
             <span className='text-xs leading-[18px] text-muted-foreground tabular-nums'>{item.episodes.length}</span>

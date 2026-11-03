@@ -142,7 +142,7 @@ const SidebarFoot = ({ pathname }: { pathname: string }) => {
               aria-current={current === to ? 'page' : undefined}
               tooltip={text}
               className={cn(
-                'h-8 gap-1.5 px-2 text-[11px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:p-2!',
+                'h-9 gap-2.5 rounded-r-lg rounded-l-none border-l-[3px] border-l-transparent px-[5px] text-[13px] text-muted-foreground transition-none hover:bg-muted hover:text-foreground data-active:border-l-primary data-active:bg-accent data-active:font-semibold data-active:text-accent-foreground group-data-[collapsible=icon]:h-9! group-data-[collapsible=icon]:rounded-[8px] group-data-[collapsible=icon]:border-l-0 group-data-[collapsible=icon]:p-2!',
                 to === '/admin/status' && isDown && !isPending && 'text-destructive'
               )}
             >

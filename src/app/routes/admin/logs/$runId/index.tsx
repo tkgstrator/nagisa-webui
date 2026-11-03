@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { useIntlayer } from 'react-intlayer'
@@ -6,7 +6,7 @@ import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
 import { StatTile } from '@/app/components/stat-tile'
 import { appLocale } from '@/app/lib/locale'
-import { syncRunQueryOptions } from '@/app/lib/query-options'
+import { logEntriesQueryOptions, syncRunQueryOptions } from '@/app/lib/query-options'
 import { formatAbsolute, formatRelative } from '@/app/routes/recordings/-components/format'
 import type { SyncRunSchema } from '@/schemas/log.dto'
 import { EntriesTable } from '../-components/entries-table'
@@ -18,6 +18,22 @@ export const Route = createFileRoute('/admin/logs/$runId/')({
   pendingComponent: LoadingSpinner,
   component: SyncRunDetailPage
 })
+
+/** run 詳細に載せる生ログの上限。1 バッチで数百行出るので全部は取らない */
+const ENTRY_LIMIT = 200
+
+/** Workers Logs の保持期間 (時間)。 */
+const LOG_RETENTION_HOURS = 168
+
+/**
+ * 生ログを探す期間。run が始まった時刻より前のログは無いので、開始からの経過時間に絞る
+ * (7 日全部を舐めると Telemetry API が遅い)。開始前後のずれに数分の余白を取る。
+ */
+const entryHours = (run: SyncRunSchema | undefined): number => {
+  if (run === undefined) return LOG_RETENTION_HOURS
+  const elapsed = (Date.now() - new Date(run.startedAt).getTime()) / 3_600_000
+  return Math.min(LOG_RETENTION_HOURS, Math.max(1, Math.ceil(elapsed + 0.1)))
+}
 
 /** meta は JSON 文字列。壊れていても画面は落とさず生のまま出す。 */
 const formatMeta = (meta: string | null): string | null => {
@@ -40,6 +56,11 @@ function SyncRunDetailPage() {
   const content = useIntlayer('admin-logs-run-id')
   const { runId } = Route.useParams()
   const { data } = useQuery(syncRunQueryOptions(runId))
+  // 期間は run の開始時刻から決めるので、run が取れてから引く。取れる前に引くと期間違いで二重に取ることになる
+  const entries = useInfiniteQuery({
+    ...logEntriesQueryOptions({ runId, level: 'debug', limit: ENTRY_LIMIT, hours: entryHours(data?.run) }),
+    enabled: data !== undefined
+  })
 
   if (data === undefined) {
     return (
@@ -52,6 +73,7 @@ function SyncRunDetailPage() {
   }
 
   const run: SyncRunSchema = data.run
+  const entryRows = entries.data?.pages.flatMap((page) => page.data) ?? []
   const meta = formatMeta(run.meta)
 
   return (
@@ -166,13 +188,16 @@ function SyncRunDetailPage() {
 
       <section aria-label={content.entries.ariaLabel.value} className='flex flex-col gap-2'>
         <h2 className='text-sm font-semibold'>
-          {content.entries.heading({ count: data.entries.length.toLocaleString(appLocale) })}
+          {content.entries.heading({ count: entryRows.length.toLocaleString(appLocale) })}
         </h2>
-        {data.entriesError !== null && <p className='text-sm text-destructive'>{data.entriesError}</p>}
-        {data.entries.length === 0 ? (
+        {entries.isPending ? (
+          <LoadingSpinner />
+        ) : entries.isError ? (
+          <p className='text-sm text-destructive'>{content.fetchError}</p>
+        ) : entryRows.length === 0 ? (
           <p className='text-sm text-muted-foreground'>{content.entries.empty}</p>
         ) : (
-          <EntriesTable entries={data.entries} />
+          <EntriesTable entries={entryRows} />
         )}
       </section>
     </PageContainer>

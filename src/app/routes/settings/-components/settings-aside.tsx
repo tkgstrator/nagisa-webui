@@ -79,7 +79,7 @@ export const SettingsAside = ({ adminLinkCount }: { adminLinkCount: number }) =>
                 'flex items-center gap-2.5 rounded-r-[9px] border-l-[3px] border-l-transparent px-3 py-2 text-[12.5px] text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground',
                 'max-lg:shrink-0 max-lg:rounded-full max-lg:border-l-0 max-lg:bg-muted max-lg:px-3.5 max-lg:py-[7px]',
                 current &&
-                  'border-l-primary bg-accent font-bold text-accent-foreground max-lg:bg-primary max-lg:text-primary-foreground'
+                  'border-l-primary bg-accent text-accent-foreground max-lg:bg-primary max-lg:text-primary-foreground'
               )}
             >
               {section.label}

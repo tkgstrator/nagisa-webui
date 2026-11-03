@@ -1,4 +1,4 @@
-.a-field { display: flex; align-items: center; gap: 8px; width: 280px; max-width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); }
+.a-field { display: flex; align-items: center; gap: 8px; width: 280px; max-width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); font-size: 14px; }
 .a-field.a-pill { border-radius: 999px; } .a-field input { width: 100%; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; }
 .a-field input::placeholder { color: var(--muted-foreground); }
 .a-field:focus-within, .a-field.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
@@ -10,7 +10,23 @@
 :where(.a-field) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 :where(.a-field):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 
-.a-field.a-search { width: 260px; min-height: 34px; }
-.a-field.a-search input { height: 32px; }
+.a-field.a-search { width: 260px; }
 .a-field.a-search svg { width: 15px; height: 15px; }
 @media (max-width: 640px) { .a-field.a-search { width: 100%; } }
+
+/* サイズは 2 種類だけ。default = 36px・角 8px・14px (フォーム用) / sm = 34px・pill・12.5px (ツールバー用)。
+   a-pill が sm。input / select 共通で、ページ側は寸法を上書きしない。 */
+.a-field.a-pill, .a-select.a-pill { min-height: 34px; border-radius: 999px; font-size: 12.5px; }
+.a-field.a-pill input { height: 32px; }
+
+/* select 原子。.a-field と同じ枠・focus・error・disabled。ネイティブ select を中に置き、chevron は 16px。 */
+.a-select { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 280px; max-width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); font-size: 14px; color: var(--foreground); }
+.a-select select { flex: 1; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; font: inherit; color: inherit; appearance: none; -webkit-appearance: none; }
+.a-select.a-pill select { height: 32px; }
+.a-select svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; color: var(--muted-foreground); pointer-events: none; }
+.a-select:hover, .a-select.is-hover { border-color: var(--primary); }
+.a-select:focus-within, .a-select.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
+.a-select.a-error { border-color: var(--destructive); } .a-select.a-disabled { background: var(--muted); opacity: .45; }
+.a-select.a-disabled:hover { border-color: var(--input); }
+.a-select.a-fit { width: auto; }
+@media (max-width: 640px) { .a-select.a-search { width: 100%; } }

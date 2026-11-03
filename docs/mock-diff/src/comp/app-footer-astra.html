@@ -54,3 +54,22 @@ TITLE: フッター
   </div>
   <p class="cat-note">ページでは <code>position: fixed</code> で画面下端に置き、左端は常設サイドバー (236px) の右から始まる。ここでは枠に <code>transform</code> を掛けて fixed を枠内に閉じ込めている。</p>
 </section>
+
+<section class="cat-sec">
+  <h2>サイドバー追従 <span class="cat-hint">.ftr.is-fixed.is-collapsed</span></h2>
+  <div class="cat-stack">
+    <div class="cat-item cat-full"><span class="cat-label">サイドバー展開時 (左端 236px)</span>
+<div class="cat-frame" style="position:relative;height:96px;overflow:hidden;transform:translateZ(0)"><div style="position:absolute;inset:0 auto 0 0;width:236px;border-right:1px solid var(--border);background:var(--sidebar)"></div><footer class="ftr is-fixed" data-part="fixed-expanded">
+        <span class="l"><span>Nagisa WebUI</span><span>v0.10.0</span><span class="sha">f5298cb</span></span>
+        <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a></span>
+      </footer></div>
+    </div>
+    <div class="cat-item cat-full is-key"><span class="cat-label">サイドバー折りたたみ時 (左端 56px)</span>
+<div class="cat-frame" style="position:relative;height:96px;overflow:hidden;transform:translateZ(0)"><div style="position:absolute;inset:0 auto 0 0;width:56px;border-right:1px solid var(--border);background:var(--sidebar)"></div><footer class="ftr is-fixed is-collapsed" data-part="fixed-collapsed">
+        <span class="l"><span>Nagisa WebUI</span><span>v0.10.0</span><span class="sha">f5298cb</span></span>
+        <span class="r"><a href="#changelog">変更履歴</a><a href="#admin">管理</a></span>
+      </footer></div>
+    </div>
+  </div>
+  <p class="cat-note">サイドバーの幅が 236px から 56px に変わるのに合わせ、フッターの左端も同じ 200ms linear で動く。罫線とテキストがサイドバーの右端から始まる。</p>
+</section>

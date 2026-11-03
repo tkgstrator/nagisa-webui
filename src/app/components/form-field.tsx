@@ -1,9 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/app/lib/utils'
 
-/** 入力欄と同じ高さ・角丸。Input / SelectTrigger の className に足して使う。 */
-export const formControlClass = 'h-9 w-full rounded-lg px-2.5 text-sm data-[size=default]:h-9 md:text-sm'
-
 /** 等幅で出す補足 (パスやフラグ)。 */
 export const MonoText = ({ children }: { children: ReactNode }) => (
   <code className='font-[ui-monospace,SFMono-Regular,Menlo,monospace] text-[11.5px]'>{children}</code>
@@ -17,14 +14,21 @@ interface FormFieldProps {
   label: ReactNode
   htmlFor: string
   hint?: ReactNode
+  /** 必須項目。ラベル末尾に * を付ける。 */
+  required?: boolean
   children: ReactNode
 }
 
-/** ラベル + 入力欄 + 補足の 1 組。モックの `.a-field-wrap` に相当する (幅 280px)。 */
-export const FormField = ({ label, htmlFor, hint, children }: FormFieldProps) => (
-  <div className='flex w-[280px] max-w-full flex-col gap-1.5'>
+/** ラベル + 入力欄 + 補足の 1 組。モックの `.a-field-wrap` に相当する (セル幅いっぱい)。 */
+export const FormField = ({ label, htmlFor, hint, required, children }: FormFieldProps) => (
+  <div className='flex w-full min-w-0 flex-col gap-1.5'>
     <label htmlFor={htmlFor} className='text-xs/[18px] font-semibold'>
       {label}
+      {required && (
+        <span aria-hidden='true' className='ml-0.5 align-top text-sm/[18px] font-bold text-destructive'>
+          *
+        </span>
+      )}
     </label>
     {children}
     {hint && <FormHint>{hint}</FormHint>}
@@ -33,7 +37,7 @@ export const FormField = ({ label, htmlFor, hint, children }: FormFieldProps) =>
 
 /** 2 項目を横に並べる行。スマホでは縦積み。 */
 export const FormRow = ({ children }: { children: ReactNode }) => (
-  <div className='grid grid-cols-2 gap-3.5 max-sm:grid-cols-1'>{children}</div>
+  <div className='grid grid-cols-2 items-end gap-3.5 max-sm:grid-cols-1'>{children}</div>
 )
 
 /** JSON などの整形済みテキスト。モックの `.pg-pre` に相当する。 */

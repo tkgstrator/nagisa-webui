@@ -36,7 +36,7 @@ const buttonVariants = cva(
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
         pill: "h-9 gap-[7px] rounded-full px-3.5 text-[13px] font-semibold",
-        "pill-sm": "h-[30px] gap-[7px] rounded-full px-2.5 text-xs font-semibold",
+        "pill-sm": "h-[34px] gap-[7px] rounded-full px-3 text-[12.5px] font-semibold",
         "pill-lg": "h-[42px] gap-[7px] rounded-full px-[18px] text-sm font-semibold",
       },
     },
@@ -49,7 +49,14 @@ const buttonVariants = cva(
         className: "hover:bg-[color-mix(in_oklch,var(--primary)_86%,var(--foreground))]",
       },
       { variant: "secondary", size: pillSizes, className: "hover:bg-muted hover:text-foreground" },
-      { variant: "outline", size: pillSizes, className: "bg-transparent dark:bg-transparent" },
+      { variant: "outline", size: ["pill", "pill-lg"], className: "bg-transparent dark:bg-transparent" },
+      // pill-sm の outline は Input / SelectTrigger の sm (fieldVariants) と同じ枠・背景・focus にそろえる。
+      {
+        variant: "outline",
+        size: "pill-sm",
+        className:
+          "border-input bg-background dark:border-input dark:bg-background focus-visible:border-primary focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+      },
       {
         variant: "destructive",
         size: pillSizes,

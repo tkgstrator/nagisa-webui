@@ -1,10 +1,11 @@
 import { getIntlayer, getLocaleName, locales } from 'intlayer'
 import { useIntlayer, useLocale } from 'react-intlayer'
+import { SortControl } from '@/app/components/sort-control'
 import { appLocale } from '@/app/lib/locale'
 import {
   type CardDensity,
   PAGE_SIZE_OPTIONS,
-  SORT_LABELS,
+  SORT_KEY_OPTIONS,
   type SortPreference,
   type ThemePreference,
   useSettings
@@ -33,11 +34,6 @@ const LANGUAGE_OPTIONS = locales.map((locale) => ({ value: String(locale), label
 const PAGE_SIZE_SELECT = PAGE_SIZE_OPTIONS.map((size) => ({
   value: String(size),
   label: displaySectionModuleContent.pageSizeOption({ size })
-}))
-
-const SORT_SELECT = (Object.keys(SORT_LABELS) as SortPreference[]).map((value) => ({
-  value,
-  label: SORT_LABELS[value]
 }))
 
 export const DisplaySection = () => {
@@ -100,11 +96,11 @@ export const DisplaySection = () => {
           label={content.defaultSort.label.value}
           description={content.defaultSort.description}
         >
-          <StSelect
+          <SortControl
             label={content.defaultSort.label.value}
             value={settings.defaultSort}
-            options={SORT_SELECT}
-            onValueChange={(next) => update('defaultSort', next)}
+            keys={SORT_KEY_OPTIONS}
+            onValueChange={(next) => update('defaultSort', next as SortPreference)}
           />
         </StRow>
 
