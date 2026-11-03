@@ -19,14 +19,45 @@ export interface AnimeFlatExtras {
   status: string
 }
 
-export function deriveYearQuarterStatus(am: AnilistMedia): AnimeFlatExtras {
+/**
+ * 終了日の「その日の終わり」(UTC) の時刻。day / month が欠けていれば月末 / 年末で見る。
+ * 最終話がその日の夜 (UTC では同日内) に放送されても、日が変わるまでは終了と見なさない。
+ */
+function endOfEndDateUtc(am: AnilistMedia): number | null {
+  if (am.endYear == null) return null
+  const month = am.endMonth ?? 12
+  // Date.UTC は day=0 で前月末日になるので、翌月/翌年の 1 日 0 時 = 終了日の翌日 0 時
+  const dayAfter = am.endDay != null ? Date.UTC(am.endYear, month - 1, am.endDay + 1) : Date.UTC(am.endYear, month, 1)
+  return dayAfter
+}
+
+/**
+ * AniList の更新が遅れていても、保存済みの情報から放送終了と言えるか。
+ * - 終了日 (UTC) が過去
+ * - 最終話 (nextAiringEpisode.episode が全話数以上) の放送時刻を過ぎている
+ * 「次回放送なし」だけでは中断・未定との区別がつかないので終了とは見なさない。
+ */
+export function isAiringOver(am: AnilistMedia, now: Date): boolean {
+  const endBoundary = endOfEndDateUtc(am)
+  if (endBoundary !== null && endBoundary <= now.getTime()) return true
+  return (
+    am.episodes != null &&
+    am.nextAiringEpisode != null &&
+    am.nextAiringAt != null &&
+    am.nextAiringEpisode >= am.episodes &&
+    am.nextAiringAt.getTime() <= now.getTime()
+  )
+}
+
+export function deriveYearQuarterStatus(am: AnilistMedia, now: Date = new Date()): AnimeFlatExtras {
   const year = am.seasonYear ?? am.startYear ?? 0
   const quarter = am.season
     ? (SEASON_TO_QUARTER[am.season] ?? 0)
     : am.startMonth != null
       ? MONTH_TO_QUARTER[am.startMonth - 1]
       : 0
-  return { year, quarter, status: am.status }
+  const status = am.status === 'RELEASING' && isAiringOver(am, now) ? 'FINISHED' : am.status
+  return { year, quarter, status }
 }
 
 export function flattenAnime<T extends AnimeWithAnilistMedia>(row: T): Omit<T, 'anilistMedia'> & AnimeFlatExtras {

@@ -14,6 +14,7 @@ import {
   KeyArchiveProviderEnum,
   KeyArchiveRequestSchema
 } from '@/schemas/archive.dto'
+import { JellyfinRefreshStateSchema } from '@/schemas/jellyfin.dto'
 import {
   CatalogEventKindEnum,
   CursoredLogEntrySchema,
@@ -37,6 +38,7 @@ import {
   RecordingSyncStateSchema,
   UpdateEpisodeSchema
 } from '@/schemas/recording.dto'
+import { RecordingSettingsSchema } from '@/schemas/settings.dto'
 import { PaginatedUnidentifiedSchema } from '@/schemas/unidentified.dto'
 
 const api = new Zodios('/api', [
@@ -163,6 +165,25 @@ const api = new Zodios('/api', [
     path: '/recording-library/sync-state',
     alias: 'getRecordingSyncState',
     response: RecordingSyncStateSchema
+  },
+  {
+    method: 'get',
+    path: '/jellyfin/refresh-state',
+    alias: 'getJellyfinRefreshState',
+    response: JellyfinRefreshStateSchema
+  },
+  {
+    method: 'get',
+    path: '/settings/recording',
+    alias: 'getRecordingSettings',
+    response: RecordingSettingsSchema
+  },
+  {
+    method: 'put',
+    path: '/settings/recording',
+    alias: 'updateRecordingSettings',
+    parameters: [{ name: 'body', type: 'Body', schema: RecordingSettingsSchema }],
+    response: RecordingSettingsSchema
   },
   {
     method: 'get',

@@ -21,6 +21,8 @@
 
 import { NagisaLibraryChangesSchema } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
+import { isJellyfinConfigured, type JellyfinEnv } from '../jellyfin/client'
+import { ensureRefreshState } from '../jellyfin/state'
 import { getAppLogger } from '../logger'
 import { fetchNagisaRaw, NagisaConfigError, type NagisaEnv } from '../nagisa-client'
 import { applyChangesPage } from './changes'
@@ -43,16 +45,20 @@ type Prisma = ReturnType<typeof createPrismaClient>
  */
 export async function syncLibrary(
   prisma: Prisma,
-  env: Partial<NagisaEnv> & { DB: D1Database },
+  env: Partial<NagisaEnv> & Partial<JellyfinEnv> & { DB: D1Database },
   options?: { force?: boolean }
 ): Promise<LibrarySyncResult> {
   const result = emptyResult()
   const owner = crypto.randomUUID()
   const now = Date.now()
+  const markJellyfin = isJellyfinConfigured(env)
 
   // 行が無ければ作る。lease の取得は「条件付き updateMany の count」で見る
   // (D1 は単文が原子的なので、これだけで重複起動を弾ける)。
   await prisma.syncState.upsert({ where: { key: SYNC_KEY }, create: { key: SYNC_KEY }, update: {} })
+  // dirty の印を立てる UPDATE は行が無いと何もしないので、ここで保証する。
+  // 失敗しても台帳同期は止めない (Jellyfin 連携は副作用であって本体ではない)。
+  if (markJellyfin) await ensureRefreshState(prisma)
   const got = await prisma.syncState.updateMany({
     where: { key: SYNC_KEY, OR: [{ leaseUntil: null }, { leaseUntil: { lt: new Date(now) } }] },
     data: { leaseUntil: new Date(now + LEASE_MS), leaseOwner: owner }
@@ -80,11 +86,11 @@ export async function syncLibrary(
     // `snapshotStartedAt` だけが残る (1 ページで終わる台帳では前者が null)。
     // 片方しか見ないと、後者が差分同期に切り替わって削除を取りこぼす。
     if (state?.snapshotCursor || state?.snapshotStartedAt) {
-      await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, 'resume', result)
+      await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, 'resume', result, markJellyfin)
       return result
     }
     if (!state?.libraryCursor) {
-      await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, 'initial', result)
+      await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, 'initial', result, markJellyfin)
       return result
     }
 
@@ -97,7 +103,7 @@ export async function syncLibrary(
       if (res.status === 410 || res.status === 409) {
         const code = await readErrorCode(res)
         logger.warn({ action: 'library-cursor-invalid', status: res.status, code })
-        await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, code, result)
+        await bootstrapLibrary(prisma, env.DB, env as NagisaEnv, owner, code, result, markJellyfin)
         return result
       }
       if (!res.ok) {
@@ -121,7 +127,7 @@ export async function syncLibrary(
         break
       }
 
-      if (!(await applyChangesPage(prisma, env.DB, body, owner, result))) break
+      if (!(await applyChangesPage(prisma, env.DB, body, owner, result, markJellyfin))) break
       cursor = body.next_cursor
       if (!body.has_more) break
       // 文数の実測で打ち切る (ページ数だけでは抑えきれない。定数のコメント参照)。

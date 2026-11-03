@@ -56,15 +56,6 @@ export const logLevelLabel: Record<LogLevelEnum, string> = {
   fatal: content.logLevelLabel.fatal
 }
 
-/** 行頭のアクセント。info / debug は平常運転なので色を付けない。 */
-export const logLevelAccent: Record<LogLevelEnum, string> = {
-  debug: 'border-l-transparent',
-  info: 'border-l-transparent',
-  warning: 'border-l-warning',
-  error: 'border-l-destructive',
-  fatal: 'border-l-destructive'
-}
-
 export const logLevelBadge: Record<LogLevelEnum, string> = {
   debug: 'bg-muted text-muted-foreground',
   info: 'bg-muted text-muted-foreground',

@@ -83,12 +83,14 @@ export const StNote = ({ children }: { children: ReactNode }) => (
 export const StSwitch = ({
   checked,
   onCheckedChange,
-  label
+  label,
+  disabled
 }: {
   checked: boolean
   onCheckedChange: (next: boolean) => void
   label: string
-}) => <Switch checked={checked} aria-label={label} onCheckedChange={onCheckedChange} />
+  disabled?: boolean
+}) => <Switch checked={checked} aria-label={label} disabled={disabled} onCheckedChange={onCheckedChange} />
 
 export type { SegmentOption }
 

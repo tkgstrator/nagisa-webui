@@ -12,12 +12,16 @@ import type { PrismaClient } from '../../generated/prisma/client.ts'
  */
 export const D1_VARIABLE_LIMIT = 90
 
-export async function findExistingContentIds(prisma: PrismaClient, contentIds: string[]): Promise<Set<string>> {
+export async function findExistingContentIds(
+  prisma: PrismaClient,
+  provider: string,
+  contentIds: string[]
+): Promise<Set<string>> {
   const results: string[] = []
   for (let i = 0; i < contentIds.length; i += D1_VARIABLE_LIMIT) {
     const chunk = contentIds.slice(i, i + D1_VARIABLE_LIMIT)
     const rows = await prisma.anime.findMany({
-      where: { contentId: { in: chunk } },
+      where: { provider, contentId: { in: chunk } },
       select: { contentId: true }
     })
     results.push(...rows.map((r) => r.contentId))
@@ -25,28 +29,41 @@ export async function findExistingContentIds(prisma: PrismaClient, contentIds: s
   return new Set(results)
 }
 
-/** AniList 識別済みかどうかに関わらず、過去に sync 試行済みの contentId を返す */
+/**
+ * AniList 識別済み (anime に登録済み) の contentId を返す。
+ * unidentified_anime は「既知」に含めない: 含めると識別失敗が固定化され二度と再識別されない。
+ */
 export async function findKnownContentIds(
   prisma: PrismaClient,
   provider: string,
   contentIds: string[]
 ): Promise<Set<string>> {
-  const identified: string[] = []
-  const unidentified: string[] = []
+  const found: string[] = []
   for (let i = 0; i < contentIds.length; i += D1_VARIABLE_LIMIT) {
     const chunk = contentIds.slice(i, i + D1_VARIABLE_LIMIT)
-    const [identifiedRows, unidentifiedRows] = await Promise.all([
-      prisma.anime.findMany({
-        where: { provider, contentId: { in: chunk } },
-        select: { contentId: true }
-      }),
-      prisma.unidentifiedAnime.findMany({
-        where: { provider, contentId: { in: chunk } },
-        select: { contentId: true }
-      })
-    ])
-    identified.push(...identifiedRows.map((r) => r.contentId))
-    unidentified.push(...unidentifiedRows.map((r) => r.contentId))
+    const rows = await prisma.anime.findMany({
+      where: { provider, contentId: { in: chunk } },
+      select: { contentId: true }
+    })
+    found.push(...rows.map((r) => r.contentId))
   }
-  return new Set([...identified, ...unidentified])
+  return new Set(found)
+}
+
+/** 過去に識別へ失敗して unidentified_anime にある contentId を返す (再識別の対象) */
+export async function findUnidentifiedContentIds(
+  prisma: PrismaClient,
+  provider: string,
+  contentIds: string[]
+): Promise<Set<string>> {
+  const found: string[] = []
+  for (let i = 0; i < contentIds.length; i += D1_VARIABLE_LIMIT) {
+    const chunk = contentIds.slice(i, i + D1_VARIABLE_LIMIT)
+    const rows = await prisma.unidentifiedAnime.findMany({
+      where: { provider, contentId: { in: chunk } },
+      select: { contentId: true }
+    })
+    found.push(...rows.map((r) => r.contentId))
+  }
+  return new Set(found)
 }
