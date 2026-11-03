@@ -10,8 +10,9 @@ const lambda = {
 
 const titles = (n: number) => Array.from({ length: n }, (_, i) => `テスト作品${i} 第2期`)
 
-describe('D1 bind variable limit (100 per query)', async () => {
-  const t = await createLimitedDb()
+const t = await createLimitedDb()
+
+describe('D1 bind variable limit (100 per query)', () => {
   afterAll(() => t.close())
 
   test('identifyTitlesViaD1 stays under the limit for 200 titles', async () => {
