@@ -33,7 +33,8 @@ export function SummarySearch({ value, onChange }: { value: string; onChange: (v
         placeholder={content.search.placeholder.value}
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
-        className='h-[30px] rounded-full bg-background pr-3 pl-8 text-xs focus-visible:border-primary md:text-xs'
+        size='sm'
+        search
         aria-label={content.search.ariaLabel.value}
       />
     </div>

@@ -8,14 +8,16 @@ type StatProps = {
   tone: Tone
   label: string
   value: number
+  selected: boolean
   onSelect: () => void
 }
 
-const Stat = ({ tone, label, value, onSelect }: StatProps) => (
+const Stat = ({ tone, label, value, selected, onSelect }: StatProps) => (
   <button
     type='button'
+    aria-pressed={selected}
     onClick={onSelect}
-    className='flex w-full items-center gap-2 rounded-r-lg border-l-[3px] border-l-transparent px-2.5 py-[7px] text-left text-[12.5px] text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring'
+    className='flex w-full items-center gap-2 rounded-r-lg border-l-[3px] border-l-transparent px-2.5 py-[7px] text-left text-[12.5px] text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring aria-pressed:border-l-primary aria-pressed:bg-accent aria-pressed:text-accent-foreground'
   >
     <StatusDot aria-hidden='true' tone={tone} />
     {label}
@@ -30,10 +32,18 @@ type RecordingsSidebarProps = {
   recorded: number
   /** 表示中のページ内で未録画の作品数。 */
   pending: number
+  /** 現在の絞り込み。該当する項目を選択中として示す。 */
+  recordedFilter: RecordedFilter
   onFilterChange: (value: RecordedFilter) => void
 }
 
-export const RecordingsSidebar = ({ total, recorded, pending, onFilterChange }: RecordingsSidebarProps) => {
+export const RecordingsSidebar = ({
+  total,
+  recorded,
+  pending,
+  recordedFilter,
+  onFilterChange
+}: RecordingsSidebarProps) => {
   const content = useIntlayer('recordings-recordings-sidebar')
   return (
     <SidebarSlot>
@@ -41,14 +51,27 @@ export const RecordingsSidebar = ({ total, recorded, pending, onFilterChange }: 
         <h3 className='px-2.5 pb-2 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground uppercase'>
           {content.heading}
         </h3>
-        <Stat tone='warning' label={content.scheduled.value} value={total} onSelect={() => onFilterChange('all')} />
+        <Stat
+          tone='warning'
+          label={content.scheduled.value}
+          value={total}
+          selected={recordedFilter === 'all'}
+          onSelect={() => onFilterChange('all')}
+        />
         <Stat
           tone='success'
           label={content.recorded.value}
           value={recorded}
+          selected={recordedFilter === 'recorded'}
           onSelect={() => onFilterChange('recorded')}
         />
-        <Stat tone='info' label={content.pending.value} value={pending} onSelect={() => onFilterChange('pending')} />
+        <Stat
+          tone='info'
+          label={content.pending.value}
+          value={pending}
+          selected={recordedFilter === 'pending'}
+          onSelect={() => onFilterChange('pending')}
+        />
       </div>
     </SidebarSlot>
   )

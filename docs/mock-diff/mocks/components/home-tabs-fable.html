@@ -205,13 +205,13 @@ svg { display: block; flex: none; }
 }
 .tab:hover, .tab.is-hover { color: var(--foreground); background: color-mix(in oklch, var(--muted) 65%, transparent); }
 .tab:focus-visible, .tab.is-focus { outline: 2px solid var(--ring); outline-offset: -3px; }
-.tab[aria-selected="true"] { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+.tab[aria-selected="true"] { color: var(--foreground); border-bottom-color: var(--primary); }
 .tab[aria-selected="true"]:hover, .tab[aria-selected="true"].is-hover { background: none; }
 .tab[disabled] { color: color-mix(in oklch, var(--muted-foreground) 55%, transparent); cursor: not-allowed; }
 .tab[disabled]:hover, .tab[disabled].is-hover { background: none; color: color-mix(in oklch, var(--muted-foreground) 55%, transparent); }
 
 /* 件数: 括弧やスラッシュで本文に混ぜず、独立した等幅の数字にする */.tab .c { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); }
-.tab[aria-selected="true"] .c { color: var(--primary); font-weight: 600; }
+.tab[aria-selected="true"] .c { color: var(--primary); }
 .tab .c.is-zero { opacity: .45; }
 .tab[disabled] .c { opacity: .45; }
 .tab svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -261,9 +261,9 @@ svg { display: block; flex: none; }
   .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }}
 
 /* ---------- radio で切り替える版 (.tabs-wrap.is-radio) ---------- *//* .tab の中に input.sr[type=radio] を入れ、選ばれた n 番目のタブに対応する n 番目の .panel だけを出す。
-   .tabs-wrap の子は .tabs, .panel, .panel ... の順なので、パネルは nth-child(n + 1)。実装側は state で出し分けてよい。 */.tabs-wrap.is-radio .tab:has(.sr:checked) { color: var(--foreground); font-weight: 600; border-bottom-color: var(--primary); }
+   .tabs-wrap の子は .tabs, .panel, .panel ... の順なので、パネルは nth-child(n + 1)。実装側は state で出し分けてよい。 */.tabs-wrap.is-radio .tab:has(.sr:checked) { color: var(--foreground); border-bottom-color: var(--primary); }
 .tabs-wrap.is-radio .tab:has(.sr:checked):hover, .tabs-wrap.is-radio .tab:has(.sr:checked).is-hover { background: none; }
-.tabs-wrap.is-radio .tab:has(.sr:checked) .c { color: var(--primary); font-weight: 600; }
+.tabs-wrap.is-radio .tab:has(.sr:checked) .c { color: var(--primary); }
 .tabs-wrap.is-radio > .panel { display: none; }
 .tabs-wrap.is-radio:has(.tab:nth-child(1) .sr:checked) > .panel:nth-child(2), .tabs-wrap.is-radio:has(.tab:nth-child(2) .sr:checked) > .panel:nth-child(3), .tabs-wrap.is-radio:has(.tab:nth-child(3) .sr:checked) > .panel:nth-child(4), .tabs-wrap.is-radio:has(.tab:nth-child(4) .sr:checked) > .panel:nth-child(5), .tabs-wrap.is-radio:has(.tab:nth-child(5) .sr:checked) > .panel:nth-child(6), .tabs-wrap.is-radio:has(.tab:nth-child(6) .sr:checked) > .panel:nth-child(7) { display: block; }
 

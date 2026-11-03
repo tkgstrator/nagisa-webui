@@ -27,7 +27,7 @@ function ToggleGroupItem<Value extends string>({
     <Toggle
       data-slot="toggle-group-item"
       className={cn(
-        "h-[26px] rounded-full bg-transparent px-3 text-[12.5px] text-muted-foreground outline-none transition-none hover:text-foreground active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:font-bold disabled:opacity-45",
+        "h-[26px] rounded-full bg-transparent px-3 text-[12.5px] text-muted-foreground outline-none transition-none hover:text-foreground active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-pressed:bg-primary aria-pressed:text-primary-foreground disabled:opacity-45",
         className
       )}
       {...props}

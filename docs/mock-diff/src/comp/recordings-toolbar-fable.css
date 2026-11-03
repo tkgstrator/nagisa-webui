@@ -9,11 +9,11 @@
 .search svg { position: absolute; left: 10px; top: 50%; width: 15px; height: 15px; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; fill: none; stroke: currentColor; stroke-width: 2; }
 .search input {
   width: 100%; height: 34px; padding: 0 30px 0 32px;
-  border: 1px solid var(--input); border-radius: 8px;
-  background: var(--background); color: var(--foreground); font: inherit; font-size: 13px;
+  border: 1px solid var(--input); border-radius: 999px;
+  background: var(--background); color: var(--foreground); font: inherit; font-size: 12.5px;
 }
 .search input::placeholder { color: var(--muted-foreground); }
-.search input:focus-visible { outline: 2px solid var(--ring); outline-offset: 0; border-color: var(--primary); }
+.search input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
 .search .clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 4px; display: grid; place-items: center; color: var(--muted-foreground); }
 .search .clear svg { position: static; transform: none; width: 11px; height: 11px; stroke-width: 2.4; }
 .search .clear:hover { background: var(--muted); color: var(--foreground); }
@@ -23,7 +23,7 @@
 .seg button { height: 28px; padding: 0 10px; border-radius: 6px; font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 6px; }
 .seg button:hover { color: var(--foreground); }
 .seg button:focus-visible { outline: 2px solid var(--ring); outline-offset: -1px; }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); }
 .seg button .n { font-size: 11px; opacity: .8; font-variant-numeric: tabular-nums; }
 
 /* プロバイダ chip */
@@ -36,7 +36,8 @@
 .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .55; flex: none; }
 .chip:hover { background: var(--muted); color: var(--foreground); }
 .chip:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
-.chip[aria-pressed="true"] { border-color: transparent; font-weight: 600; }
+.chip[aria-pressed="true"] { border-color: transparent; }
+.chip.is-warn[aria-pressed="true"] { background: var(--warning); color: var(--warning-foreground); }
 .chip[aria-pressed="true"] .dot { opacity: 1; }
 .chip[aria-pressed="true"].amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
 .chip[aria-pressed="true"].hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
@@ -54,21 +55,22 @@
 /* 並べ替え */
 .sort { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); }
 .sort select {
-  height: 30px; padding: 0 28px 0 10px; border: 1px solid var(--input); border-radius: 8px;
-  background-color: var(--background); color: var(--foreground); font: inherit; font-size: 12px;
+  height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--input); border-radius: 999px;
+  background-color: var(--background); color: var(--foreground); font: inherit; font-size: 12.5px;
   appearance: none; -webkit-appearance: none;
   background-image: linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%), linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
-  background-position: calc(100% - 15px) 13px, calc(100% - 10px) 13px;
+  background-position: calc(100% - 17px) 15px, calc(100% - 12px) 15px;
   background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
 }
-.sort select:focus-visible { outline: 2px solid var(--ring); border-color: var(--primary); }
+.sort select:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
 
 /* 絞り込みリセット */
-.reset { font-size: 12px; color: var(--muted-foreground); display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px; border-radius: 6px; }
-.reset svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.reset { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex: none; padding: 0; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--muted-foreground); }
+.reset svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .reset:hover { background: var(--muted); color: var(--foreground); }
-.reset:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
-.reset[disabled] { opacity: .45; cursor: default; }
+.reset:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.reset[disabled] { opacity: .5; cursor: default; }
+.reset[disabled]:hover { background: var(--background); color: var(--muted-foreground); }
 
 /* 選択バー */
 .selbar {
@@ -123,3 +125,15 @@
 .sort-wrap { position: relative; display: inline-flex; }
 .sort-wrap select { width: 100%; background-image: none; }
 .sort-chevron { position: absolute; top: 50%; right: 10px; width: 10px; height: 10px; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; }
+
+/* 並べ替え: キーの select と向きの切り替えを同じ行に並べる。向きは常に表示し、高さは select (34px) に揃える。 */
+.sort-group { display: inline-flex; align-items: center; gap: 8px; }
+.sort-group .a-segments, .sort-dir { height: 34px; align-items: center; box-sizing: border-box; }
+.sort-dir { display: inline-flex; gap: 3px; padding: 3px; border-radius: 999px; background: var(--muted); }
+.sort-dir button { height: 26px; padding: 0 12px; border: 0; border-radius: 999px; font-size: 12.5px; color: var(--muted-foreground); background: transparent; }
+.sort-dir button:hover { color: var(--foreground); }
+.sort-dir button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); }
+@media (max-width: 640px) {
+  .sort-group { width: 100%; }
+  .sort-group .sort { flex: 1; min-width: 0; width: auto; }
+}

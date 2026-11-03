@@ -336,14 +336,16 @@ svg { display: block; flex: none; }
 .side-stat.d-watch .dot { background: var(--success); }
 
 .side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; }
-.side-status, .side-link { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; font-size: 11px; color: var(--muted-foreground); transition: background-color .15s, color .15s; }
+.side-status, .side-link { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 0 8px 8px 0; border-left: 3px solid transparent; font-size: 13px; color: var(--muted-foreground); transition: background-color .15s, color .15s; }
 .side-status:hover, .side-link:hover { background: var(--muted); color: var(--foreground); }
-.side-status[aria-current="page"], .side-link[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
-.side-status i { width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; flex: none; }
-.side-status.is-checking i { background: var(--warning); }
+.side-status[aria-current="page"], .side-link[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; border-left-color: var(--primary); }
+/* ドットは 16px の箱に入れ、アイコン (16px) と同じ中心線に乗せる */
+.side-status i { position: relative; width: 16px; height: 16px; flex: none; }
+.side-status i::before { content: ""; position: absolute; left: 4.5px; top: 4.5px; width: 7px; height: 7px; border-radius: 999px; background: var(--success); animation: pulseDot 2.2s ease-in-out infinite; }
+.side-status.is-checking i::before { background: var(--warning); }
 .side-status.is-down { color: var(--destructive); }
-.side-status.is-down i { background: var(--destructive); animation: none; }
-.side-link svg { width: 13px; height: 13px; flex: none; }
+.side-status.is-down i::before { background: var(--destructive); animation: none; }
+.side-link svg { width: 16px; height: 16px; flex: none; }
 
 /* mobile: サイドバーを畳んで上端の横並びバーにする */
 .side.is-mobile { width: 390px; flex: none; flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--border); max-width: 100%; }
@@ -393,9 +395,8 @@ svg { display: block; flex: none; }
 .side.is-compact .side-brand, .side.is-compact .side-widget, .side.is-compact .side-count { display: none; }
 .side.is-compact .side-nav a span:not(.side-count) { display: none; }
 .side.is-compact .side-nav a { width: 32px; height: 35.5px; justify-content: center; gap: 0; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
-.side.is-compact .side-foot a { width: 32px; height: 28.5px; justify-content: center; gap: 0; padding: 6px 8px; margin: 0 auto; font-size: 0; }
+.side.is-compact .side-foot a { width: 32px; height: 35.5px; justify-content: center; gap: 0; padding: 8px; margin: 0 auto; border-left: 0; border-radius: 8px; font-size: 0; }
 .side.is-compact .side-foot svg { width: 16px; height: 16px; }
-.side.is-compact .side-foot .side-status i { width: 7px; height: 7px; }
 @media (max-width: 640px) { .side.is-compact { width: 100%; flex-basis: auto; } }
 @media (max-width: 640px) {
   .side.is-sticky { height: auto; overflow-y: visible; }
@@ -792,7 +793,7 @@ svg { display: block; flex: none; }
 }
 .st-seg button:hover { color: var(--foreground); }
 .st-seg button:active { transform: scale(.95); }
-.st-seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); font-weight: 700; }
+.st-seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); }
 
 .st-sw {
   width: 40px; height: 23px; border-radius: 999px; background: var(--input);
@@ -808,7 +809,7 @@ svg { display: block; flex: none; }
 .st-sw:focus-visible{ outline: 2px solid var(--ring); outline-offset: 2px; }
 
 .st-sel {
-  display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px;
+  display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px;
   border: 1px solid var(--input); border-radius: 999px;
   font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap;
   transition: border-color .15s ease, background-color .15s ease;
@@ -817,7 +818,7 @@ svg { display: block; flex: none; }
 .st-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
 
 .st-btn {
-  height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--input);
+  height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--input);
   font-size: 12.5px; font-weight: 700; white-space: nowrap;
   transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
@@ -911,12 +912,15 @@ svg { display: block; flex: none; }
 .ftr .ext svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ftr .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); flex: none; }
 .ftr .dot.is-down { background: var(--destructive); }
-/* 画面下端に常時固定する版。左端は常設サイドバー (236px) の右から。
+/* 画面下端に常時固定する版。左端は常設サイドバー (展開 236px / 折りたたみ 56px) の右から。
    高さ 44px は決定稿骨格の .pg の下余白 90px (= 46 + 44) と対になっている。 */
 .ftr.is-fixed {
   position: fixed; left: 236px; right: 0; bottom: 0; z-index: 30; height: 44px;
   padding: 0 36px; background: var(--background); flex-wrap: nowrap;
+  transition: left .2s linear;
 }
+/* サイドバーを畳むと左端も 56px (--sidebar-width-icon) へ同じ 200ms linear で追従する */
+.ftr.is-fixed.is-collapsed { left: 56px; }
 @media (max-width: 640px) {
   .ftr { flex-direction: column; align-items: flex-start; gap: 8px; }
   .ftr .r { gap: 12px; }

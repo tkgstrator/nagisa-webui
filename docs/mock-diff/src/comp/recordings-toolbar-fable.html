@@ -15,17 +15,13 @@ TITLE: 録画一覧のツールバー
         <button type="button" aria-pressed="false">未録画 <span class="n">1</span></button>
         <button type="button" aria-pressed="false">録画済み <span class="n">5</span></button>
       </div>
-      <div class="chips" role="group" aria-label="配信元">
-        <button type="button" class="chip amazon" aria-pressed="true"><i class="dot"></i>Prime Video</button>
-        <button type="button" class="chip hulu" aria-pressed="false"><i class="dot"></i>Hulu</button>
-        <button type="button" class="chip crunchyroll" aria-pressed="false"><i class="dot"></i>Crunchyroll</button>
-        <button type="button" class="chip abema" aria-pressed="false"><i class="dot"></i>ABEMA</button>
-        <button type="button" class="chip netflix" aria-pressed="false"><i class="dot"></i>Netflix</button>
-      </div>
-      <button type="button" class="toggle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 9 9"/></svg>配信終了予定のみ</button>
-      <button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット</button>
+      <label class="sort">
+        <span class="sort-wrap"><select aria-label="配信元"><option selected>全配信元</option><option>Prime Video</option><option>Hulu</option><option>Crunchyroll</option><option>ABEMA</option><option>Netflix</option></select><svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+      </label>
+      <button type="button" class="chip is-warn" aria-pressed="false">配信終了予定のみ</button>
+      <button type="button" class="reset" aria-label="絞り込みをリセット" title="絞り込みをリセット"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></button>
       <span class="spacer"></span>
-      <label class="sort">並べ替え
+      <label class="sort">
         <select>
           <option>最終更新が新しい順</option>
           <option>進捗が低い順</option>
@@ -89,10 +85,10 @@ TITLE: 録画一覧のツールバー
 <section class="cat-sec">
   <h2>並べ替えと絞り込みリセット</h2>
   <div class="cat-row">
-    <div class="cat-item is-key"><span class="cat-label">並べ替え</span><label class="sort">並べ替え<select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select></label></div>
-    <div class="cat-item"><span class="cat-label">フォーカス</span><label class="sort">並べ替え<select class="is-focus"><option>進捗が低い順</option></select></label></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット <span class="num">3</span></button></div>
-    <div class="cat-item"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>絞り込みをリセット</button></div>
+    <div class="cat-item is-key"><span class="cat-label">並べ替え</span><label class="sort"><select><option>最終更新が新しい順</option><option>進捗が低い順</option><option>配信終了が近い順</option><option>タイトル順</option></select></label></div>
+    <div class="cat-item"><span class="cat-label">フォーカス</span><label class="sort"><select class="is-focus"><option>進捗が低い順</option></select></label></div>
+    <div class="cat-item"><span class="cat-label">リセット <small>条件あり</small></span><button type="button" class="reset" aria-label="絞り込みをリセット" title="絞り込みをリセット"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></button></div>
+    <div class="cat-item"><span class="cat-label">リセット <small>条件なし = 無効</small></span><button type="button" class="reset" disabled aria-label="絞り込みをリセット" title="絞り込みをリセット"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></button></div>
   </div>
 </section>
 
@@ -163,16 +159,17 @@ TITLE: 録画一覧のツールバー
         </div>
     </div>
     <div class="cat-item cat-full is-key"><span class="cat-label">.sort-wrap</span>
+<span class="sort-group">
 <span class="sort-wrap">
-            <select>
-              <option>最終更新が新しい順</option>
-              <option>最終更新が古い順</option>
-              <option>タイトル順</option>
-              <option>放送年 (新しい順)</option>
-              <option>放送年 (古い順)</option>
+            <select aria-label="並べ替え">
+              <option selected>最終更新</option>
+              <option>タイトル</option>
+              <option>放送年</option>
             </select>
             <svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </span>
+<span class="sort-dir" role="group" aria-label="並び順の向き"><button type="button" aria-pressed="false">昇順</button><button type="button" aria-pressed="true">降順</button></span>
+</span>
     </div>
   </div>
   <p class="cat-note">録画一覧 (決定稿) で使う修飾。部品の既定値はそのままで、ページ側がクラスを足したときだけ効く。</p>

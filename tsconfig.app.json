@@ -3,6 +3,7 @@
   "include": [
     "src/app/**/*.ts",
     "src/app/**/*.tsx",
+    "src/lib/anime-status.ts",
     "src/schemas/anime.dto.ts",
     "src/schemas/archive.dto.ts",
     "src/schemas/log.dto.ts",

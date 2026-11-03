@@ -41,12 +41,11 @@ export interface Settings {
 export const PAGE_SIZE_OPTIONS = [12, 24, 48, 96] as const
 export const EXPIRING_LEAD_DAY_OPTIONS = [3, 7, 14, 30] as const
 
-export const SORT_LABELS: Record<SortPreference, string> = {
-  'title-asc': settingsModuleContent.sortLabels.titleAsc,
-  'title-desc': settingsModuleContent.sortLabels.titleDesc,
-  'year-asc': settingsModuleContent.sortLabels.yearAsc,
-  'year-desc': settingsModuleContent.sortLabels.yearDesc
-}
+/** 既定の並び順のキー。向き (昇順/降順) は別コントロールで選ぶ。 */
+export const SORT_KEY_OPTIONS = [
+  { value: 'title', label: settingsModuleContent.sortLabels.title },
+  { value: 'year', label: settingsModuleContent.sortLabels.year }
+] as const
 
 export const LANGUAGE_LABELS: Record<LanguagePreference, string> = {
   sub: settingsModuleContent.languageLabels.sub,

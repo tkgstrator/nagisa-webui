@@ -38,66 +38,77 @@ USES: app-header input toggle button app-footer
       </div>
 
       <div class="pg-body">
+        <div class="pg-rec-layout">
         <form class="pg-form">
-          <div class="a-field-wrap">
-            <label for="rec-provider">provider</label>
-            <div class="pg-select">
-              <select id="rec-provider">
-                <option>Prime Video</option>
-                <option>Hulu</option>
-                <option selected>Crunchyroll</option>
-                <option>ABEMA</option>
-              </select>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-          </div>
-
-          <div class="a-field-wrap">
-            <label for="rec-content-id">content_id</label>
-            <div class="a-field"><input id="rec-content-id" type="text" placeholder="例: B0DXV9MP4Y / lycoris-recoil など" value="GRDN8X003"></div>
-          </div>
-
-          <div class="pg-form-row">
-            <div class="a-field-wrap">
-              <label for="rec-season">season_number（任意・空欄で全シーズン）</label>
-              <div class="a-field"><input id="rec-season" type="text" placeholder="例: 1" value="2"></div>
-            </div>
-            <div class="a-field-wrap">
-              <label for="rec-episodes">episodes（任意・空欄で全話）</label>
-              <div class="a-field"><input id="rec-episodes" type="text" placeholder="例: 1, 2, 3"></div>
-              <p class="pg-form-hint">カンマ・スペース・改行で区切って入力してください。season_number の指定も必要です。</p>
-            </div>
-          </div>
-
-          <div class="pg-form-row">
-            <div class="a-field-wrap">
-              <label for="rec-marketplace">marketplace（任意）</label>
-              <div class="pg-select">
-                <select id="rec-marketplace">
-                  <option>未指定</option>
-                  <option selected>日本 (jp)</option>
-                  <option>米国 (us)</option>
-                </select>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          <section class="pg-form-group">
+            <p class="pg-form-group-title">対象</p>
+            <div class="pg-form-row">
+              <div class="a-field-wrap">
+                <label for="rec-provider">provider<span class="pg-req" aria-hidden="true">*</span></label>
+                <div class="a-select">
+                  <select id="rec-provider" aria-required="true">
+                    <option>Prime Video</option>
+                    <option>Hulu</option>
+                    <option selected>Crunchyroll</option>
+                    <option>ABEMA</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+              </div>
+              <div class="a-field-wrap">
+                <label for="rec-content-id">content_id<span class="pg-req" aria-hidden="true">*</span></label>
+                <div class="a-field"><input id="rec-content-id" type="text" aria-required="true" placeholder="例: B0DXV9MP4Y / lycoris-recoil など" value="GRDN8X003"></div>
               </div>
             </div>
-            <div class="a-field-wrap">
-              <label for="rec-language">language（任意）</label>
-              <div class="pg-select">
-                <select id="rec-language">
-                  <option>未指定</option>
-                  <option selected>字幕 (sub)</option>
-                  <option>吹き替え (dub)</option>
-                </select>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            <p class="pg-form-hint">未識別タイトル一覧から入力済み</p>
+          </section>
+
+          <section class="pg-form-group">
+            <p class="pg-form-group-title">範囲</p>
+            <div class="pg-form-row">
+              <div class="a-field-wrap">
+                <label for="rec-season">season_number</label>
+                <div class="a-field"><input id="rec-season" type="text" placeholder="空欄で全シーズン" value="2"></div>
+              </div>
+              <div class="a-field-wrap">
+                <label for="rec-episodes">episodes</label>
+                <div class="a-field"><input id="rec-episodes" type="text" placeholder="空欄で全話（例: 1, 2, 3）"></div>
               </div>
             </div>
-          </div>
+            <p class="pg-form-hint">カンマ・スペース・改行で区切って入力してください。season_number の指定も必要です。</p>
+          </section>
 
-          <label class="pg-form-check" for="rec-force">
-            <input id="rec-force" class="a-check" type="checkbox">
-            <span class="pg-form-hint"><b>force</b> — 出力ファイルが存在する場合も、スキップせずに再ダウンロードします（Nagisa の <code class="pg-tbl-mono">-F</code> に相当）</span>
-          </label>
+          <section class="pg-form-group">
+            <p class="pg-form-group-title">オプション</p>
+            <div class="pg-form-row">
+              <div class="a-field-wrap">
+                <label for="rec-marketplace">marketplace</label>
+                <div class="a-select">
+                  <select id="rec-marketplace">
+                    <option>未指定</option>
+                    <option selected>日本 (jp)</option>
+                    <option>米国 (us)</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+              </div>
+              <div class="a-field-wrap">
+                <label for="rec-language">language</label>
+                <div class="a-select">
+                  <select id="rec-language">
+                    <option>未指定</option>
+                    <option selected>字幕 (sub)</option>
+                    <option>吹き替え (dub)</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+              </div>
+            </div>
+            <label class="pg-form-check" for="rec-force">
+              <input id="rec-force" class="a-check" type="checkbox">
+              <span class="pg-form-hint"><b>force</b> — 出力ファイルが存在する場合も、スキップせずに再ダウンロードします（Nagisa の <code class="pg-tbl-mono">-F</code> に相当）</span>
+            </label>
+          </section>
 
           <div class="pg-form-actions">
             <button type="submit" class="a-btn">
@@ -107,9 +118,10 @@ USES: app-header input toggle button app-footer
           </div>
         </form>
 
-        <div class="pg-sec">
-          <div class="pg-sec-head"><p class="pg-sec-title">送信内容プレビュー</p></div>
-          <pre class="pg-pre">{
+        <div class="pg-rec-aside">
+        <section class="pg-form-group">
+          <p class="pg-form-group-title">送信内容プレビュー</p>
+          <pre class="pg-pre" style="margin-top:24px">{
   "provider": "crunchyroll",
   "items": [
     {
@@ -122,7 +134,7 @@ USES: app-header input toggle button app-footer
   "marketplace": "jp",
   "language": "sub"
 }</pre>
-        </div>
+        </section>
 
         <div class="pg-sec">
           <div class="pg-sec-head"><p class="pg-sec-title">2 件のジョブを投入しました</p></div>
@@ -175,6 +187,8 @@ USES: app-header input toggle button app-footer
     }
   ]
 }</pre>
+        </div>
+        </div>
         </div>
       </div>
     </div>

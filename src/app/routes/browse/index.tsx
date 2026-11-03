@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { useAtom } from 'jotai'
-import { ChevronDown, RotateCcw } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntlayer } from 'react-intlayer'
 import { z } from 'zod'
@@ -10,6 +10,7 @@ import { AnimeDrawer } from '@/app/components/anime-drawer'
 import { SidebarSlot } from '@/app/components/app-sidebar'
 import { LoadingSpinner } from '@/app/components/loading-spinner'
 import { PageContainer } from '@/app/components/page-container'
+import { SortControl } from '@/app/components/sort-control'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/app/components/ui/sheet'
 import { type BrowseFilters, browseFiltersAtom, browseFiltersDefaults } from '@/app/lib/atoms'
 import { animeListQueryOptions } from '@/app/lib/query-options'
@@ -21,7 +22,7 @@ import { AnimeCard } from './-components/anime-card'
 import { BrowseFilterPanel } from './-components/browse-filters'
 import { BrowsePagination } from './-components/browse-pagination'
 import { SearchBar } from './-components/search-bar'
-import { baseListQuery, buildActiveChips, SORT_OPTIONS, type SortValue } from './-lib/filters'
+import { baseListQuery, buildActiveChips, SORT_KEYS, SORT_OPTIONS, type SortValue } from './-lib/filters'
 
 /** 表示密度ごとの列数と間隔。`default` は決定稿モックのままの値。 */
 const DENSITY_GRID: Record<CardDensity, string> = {
@@ -176,21 +177,12 @@ function AnimeListPage() {
           </div>
           <div className='flex items-center gap-2.5 max-sm:w-full max-sm:flex-wrap'>
             <SearchBar value={filters.search} onChange={setFilter('search')} />
-            <div className='relative'>
-              <select
-                aria-label={content.sortAriaLabel.value}
-                value={sortValue}
-                onChange={(e) => onSortChange(e.target.value)}
-                className='h-[34px] appearance-none rounded-full border border-input bg-background pr-[26px] pl-3 text-[12.5px] text-foreground focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none'
-              >
-                {SORT_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className='pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground' />
-            </div>
+            <SortControl
+              label={content.sortAriaLabel.value}
+              value={sortValue}
+              keys={SORT_KEYS}
+              onValueChange={onSortChange}
+            />
           </div>
         </div>
 

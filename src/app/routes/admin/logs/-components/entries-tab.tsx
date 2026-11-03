@@ -56,7 +56,7 @@ export function EntriesTab({
           size='pill-sm'
           onClick={() => fetchNextPage()}
           disabled={!hasNextPage || isFetchingNextPage}
-          className='bg-transparent px-4'
+          className='px-4'
         >
           {isFetchingNextPage
             ? content.entriesTab.loading

@@ -113,7 +113,7 @@ function UnidentifiedAdminPage() {
             </>
           }
         >
-          <Button variant='outline' size='pill-sm' className='bg-transparent' onClick={toggleOrder}>
+          <Button variant='outline' size='pill-sm' onClick={toggleOrder}>
             <List />
             {content.sortButton.prefix.value}{' '}
             {search.order === 'desc' ? content.sortButton.desc.value : content.sortButton.asc.value}
