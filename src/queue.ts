@@ -3,13 +3,13 @@ import { autoRecordScheduled } from './lib/auto-record'
 import { createPrismaClient } from './lib/db'
 import { COLOR_SUCCESS, COLOR_WARN, notify } from './lib/discord'
 import { enqueueImageWarm, warmImages } from './lib/image-warm'
-import { createFetchClient } from './lib/lambda'
+import { createFetchClient, LambdaInvocationError } from './lib/lambda'
 import { getAppLogger } from './lib/logger'
 import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
 import { resolveQueueForProvider } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { SyncService } from './lib/sync'
-import { finishRun, resolveStatus, startRun } from './lib/sync-run'
+import { finishRun, propagateChildFailures, resolveStatus, startRun } from './lib/sync-run'
 
 import type { Message } from './schemas/message.dto'
 
@@ -58,6 +58,21 @@ async function findAnimeForMessage(
     })
   }
   return null
+}
+
+/**
+ * 再試行しても結果が変わらない失敗か。AniList が 403 (manually blocked) / 401 を返しているときは
+ * 待っても解けないので、retry せず即 fail にして原因を見える側 (親 run / Discord) に出す。
+ */
+function isPermanentFailure(e: unknown): boolean {
+  return e instanceof LambdaInvocationError && /AniList (401|403)\b/.test(e.body)
+}
+
+/** 失敗一覧に出すラベル */
+async function failureLabel(prisma: ReturnType<typeof createPrismaClient>, body: Message): Promise<string> {
+  if (body.type === 'anilist_sync') return `[anilist_sync ${body.message.year}]`
+  const anime = await findAnimeForMessage(prisma, body).catch(() => null)
+  return anime ? anime.title : `[${body.type}]`
 }
 
 /** Discord embed field value は 1024 文字まで。超えたら "...他N件" で切り詰める */
@@ -118,6 +133,7 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
   let failed = 0
   let retried = 0
   const failedLabels: string[] = []
+  const failedByParent = new Map<string, { count: number; errorMessage: string }>()
 
   const processMessage = async (message: (typeof batch.messages)[number]): Promise<void> => {
     const body = message.body
@@ -167,7 +183,7 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
         }
         case 'anilist_sync': {
           const { year, country } = message.body.message
-          const result = await syncAnilistMediaYear({ prisma, year, country })
+          const result = await syncAnilistMediaYear({ prisma, lambda, year, country })
           logger.info({
             action: 'anilist-sync-year-done',
             year,
@@ -217,11 +233,17 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
       // max_retries = 3 は「初回配信の後に 3 回再試行」なので attempts は 1〜4 まで来る。
       // attempts が MAX_RETRIES を超えたら今回が最後の配信 = これ以上 retry() を呼ばない
       // (呼ぶと DLQ に積む前提のリトライ上限管理と衝突し、通知も二重に飛ぶ)。
-      const isFinalAttempt = message.attempts > MAX_RETRIES
+      const isFinalAttempt = message.attempts > MAX_RETRIES || isPermanentFailure(e)
       if (isFinalAttempt) {
         failed++
-        const anime = await findAnimeForMessage(prisma, message.body).catch(() => null)
-        failedLabels.push(anime ? anime.title : `[${message.body.type}]`)
+        failedLabels.push(await failureLabel(prisma, message.body))
+        if (message.body.runId !== undefined) {
+          const prev = failedByParent.get(message.body.runId)
+          failedByParent.set(message.body.runId, {
+            count: (prev?.count ?? 0) + 1,
+            errorMessage: prev?.errorMessage ?? errorMessage
+          })
+        }
       } else {
         const delaySeconds = RETRY_DELAY_SECONDS[message.attempts - 1] ?? RETRY_DELAY_SECONDS.at(-1)
         message.retry({ delaySeconds })
@@ -257,6 +279,7 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
       retried,
       meta: parentIds.length > 1 ? { parentIds } : undefined
     })
+    await propagateChildFailures(prisma, failedByParent)
     await prisma.$disconnect()
   }
 }

@@ -10,6 +10,7 @@
  *   POST /title_info     — タイトル詳細取得
  *   POST /abema_archive  — ABEMA archive key/segment fetch
  *   POST /identify       — AniList でタイトルを検索して aniListId 等を返す
+ *   POST /anilist_year   — AniList の 1 年分 anime media をページ範囲指定で取得
  *   POST /image          — 画像を取得して WebP のラダー各幅に変換して返す
  *
  * 実処理は handlers/ 配下に分割している。このファイルは entry と routing のみ。
@@ -19,6 +20,8 @@ import {
   ExpiringResponseSchema,
   FetchAbemaArchiveRequestSchema,
   FetchAbemaArchiveResponseSchema,
+  FetchAnilistYearRequestSchema,
+  FetchAnilistYearResponseSchema,
   FetchExpiringRequestSchema,
   FetchImageRequestSchema,
   FetchImageResponseSchema,
@@ -31,6 +34,7 @@ import {
 import { TitleInfoSchema } from '../../src/schemas/providers/common.dto'
 import { parseEvent } from './event'
 import { fetchAbemaArchives } from './handlers/abema-archive'
+import { fetchAnilistYear } from './handlers/anilist-year'
 import { fetchExpiring } from './handlers/expiring'
 import { identifyTitles } from './handlers/identify'
 import { fetchImages } from './handlers/image'
@@ -96,6 +100,11 @@ export async function handler(event: unknown): Promise<LambdaResponse> {
         return await handleRoute(body, IdentifyRequestSchema, IdentifyResponseSchema, ({ titles }) => {
           logger.debug({ action: 'route-identify', count: titles.length, requestId })
           return identifyTitles(titles)
+        })
+      case '/anilist_year':
+        return await handleRoute(body, FetchAnilistYearRequestSchema, FetchAnilistYearResponseSchema, (input) => {
+          logger.debug({ action: 'route-anilist-year', year: input.year, startPage: input.startPage, requestId })
+          return fetchAnilistYear(input)
         })
       case '/image':
         return await handleRoute(body, FetchImageRequestSchema, FetchImageResponseSchema, ({ urls }) => {

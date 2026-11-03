@@ -346,6 +346,6 @@ export class SyncService {
       provider: message.provider,
       category: message.category
     })
-    return fetchTitleList(this.prisma, message.provider, message.category, result)
+    return fetchTitleList(this.prisma, message.provider, message.category, result, this.lambda)
   }
 }

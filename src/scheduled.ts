@@ -5,6 +5,7 @@ import { syncJobs } from './lib/job-sync'
 import { syncLibrary } from './lib/library-sync'
 import { collectLogGarbage } from './lib/log-gc'
 import { getAppLogger } from './lib/logger'
+import { notifyIfAnilistStale } from './lib/metadata/anilist-staleness'
 import { sendMessage } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { finishRun, type RunStatus, startRun } from './lib/sync-run'
@@ -161,6 +162,10 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
           // wrangler.toml の crons に書いた文字列がそのまま event.cron に来る。
           // "0 5 * * 0" と書くと一致せず default に落ちるので、定義と同じ SUN 表記にする。
           case '0 5 * * SUN': {
+            // 先に前回までの同期が止まっていないか確認する (通知失敗で enqueue を止めない)
+            await notifyIfAnilistStale(prisma, env.DISCORD_WEBHOOK_URL).catch((e: unknown) =>
+              logger.error({ action: 'anilist-stale-check-failed', error: e instanceof Error ? e.message : String(e) })
+            )
             const fromYear = 2000
             const toYear = dayjs().year() + 1
             const years = Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i)
