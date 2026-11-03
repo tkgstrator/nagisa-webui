@@ -78,14 +78,14 @@ export const EntriesTable = ({ entries }: { entries: LogEntrySchema[] }) => {
                   </details>
                 )}
               </td>
-              <td className={`${cellClass} text-right`}>
+              <td className={`${cellClass} whitespace-nowrap text-right`}>
                 {entry.runId === null ? (
                   <span className='text-[11px] text-muted-foreground'>—</span>
                 ) : (
                   <Link
                     to='/admin/logs/$runId'
                     params={{ runId: entry.runId }}
-                    className='inline-flex h-7 items-center rounded-md border border-border px-2.5 text-[12px] font-medium transition-colors hover:bg-background'
+                    className='inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-md border border-border px-2.5 text-[12px] font-medium transition-colors hover:bg-background'
                   >
                     {content.run}
                   </Link>

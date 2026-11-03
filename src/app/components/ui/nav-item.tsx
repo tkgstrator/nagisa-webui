@@ -50,7 +50,7 @@ function NavItemCount({ className, ...props }: React.ComponentProps<"span">) {
 }
 
 const navLinkVariants = cva(
-  "flex items-center gap-3 rounded-r-[10px] border-l-[3px] border-l-primary px-4 py-3.5 outline-none transition-[background,transform] duration-[180ms] ease-in-out hover:translate-x-[3px] hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:text-primary",
+  "flex items-center gap-3 rounded-r-[10px] border-l-[3px] border-l-primary px-4 py-3.5 outline-none transition-colors duration-[180ms] ease-in-out hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:text-primary",
   {
     variants: {
       tone: {
