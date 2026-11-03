@@ -8,7 +8,9 @@ import type { PrismaClient } from '../../generated/prisma/client.ts'
  * (`scripts/analysis/d1-param-limit-probe.ts` で実測)。
  *
  * 100 ちょうどにしないのは、この定数を使う呼び出しが IN 句以外にも変数を持つため。
- * 最も余裕がないのは `expiredAt` リセットの updateMany で `chunk + 3` になる。
+ * Prisma の findMany は orderBy 付きだと `LIMIT ? OFFSET ?` で `chunk + 2` (実測: IN 100 個だと 102 で
+ * P2029 "query parameter limit ... exceeded")、`expiredAt` リセットの updateMany は `chunk + 3` になる。
+ * IN 句を chunk する箇所は必ずこの定数を使い、独自の 100 を持たないこと。
  */
 export const D1_VARIABLE_LIMIT = 90
 
