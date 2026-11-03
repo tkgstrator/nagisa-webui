@@ -151,7 +151,7 @@ export const CatalogEventKindEnum = z.enum(['title-added', 'season-added', 'epis
 export type CatalogEventKindEnum = z.infer<typeof CatalogEventKindEnum>
 
 /** 既存エピソードで変わった項目 */
-export const CatalogEventFieldEnum = z.enum(['image', 'description', 'duration', 'releaseDate'])
+export const CatalogEventFieldEnum = z.enum(['title', 'image', 'description', 'duration', 'releaseDate'])
 export type CatalogEventFieldEnum = z.infer<typeof CatalogEventFieldEnum>
 
 export const CatalogEventSchema = z.object({
