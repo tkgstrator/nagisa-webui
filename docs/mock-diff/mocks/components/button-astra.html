@@ -202,10 +202,12 @@ code { overflow-wrap: anywhere; }
 .cat .is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
 /* ---------- component: button ---------- */
 .a-btn { height: 36px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid transparent; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: 13px; font-weight: 600; }
-.a-btn.a-sm { height: 30px; padding: 0 10px; font-size: 12px; } .a-btn.a-lg { height: 42px; padding: 0 18px; font-size: 14px; }
+.a-btn.a-sm { height: 34px; padding: 0 12px; font-size: 12.5px; } .a-btn.a-lg { height: 42px; padding: 0 18px; font-size: 14px; }
 .a-btn.a-secondary { background: var(--secondary); color: var(--secondary-foreground); }
 .a-btn.a-ghost { background: transparent; color: var(--foreground); }
 .a-btn.a-outline { background: transparent; color: var(--foreground); border-color: var(--border); }
+.a-btn.a-outline.a-sm { background: var(--background); border-color: var(--input); }
+.a-btn.a-outline.a-sm:focus-visible, .a-btn.a-outline.a-sm.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
 .a-btn.a-destructive { background: var(--destructive); color: var(--destructive-foreground); }
 .a-btn:not(:disabled):hover, .a-btn.is-hover, .a-btn:not(:disabled).is-hover { background: color-mix(in oklch, var(--primary) 86%, var(--foreground)); }
 .a-btn.a-destructive:not(:disabled):hover, .a-btn.a-destructive.is-hover, .a-btn.a-destructive:not(:disabled).is-hover { background: color-mix(in oklch, var(--destructive) 86%, var(--foreground)); }

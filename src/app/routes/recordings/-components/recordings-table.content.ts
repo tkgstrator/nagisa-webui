@@ -4,12 +4,15 @@ const recordingsTableContent = {
   key: 'recordings-recordings-table',
   content: t({
     ja: {
-      recordedBadge: {
-        recorded: '録画済み',
-        pending: '未録画'
+      statuses: {
+        completed: '完了',
+        incomplete: '未録画あり',
+        recording: '放送中',
+        upcoming: '放送前',
+        hiatus: '休止',
+        cancelled: '中止'
       },
       nextEpisodePrefix: '次回 ',
-      remainingDays: insert('あと {{days}} 日'),
       groups: {
         airing: {
           label: '放送中',
@@ -28,19 +31,20 @@ const recordingsTableContent = {
       columns: {
         title: '作品',
         provider: '配信元',
-        airing: '放送',
-        recorded: '録画',
-        updatedAt: '最終更新',
-        expiresAt: '配信終了'
+        status: '状態',
+        updatedAt: '最終更新'
       }
     },
     en: {
-      recordedBadge: {
-        recorded: 'Recorded',
-        pending: 'Not recorded'
+      statuses: {
+        completed: 'Completed',
+        incomplete: 'Incomplete',
+        recording: 'Recording',
+        upcoming: 'Upcoming',
+        hiatus: 'On hiatus',
+        cancelled: 'Cancelled'
       },
       nextEpisodePrefix: 'Next ',
-      remainingDays: insert('Time remaining: {{days}} d'),
       groups: {
         airing: {
           label: 'Airing',
@@ -59,10 +63,8 @@ const recordingsTableContent = {
       columns: {
         title: 'titles',
         provider: 'Provider',
-        airing: 'Broadcast',
-        recorded: 'Recording status',
-        updatedAt: 'Last updated',
-        expiresAt: 'Available until'
+        status: 'Status',
+        updatedAt: 'Last updated'
       }
     }
   })

@@ -51,6 +51,7 @@
   line-height: 1.2;
 }
 .pg-sub { margin-top: 4px; font-size: 12px; color: var(--muted-foreground); }
+.pg-sub code { line-height: 18px; }
 .pg-sub b { color: var(--foreground); font-weight: 600; }
 .pg-headctl { display: flex; align-items: center; gap: 10px; }
 
@@ -140,18 +141,24 @@
 
 /* ---------- form ---------- */
 /* admin-recorder のジョブ投入フォーム。 */
-.pg-form { display: flex; flex-direction: column; gap: 18px; max-width: 580px; }
-.pg-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pg-rec-layout { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 40px; align-items: start; }
+.pg-rec-aside { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.pg-rec-aside .pg-sec { margin-top: 0; }
+.pg-form { display: flex; flex-direction: column; gap: 22px; }
+.pg-form-group { display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+.pg-form-group-title { font-size: 11px; font-weight: 700; color: var(--muted-foreground); }
+.pg-form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 14px; }
+.a-field-wrap { min-width: 0; }
+.pg-form .a-field-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.pg-form .a-field-wrap label { font-size: 12px; line-height: 18px; font-weight: 600; }
+.pg-form .a-field, .pg-form .a-select { width: 100%; height: 36px; min-height: 36px; box-sizing: border-box; }
+.pg-form-check .pg-form-hint { margin-top: 0; line-height: 18px; }
+.pg-form-check .pg-tbl-mono { line-height: 1; }
+.pg-req { margin-left: 2px; vertical-align: top; font-size: 14px; line-height: 18px; font-weight: 700; color: var(--destructive); }
+.pg-form-check .a-check { flex: none; margin: 0; }
 .pg-form-hint { font-size: 11.5px; color: var(--muted-foreground); }
 .pg-form-check { display: flex; align-items: flex-start; gap: 8px; }
-.pg-form-check .pg-form-hint { margin-top: 2px; }
 .pg-form-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
-/* 素の <select> を a-field と同じ見た目に揃える (原子には select 版が無いため)。 */
-.pg-select { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--input); border-radius: 8px; background: var(--background); }
-.pg-select:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--primary); }
-.pg-select select { flex: 1; min-width: 0; height: 34px; border: 0; padding: 0; outline: none; background: transparent; font: inherit; color: inherit; appearance: none; }
-.pg-select svg { flex: none; width: 16px; height: 16px; color: var(--muted-foreground); }
 
 /* JSON プレビュー / レスポンス表示。 */
 .pg-pre { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; line-height: 1.6; overflow-x: auto; color: var(--foreground); white-space: pre-wrap; word-break: break-all; }
@@ -162,6 +169,10 @@
 .pg-result .pg-result-title { font-size: 13px; font-weight: 700; }
 .pg-result .pg-result-sub { font-size: 11.5px; color: var(--muted-foreground); }
 
+@media (max-width: 1023px) {
+  .pg-rec-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-rec-aside { position: static; }
+}
 @media (max-width: 640px) {
   .pg-form-row { grid-template-columns: 1fr; }
 }

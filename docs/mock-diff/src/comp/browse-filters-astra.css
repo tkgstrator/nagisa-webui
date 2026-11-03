@@ -46,12 +46,12 @@
 .search input::placeholder { color: var(--muted-foreground); }
 
 .sort { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted-foreground); }
-.sort select { height: 34px; padding: 0 26px 0 12px; border: 1px solid var(--input); border-radius: 999px; background: var(--background); color: var(--foreground); appearance: none; -webkit-appearance: none; font-size: 12.5px; }
-.sort select:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
-.sort .sel { position: relative; }
-.sort .sel svg { position: absolute; right: 10px; top: 50%; translate: 0 -50%; width: 12px; height: 12px; pointer-events: none; fill: none; stroke: var(--muted-foreground); stroke-width: 2; }
 
 @media (max-width: 640px) {
   .fpanel { width: 100%; }
   .search { width: 100%; }
 }
+
+/* 並べ替え: 向きの切り替えは select (34px) と同じ高さに揃え、常に表示する。 */
+.sort { gap: 8px; }
+.sort .a-segments { height: 34px; box-sizing: border-box; align-items: center; }

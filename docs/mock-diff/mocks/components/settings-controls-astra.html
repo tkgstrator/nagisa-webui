@@ -241,7 +241,7 @@ svg { display: block; flex: none; }
 }
 .st-seg button:hover, .st-seg button.is-hover { color: var(--foreground); }
 .st-seg button:active { transform: scale(.95); }
-.st-seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); font-weight: 700; }
+.st-seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); }
 
 .st-sw {
   width: 40px; height: 23px; border-radius: 999px; background: var(--input);
@@ -257,7 +257,7 @@ svg { display: block; flex: none; }
 .st-sw:focus-visible, .st-sw.is-focus { outline: 2px solid var(--ring); outline-offset: 2px; }
 
 .st-sel {
-  display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px;
+  display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px;
   border: 1px solid var(--input); border-radius: 999px;
   font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap;
   transition: border-color .15s ease, background-color .15s ease;
@@ -266,7 +266,7 @@ svg { display: block; flex: none; }
 .st-sel svg { width: 12px; height: 12px; color: var(--muted-foreground); }
 
 .st-btn {
-  height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--input);
+  height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--input);
   font-size: 12.5px; font-weight: 700; white-space: nowrap;
   transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
@@ -419,9 +419,10 @@ svg { display: block; flex: none; }
             </div>
           </div>
           <div class="st-ctl">
-            <span class="st-sel">放送年 (新しい順)
+            <span class="st-sel">放送年
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
+                  <div class="st-seg" style="height:34px;box-sizing:border-box;align-items:center" role="group" aria-label="並び順の向き"><button type="button" aria-pressed="false">昇順</button><button type="button" aria-pressed="true">降順</button></div>
           </div>
         </div>
       </div>
@@ -544,9 +545,10 @@ svg { display: block; flex: none; }
                   </div>
                 </div>
                 <div class="st-ctl">
-                  <span class="st-sel">放送年 (新しい順)
+                  <span class="st-sel">放送年
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
+                  <div class="st-seg" style="height:34px;box-sizing:border-box;align-items:center" role="group" aria-label="並び順の向き"><button type="button" aria-pressed="false">昇順</button><button type="button" aria-pressed="true">降順</button></div>
                 </div>
               </div>
               <div class="st-row" style="--i:3">

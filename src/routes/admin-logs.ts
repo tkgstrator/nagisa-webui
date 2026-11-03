@@ -139,18 +139,6 @@ function serializeCatalog(r: CatalogRow): CatalogEventSchema {
   }
 }
 
-/** run 詳細に載せる生ログの上限。1 バッチで数百行出るので全部は返さない */
-const RUN_DETAIL_ENTRY_LIMIT = 200
-
-/** Workers Logs の保持期間。run 詳細はこの範囲でだけ生ログを探す */
-const LOG_RETENTION_HOURS = 168
-
-function describeObservabilityError(e: unknown): string {
-  if (e instanceof ObservabilityNotConfiguredError) return 'Workers Logs の読み取り設定が無い'
-  if (e instanceof ObservabilityUpstreamError) return `Workers Logs の取得に失敗: ${e.message}`
-  throw e
-}
-
 const adminLogs = new OpenAPIHono<{ Bindings: Bindings }>()
 
 adminLogs.openapi(
@@ -289,28 +277,19 @@ adminLogs.openapi(
       if (run === null) {
         return c.json({ message: 'run not found' }, 404)
       }
-      // 生ログは Workers Logs 側。取れなくても実行記録そのものは返す
-      const [children, logs] = await Promise.all([
-        prisma.syncRun.findMany({
-          where: { parentId: id },
-          orderBy: { startedAt: 'asc' },
-          take: 100
-        }),
-        queryLogEntries(c.env, {
-          limit: RUN_DETAIL_ENTRY_LIMIT,
-          level: 'debug',
-          runId: id,
-          hours: LOG_RETENTION_HOURS
-        }).then(
-          (r) => ({ entries: r.data, entriesError: null }),
-          (e: unknown) => ({ entries: [], entriesError: describeObservabilityError(e) })
-        )
-      ])
+      // 生ログは Workers Logs 側で遅いので、ここでは待たない。画面が `/logs/entries?runId=` で別に引く。
+      // `entries` / `entriesError` は古いフロントが落ちないよう形だけ残す。
+      const children = await prisma.syncRun.findMany({
+        where: { parentId: id },
+        orderBy: { startedAt: 'asc' },
+        take: 100
+      })
       return c.json(
         {
           run: serializeRun(run),
           children: children.map(serializeRun),
-          ...logs
+          entries: [],
+          entriesError: null
         },
         200
       )

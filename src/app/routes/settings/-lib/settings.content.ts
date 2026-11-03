@@ -5,10 +5,8 @@ const settingsContent = {
   content: t({
     ja: {
       sortLabels: {
-        titleAsc: 'タイトル (昇順)',
-        titleDesc: 'タイトル (降順)',
-        yearAsc: '放送年 (古い順)',
-        yearDesc: '放送年 (新しい順)'
+        title: 'タイトル',
+        year: '放送年'
       },
       languageLabels: {
         sub: '字幕 (sub)',
@@ -19,10 +17,8 @@ const settingsContent = {
     },
     en: {
       sortLabels: {
-        titleAsc: 'Title (ascending)',
-        titleDesc: 'Title (descending)',
-        yearAsc: 'Release year (oldest first)',
-        yearDesc: 'Release year (newest first)'
+        title: 'Title',
+        year: 'Release year'
       },
       languageLabels: {
         sub: 'Subtitled (sub)',

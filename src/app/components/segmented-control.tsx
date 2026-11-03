@@ -15,19 +15,22 @@ export const SegmentedControl = <T extends string>({
   options,
   onValueChange,
   label,
-  fill
+  fill,
+  className
 }: {
   value: T
   options: readonly SegmentOption<T>[]
   onValueChange: (next: T) => void
   label: string
   fill?: boolean
+  /** 高さなど外側の寸法合わせ用。 */
+  className?: string
 }) => (
   <ToggleGroup
     value={[value]}
     onValueChange={(values) => values[0] && onValueChange(values[0] as T)}
     aria-label={label}
-    className={cn('min-w-0 shrink-0', fill && 'max-sm:flex max-sm:w-full')}
+    className={cn('min-w-0 shrink-0', fill && 'max-sm:flex max-sm:w-full', className)}
   >
     {options.map((option) => (
       <ToggleGroupItem key={option.value} value={option.value} className={cn(fill && 'max-sm:flex-1 max-sm:px-2')}>

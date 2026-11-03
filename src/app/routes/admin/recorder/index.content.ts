@@ -26,19 +26,25 @@ const adminNagisaContent = {
         suffix: 'に録画ジョブを直接送信します。'
       },
       labels: {
-        seasonNumber: 'season_number（任意・空欄で全シーズン）',
-        episodes: 'episodes（任意・空欄で全話）',
-        marketplace: 'marketplace（任意）',
-        language: 'language（任意）'
+        seasonNumber: 'season_number',
+        episodes: 'episodes',
+        marketplace: 'marketplace',
+        language: 'language'
       },
       placeholders: {
         contentId: '例: B0DXV9MP4Y / lycoris-recoil など',
-        seasonNumber: '例: 1',
-        episodes: '例: 1, 2, 3'
+        seasonNumber: '空欄で全シーズン',
+        episodes: '空欄で全話（例: 1, 2, 3）'
       },
+      groups: {
+        target: '対象',
+        range: '範囲',
+        options: 'オプション'
+      },
+      prefilledHint: '未識別タイトル一覧から入力済み',
       episodesHint: 'カンマ・スペース・改行で区切って入力してください。season_number の指定も必要です。',
       forceHint: {
-        prefix: '— 出力ファイルが存在する場合も、スキップせずに再ダウンロードします（Nagisa の',
+        prefix: '— 出力済みでも再ダウンロードします（Nagisa の',
         suffix: 'に相当）'
       },
       submit: '投入',
@@ -72,19 +78,25 @@ const adminNagisaContent = {
         suffix: 'endpoint through the backend.'
       },
       labels: {
-        seasonNumber: 'season_number (optional; leave blank for all seasons)',
-        episodes: 'episodes (optional; leave blank for all episodes)',
-        marketplace: 'marketplace (optional)',
-        language: 'language (optional)'
+        seasonNumber: 'season_number',
+        episodes: 'episodes',
+        marketplace: 'marketplace',
+        language: 'language'
       },
       placeholders: {
         contentId: 'e.g. B0DXV9MP4Y or lycoris-recoil',
-        seasonNumber: 'e.g. 1',
-        episodes: 'e.g. 1, 2, 3'
+        seasonNumber: 'Blank for all seasons',
+        episodes: 'Blank for all (e.g. 1, 2, 3)'
       },
+      groups: {
+        target: 'Target',
+        range: 'Range',
+        options: 'Options'
+      },
+      prefilledHint: 'Prefilled from the unidentified titles list',
       episodesHint: 'Separate with commas, spaces, or line breaks. Requires season_number.',
       forceHint: {
-        prefix: "— Download again even if output files exist (equivalent to Nagisa's",
+        prefix: "— Download again even if output exists (Nagisa's",
         suffix: 'flag)'
       },
       submit: 'Submit',

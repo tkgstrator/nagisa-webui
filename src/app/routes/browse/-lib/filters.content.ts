@@ -24,10 +24,8 @@ const browseFiltersLibContent = {
         expiring: '配信終了予定'
       },
       sort: {
-        titleAsc: 'タイトル (昇順)',
-        titleDesc: 'タイトル (降順)',
-        yearDesc: '放送年 (新しい順)',
-        yearAsc: '放送年 (古い順)'
+        title: 'タイトル',
+        year: '放送年'
       },
       chips: {
         provider: '配信元',
@@ -60,10 +58,8 @@ const browseFiltersLibContent = {
         expiring: 'Leaving soon'
       },
       sort: {
-        titleAsc: 'Title (ascending)',
-        titleDesc: 'Title (descending)',
-        yearDesc: 'Release year (newest first)',
-        yearAsc: 'Release year (oldest first)'
+        title: 'Title',
+        year: 'Release year'
       },
       chips: {
         provider: 'Provider',

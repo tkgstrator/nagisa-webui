@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
+import { OptionSelect } from '@/app/components/option-select'
 import { SegmentedControl, type SegmentOption } from '@/app/components/segmented-control'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
 import { StatusBadge } from '@/app/components/ui/status-badge'
 import { Switch } from '@/app/components/ui/switch'
 import { cn } from '@/app/lib/utils'
@@ -102,39 +102,18 @@ export const StSegment = <T extends string>(props: {
   label: string
 }) => <SegmentedControl {...props} fill />
 
-/** モックの .st-sel。既存の Select をピル型に寄せただけで中身は共通。 */
-export const StSelect = <T extends string>({
-  value,
-  options,
-  onValueChange,
-  label
-}: {
+/** モックの .st-sel。共通の OptionSelect (size=sm) をそのまま使う。 */
+export const StSelect = <T extends string>(props: {
   value: T
   options: readonly SegmentOption<T>[]
   onValueChange: (next: T) => void
   label: string
-}) => (
-  <Select value={value} onValueChange={(next) => onValueChange(next as T)}>
-    <SelectTrigger
-      aria-label={label}
-      className='gap-[7px] rounded-full px-3 text-[12.5px] tabular-nums transition-colors data-[size=default]:h-[30px] hover:border-primary [&_svg]:size-3'
-    >
-      <SelectValue>{(v) => options.find((option) => option.value === v)?.label ?? ''}</SelectValue>
-    </SelectTrigger>
-    <SelectContent>
-      {options.map((option) => (
-        <SelectItem key={option.value} value={option.value}>
-          {option.label}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-)
+}) => <OptionSelect {...props} />
 
 /** モックの .st-btn。Dialog の render に素の button を渡したいので class だけ切り出す。 */
 export const stButtonClass = (danger = false) =>
   cn(
-    'h-[30px] shrink-0 rounded-full border border-input px-3.5 text-[12.5px] font-bold whitespace-nowrap transition-colors duration-200 hover:bg-muted',
+    'h-[34px] shrink-0 rounded-full border border-input px-3.5 text-[12.5px] font-bold whitespace-nowrap transition-colors duration-200 hover:bg-muted',
     danger && 'border-destructive/45 text-destructive hover:bg-destructive/10'
   )
 

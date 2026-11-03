@@ -1,4 +1,5 @@
 TITLE: 絞り込みパネル
+USES: input toggle
 ---
 <header class="cat-head">
   <h1>絞り込みパネル <span class="cat-id">browse-filters</span></h1>
@@ -114,7 +115,7 @@ TITLE: 絞り込みパネル
   <div class="cat-row">
     <div class="cat-item"><span class="cat-label">検索</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="タイトルで検索" aria-label="タイトルで検索"></div></div>
     <div class="cat-item"><span class="cat-label">入力あり + フォーカス</span><div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="is-focus" type="search" value="アストロ" aria-label="タイトルで検索"></div></div>
-    <div class="cat-item"><span class="cat-label">並べ替え</span><div class="sort"><span>並べ替え</span><div class="sel"><select aria-label="並べ替え"><option selected>放送年 (新しい順)</option><option>放送年 (古い順)</option><option>タイトル (昇順)</option><option>タイトル (降順)</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div></div></div>
+    <div class="cat-item"><span class="cat-label">並べ替え</span><div class="sort"><div class="a-select a-pill a-fit"><select aria-label="並べ替え"><option>タイトル</option><option selected>放送年</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="a-segments" role="group" aria-label="並び順の向き"><button type="button" aria-pressed="false">昇順</button><button type="button" aria-pressed="true">降順</button></div></div></div>
   </div>
   <p class="cat-note">パネルが左を占有するぶん、検索窓は一覧の上に残す。両方を左に寄せると本文の横幅が細くなりすぎる。</p>
 </section>

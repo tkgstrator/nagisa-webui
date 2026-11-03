@@ -19,7 +19,7 @@
 .seg button:hover { color: var(--foreground); }
 .seg button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
 .seg button:active { transform: scale(0.95); }
-.seg button[aria-pressed="true"] { background: var(--background); color: var(--foreground); font-weight: 600; box-shadow: 0 1px 3px color-mix(in oklch, var(--foreground) 14%, transparent); }
+.seg button[aria-pressed="true"] { background: var(--background); color: var(--foreground); box-shadow: 0 1px 3px color-mix(in oklch, var(--foreground) 14%, transparent); }
 .seg button .n { font-size: 11px; opacity: .75; font-variant-numeric: tabular-nums; }
 
 /* プロバイダ chip */
@@ -33,7 +33,7 @@
 .pchip:hover { background: var(--muted); color: var(--foreground); }
 .pchip:active { transform: scale(0.95); }
 .pchip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
-.pchip[aria-pressed="true"] { border-color: transparent; font-weight: 600; }
+.pchip[aria-pressed="true"] { border-color: transparent; }
 .pchip[aria-pressed="true"] .dot { opacity: 1; }
 .pchip[aria-pressed="true"].amazon { background: var(--brand-amazon); color: var(--brand-amazon-foreground); }
 .pchip[aria-pressed="true"].hulu { background: var(--brand-hulu); color: var(--brand-hulu-foreground); }
@@ -47,7 +47,7 @@
 .toggle-chip:hover { background: var(--muted); color: var(--foreground); }
 .toggle-chip:active { transform: scale(0.95); }
 .toggle-chip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
-.toggle-chip[aria-pressed="true"] { background: var(--warning); color: var(--warning-foreground); border-color: transparent; font-weight: 600; }
+.toggle-chip[aria-pressed="true"] { background: var(--warning); color: var(--warning-foreground); border-color: transparent; }
 
 /* 並べ替え */
 .sort { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--muted-foreground); }

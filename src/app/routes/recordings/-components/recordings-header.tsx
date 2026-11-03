@@ -1,4 +1,5 @@
 import { useIntlayer } from 'react-intlayer'
+import { Input } from '@/app/components/ui/input'
 
 type RecordingsHeaderProps = {
   /** 予約中の総件数 (フィルタ適用後・全ページ)。非表示にしている完結作品も含む。 */
@@ -21,8 +22,7 @@ export const RecordingsHeader = ({ total, hiddenFinished, search, onSearchChange
           {hiddenFinished > 0 ? content.finishedHidden({ count: hiddenFinished }) : null}
         </p>
       </div>
-      <label className='relative max-w-[360px] flex-[1_1_260px] max-sm:max-w-none max-sm:flex-[1_1_100%]'>
-        <span className='sr-only'>{content.searchLabel}</span>
+      <div className='relative max-w-[360px] flex-[1_1_260px] max-sm:max-w-none max-sm:flex-[1_1_100%]'>
         <svg
           viewBox='0 0 24 24'
           fill='none'
@@ -34,14 +34,16 @@ export const RecordingsHeader = ({ total, hiddenFinished, search, onSearchChange
           <circle cx='11' cy='11' r='7' />
           <path d='m20 20-3.5-3.5' />
         </svg>
-        <input
+        <Input
           type='search'
+          size='sm'
+          search
+          aria-label={content.searchLabel.value}
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={content.searchPlaceholder.value}
-          className='h-[34px] w-full rounded-lg border border-input bg-background pr-[30px] pl-8 text-[13px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-ring'
         />
-      </label>
+      </div>
     </header>
   )
 }
