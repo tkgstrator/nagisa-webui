@@ -15,10 +15,11 @@ LAMBDA_FUNCTION_URL = "https://esxey6x7zbx2c3fdm6kkla4v4q0ftaol.lambda-url.ap-no
 LAMBDA_FUNCTION_URL_US = "https://ytyebcratcyemkikzh3427i7eu0lasjk.lambda-url.us-east-1.on.aws/"
 WORKER_NAME = "anime-tracker-staging"
 CF_ACCOUNT_ID = "2488ea57494b2dacae95a6e363e7dcb2"
-# Jellyfin ライブラリ自動更新 (docs/plans/06-jellyfin-refresh.md)。空 or 未設定なら機能ごと無効。
+# Jellyfin ライブラリ自動更新 (docs/plans/06-jellyfin-refresh.md)。JELLYFIN_URL / JELLYFIN_API_KEY のどちらかが未設定なら機能ごと無効。
+# JELLYFIN_URL はここに書かない: config に書いた var はデプロイ (--keep-vars でも) のたびにその値で上書きされる。
+#   運用者がダッシュボードの Variables か `wrangler secret put JELLYFIN_URL --env <env>` で設定する (--keep-vars で保持される)。
 # JELLYFIN_API_KEY は secret なのでここには書かない (wrangler secret put JELLYFIN_API_KEY)。
 # 任意: JELLYFIN_REFRESH_SETTLE_SECONDS (既定 120) / JELLYFIN_REFRESH_MAX_WAIT_SECONDS (既定 900)
-JELLYFIN_URL = ""
 
 [assets]
 directory = "dist/client"
@@ -111,7 +112,6 @@ CF_ACCESS_CLIENT_ID = "cfdfd7d6e420692d0d5a04db0872e875.access"
 BACKEND_URL = "https://nagisa-backend.tkgstrator.work"
 LAMBDA_FUNCTION_URL = "https://esxey6x7zbx2c3fdm6kkla4v4q0ftaol.lambda-url.ap-northeast-1.on.aws/"
 LAMBDA_FUNCTION_URL_US = "https://ytyebcratcyemkikzh3427i7eu0lasjk.lambda-url.us-east-1.on.aws/"
-JELLYFIN_URL = ""
 
 [[env.staging.kv_namespaces]]
 binding = "KV"
@@ -180,7 +180,6 @@ CF_ACCESS_CLIENT_ID = "cfdfd7d6e420692d0d5a04db0872e875.access"
 BACKEND_URL = "https://nagisa-backend.tkgstrator.work"
 LAMBDA_FUNCTION_URL = "https://esxey6x7zbx2c3fdm6kkla4v4q0ftaol.lambda-url.ap-northeast-1.on.aws/"
 LAMBDA_FUNCTION_URL_US = "https://ytyebcratcyemkikzh3427i7eu0lasjk.lambda-url.us-east-1.on.aws/"
-JELLYFIN_URL = ""
 
 [[env.production.kv_namespaces]]
 binding = "KV"
