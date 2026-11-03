@@ -2,10 +2,10 @@ import dayjs from 'dayjs'
 import type { ExpiringResponse, TitleListResponse } from '@/schemas/lambda.dto.ts'
 import type { PrismaClient } from '../../generated/prisma/client.ts'
 import { recordCatalogEvents } from '../catalog-event'
-import type { FetchClient } from '../lambda'
 import { getAppLogger } from '../logger'
 import { cleanTitle } from '../metadata/anilist'
 import { identifyTitlesViaD1 } from '../metadata/local-anilist'
+import { type MediaLambda, requireAnilistMedia } from './ensure-media'
 import { fillFromLambda } from './identify'
 import { animeUuid } from './ids'
 import { D1_VARIABLE_LIMIT, findExistingContentIds, findKnownContentIds, findUnidentifiedContentIds } from './queries'
@@ -29,7 +29,7 @@ export async function fetchTitleList(
   providerName: string,
   category: string,
   result: TitleListResponse,
-  lambda?: Pick<FetchClient, 'identifyTitles'>
+  lambda?: MediaLambda
 ): Promise<string[]> {
   // new_episode の場合、COMING_SOON タイトル（nextEpisodeDate あり）を除外して上書きを防ぐ
   const comingSoonContentIds =
@@ -135,8 +135,13 @@ export async function fetchTitleList(
       prisma,
       batch.map((t) => t.title)
     )
+    // anime 作成前に anilist_media の行を保証する (Lambda 識別分は行が無い)。取れなければ未識別のまま残す
     const results = lambda
-      ? await fillFromLambda(prisma, lambda, batch, d1Results, providerName, allowLambda.slice(i, i + BATCH_SIZE))
+      ? await requireAnilistMedia(
+          prisma,
+          lambda,
+          await fillFromLambda(lambda, batch, d1Results, providerName, allowLambda.slice(i, i + BATCH_SIZE))
+        )
       : d1Results
 
     for (let j = 0; j < batch.length; j++) {

@@ -3,6 +3,15 @@ import type { PrismaClient } from '../../src/generated/prisma/client.ts'
 import { findKnownContentIds } from '../../src/lib/sync/queries'
 import { reidentifyUnidentified } from '../../src/lib/sync/reidentify'
 
+const entry = (id: number) => ({
+  id,
+  title: { native: 'x', romaji: null, english: null },
+  season: null,
+  seasonYear: null,
+  status: 'RELEASING',
+  startDate: { year: 2026, month: 7 }
+})
+
 describe('findKnownContentIds', () => {
   test('does not treat unidentified rows as known', async () => {
     const calls: string[] = []
@@ -52,6 +61,7 @@ describe('reidentifyUnidentified', () => {
       catalogEvent: { createMany: async () => ({ count: 1 }), create: async () => ({}) }
     } as unknown as PrismaClient
     const lambda = {
+      fetchAnilistStatus: async ({ ids }: { ids: number[] }) => ({ entries: ids.map(entry) }),
       identifyTitles: async (body: { titles: string[] }) => ({
         results: body.titles.map((t) =>
           t === 'FX戦士くるみちゃん'

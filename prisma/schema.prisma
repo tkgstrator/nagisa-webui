@@ -157,6 +157,14 @@ model AnilistMedia {
   status          String  @default("UNKNOWN")
   startYear       Int?    @map("start_year")
   startMonth      Int?    @map("start_month")
+  /// 終了日・話数・次回放送。放送中の導出ステータス (anime-flatten.ts) の入力。いずれも AniList が持たなければ null
+  endYear         Int?    @map("end_year")
+  endMonth        Int?    @map("end_month")
+  endDay          Int?    @map("end_day")
+  episodes        Int?
+  /// nextAiringEpisode.airingAt (UTC)
+  nextAiringAt    DateTime? @map("next_airing_at")
+  nextAiringEpisode Int?  @map("next_airing_episode")
   countryOfOrigin String  @default("JP") @map("country_of_origin") // JP / CN / KR
   /// 正規化済みタイトル (lowercase, strip whitespace/punctuation)、indexed lookup 用
   nativeNorm      String? @map("native_norm")

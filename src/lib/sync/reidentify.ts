@@ -1,8 +1,8 @@
 import type { PrismaClient } from '../../generated/prisma/client.ts'
 import type { TitleMetadata } from '../../schemas/providers/metadata.dto'
-import type { FetchClient } from '../lambda'
 import { getAppLogger } from '../logger'
 import { identifyTitlesViaD1 } from '../metadata/local-anilist'
+import { type MediaLambda, requireAnilistMedia } from './ensure-media'
 import { fillFromLambda, LAMBDA_IDENTIFY_BATCH, promoteUnidentified } from './identify'
 
 const logger = getAppLogger('sync')
@@ -26,7 +26,7 @@ export interface ReidentifyResult {
  */
 export async function reidentifyUnidentified(
   prisma: PrismaClient,
-  lambda: Pick<FetchClient, 'identifyTitles'>,
+  lambda: MediaLambda,
   options: { cursor?: string; limit?: number } = {}
 ): Promise<ReidentifyResult> {
   const limit = options.limit ?? REIDENTIFY_CHUNK
@@ -43,23 +43,18 @@ export async function reidentifyUnidentified(
     rows.map((r) => r.title)
   )
   // Lambda には D1 で外れた行だけを LAMBDA_IDENTIFY_BATCH ずつ投げる。
-  // 識別できた行の anilist_media は fillFromLambda が仮行を用意する (用意できなければ未識別のまま)
-  const merged = await Array.from({ length: Math.ceil(rows.length / LAMBDA_IDENTIFY_BATCH) }, (_, k) => k).reduce(
+  // 識別できた行の anilist_media は promote 前に requireAnilistMedia が /anilist_status で完全な行にする (取れなければ未識別のまま)
+  const filledAll = await Array.from({ length: Math.ceil(rows.length / LAMBDA_IDENTIFY_BATCH) }, (_, k) => k).reduce(
     async (accP, k) => {
       const acc = await accP
       const from = k * LAMBDA_IDENTIFY_BATCH
       const slice = rows.slice(from, from + LAMBDA_IDENTIFY_BATCH)
-      const filled = await fillFromLambda(
-        prisma,
-        lambda,
-        slice,
-        d1Results.slice(from, from + slice.length),
-        'reidentify'
-      )
+      const filled = await fillFromLambda(lambda, slice, d1Results.slice(from, from + slice.length), 'reidentify')
       return [...acc, ...filled]
     },
     Promise.resolve<(TitleMetadata | undefined)[]>([])
   )
+  const merged = await requireAnilistMedia(prisma, lambda, filledAll)
 
   const promoted = await rows.reduce(async (accP, row, i) => {
     const acc = await accP

@@ -67,6 +67,18 @@ export const AnilistSyncMessageSchema = z.object({
 })
 export type AnilistSyncMessage = z.infer<typeof AnilistSyncMessageSchema>
 
+/** RELEASING / NOT_YET_RELEASED の行を id_in で再取得する。上限 50 は Lambda の ANILIST_STATUS_MAX_IDS と揃える */
+const AnilistStatusBodySchema = z.object({
+  ids: z.array(z.number().int().positive()).min(1).max(50)
+})
+
+export const AnilistStatusMessageSchema = z.object({
+  type: z.literal('anilist_status'),
+  runId,
+  message: AnilistStatusBodySchema
+})
+export type AnilistStatusMessage = z.infer<typeof AnilistStatusMessageSchema>
+
 /** unidentified_anime の一括再識別。cursor (直前に処理した行の id) 以降を limit 件ずつ処理し、続きがあれば自分で次を積む */
 const ReidentifyBodySchema = z.object({
   cursor: z.string().nonempty().optional(),
@@ -86,6 +98,7 @@ export const MessageSchema = z.discriminatedUnion('type', [
   ImageWarmMessageSchema,
   AbemaArchiveMessageSchema,
   AnilistSyncMessageSchema,
+  AnilistStatusMessageSchema,
   ReidentifyMessageSchema
 ])
 export type Message = z.infer<typeof MessageSchema>
