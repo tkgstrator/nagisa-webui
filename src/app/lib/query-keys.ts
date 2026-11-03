@@ -13,6 +13,12 @@ export const queryKeys = {
     stats: ['recording-library', 'stats'] as const,
     syncState: ['recording-library', 'sync-state'] as const
   },
+  jellyfin: {
+    refreshState: ['jellyfin', 'refresh-state'] as const
+  },
+  settings: {
+    recording: ['settings', 'recording'] as const
+  },
   changelog: ['changelog'] as const,
   admin: {
     archiveStats: (provider: string) => ['admin', 'key-archives', 'stats', provider] as const,

@@ -1,6 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getIntlayer } from 'intlayer'
 import { useIntlayer } from 'react-intlayer'
+import api from '@/app/lib/api'
 import { appLocale } from '@/app/lib/locale'
+import { queryKeys } from '@/app/lib/query-keys'
+import { recordingSettingsQueryOptions } from '@/app/lib/query-options'
 import { EXPIRING_LEAD_DAY_OPTIONS, LANGUAGE_LABELS, type LanguagePreference, useSettings } from '../-lib/settings'
 import { StNote, StPanel, StRow, StSelect, StSwitch } from './controls'
 import { AutoIcon, ClockIcon, LanguageIcon, RecordIcon, WarnIcon } from './icons'
@@ -21,6 +25,14 @@ const LANGUAGE_SELECT = (Object.keys(LANGUAGE_LABELS) as LanguagePreference[]).m
 export const RecordingSection = () => {
   const { settings, update } = useSettings()
   const content = useIntlayer('settings-recording-section')
+  const queryClient = useQueryClient()
+  // 自動録画の ON/OFF はサーバーが保存する (cron が参照するため)。読み込み中は操作させない
+  const { data: server } = useQuery(recordingSettingsQueryOptions())
+  const autoSchedule = useMutation({
+    mutationFn: (next: boolean) => api.updateRecordingSettings({ autoScheduleNewEpisodes: next }),
+    onSuccess: (saved) => queryClient.setQueryData(queryKeys.settings.recording, saved)
+  })
+  const autoScheduleOn = autoSchedule.isPending ? autoSchedule.variables : server?.autoScheduleNewEpisodes
 
   return (
     <PgSec id='s-rec' title={content.title.value} count={content.count}>
@@ -71,18 +83,19 @@ export const RecordingSection = () => {
           />
         </StRow>
 
-        {/* TODO: 新着エピソードの自動予約はバックエンド側の仕組みが無いため値の保持だけ。 */}
+        {/* サーバー保存。OFF のとき毎時 cron の掃引も update 後の自動録画も止まる。 */}
         <StRow
           index={3}
           icon={<AutoIcon />}
           label={content.autoSchedule.label.value}
           description={content.autoSchedule.description}
         >
-          <StNote>{settings.autoScheduleNewEpisodes ? content.autoSchedule.on : content.autoSchedule.off}</StNote>
+          <StNote>{autoScheduleOn ? content.autoSchedule.on : content.autoSchedule.off}</StNote>
           <StSwitch
             label={content.autoSchedule.label.value}
-            checked={settings.autoScheduleNewEpisodes}
-            onCheckedChange={(next) => update('autoScheduleNewEpisodes', next)}
+            checked={autoScheduleOn ?? false}
+            disabled={server === undefined}
+            onCheckedChange={(next) => autoSchedule.mutate(next)}
           />
         </StRow>
 

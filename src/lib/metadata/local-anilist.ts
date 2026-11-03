@@ -18,7 +18,7 @@ const D1_VARIABLE_LIMIT = 100
 const SEASON_TO_QUARTER: Record<string, number> = { WINTER: 0, SPRING: 1, SUMMER: 2, FALL: 3 }
 const MONTH_TO_QUARTER = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] as const
 
-interface AnilistRow {
+export interface AnilistRow {
   id: number
   titleNative: string | null
   season: string | null
@@ -35,7 +35,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, (i + 1) * size))
 }
 
-function toMetadata(row: AnilistRow): TitleMetadata | undefined {
+export function toMetadata(row: AnilistRow): TitleMetadata | undefined {
   const year = row.seasonYear ?? row.startYear
   const quarter = row.season
     ? SEASON_TO_QUARTER[row.season]
@@ -54,10 +54,18 @@ function toMetadata(row: AnilistRow): TitleMetadata | undefined {
 }
 
 /**
- * 全 titles の normalized 形を一括収集し、100 件 chunk で
- * anilist_media を batched lookup して norm → row のマップを返す。
+ * 候補行の中から最初に TitleMetadata へ変換できるものを返す。
+ * 先頭の行が year/quarter/titleNative 欠落で変換できなくても、同名の他候補にフォールバックする。
  */
-async function buildLookup(prisma: PrismaClient, titles: string[]): Promise<Map<string, AnilistRow>> {
+export function pickMetadata(rows: AnilistRow[] | undefined): TitleMetadata | undefined {
+  return (rows ?? []).reduce<TitleMetadata | undefined>((found, row) => found ?? toMetadata(row), undefined)
+}
+
+/**
+ * 全 titles の normalized 形を一括収集し、100 件 chunk で
+ * anilist_media を batched lookup して norm → 候補行 (新しい年が先頭) のマップを返す。
+ */
+async function buildLookup(prisma: PrismaClient, titles: string[]): Promise<Map<string, AnilistRow[]>> {
   const norms = new Set<string>()
   for (const t of titles) {
     const raw = normalizeTitle(t)
@@ -66,7 +74,7 @@ async function buildLookup(prisma: PrismaClient, titles: string[]): Promise<Map<
     if (cleaned) norms.add(cleaned)
   }
 
-  const map = new Map<string, AnilistRow>()
+  const map = new Map<string, AnilistRow[]>()
   const select = {
     id: true,
     titleNative: true,
@@ -90,9 +98,11 @@ async function buildLookup(prisma: PrismaClient, titles: string[]): Promise<Map<
       })
       for (const r of rows) {
         const key = r[column]
-        if (key && !map.has(key)) {
-          map.set(key, r as AnilistRow)
-        }
+        if (!key) continue
+        const list = map.get(key)
+        // 列をまたいで同じ行が重複しないようにする
+        if (!list) map.set(key, [r as AnilistRow])
+        else if (!list.some((x) => x.id === r.id)) list.push(r as AnilistRow)
       }
     }
   }
@@ -112,21 +122,9 @@ export async function identifyTitlesViaD1(
 
   return titles.map((t) => {
     const rawNorm = normalizeTitle(t)
-    if (rawNorm) {
-      const hit = lookup.get(rawNorm)
-      if (hit) {
-        const m = toMetadata(hit)
-        if (m) return m
-      }
-    }
+    const rawHit = rawNorm ? pickMetadata(lookup.get(rawNorm)) : undefined
+    if (rawHit) return rawHit
     const cleanedNorm = normalizeTitle(cleanTitle(t))
-    if (cleanedNorm && cleanedNorm !== rawNorm) {
-      const hit = lookup.get(cleanedNorm)
-      if (hit) {
-        const m = toMetadata(hit)
-        if (m) return m
-      }
-    }
-    return undefined
+    return cleanedNorm && cleanedNorm !== rawNorm ? pickMetadata(lookup.get(cleanedNorm)) : undefined
   })
 }

@@ -9,6 +9,7 @@ const settingsAsideContent = {
         provider: '配信元',
         rec: '録画',
         sync: '台帳同期',
+        jellyfin: 'Jellyfin',
         admin: '管理',
         data: 'データ',
         about: 'アプリ情報'
@@ -29,6 +30,7 @@ const settingsAsideContent = {
         provider: 'Providers',
         rec: 'Recordings',
         sync: 'Library sync',
+        jellyfin: 'Jellyfin',
         admin: 'Admin',
         data: 'Data',
         about: 'About'
