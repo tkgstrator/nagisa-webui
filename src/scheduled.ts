@@ -157,6 +157,13 @@ export async function scheduled(event: ScheduledEvent, env: Env): Promise<void> 
             logger.info({ action: 'enqueue-abema-archive', count: enqueued })
             // cron は Worker あたり 5 本が上限で空きが無いので、ログの GC はここに相乗りさせる。
             await collectLogGarbage(prisma)
+            // unidentified_anime の一括再識別も相乗り。以降のチャンクは queue 側が自分で続きを積む。
+            await sendMessage(env, {
+              type: 'reidentify_unidentified',
+              runId: runId ?? undefined,
+              message: { limit: 100 }
+            })
+            enqueued += 1
             break
           }
           // wrangler.toml の crons に書いた文字列がそのまま event.cron に来る。

@@ -6,12 +6,13 @@ import { enqueueImageWarm, warmImages } from './lib/image-warm'
 import { createFetchClient, LambdaInvocationError } from './lib/lambda'
 import { getAppLogger } from './lib/logger'
 import { syncAnilistMediaYear } from './lib/metadata/anilist-sync'
-import { resolveQueueForProvider } from './lib/queue-routing'
+import { resolveQueueForProvider, sendMessage } from './lib/queue-routing'
 import { runWithContext } from './lib/run-context'
 import { SyncService } from './lib/sync'
+import { reidentifyUnidentified } from './lib/sync/reidentify'
 import { finishRun, propagateChildFailures, resolveStatus, startRun } from './lib/sync-run'
 
-import type { Message } from './schemas/message.dto'
+import { type Message, ProviderTypeEnum } from './schemas/message.dto'
 
 const logger = getAppLogger('queue')
 
@@ -148,6 +149,8 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
       meta.animeId = body.message.animeId
     } else if (body.type === 'anilist_sync') {
       meta.year = body.message.year
+    } else if (body.type === 'reidentify_unidentified') {
+      meta.cursor = body.message.cursor
     } else if (body.type === 'image_warm') {
       meta.provider = body.message.provider
       meta.count = body.message.urls.length
@@ -192,6 +195,35 @@ export async function queue(batch: MessageBatch<Message>, env: Env): Promise<voi
             pages: result.pages,
             elapsedMs: result.elapsedMs
           })
+          break
+        }
+        case 'reidentify_unidentified': {
+          const { cursor, limit } = message.body.message
+          const result = await reidentifyUnidentified(prisma, lambda, { cursor, limit })
+          // 昇格した anime は episodes がまだ無いので update ジョブを積む (fetch case と同じ形・同じ振り分け)
+          for (const provider of ProviderTypeEnum.options) {
+            const items = result.promoted.filter((p) => p.provider === provider)
+            const targetQueue = resolveQueueForProvider(env, provider)
+            for (let i = 0; i < items.length; i += SEND_BATCH_SIZE) {
+              await targetQueue.sendBatch(
+                items.slice(i, i + SEND_BATCH_SIZE).map(({ contentId }) => ({
+                  body: { type: 'update' as const, runId: message.body.runId, message: { provider, contentId } }
+                }))
+              )
+            }
+          }
+          if (result.nextCursor) {
+            // 続きを自分で積む。Lambda/AniList を burst で叩かないよう少し間隔を空ける
+            await sendMessage(
+              env,
+              {
+                type: 'reidentify_unidentified',
+                runId: message.body.runId,
+                message: { cursor: result.nextCursor, limit }
+              },
+              { delaySeconds: 30 }
+            )
+          }
           break
         }
         case 'abema_archive': {
