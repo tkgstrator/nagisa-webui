@@ -67,11 +67,25 @@ export const AnilistSyncMessageSchema = z.object({
 })
 export type AnilistSyncMessage = z.infer<typeof AnilistSyncMessageSchema>
 
+/** unidentified_anime の一括再識別。cursor (直前に処理した行の id) 以降を limit 件ずつ処理し、続きがあれば自分で次を積む */
+const ReidentifyBodySchema = z.object({
+  cursor: z.string().nonempty().optional(),
+  limit: z.number().int().min(1).max(200).default(100)
+})
+
+export const ReidentifyMessageSchema = z.object({
+  type: z.literal('reidentify_unidentified'),
+  runId,
+  message: ReidentifyBodySchema
+})
+export type ReidentifyMessage = z.infer<typeof ReidentifyMessageSchema>
+
 export const MessageSchema = z.discriminatedUnion('type', [
   FetchMessageSchema,
   UpdateMessageSchema,
   ImageWarmMessageSchema,
   AbemaArchiveMessageSchema,
-  AnilistSyncMessageSchema
+  AnilistSyncMessageSchema,
+  ReidentifyMessageSchema
 ])
 export type Message = z.infer<typeof MessageSchema>
