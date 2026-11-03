@@ -201,7 +201,68 @@ adminLogs.openapi(
   }
 )
 
-// `/sync-runs/{id}` より前に登録する。Hono は静的セグメントを優先するが、登録順に依存しない形にしておく
+adminLogs.openapi(
+  createRoute({
+    method: 'get',
+    path: '/sync-runs/stats',
+    tags: ['Admin'],
+    summary: 'cron 式ごとの最終実行 (wrangler.toml の定義と突き合わせる)',
+    responses: {
+      200: {
+        description: 'cron の稼働状況',
+        content: { 'application/json': { schema: LogStatsSchema } }
+      }
+    }
+  }),
+  async (c) => {
+    const prisma = createPrismaClient(c.env.DB)
+    try {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      const [lastRuns, counts] = await Promise.all([
+        Promise.all(
+          CRON_DEFINITIONS.map((d) =>
+            prisma.syncRun.findFirst({
+              where: { kind: 'cron', trigger: 'trigger' in d ? d.trigger : d.cron },
+              orderBy: { startedAt: 'desc' }
+            })
+          )
+        ),
+        prisma.syncRun.groupBy({
+          by: ['status'],
+          where: { startedAt: { gte: since } },
+          _count: { _all: true }
+        })
+      ])
+      const countOf = (status: string) => counts.find((x) => x.status === status)?._count._all ?? 0
+      return c.json(
+        {
+          crons: CRON_DEFINITIONS.map((d, i) => {
+            const last = lastRuns[i]
+            return {
+              cron: d.cron,
+              label: d.label,
+              everRan: last !== null,
+              lastRun: last === null ? null : serializeRun(last)
+            }
+          }),
+          recent: {
+            total: counts.reduce((acc, x) => acc + x._count._all, 0),
+            success: countOf('success'),
+            partial: countOf('partial'),
+            failed: countOf('failed'),
+            running: countOf('running')
+          }
+        },
+        200
+      )
+    } finally {
+      await prisma.$disconnect()
+    }
+  }
+)
+
+// Hono は静的セグメントを優先せず、同じ位置にマッチするルートは登録順で解決する。
+// `/sync-runs/stats` のような静的パスは必ず `/sync-runs/{id}` より先に登録すること
 adminLogs.openapi(
   createRoute({
     method: 'get',
@@ -385,66 +446,6 @@ adminLogs.openapi(
           page,
           limit,
           totalPages: Math.max(1, Math.ceil(total / limit))
-        },
-        200
-      )
-    } finally {
-      await prisma.$disconnect()
-    }
-  }
-)
-
-adminLogs.openapi(
-  createRoute({
-    method: 'get',
-    path: '/sync-runs/stats',
-    tags: ['Admin'],
-    summary: 'cron 式ごとの最終実行 (wrangler.toml の定義と突き合わせる)',
-    responses: {
-      200: {
-        description: 'cron の稼働状況',
-        content: { 'application/json': { schema: LogStatsSchema } }
-      }
-    }
-  }),
-  async (c) => {
-    const prisma = createPrismaClient(c.env.DB)
-    try {
-      const since = new Date(Date.now() - 24 * 60 * 60 * 1000)
-      const [lastRuns, counts] = await Promise.all([
-        Promise.all(
-          CRON_DEFINITIONS.map((d) =>
-            prisma.syncRun.findFirst({
-              where: { kind: 'cron', trigger: 'trigger' in d ? d.trigger : d.cron },
-              orderBy: { startedAt: 'desc' }
-            })
-          )
-        ),
-        prisma.syncRun.groupBy({
-          by: ['status'],
-          where: { startedAt: { gte: since } },
-          _count: { _all: true }
-        })
-      ])
-      const countOf = (status: string) => counts.find((x) => x.status === status)?._count._all ?? 0
-      return c.json(
-        {
-          crons: CRON_DEFINITIONS.map((d, i) => {
-            const last = lastRuns[i]
-            return {
-              cron: d.cron,
-              label: d.label,
-              everRan: last !== null,
-              lastRun: last === null ? null : serializeRun(last)
-            }
-          }),
-          recent: {
-            total: counts.reduce((acc, x) => acc + x._count._all, 0),
-            success: countOf('success'),
-            partial: countOf('partial'),
-            failed: countOf('failed'),
-            running: countOf('running')
-          }
         },
         200
       )
