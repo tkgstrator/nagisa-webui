@@ -2,9 +2,11 @@ import dayjs from 'dayjs'
 import type { ExpiringResponse, TitleListResponse } from '@/schemas/lambda.dto.ts'
 import type { PrismaClient } from '../../generated/prisma/client.ts'
 import { recordCatalogEvents } from '../catalog-event'
+import type { FetchClient } from '../lambda'
 import { getAppLogger } from '../logger'
 import { cleanTitle } from '../metadata/anilist'
 import { identifyTitlesViaD1 } from '../metadata/local-anilist'
+import { fillFromLambda } from './identify'
 import { animeUuid } from './ids'
 import { D1_VARIABLE_LIMIT, findExistingContentIds, findKnownContentIds } from './queries'
 
@@ -23,7 +25,8 @@ export async function fetchTitleList(
   prisma: PrismaClient,
   providerName: string,
   category: string,
-  result: TitleListResponse
+  result: TitleListResponse,
+  lambda?: Pick<FetchClient, 'identifyTitles'>
 ): Promise<string[]> {
   // new_episode の場合、COMING_SOON タイトル（nextEpisodeDate あり）を除外して上書きを防ぐ
   const comingSoonContentIds =
@@ -95,8 +98,9 @@ export async function fetchTitleList(
   }
 
   // バッチで anilist_media を D1 lookup し、識別済みの新規タイトルを DB に INSERT
-  // AniList search backend 障害中なので Lambda /identify は使わず、事前 sync 済みの
-  // anilist_media テーブルを normalized title で引く。
+  // 事前 sync 済みの anilist_media テーブルを normalized title で引くのを一次経路とし、
+  // 当たらなかったタイトルだけ Lambda /identify (AniList 検索) にフォールバックする。
+  // Workers の送信元は AniList に 403 でブロックされるので、AniList は Lambda 経由でしか引けない。
   const BATCH_SIZE = 20
   const identifiedContentIds: string[] = []
 
@@ -109,10 +113,11 @@ export async function fetchTitleList(
       batchSize: batch.length,
       titles: batch.map((t) => t.title)
     })
-    const results = await identifyTitlesViaD1(
+    const d1Results = await identifyTitlesViaD1(
       prisma,
       batch.map((t) => t.title)
     )
+    const results = lambda ? await fillFromLambda(prisma, lambda, batch, d1Results, providerName) : d1Results
 
     for (let j = 0; j < batch.length; j++) {
       const meta = results[j]

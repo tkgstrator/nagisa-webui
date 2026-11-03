@@ -102,3 +102,40 @@ export function resolveStatus(succeeded: number, failed: number): RunStatus {
   if (failed === 0) return 'success'
   return succeeded > 0 ? 'partial' : 'failed'
 }
+
+/**
+ * 子 run (queue バッチ) の失敗を親 cron run に反映する。
+ *
+ * 親 cron run は enqueue した時点で閉じるため、子の失敗は親の status に自然には伝わらない
+ * (週次 AniList 同期が 403 で全滅しても「成功」に見えていた)。失敗した message 数だけ
+ * failed を加算し succeeded から引いて、status を resolveStatus で再計算する。
+ * 親がまだ running なら finishRun が後から上書きするので触らない。
+ */
+export async function propagateChildFailures(
+  prisma: Prisma,
+  failedByParent: ReadonlyMap<string, { count: number; errorMessage: string }>
+): Promise<void> {
+  for (const [parentId, { count, errorMessage }] of failedByParent) {
+    if (count <= 0) continue
+    try {
+      const parent = await prisma.syncRun.findUnique({
+        where: { id: parentId },
+        select: { status: true, succeeded: true, failed: true, errorMessage: true }
+      })
+      if (parent === null || parent.status === 'running') continue
+      const failed = parent.failed + count
+      const succeeded = Math.max(0, parent.succeeded - count)
+      await prisma.syncRun.update({
+        where: { id: parentId },
+        data: {
+          status: resolveStatus(succeeded, failed),
+          succeeded,
+          failed,
+          errorMessage: parent.errorMessage ?? errorMessage.slice(0, 500)
+        }
+      })
+    } catch (e) {
+      logger.warn({ action: 'propagate-child-failure-failed', parentId, error: String(e) })
+    }
+  }
+}

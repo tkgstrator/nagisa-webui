@@ -45,23 +45,12 @@ app.route('/api/recording-library', recordingLibraryRoutes)
 app.route('/api/recording-jobs', recordingJobsRoutes)
 app.route('/api/episodes', episodesRoutes)
 
-// デバッグ用: Falcor API / AniList のレスポンスを直接確認する
+// デバッグ用: Falcor API のレスポンスを直接確認する。AniList は Workers から 403 になるため Lambda 経由でのみ叩く
 app.get('/api/debug/falcor/:slug', async (c) => {
   const slug = c.req.param('slug')
   const paths = JSON.stringify([['titleSlug', slug, ['name', 'slug', 'description', 'thumbnailUrl', 'service']]])
   const url = `https://www.hulu.jp/anon/ja/webp/path?paths=${encodeURIComponent(paths)}&method=get`
   const res = await fetch(url)
-  return c.json({ status: res.status, body: await res.json() })
-})
-
-app.get('/api/debug/anilist/:title', async (c) => {
-  const title = c.req.param('title')
-  const query = `query { Page(perPage: 5) { media(search: ${JSON.stringify(title)}, type: ANIME) { id title { native } countryOfOrigin status season seasonYear } } }`
-  const res = await fetch('https://graphql.anilist.co', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query })
-  })
   return c.json({ status: res.status, body: await res.json() })
 })
 
