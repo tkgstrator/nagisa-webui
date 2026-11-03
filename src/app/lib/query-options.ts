@@ -54,6 +54,14 @@ export const recordingSyncStateQueryOptions = () =>
     refetchInterval: 30_000
   })
 
+/** 環境変数の読み取り専用表示 + デバウンス状態。ローカル D1 だけを見る。 */
+export const jellyfinRefreshStateQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.jellyfin.refreshState,
+    queryFn: () => api.getJellyfinRefreshState(),
+    refetchInterval: 30_000
+  })
+
 export const unidentifiedListQueryOptions = (filters: Record<string, unknown>) =>
   queryOptions({
     queryKey: queryKeys.admin.unidentified(filters),

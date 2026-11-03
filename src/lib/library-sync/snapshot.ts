@@ -1,10 +1,12 @@
 import { Prisma as PrismaSql } from '../../generated/prisma/client.ts'
 import { NagisaLibrarySnapshotSchema } from '../../schemas/nagisa.dto'
 import type { createPrismaClient } from '../db'
+import { buildDirtyWrite } from '../jellyfin/dirty'
 import { getAppLogger } from '../logger'
 import { fetchNagisaRaw, type NagisaEnv } from '../nagisa-client'
 import { type LedgerRow, learnTmdbIds, resolveEpisodes, sqlDate, stamp } from './ledger'
 import { MAX_SNAPSHOT_PAGES_PER_RUN, MAX_WRITES_PER_PAGE, MAX_WRITES_PER_RUN, SNAPSHOT_LIMIT, SYNC_KEY } from './limits'
+import { hasNewCompleted } from './new-completed'
 import {
   applyBatched,
   fenced,
@@ -35,7 +37,9 @@ export async function bootstrapLibrary(
   env: NagisaEnv,
   owner: string,
   reason: string,
-  result: LibrarySyncResult
+  result: LibrarySyncResult,
+  /** Jellyfin 連携が有効か。有効なときだけ、新規 completed に dirty の印を立てる */
+  markJellyfin: boolean
 ): Promise<void> {
   result.bootstrap = reason
   const startedFrom = await prisma.syncState.findUnique({ where: { key: SYNC_KEY } })
@@ -91,6 +95,9 @@ export async function bootstrapLibrary(
     // 作品の tmdbId を先に覚えておくと、同じページの id を持たない行がそれで当たる。
     result.tmdbLearned += await learnTmdbIds(prisma, db, rows)
     const resolved = await resolveEpisodes(prisma, rows)
+    // ページごとに判定して、見つかったページのバッチに印を載せる。run を跨ぐ再開でも
+    // 取りこぼさない (印はカーソルと同じバッチに入るので、進んだページの分は必ず立っている)。
+    const dirty = markJellyfin && (await hasNewCompleted(prisma, rows, resolved)) ? [buildDirtyWrite(owner, now)] : []
     const { writes, unmatched } = buildUpsertWrites(rows, resolved, now, owner, true)
     cursor = body.next_cursor
     const done = !cursor
@@ -115,6 +122,7 @@ export async function bootstrapLibrary(
     // 途中のページ。適用とカーソルを同じバッチに入れる (間で落ちると取りこぼす)。
     if (!done) {
       const applied = await applyBatched(db, writes, [
+        ...dirty,
         stateWrite(owner, now, PrismaSql.sql`snapshot_cursor = ${cursor}`)
       ])
       if (fenced(applied, result, 'snapshot')) return
@@ -137,7 +145,7 @@ export async function bootstrapLibrary(
     // 「台帳に居なかった」に見え、比率ガードが誤爆する) が、D1 には同一バッチの
     // 途中結果を読む手段が無い。カーソルを確定するのは後のバッチなので、
     // ここで落ちても次 run が同じページを読み直すだけで済む (適用は冪等)。
-    if (writes.length > 0) await applyBatched(db, writes, [])
+    if (writes.length > 0 || dirty.length > 0) await applyBatched(db, writes, dirty)
     result.unmatched += unmatched
     result.upserts += writes.length
     result.pages++

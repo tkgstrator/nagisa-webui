@@ -14,6 +14,7 @@ import {
   KeyArchiveProviderEnum,
   KeyArchiveRequestSchema
 } from '@/schemas/archive.dto'
+import { JellyfinRefreshStateSchema } from '@/schemas/jellyfin.dto'
 import {
   CatalogEventKindEnum,
   CursoredLogEntrySchema,
@@ -163,6 +164,12 @@ const api = new Zodios('/api', [
     path: '/recording-library/sync-state',
     alias: 'getRecordingSyncState',
     response: RecordingSyncStateSchema
+  },
+  {
+    method: 'get',
+    path: '/jellyfin/refresh-state',
+    alias: 'getJellyfinRefreshState',
+    response: JellyfinRefreshStateSchema
   },
   {
     method: 'get',
