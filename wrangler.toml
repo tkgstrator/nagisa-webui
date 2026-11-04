@@ -67,7 +67,9 @@ max_retries = 3
 max_concurrency = 1
 dead_letter_queue = "anime-tracker-amazon-dlq-staging"
 
-# hulu / crunchyroll / abema 共有 queue。Amazon 分離後も従来の実効並列度 (batch 5 × concurrency 2 = 10) を維持。
+# hulu / crunchyroll / abema 共有 queue。実効並列度は batch 5 × concurrency 1 = 5 に絞っている。
+# Lambda の同時実行上限 (アカウント既定 10 前後) を本番・ステージングで共有しており、
+# 実効 10 では anime-tracker-fetch-throttles アラームが発火したため (#168 再識別後の update 大量発生で顕在化)。
 [[queues.producers]]
 binding = "SYNC_QUEUE"
 queue = "anime-tracker-sync-staging"
@@ -76,7 +78,7 @@ queue = "anime-tracker-sync-staging"
 queue = "anime-tracker-sync-staging"
 max_batch_size = 5
 max_retries = 3
-max_concurrency = 2
+max_concurrency = 1
 dead_letter_queue = "anime-tracker-sync-dlq-staging"
 
 [[queues.producers]]
@@ -140,7 +142,7 @@ max_retries = 3
 max_concurrency = 1
 dead_letter_queue = "anime-tracker-amazon-dlq-staging"
 
-# hulu / crunchyroll / abema 共有 queue。実効並列度は従来通り 10 (batch 5 × concurrency 2)。
+# hulu / crunchyroll / abema 共有 queue。実効並列度は 5 (batch 5 × concurrency 1)。理由は共通設定側のコメント参照。
 [[env.staging.queues.producers]]
 binding = "SYNC_QUEUE"
 queue = "anime-tracker-sync-staging"
@@ -149,7 +151,7 @@ queue = "anime-tracker-sync-staging"
 queue = "anime-tracker-sync-staging"
 max_batch_size = 5
 max_retries = 3
-max_concurrency = 2
+max_concurrency = 1
 dead_letter_queue = "anime-tracker-sync-dlq-staging"
 
 [[env.staging.queues.producers]]
@@ -210,7 +212,7 @@ max_retries = 3
 max_concurrency = 1
 dead_letter_queue = "anime-tracker-amazon-dlq-production"
 
-# hulu / crunchyroll / abema 共有 queue。実効並列度は従来通り 10 (batch 5 × concurrency 2)。
+# hulu / crunchyroll / abema 共有 queue。実効並列度は 5 (batch 5 × concurrency 1)。理由は共通設定側のコメント参照。
 [[env.production.queues.producers]]
 binding = "SYNC_QUEUE"
 queue = "anime-tracker-sync-production"
@@ -219,7 +221,7 @@ queue = "anime-tracker-sync-production"
 queue = "anime-tracker-sync-production"
 max_batch_size = 5
 max_retries = 3
-max_concurrency = 2
+max_concurrency = 1
 dead_letter_queue = "anime-tracker-sync-dlq-production"
 
 [[env.production.queues.producers]]
