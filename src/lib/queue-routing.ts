@@ -3,7 +3,7 @@
  *
  * Amazon はスクレイピング先の throttle 対策で専用 queue (`AMAZON_QUEUE`, 実効並列度 2) に
  * 隔離する。それ以外の provider (hulu/crunchyroll/abema) と provider を持たない message 型
- * (abema_archive/anilist_sync) は共有の `SYNC_QUEUE` (実効並列度 10) に流す。
+ * (abema_archive/anilist_sync) は共有の `SYNC_QUEUE` (実効並列度 5) に流す。
  *
  * 送信箇所ごとに binding を選ばせると provider の抜き漏れでズレるため、
  * `src/scheduled.ts` / `src/queue.ts` / `src/routes/admin.ts` は必ずこの関数経由で送る。
